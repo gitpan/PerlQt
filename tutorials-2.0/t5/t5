@@ -1,0 +1,54 @@
+#!/usr/bin/perl -w
+package MyWidget;
+
+use Qt 2.0;
+import Qt::app;
+
+@ISA = qw(Qt::Widget);
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+
+    $self->setMinimumSize(200, 200);
+
+    my $quit = Qt::PushButton->new('Quit', $self, 'quit');
+    $quit->setGeometry(10, 10, 75, 30);
+    $quit->setFont(Qt::Font->new('Times', 18, Qt::Font::Bold));
+
+    $app->connect($quit, 'clicked()', 'quit()');
+
+    my $lcd = Qt::LCDNumber->new(2, $self, 'lcd');
+    $lcd->move(10, $quit->y() + $quit->height() + 10);
+
+    my $sBar =
+        Qt::ScrollBar->new(0, 99,                           # range
+                           1, 10,                           # line/page steps
+                           0,                               # initial value
+                           Qt::Horizontal,                  # orientation
+                           $self, 'scrollbar');
+
+    $lcd->connect($sBar, 'valueChanged(int)', 'display(int)');
+
+    @$self{'quit', 'sBar', 'lcd'} = ($quit, $sBar, $lcd);
+    return $self;
+}
+
+sub resizeEvent {
+    my $self = shift;
+    my($sBar, $lcd) = @$self{'sBar', 'lcd'};
+
+    $sBar->setGeometry(10, $self->height() - 10 - 16, $self->width() - 20, 16);
+    $lcd->resize($sBar->width(), $sBar->y() - $lcd->y() - 5);
+}
+
+package main;
+
+use Qt 2.0;
+import Qt::app;
+
+$w = MyWidget->new;
+$w->setGeometry(100, 100, 200, 200);
+$app->setMainWidget($w);
+$w->show();
+exit $app->exec();
+

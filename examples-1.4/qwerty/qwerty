@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+use Qt 2.0;
+import Qt::app;
+use Editor;
+
+$e = Editor->new;
+$e->resize(400, 400);
+$e->show();
+
+for(@ARGV) {
+    $e = Editor->new;
+    $e->resize(400, 400);
+    $e->loadFile($_);
+    $e->show();
+}
+$app->connect($app, 'lastWindowClosed()', 'quit()');
+exit $app->exec();

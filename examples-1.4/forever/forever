@@ -1,0 +1,122 @@
+#!/usr/bin/perl -w
+#
+# PerlQt Example Application: forever
+#
+# Draws rectangles forever.
+#
+
+package Counter;
+
+#
+# Counter - a widget that displays an unsigned int continuously.
+#
+
+use Qt 2.0;
+
+@ISA = qw(Qt::Label);
+
+#
+# Constructs a Counter
+#
+
+sub new {
+    my $self = shift->SUPER::new(@_[1..$#_]);
+
+    $self->{'number'} = shift;
+    $self->setText('  0  rectangles/second');
+    $self->setAutoResize(1);
+    $self->startTimer(1000);
+
+    return $self;
+}
+
+#
+# Timer event is called every second and prints out number
+#
+
+sub timerEvent {
+    my $self = shift;
+    my $number = $self->{'number'};
+
+    if(defined $self->{'number'}) {
+	$self->setText(sprintf('%d rectangles/second', $$number));
+	$$number = 0;
+    }
+    $self->repaint(1);
+}
+
+package Forever;
+
+#
+# Forever - a widget that draws rectangles forever.
+#
+
+use Qt 2.0;
+
+@ISA = qw(Qt::Widget);
+
+#
+# Constructs a Forever widget.
+#
+
+sub COLORS () { 120 }
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+    my @colors;
+
+    for my $a (0..COLORS-1) {
+	$colors[$a] = Qt::Color->new(rand(0xff), rand(0xff), rand(0xff));
+    }
+    my $rectangles = 0;
+    my $counter = Counter->new(\$rectangles);
+    $counter->show();
+    $self->startTimer(0);
+
+    @$self{'counter', 'rectangles', 'colors'} =
+	($counter, \$rectangles, \@colors);
+    return $self;
+}
+
+#
+# Handles paint events for the Forever widget.
+#
+
+sub paintEvent {
+    my $self = shift;
+    my $colors = $self->{'colors'};
+    my $paint = Qt::Painter->new;
+
+    $paint->begin($self);
+    $paint->setWindow(0, 0, 1024, 1024);
+    $paint->setPen(Qt::NoPen);
+    $paint->setBrush($colors->[int(rand(COLORS))]);
+    my $p1 = Qt::Point->new(rand(0x3ff), rand(0x3ff));
+    my $p2 = Qt::Point->new(rand(0x3ff), rand(0x3ff));
+    my $r = Qt::Rect->new($p1, $p2);
+    $paint->drawRect($r);
+    $paint->end();
+}
+
+#
+# Handles timer events for the Forever widget.
+#
+
+sub timerEvent {
+    my $self = shift;
+    my $rectangles = $self->{'rectangles'};
+
+    $self->repaint(0);
+    $$rectangles++;
+}
+
+package main;
+
+use Qt 2.0;
+import Qt::app;
+
+$always = Forever->new;
+$app->setMainWidget($always);
+$always->show();
+exit $app->exec();
+

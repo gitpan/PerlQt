@@ -188,6 +188,17 @@ void __pig_module_used(const char *pig0) {
     hv_store(pighv_inc, pigpm, strlen(pigpm), newSVpv(__FILE__, 0), 0);
 }
 
+extern "C" XS(PIG_Qt_import) {
+    dXSARGS;
+    const char *pigclass = HvNAME(PIGcurcop->cop_stash);
+    char *pigvar;
+
+    pigvar = new char [strlen(pigclass) + 7];
+    sprintf(pigvar, "%s::app", pigclass);
+    perl_get_sv(pigvar, TRUE | GV_ADDMULTI);    // No warnings
+    delete [] pigvar;
+}
+
 extern "C" XS(boot_Qt) {
     dXSARGS;
     
@@ -204,6 +215,7 @@ extern "C" XS(boot_Qt) {
     pig_load_constants("Qt", PIG_constant_Qt);
     newXS("Qt::Application::new", PIG_QApplication_new, __FILE__);
     newXS("Qt::app::import", PIG_app_import, __FILE__);
+    newXS("Qt::import", PIG_Qt_import, __FILE__);
 
     XSRETURN_UNDEF;
 }

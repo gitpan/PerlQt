@@ -13,7 +13,6 @@
 #include "pigvirtual.h"
 
 PIG_DEFINE_VOID_FUNC_2(pig_virtual_dereference, const class pig_virtual *, void *) {
-warn("Dereferencing\n");
     SvFLAGS((SV *)pig0->pig_rv) = (SvFLAGS((SV *)pig0->pig_rv) & ~SVTYPEMASK) | SVt_NULL;
     SvREFCNT_dec((SV *)pig0->pig_rv);
 }

@@ -1,9 +1,0 @@
-#!/usr/bin/perl -w
-use Qt 2.0;
-use Qt::app;
-use LifeDialog;
-
-$life = LifeDialog->new;
-$app->setMainWidget($life);
-$life->show();
-exit $app->exec();

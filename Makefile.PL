@@ -27,8 +27,8 @@ $MAKE = 'Qt-1.4';
     CC => 'g++',
     CCFLAGS => '',
     DEFINE => '',
-    INC => '-I/usr/X11R6/include -I/usr/include/qt -I.',
-    LIBS => '-lqt -L/usr/X11R6/lib -lX11',
+    INC => '-I$(QTDIR)/include -I/usr/X11R6/include -I/usr/include/qt -I.',
+    LIBS => '-L$(QTDIR)/lib -L/usr/X11R6/lib -lqt -lX11',
     OPTIMIZE => '-O'
 );
 ##########
@@ -84,6 +84,8 @@ sub configurate {
 	pigtype_base\$(OBJ_EXT) 
 	pigtype_object\$(OBJ_EXT)
 	pigtype_qt\$(OBJ_EXT)
+	pigtype_qt_qstring\$(OBJ_EXT)
+	pigtype_qt_qstrlist\$(OBJ_EXT)
 	pigfunc_base\$(OBJ_EXT)
 	pigfunc_object\$(OBJ_EXT)
 	pigfunc_qt\$(OBJ_EXT)
@@ -91,7 +93,7 @@ sub configurate {
     };
 
     my $define = "-DPIGDEBUG=$debug -DPIG_QT " .
-	"-DPIGPERL_PATCHLEVEL=$pl -DPIGPERL_SUBVERSION=$sv $Args{DEFINE}";
+	"-DPIGPERL_PL=$pl -DPIGPERL_SV=$sv $Args{DEFINE}";
 
     my $libs = $Args{LIBS};
 

@@ -1,0 +1,9 @@
+connect example from Qt-1.44
+
+connect.cpp => connect
+
+Should work everywhere without any messages.
+
+The colors seem a bit off, though. If anyone can tell me one way or the
+other whether the random color generator works like the C++ version,
+that'd be great.

@@ -1,0 +1,79 @@
+#!/usr/bin/perl -w
+
+package Test;
+
+use Qt 2.0;
+
+@ISA = qw(Qt::Widget);
+
+sub new {
+    return shift->SUPER::new(@_);
+}
+
+sub paintEvent {
+    my $self = shift;
+    my $e = shift;
+    my $p = Qt::Painter->new($self);
+    $p->setClipRect($e->rect());
+    my $d = 1000;  # large number
+    my $x1 = 0;
+    my $x2 = $self->width()-1;
+    my $y1 = 0;
+    my $y2 = $self->height()-1;
+
+    my $x = ($x1+$x2)/2;
+    $p->drawLine($x, $y1, $x+$d, $y1+$d);
+    $p->drawLine($x, $y1, $x-$d, $y1+$d);
+    $p->drawLine($x, $y2, $x+$d, $y2-$d);
+    $p->drawLine($x, $y2, $x-$d, $y2-$d);
+
+    my $y = ($y1+$y2)/2;
+    $p->drawLine($x1, $y, $x1+$d, $y+$d);
+    $p->drawLine($x1, $y, $x1+$d, $y-$d);
+    $p->drawLine($x2, $y, $x2-$d, $y+$d);
+    $p->drawLine($x2, $y, $x2-$d, $y-$d);
+}
+
+package main;
+
+use Qt 2.0;
+import Qt::app;
+
+$s1 = Qt::Splitter->new(Qt::Splitter::Vertical, undef, "main");
+
+$s2 = Qt::Splitter->new(Qt::Splitter::Horizontal, $s1, "top");
+
+$t1 = Test->new($s2);
+$t1->setBackgroundColor(Qt::blue->light(180));
+$t1->setMinimumSize(50, 0);
+
+$t2 = Test->new($s2);
+$t2->setBackgroundColor(Qt::green->light(180));
+$s2->setResizeMode($t2, Qt::Splitter::KeepSize);
+$s2->moveToFirst($t2);
+
+$s3 = Qt::Splitter->new(Qt::Splitter::Horizontal, $s1, "bottom");
+
+# s4 is nested inside s3 - allowing 3 widgets to be split
+$s4 = Qt::Splitter->new(Qt::Splitter::Horizontal, $s3, "bottom");
+
+$t3 = Test->new($s4);
+$t3->setBackgroundColor(Qt::red);
+
+$t4 = Test->new($s4);
+$t4->setBackgroundColor(Qt::white);
+
+$t5 = Test->new($s3);
+$t5->setMaximumHeight(250);
+$t5->setMinimumSize(80, 50);
+$t5->setBackgroundColor(Qt::yellow);
+
+# Test widgets draw fast...
+#$s1->setOpaqueResize(1);
+$s2->setOpaqueResize(1);
+$s3->setOpaqueResize(1);
+$s4->setOpaqueResize(1);
+
+$app->setMainWidget($s1);
+$s1->show();
+exit $app->exec();

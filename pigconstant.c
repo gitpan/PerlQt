@@ -13,7 +13,7 @@
 #include "pigclassinfo.h"
 #include "pigtype_object.h"
 
-#if PIGPERL_PATCHLEVEL < 5
+#if PIGPERL_PL < 5
 
 /* perl-5.005 code. Used under GPL, removed PL_ prefixes */
 

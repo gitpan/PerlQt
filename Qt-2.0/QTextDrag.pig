@@ -6,9 +6,9 @@ suicidal virtual class QTextDrag : virtual QDragObject {
     virtual ~QTextDrag();
     static bool canDecode(const QMimeSource *);
     static bool decode(const QMimeSource *, QString &);
-    static bool decode(const QMimeSource *, QString &, const char *);
+    static bool decode(const QMimeSource *, QString &, QCString &);
     virtual QByteArray encodedData(const char *) const;
     virtual const char *format(int) const;
-    virtual void setSubtype(const char *);
+    virtual void setSubtype(const QCString &);
     virtual void setText(const QString &);
 } Qt::TextDrag;

@@ -13,6 +13,10 @@
 #include "pigvirtual.h"
 #include "pigfunc_base.h"
 
+void pig_croak(const char* pat, ...) {
+    warn("%s", pat);
+}
+
 PIG_DEFINE_VOID_FUNC_1(pig_sub_enter, struct pig_sub_frame *) {
     struct pig_sub_frame *pignode;
     pignode = new pig_sub_frame;

@@ -193,22 +193,7 @@ PIG_DEFINE_FUNC_1(void *, pig_type_object_destructor_argument, const char *) {
     PIGARGUMENT(pig_object_cast(pigd, pig0));
 }
 
-PIG_DEFINE_FUNC_0(bool, pig_object_can_delete) {
-    PIGARGS;
-    if(!SvOK(ST(0))) return FALSE;
-    pig_object_data *pigd = pig_object_extract(ST(0));
-//printf("flags: %x\n", pigd->pigflags);
-//printf("testing for delete of %s:%p:%p:%x %s\n", pigd->piginfo->pigclassname, pigd, pigd->pigptr, pigd->pigflags, (pigd->pigflags & PIGOBJECT_ALLOCATED) ? "TRUE" : "FALSE");
-
-    if(pigd->piginfo->pigclassinfo != PIG_CLASS_SUICIDAL) {
-        PIGARGUMENT((pigd->pigflags & PIGOBJECT_ALLOCATED) ? TRUE : FALSE);
-    } else {
-	PIGARGUMENT(FALSE);
-    }
-}
-
 PIG_DEFINE_VOID_FUNC_2(pig_object_destroy, void *, class pig_virtual *) {
-    warn("Please, no\n");
 }
 
 
@@ -445,7 +430,6 @@ PIG_EXPORT_TABLE(pigobject)
     PIG_EXPORT_FUNC(pig_type_new_castobject_return)
     PIG_EXPORT_FUNC(pig_type_new_object_return)
     PIG_EXPORT_FUNC(pig_type_object_destructor_argument)
-    PIG_EXPORT_FUNC(pig_object_can_delete)
     PIG_EXPORT_FUNC(pig_object_destroy)
 
     PIG_EXPORT_FUNC(pig_createMetaObject)

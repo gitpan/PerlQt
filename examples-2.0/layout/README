@@ -1,0 +1,5 @@
+layout example from Qt-1.44
+
+layout.cpp => layout
+
+Everything works except the popup menu. It's a problem with PerlQt.

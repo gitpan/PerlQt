@@ -1,0 +1,16 @@
+#!/usr/bin/perl -w
+use Qt 2.0;
+import Qt::app;
+use Directory;
+
+$mw = Qt::ListView->new();
+$app->setMainWidget($mw);
+$mw->setCaption("Directory Browser");
+$mw->addColumn("Name");
+$mw->addColumn("Type");
+$mw->resize(400, 400);
+$mw->setTreeStepSize(20);
+$root = Directory->new($mw);
+$root->setOpen(1);
+$mw->show();
+exit $app->exec();

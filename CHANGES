@@ -1,3 +1,17 @@
+Changed from 2.101 to 2.102  (2000-Jan-21)
+---------------------------
+
+- Copied the examples and tutorials directories to make 1.4 and 2.0
+  versions of each
+- Adopted C<import Qt::app> over C<use Qt::app>
+- Changed the Makefile.PL to use $(QTDIR) paths by default
+- Separated and enhanced the QString and QStrList code from pigtype_qt.c
+- Overhauled typemap handling
+- Added &delete, &continue and &break methods to every class to help
+  with object destruction
+- Added documentation. See doc/starting.pod
+
+
 Changes from 2.100 to 2.101  (2000-Jan-19)
 ---------------------------
 

@@ -5,13 +5,11 @@ For installation instructions, see the INSTALL file.
 You must have Qt installed before installing PerlQt.
 The homepage for Qt is http://www.troll.no/.
 
-Included with this release are the class templates for Qt-2.0.2.
-I have not tested them with any prior release, and the will not
-work with Qt-1.x.
+Included with this release are the class templates for Qt-2.0.2 and
+Qt-1.44. They may work with other versions, but I haven't tested it.
 
-There is currently no documentation for PerlQt. I apologize
-for the inconvenience, but there I can give you some general
-guidelines for using PerlQt. Here is Hello World for PerlQt:
+Basic documentation for PerlQt can be found in the doc/ directory.
+Please read starting.pod. Here is Hello World for PerlQt:
 
 #!/usr/bin/perl -w
 use Qt 2.0;

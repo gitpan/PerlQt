@@ -1,0 +1,11 @@
+#!/usr/bin/perl -w
+
+use Qt 2.0;
+import Qt::app;
+use Preferences;
+
+my $mw = Preferences->new;
+$app->setMainWidget($mw);
+$mw->setCaption('Preferences Output');
+$mw->show();
+exit $app->exec();

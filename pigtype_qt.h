@@ -33,17 +33,32 @@ PIG_DECLARE_TYPE(pig_type_qt_pointarrayitems)
 PIG_DECLARE_TYPE(pig_type_qt_HVorientation)
 PIG_DECLARE_TYPE(pig_type_qt_VHorientation)
 
+PIG_DECLARE_TYPE(pig_type_qt_QString)
 PIG_DECLARE_TYPE(pig_type_qt_QString_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QString_ref)
+PIG_DECLARE_TYPE(pig_type_qt_const_QString_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_const_QString_ref)
+
+#if QT_VERSION > 200
+PIG_DECLARE_TYPE(pig_type_qt_QCString)
+PIG_DECLARE_TYPE(pig_type_qt_QCString_ptr)
+PIG_DECLARE_TYPE(pig_type_qt_QCString_ref)
+PIG_DECLARE_TYPE(pig_type_qt_const_QCString_ptr)
+PIG_DECLARE_TYPE(pig_type_qt_const_QCString_ref)
+#endif
+
 PIG_DECLARE_TYPE(pig_type_qt_QByteArray_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QArray_QRect_ptr)
 
 PIG_DECLARE_TYPE(pig_type_qt_QFileInfo_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QFileInfoList_ptr)
 
+#if QT_VERSION > 200
 PIG_DECLARE_TYPE(pig_type_qt_QStringList_ptr)
+#endif
+
 PIG_DECLARE_TYPE(pig_type_qt_QStrList_ptr)
+PIG_DECLARE_TYPE(pig_type_qt_leak_QStrList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QTabList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QObjectList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QWidgetList_ptr)
@@ -76,12 +91,23 @@ PIGTYPE_ARGUMENT2(pig_type_qt_pointarrayitems, int, int)
 PIGTYPE_ALL(pig_type_qt_HVorientation, int)
 PIGTYPE_ALL(pig_type_qt_VHorientation, int)
 
-PIGTYPE_ALL(pig_type_qt_QString_ptr, class QString *)
-PIGTYPE_ALL(pig_type_qt_QString_ref, class QString &)
-PIGTYPE_ALL(pig_type_qt_const_QString_ref, const class QString *)
+PIGTYPE_CONST_ALL(pig_type_qt_QString, class QString &)
+PIGTYPE_CONST_ALL(pig_type_qt_QString_ptr, class QString *)
+PIGTYPE_CONST_ALL(pig_type_qt_QString_ref, class QString &)
+PIGTYPE_ALL(pig_type_qt_const_QString_ptr, const class QString *)
+PIGTYPE_ALL(pig_type_qt_const_QString_ref, const class QString &)
+
+#if QT_VERSION > 200
+PIGTYPE_CONST_ALL(pig_type_qt_QCString, class QCString &)
+PIGTYPE_CONST_ALL(pig_type_qt_QCString_ptr, class QCString *)
+PIGTYPE_CONST_ALL(pig_type_qt_QCString_ref, class QCString &)
+PIGTYPE_ALL(pig_type_qt_const_QCString_ptr, const class QCString *)
+PIGTYPE_ALL(pig_type_qt_const_QCString_ref, const class QCString &)
+#endif
+
 PIGTYPE_ARGUMENT(pig_type_qt_QByteArray_ptr, const void *)
 PIGTYPE_RETURN(pig_type_qt_QByteArray_ptr, const void *)
-PIGTYPE_PUSH(pig_type_qt_QByteArray_ptr, void *)
+PIGTYPE_PUSH(pig_type_qt_QByteArray_ptr, const void *)
 PIGTYPE_POP(pig_type_qt_QByteArray_ptr, void *)
 PIGTYPE_RETURN(pig_type_qt_QArray_QRect_ptr, const void *)
 
@@ -89,14 +115,18 @@ PIGTYPE_ARGUMENT(pig_type_qt_QFileInfo_ptr, class QFileInfo *)
 PIGTYPE_PUSH(pig_type_qt_QFileInfo_ptr, const class QFileInfo *)
 PIGTYPE_RETURN(pig_type_qt_QFileInfoList_ptr, const void *)
 
+#if QT_VERSION > 200
 PIGTYPE_ARGUMENT(pig_type_qt_QStringList_ptr, void *)
 PIGTYPE_RETURN(pig_type_qt_QStringList_ptr, const void *)
 PIGTYPE_PUSH(pig_type_qt_QStringList_ptr, const void *)
+#endif
 
 PIGTYPE_ARGUMENT(pig_type_qt_QStrList_ptr, void *)
 PIGTYPE_RETURN(pig_type_qt_QStrList_ptr, const void *)
 PIGTYPE_PUSH(pig_type_qt_QStrList_ptr, const void *)
 PIGTYPE_POP(pig_type_qt_QStrList_ptr, void *)
+
+PIGTYPE_ARGUMENT(pig_type_qt_leak_QStrList_ptr, void *)
 
 PIGTYPE_RETURN(pig_type_qt_QTabList_ptr, const void *)
 PIGTYPE_RETURN(pig_type_qt_QObjectList_ptr, const void *)
@@ -130,15 +160,27 @@ PIG_IMPORT_TABLE(pigtype_qt)
     PIG_IMPORT_TYPE(pig_type_qt_pointarrayitems, "Qt sizeof(point[])")
     PIG_IMPORT_TYPE(pig_type_qt_HVorientation, "Qt HVorientation")
     PIG_IMPORT_TYPE(pig_type_qt_VHorientation, "Qt VHorientation")
+    PIG_IMPORT_TYPE(pig_type_qt_QString, "Qt QString")
     PIG_IMPORT_TYPE(pig_type_qt_QString_ptr, "Qt QString*")
     PIG_IMPORT_TYPE(pig_type_qt_QString_ref, "Qt QString&")
+    PIG_IMPORT_TYPE(pig_type_qt_const_QString_ptr, "Qt const QString*")
     PIG_IMPORT_TYPE(pig_type_qt_const_QString_ref, "Qt const QString&")
+#if QT_VERSION > 200
+    PIG_IMPORT_TYPE(pig_type_qt_QCString, "Qt QCString")
+    PIG_IMPORT_TYPE(pig_type_qt_QCString_ptr, "Qt QCString*")
+    PIG_IMPORT_TYPE(pig_type_qt_QCString_ref, "Qt QCString&")
+    PIG_IMPORT_TYPE(pig_type_qt_const_QCString_ptr, "Qt const QCString*")
+    PIG_IMPORT_TYPE(pig_type_qt_const_QCString_ref, "Qt const QCString&")
+#endif
     PIG_IMPORT_TYPE(pig_type_qt_QByteArray_ptr, "Qt QByteArray*")
     PIG_IMPORT_TYPE(pig_type_qt_QArray_QRect_ptr, "Qt QArray<QRect>*")
     PIG_IMPORT_TYPE(pig_type_qt_QFileInfo_ptr, "Qt QFileInfo*")
     PIG_IMPORT_TYPE(pig_type_qt_QFileInfoList_ptr, "Qt QFileInfoList*")
+#if QT_VERSION > 200
     PIG_IMPORT_TYPE(pig_type_qt_QStringList_ptr, "Qt QStringList*")
+#endif
     PIG_IMPORT_TYPE(pig_type_qt_QStrList_ptr, "Qt QStrList*")
+    PIG_IMPORT_TYPE(pig_type_qt_leak_QStrList_ptr, "Qt new QStrList*")
     PIG_IMPORT_TYPE(pig_type_qt_QTabList_ptr, "Qt QTabList*")
     PIG_IMPORT_TYPE(pig_type_qt_QObjectList_ptr, "Qt QObjectList*")
     PIG_IMPORT_TYPE(pig_type_qt_QWidgetList_ptr, "Qt QWidgetList*")

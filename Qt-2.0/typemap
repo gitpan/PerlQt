@@ -10,12 +10,31 @@ int* => intptr
 bool* => boolptr
 float* => floatptr
 double* => doubleptr
+
 qt_QString = const char *
+qt_QString_ptr = const char *
+qt_QString_ref = const char *
 qt_const_QString_ref = const char *
-QString => cstring
+qt_const_QString_ptr = const char *
+QString => qt_QString
 QString* => qt_QString_ptr
-QString& => qt_QString_ptr &
+QString& => qt_QString_ref
+const QString => qt_const_QString_ref
+const QString* => qt_const_QString_ptr
 const QString& => qt_const_QString_ref
+
+qt_QCString = const char *
+qt_QCString_ptr = const char *
+qt_QCString_ref = const char *
+qt_const_QCString_ref = const char *
+qt_const_QCString_ptr = const char *
+QCString => qt_QCString
+QCString* => qt_QCString_ptr
+QCString& => qt_QCString_ref
+const QCString => qt_const_QCString_ref
+const QCString* => qt_const_QCString_ptr
+const QCString& => qt_const_QCString_ref
+
 double => double
 float => float
 int& => intref
@@ -33,9 +52,9 @@ const QObjectList* => qt_QObjectList_ptr
 const QByteArray& => qt_QByteArray_ptr &
 const QFileInfo& => qt_QFileInfo_ptr &
 
-qt_QStrList_ptr = const QStrList *
-enum = int
-qt_HVorientation = int
+qt_QStrList_ptr = (QStrList *)
+enum = (int)
+qt_HVorientation = (int)
 
 Qt::BGMode => enum
 Qt::GUIStyle => enum

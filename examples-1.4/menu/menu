@@ -1,0 +1,253 @@
+#!/usr/bin/perl -w
+package MenuExample;
+
+use Qt 2.0;
+import Qt::app;
+use Qt::slots qw(
+    open()
+    news()
+    save()
+    closeDoc()
+    undo()
+    redo()
+    normal()
+    bold()
+    underline()
+    about()
+    aboutQt()
+    printer()
+    file()
+    fax()
+    printerSetup()
+);
+use Qt::signals qw(explain(cstring));
+
+@ISA = qw(Qt::Widget);
+
+$p1_xpm = [
+"16 16 3 1",
+"       c None",
+".      c #000000000000",
+"X      c #FFFFFFFF0000",
+"                ",
+"                ",
+"         ....   ",
+"        .XXXX.  ",
+" .............. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .XXXXXXXXXXXX. ",
+" .............. ",
+"                "];
+
+$p2_xpm = [
+"16 16 3 1",
+"       c None",
+".      c #000000000000",
+"X      c #FFFFFFFFFFFF",
+"                ",
+"   ......       ",
+"   .XXX.X.      ",
+"   .XXX.XX.     ",
+"   .XXX.XXX.    ",
+"   .XXX.....    ",
+"   .XXXXXXX.    ",
+"   .XXXXXXX.    ",
+"   .XXXXXXX.    ",
+"   .XXXXXXX.    ",
+"   .XXXXXXX.    ",
+"   .XXXXXXX.    ",
+"   .XXXXXXX.    ",
+"   .........    ",
+"                ",
+"                "];
+
+$p3_xpm = [
+"16 16 3 1",
+"       c None",
+".      c #000000000000",
+"X      c #FFFFFFFFFFFF",
+"                ",
+"                ",
+"   .........    ",
+"  ...........   ",
+"  ........ ..   ",
+"  ...........   ",
+"  ...........   ",
+"  ...........   ",
+"  ...........   ",
+"  ...XXXXX...   ",
+"  ...XXXXX...   ",
+"  ...XXXXX...   ",
+"  ...XXXXX...   ",
+"   .........    ",
+"                ",
+"                "];
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+    my $p1 = Qt::Pixmap->new($p1_xpm);
+    my $p2 = Qt::Pixmap->new($p2_xpm);
+    my $p3 = Qt::Pixmap->new($p3_xpm);
+
+    my $print = Qt::PopupMenu->new;
+    $print->insertItem("&Print to printer", $self, 'printer()');
+    $print->insertItem("Print to &file", $self, 'file()');
+    $print->insertItem("Print to fa&x", $self, 'fax()');
+    $print->insertSeparator();
+    $print->insertItem("Printer &Setup", $self, 'printerSetup()');
+
+    my $file = Qt::PopupMenu->new;
+    $file->insertItem($p1, "&Open", $self, 'open()', Qt::CTRL+Qt::Key_O);
+    $file->insertItem($p2, "&New", $self, 'news()', Qt::CTRL+Qt::Key_N);
+    $file->insertItem($p3, "&Save", $self, 'save()', Qt::CTRL+Qt::Key_S);
+    $file->insertItem("&Close", $self, 'closeDoc()', Qt::CTRL+Qt::Key_W);
+    $file->insertSeparator();
+    $file->insertItem("&Print", $print, Qt::CTRL+Qt::Key_P);
+    $file->insertSeparator();
+    $file->insertItem("E&xit", $app, 'quit()', Qt::CTRL+Qt::Key_Q);
+
+    my $edit = Qt::PopupMenu->new;
+    my $undoID = $edit->insertItem("&Undo", $self, 'undo()');
+    my $redoID = $edit->insertItem("&Redo", $self, 'redo()');
+    $edit->setItemEnabled($undoID, 0);
+    $edit->setItemEnabled($redoID, 0);
+
+    my $options = $self->{'options'} = Qt::PopupMenu->new;
+    $options->insertItem("&Normal Font", $self, 'normal()');
+    $options->insertSeparator();
+    $self->{'boldID'} = $options->insertItem("&Bold", $self, 'bold()');
+    $self->{'underlineID'} =
+	$options->insertItem("&Underline", $self, 'underline()');
+    $self->{'isBold'} = 0;
+    $self->{'isUnderline'} = 0;
+    $options->setCheckable(1);
+
+    my $help = Qt::PopupMenu->new;
+    $help->insertItem("&About", $self, 'about()', Qt::CTRL+Qt::Key_H);
+    $help->insertItem("About &Qt", $self, 'aboutQt()');
+
+    my $menu = $self->{'menu'} = Qt::MenuBar->new($self);
+    $menu->insertItem("&File", $file);
+    $menu->insertItem("&Edit", $edit);
+    $menu->insertItem("&Options", $options);
+    $menu->insertSeparator();
+    $menu->insertItem("&Help", $help);
+    $menu->setSeparator(Qt::MenuBar::InWindowsStyle);
+
+    my $label = $self->{'label'} = Qt::Label->new($self);
+    $label->setGeometry(20, $self->rect()->center()->y()-20,
+			$self->width()-40, 40);
+    $label->setFrameStyle(Qt::Frame::Box | Qt::Frame::Raised);
+    $label->setLineWidth(1);
+    $label->setAlignment(Qt::AlignCenter);
+
+    $label->connect($self, 'explain(cstring)', 'setText(cstring)');
+
+    $self->setMinimumSize(100, 80);
+
+    return $self;
+}
+
+sub open {
+    emit shift->explain("File/Open selected");
+}
+
+sub news {
+    emit shift->explain("File/New selected");
+}
+
+sub save {
+    emit shift->explain("File/Save selected");
+}
+
+sub closeDoc {
+    emit shift->explain("File/Close selected");
+}
+
+sub undo {
+    emit shift->explain("Edit/Undo selected");
+}
+
+sub redo {
+    emit shift->explain("Edit/Redo selected");
+}
+
+sub normal {
+    my $self = shift;
+    my $options = $self->{'options'};
+    $self->{'isBold'} = 0;
+    $self->{'isUnderline'} = 0;
+    $options->setItemChecked($self->{'boldID'}, 0);
+    $options->setItemChecked($self->{'underlineID'}, 0);
+    emit $self->explain("Options/Normal selected");
+}
+
+sub bold {
+    my $self = shift;
+    my $options = $self->{'options'};
+    $self->{'isBold'} = !$self->{'isBold'};
+    $options->setItemChecked($self->{'boldID'}, $self->{'isBold'});
+    emit $self->explain("Options/Bold selected");
+}
+
+sub underline {
+    my $self = shift;
+    my $options = $self->{'options'};
+    $self->{'isUnderline'} = !$self->{'isUnderline'};
+    $options->setItemChecked($self->{'underlineID'}, $self->{'isUnderline'});
+    emit $self->explain("Options/Underline selected");
+}
+
+sub about {
+    Qt::MessageBox::about(shift, "PerlQt Menu Example",
+			  "This example demonstrates simple use of Qt menus " .
+			  "from PerlQt.\n" .
+			  "You can cut and paste lines from it to your own " .
+			  "programs.\n");
+}
+
+sub aboutQt {
+    Qt::MessageBox::aboutQt(shift, "PerlQt Menu Example");
+}
+
+sub printer {
+    emit shift->explain("File/Printer/Print selected");
+}
+
+sub file {
+    emit shift->explain("File/Printer/Print To File selected");
+}
+
+sub fax {
+    emit shift->explain("File/Printer/Print To Fax selected");
+}
+
+sub printerSetup {
+    emit shift->explain("File/Printer/Printer Setup selected");
+}
+
+sub resizeEvent {
+    my $self = shift;
+    my $label = $self->{'label'};
+    $label->setGeometry(20, $self->rect()->center()->y()-20,
+			$self->width()-40, 40);
+}
+
+package main;
+
+use Qt 2.0;
+import Qt::app;
+
+MenuExample::new("MenuExample");
+$m = MenuExample->new;
+
+$app->setMainWidget($m);
+$m->show();
+exit $app->exec();

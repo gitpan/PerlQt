@@ -8,11 +8,11 @@ suicidal virtual class QUriDrag : virtual QStoredDrag {
     static bool decode(const QMimeSource *, QStrList &);
     static bool decodeLocalFiles(const QMimeSource *, QStringList &);
     static bool decodeToUnicodeUris(const QMimeSource *, QStringList &);
-    static const char *localFileToUri(const QString &);
+    static QCString localFileToUri(const QString &);
     void setFilenames(QStringList);
     void setUnicodeUris(QStringList);
     virtual void setUris(QStrList);
-    static const char *unicodeUriToUri(const QString &);
+    static QCString unicodeUriToUri(const QString &);
     static QString uriToLocalFile(const char *);
     static QString uriToUnicodeUri(const char *);
 } Qt::UriDrag;

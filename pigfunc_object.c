@@ -13,6 +13,41 @@
 #include "pigtype_object.h"
 #include "pigfunc_object.h"
 
+PIG_DEFINE_VOID_FUNC_0(pig_object_continue) {
+    PIGARGS;
+    struct pig_object_data *pigd = pig_object_extract(ST(0));
+    if(!pigd) return;
+    pigd->pigflags &= ~PIGOBJECT_BREAK;
+    pigd->pigflags |= PIGOBJECT_CONTINUED;
+}
+
+PIG_DEFINE_VOID_FUNC_0(pig_object_break) {
+    PIGARGS;
+    struct pig_object_data *pigd = pig_object_extract(ST(0));
+    if(!pigd) return;
+    pigd->pigflags &= ~PIGOBJECT_CONTINUED;
+    pigd->pigflags |= PIGOBJECT_BREAK;
+}
+
+PIG_DEFINE_FUNC_0(bool, pig_object_can_delete) {
+    PIGARGS;
+    if(!SvOK(ST(0))) return FALSE;
+
+    pig_object_data *pigd = pig_object_extract(ST(0));
+    if(pigd->pigflags & PIGOBJECT_ALLOCATED) {
+	if(pigd->pigflags & PIGOBJECT_CONTINUED) {
+	    PIGARGUMENT(FALSE);
+	} else if(pigd->pigflags & PIGOBJECT_BREAK) {
+	    PIGARGUMENT(TRUE);
+	}
+    }
+    if(pigd->piginfo->pigclassinfo != PIG_CLASS_SUICIDAL) {
+        PIGARGUMENT((pigd->pigflags & PIGOBJECT_ALLOCATED) ? TRUE : FALSE);
+    } else {
+        PIGARGUMENT(FALSE);
+    }
+}
+
 PIG_DEFINE_FUNC_2(SV *, pig_object_create, const char *, struct pig_object_data **) {
     static pig_object_data pigpod = { 0, 0, 0 };
 
@@ -45,12 +80,11 @@ PIG_DEFINE_FUNC_1(pig_object_data *, pig_object_extract, SV *) {
 }
 
 PIG_DEFINE_FUNC_2(void *, pig_object_cast, struct pig_object_data *, const char *) {
-    if(!pig0) return 0;
+    if(!pig0 || !pig0->pigptr) return 0;
     pig_classinfo *piginfo = pig0->piginfo;
-    //printf("casting %s(%p) to %s\n", piginfo->pigclassname, pig0->pigptr, pig1);
     void *pigr = (*piginfo->pigtocastfunc)(pig1, (void *)pig0->pigptr);
     if(!pigr)
-        die("Cannot cast %s pointer to %s\n", piginfo->pigclassname, pig1);
+        die("Cannot cast %s pointer to %s", piginfo->pigclassname, pig1);
     return pigr;
 }
 
@@ -64,6 +98,9 @@ PIG_DEFINE_FUNC_2(int, pig_object_isa, int, const char *) {
 }
 
 PIG_EXPORT_TABLE(pigfunc_object)
+    PIG_EXPORT_FUNC(pig_object_break)
+    PIG_EXPORT_FUNC(pig_object_continue)
+    PIG_EXPORT_FUNC(pig_object_can_delete)
     PIG_EXPORT_FUNC(pig_object_create)
     PIG_EXPORT_FUNC(pig_object_extract)
     PIG_EXPORT_FUNC(pig_object_cast)

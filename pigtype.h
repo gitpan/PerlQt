@@ -44,6 +44,11 @@ inline type name ## _defargument(type pig0) {			\
     return (*(type (*)(type))(_ ## name->pigdefargument))(pig0);\
 }
 
+#define PIGTYPE_CONST_DEFARGUMENT(name, type)			\
+inline type name ## _defargument(const type pig0) {		\
+    return (*(type (*)(const type))(_ ## name->pigdefargument))(pig0);\
+}
+
 #define PIGTYPE_RETURN(name, type)				\
 inline void name ## _return(type pig0) {			\
     (*(void (*)(type))(_ ## name->pigreturn))(pig0);		\
@@ -64,6 +69,13 @@ PIGTYPE_ARGUMENT(name, type)	\
 PIGTYPE_DEFARGUMENT(name, type)	\
 PIGTYPE_RETURN(name, type)	\
 PIGTYPE_PUSH(name, type)	\
+PIGTYPE_POP(name, type)
+
+#define PIGTYPE_CONST_ALL(name, type)	\
+PIGTYPE_ARGUMENT(name, type)		\
+PIGTYPE_CONST_DEFARGUMENT(name, type)	\
+PIGTYPE_RETURN(name, type)		\
+PIGTYPE_PUSH(name, type)		\
 PIGTYPE_POP(name, type)
 
 #define PIGTYPE_ARGUMENT2(name, type1, type2)  			\

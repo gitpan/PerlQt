@@ -21,6 +21,8 @@
 #define PIGOBJECT_MUTED		0x20
 #define PIGOBJECT_IMMORTALIZED	0x40
 #define PIGOBJECT_MORTALIZED	0x80
+#define PIGOBJECT_BREAK		0x100
+#define PIGOBJECT_CONTINUED	0x200
 
 #define PIGTYPEOBJECT_ARGUMENT(name, type) \
 inline type name ## _argument(const char *pig0) { \

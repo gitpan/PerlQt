@@ -4,6 +4,9 @@
 #include <qglobal.h>
 #include <qnamespace.h>
 
+const int QT_VERSION;
+const char *QT_VERSION_STR;
+
 namespace Qt {
     enum ButtonState { NoButton, LeftButton, RightButton, MidButton,
                        MouseButtonMask, ShiftButton, ControlButton,

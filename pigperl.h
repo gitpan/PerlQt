@@ -12,7 +12,7 @@
  */
 
 extern "C" {
-#if PIGPERL_PATCHLEVEL < 4
+#if PIGPERL_PL < 4
 #define debug PIGdebug
 #endif
 
@@ -30,20 +30,13 @@ extern "C" {
 #undef METHOD
 #undef debug
 
-#ifndef PIGPERL_PATCHLEVEL
-#error PIGPERL_PATCHLEVEL must be set to $Config{'PATCHLEVEL'}
+#ifndef PIGPERL_PL
+#error PIGPERL_PL must be set to $Config{'PATCHLEVEL'}
 #endif
 
-#ifndef PIGPERL_SUBVERSION
-#error PIGPERL_SUBVERSION must be set to $Config{'SUBVERSION'}
+#ifndef PIGPERL_SV
+#error PIGPERL_SV must be set to $Config{'SUBVERSION'}
 #endif
-
-#undef die
-#define die pig_croak
-#undef croak
-#define croak pig_croak
-
-extern void pig_croak(const char* pat, ...);
 
 #include "pig.h"
 #include "pigtype.h"
@@ -76,7 +69,7 @@ extern void pig_croak(const char* pat, ...);
 #define PIG_PROTO_HVSCALAR      14
 #define PIG_PROTO_LIST          15
 
-#if PIGPERL_PATCHLEVEL >= 5
+#if PIGPERL_PL >= 5
 #define PIGstack_base PL_stack_base
 #define PIGstack_sp PL_stack_sp
 #define PIGsv_yes PL_sv_yes

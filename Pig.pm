@@ -1321,7 +1321,10 @@ sub fetch_varg {
 
     if(exists $Types{$type}) {
 	my $c = '';
-	$c = "($Cast{$Types{$type}})" if exists $Cast{$Types{$type}};
+        if(exists $Cast{$Types{$type}} &&
+           $Cast{$Types{$type}} =~ /\(.*\)/) {
+            $c = $Cast{$Types{$type}};
+        }
 	my $pre = "";
 	my $xtype = $Types{$type};
 	if($xtype =~ s/(\W).*//) {
@@ -1376,9 +1379,9 @@ sub fetch_vret {
 
     if(exists $Types{$type}) {
 	my $t = '';
-	if(exists $Cast{$Types{$type}}) {
-	    $t = "($arg)";
-	}
+        if(exists $Cast{$Types{$type}}) {
+            $t = "($arg)";
+        }
 	my $pre = "";
 	my $xtype = $Types{$type};
 	if($xtype =~ s/(\W).*//) {
@@ -1534,9 +1537,13 @@ sub fetch_ret {
 
     if(exists $Types{$type}) {
 	my $c = '';
-	$c = "($Cast{$Types{$type}})" if exists $Cast{$Types{$type}};
-	$c =~ s/\(+/\(/g;	# Embarassing hack
-	$c =~ s/\)+/\)/g;	# Please, avert your eyes
+	if(exists $Cast{$Types{$type}} &&
+	   $Cast{$Types{$type}} =~ /\(.*\)/) {
+	    $c = $Cast{$Types{$type}};
+	}
+#	$c = "($Cast{$Types{$type}})" if exists $Cast{$Types{$type}};
+#	$c =~ s/\(+/(/g;
+#	$c =~ s/\)+/)/g;
 	my $pre = "";
 	my $xtype = $Types{$type};
 	if($xtype =~ s/(\W).*//) {
@@ -1590,6 +1597,7 @@ sub fetch_ret {
 
 sub fetch_arg {
     my $argument = shift;
+    my $idx = shift;
     my $prefix = shift || 'pig_type_';
     my $arg = cpp_type($argument);
     my $def = cpp_deftype($argument);
@@ -1611,8 +1619,13 @@ sub fetch_arg {
 	my $c = '';
 	my $t = '';
 	if(exists $Cast{$Types{$type}}) {
-	    $c = "($Cast{$Types{$type}})";
+if($Cast{$Types{$type}} =~ /\(.*\)/) {
+	    $c = "$Cast{$Types{$type}}";
 	    $t = "($arg)";
+}
+elsif($defarg) {
+    $defarg = $def;
+}
 	}
 	my $pre = "";
 	my $xtype = $Types{$type};
@@ -1666,7 +1679,7 @@ sub fetch_arg {
 	    }
 	} elsif($cast =~ /^const\s+(\w+)\s*\&$/) {
 	    if(defined($def)) {
-		$s .= qq'*(const $1 *)${prefix}const_object_ref_defargument(&$def, "$1")';
+		$s .= qq'*(const $1 *)${prefix}const_object_ref_defargument(&pig_$idx, "$1")';
 	    } else {
 		$s .= qq'*(const $1 *)${prefix}const_object_ref_argument("$1")';
 	    }
@@ -1678,7 +1691,7 @@ sub fetch_arg {
 	    }
 	} elsif($cast =~ /^(\w+)\s*\&?$/) {
 	    if(defined($def)) {
-		$s .= qq'*($1 *)${prefix}object_ref_defargument(&$def, "$1")';
+		$s .= qq'*($1 *)${prefix}object_ref_defargument(&pig_$idx, "$1")';
 	    } else {
 		$s .= qq'*($1 *)${prefix}object_ref_argument("$1")';
 	    }
@@ -1704,13 +1717,16 @@ sub write_proto_method {
     } else {
 	for my $argument (@{$proto->{'Arguments'}}) {
 	    my $arg = cpp_type($argument);
+	    if(cpp_deftype($argument) && $arg =~ /\&/) {
+		source i."$arg pig_$x = ".cpp_deftype($argument).";\n";
+	    }
 	    source i.$arg;
 	    source " pig$x";
 	    source " = ";
             if($x == 0 && !$proto->static && !$proto->constructor) {
-                source fetch_arg($argument, 'pig_type_this_');
+                source fetch_arg($argument, $x, 'pig_type_this_');
             } else {
-                source fetch_arg($argument);
+                source fetch_arg($argument, $x);
             }
 	    source ";\n";
 	    $x++;
@@ -2212,6 +2228,19 @@ sub write_whichproto {
 sub write_perl_methods {
     my @methods;
 
+    source "static PIG_PROTO(PIG_${Class}_continue) {\n";
+    source "    PIG_BEGIN(PIG_${Class}_continue);\n";
+    source "    pig_object_continue();\n";
+    source "    PIG_END;\n";
+    source "}\n\n";
+    push @methods, 'continue';
+    source "static PIG_PROTO(PIG_${Class}_break) {\n";
+    source "    PIG_BEGIN(PIG_${Class}_break);\n";
+    source "    pig_object_break();\n";
+    source "    PIG_END;\n";
+    source "}\n\n";
+    push @methods, 'break';
+
     for my $meth (sort newfirst keys %{$Methods{$Class}}) {
 	my @protos;
 	for my $proto (@{$Methods{$Class}{$meth}}) {
@@ -2226,6 +2255,18 @@ sub write_perl_methods {
 	next if $protocnt == 0;
 	push @methods, $meth;
 
+	if($Methods{$Class}{$meth}[0]->destructor &&
+	   $Methods{$Class}{$meth}[0]->public) {
+	    source "static PIG_PROTO(PIG_${Class}_delete) {\n";
+	    source "    PIG_BEGIN(PIG_${Class}_delete);\n";
+	    source "    $Class * pig0 = ($Class *)pig_type_object_destructor_argument(\"$Class\");\n";
+	    source "    PIG_END_ARGUMENTS;\n\n";
+	    source "    delete pig0;\n\n";
+	    source "    pig_return_nothing();\n";
+	    source "    PIG_END;\n";
+	    source "}\n\n";
+	    push @methods, 'delete';
+	}
 	my $polymorph = ($protocnt > 1);
 	my $poly = 1;
 
