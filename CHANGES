@@ -1,3 +1,32 @@
+Changes from 2.003 to 2.004  (1998-May-11)
+---------------------------
+
+- Added descriptions to MANIFEST
+- Changed #include "" to <> for Qt headers
+- Indicate hidden arguments with the @ in {@type}
+- Argument return types now parse {type(...)} block
+- static int xfd() : ConnectionNumber(qt_xdisplay()) added to Qt.pig
+- Started adding scoped arguments with data to be destroyed on scope exit
+- Added pig_croak to replace die() and croak() in C++
+- Added QString, QObjectList and QWidgetList types
+- Adjusted prototypes for bit types in Qt
+
+
+Changes from 2.002 to 2.003  (1998-Apr-22)
+---------------------------
+
+- Reorganized Makefile.PL
+        + Arguments to WriteMakefile are now in %Args
+        + If bincompat3 eq 'y', PATCHLEVEL = 3
+        + Run $Args{CC} -print-libgcc-file-name to see if -lgcc is needed
+- Added a pig_type_this_object type, which croaks when this is null
+- Fixed export of $Qt::app to specify GvIMPORTED_SV_on
+- Set pig_argument_idx = 0 in pig_begin
+- pig_find_in_array is fixed, it was completely broken
+- Check for null pointer in pig_object_extract and pig_object_cast
+- Perl-5.003 supported, #undef debug and #undef dirty to clean namespace
+
+
 Changes from 2.001 to 2.002  (1998-Apr-6)
 ---------------------------
 

@@ -9,6 +9,7 @@
  */
 
 #include "pigperl.h"
+#include "pigclassinfo.h"
 #include "pigvirtual.h"
 #include "pigfunc_base.h"
 
@@ -16,6 +17,7 @@ PIG_DEFINE_VOID_FUNC_1(pig_sub_enter, struct pig_sub_frame *) {
     struct pig_sub_frame *pignode;
     pignode = new pig_sub_frame;
     pignode->pignext = pig_frame;
+    pignode->pigscope = 0;
     pignode->pigax = pig0->pigax;
     pig_frame = pignode;
 }
@@ -25,6 +27,7 @@ PIG_DEFINE_VOID_FUNC_0(pig_sub_leave) {
     if(!pig_frame) return;
     pignode = pig_frame;
     pig_frame = pignode->pignext;
+    pig_scope_leave(pignode->pigscope);
     delete pignode;
 }
 
@@ -108,7 +111,7 @@ PIG_DEFINE_FUNC_2(int, pig_find_in_array, const char *, const char **) {
 
 
 PIG_DEFINE_VOID_FUNC_2(pig_ambiguous, const char *, const char *) {
-    die("Couldn't call %s::%s with your arguments", pig0, pig1);
+    die("Couldn't call %s::%s with your arguments", pig_map_class(pig0), pig1);
 }
 
 PIG_DEFINE_VOID_FUNC_2(pig_call_method, const class pig_virtual *, const char *) {
@@ -133,13 +136,7 @@ PIG_DEFINE_VOID_FUNC_0(pig_return_nothing) {
 //    dXSARGS;
 }
 
-#undef pig_frame
-#undef pig_lastframe
-PIG_DEFINE_VARIABLE(struct pig_sub_frame *, pig_frame) = 0;
-PIG_DEFINE_VARIABLE(struct pig_sub_frame *, pig_lastframe) = 0;
-
 PIG_EXPORT_TABLE(pigfunc_base)
-    PIG_EXPORT_VARIABLE(pig_frame)
     PIG_EXPORT_FUNC(pig_sub_enter)
     PIG_EXPORT_FUNC(pig_sub_leave)
     PIG_EXPORT_FUNC(pig_begin)

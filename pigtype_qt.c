@@ -11,6 +11,9 @@
 #include "pigperl.h"
 #include "pigtype_object.h"
 #include "pigtype_qt.h"
+#include "pigclassinfo.h"
+#include <qobjectlist.h>
+#include <qwidgetlist.h>
 
 PIG_DEFINE_STUB_TYPE(pig_type_qt_serial, const char *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_xpm, void *)
@@ -20,7 +23,6 @@ PIG_DEFINE_STUB_TYPE(pig_type_qt_ubits, uchar *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_ubitsarray, uchar **)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_uintarray, uint **)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_VHorientation, int)
-PIG_DEFINE_STUB_TYPE(pig_type_qt_QString_ptr, class QString *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QString_ref, class QString &)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QByteArray_ptr, class QByteArray *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QArray_QRect_ptr, void *)
@@ -28,8 +30,6 @@ PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfo_ptr, class QFileInfo *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfoList_ptr, class QFileInfoList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QStrList_ptr, class QStrList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QTabList_ptr, class QTabList *)
-PIG_DEFINE_STUB_TYPE(pig_type_qt_QObjectList_ptr, class QObjectList *)
-PIG_DEFINE_STUB_TYPE(pig_type_qt_QWidgetList_ptr, class QWidgetList *)
 
 PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qt_sender, class QObject *, int) {
     return (class QObject *)pig_type_object_argument("QObject");
@@ -165,6 +165,140 @@ PIG_DEFINE_TYPE_POP(pig_type_qt_HVorientation, int) {
     PIGPOP(pigr);
 }
 
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_QString_ptr) {
+    delete (QString *)pig0;
+}
+
+PIG_DEFINE_SCOPE_VIRTUAL(pig_type_qt_QString_ptr) {
+    delete (QString *)pig0;
+}
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_QString_ptr, QString *) {
+    PIGARGS;
+    if(!SvOK(PIG_ARG)) {
+        PIGARGUMENT(0);
+    }
+    STRLEN n_a;
+    QString *pigr = new QString(SvPV(PIG_ARG, n_a));
+    PIGSCOPE_ARGUMENT(pig_type_qt_QString_ptr, pigr);
+    PIGARGUMENT(pigr);
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_qt_QString_ptr, QString *) {
+    PIGARGS;
+    QString *pigr;
+    if(PIG_ARGOK) {
+        STRLEN n_a;
+        pigr = new QString(SvPV(PIG_ARG, n_a));
+        PIGSCOPE_ARGUMENT(pig_type_qt_QString_ptr, pigr);
+    }
+    else pigr = pig0;
+    PIGARGUMENT(pigr);
+}
+
+PIG_DEFINE_TYPE_RETURN(pig_type_qt_QString_ptr, QString *) {
+    PIGRET;
+    PIGRETURN(sv_2mortal(pig0 ?
+			 newSVpv(pig0->data(), 0) :
+			 newSVsv(&PIGsv_undef)));
+}
+
+PIG_DEFINE_STUB_PUSH(pig_type_qt_QString_ptr, QString *)
+
+PIG_DEFINE_TYPE_POP(pig_type_qt_QString_ptr, QString *) {
+    PIGPOPSTACK;
+    QString *pigr;
+    if(SvOK(PIG_TOPSTACK)) {
+        STRLEN n_a;
+        pigr = new QString(SvPV(PIG_TOPSTACK, n_a));
+        PIGSCOPE_VIRTUAL(pig_type_qt_QString_ptr, pigr);
+    }
+    else pigr = 0;
+    PIGPOP(pigr);
+}
+
+
+PIG_DEFINE_STUB_ARGUMENT(pig_type_qt_QObjectList_ptr, QObjectList *)
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_QObjectList_ptr, QObjectList *)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_QObjectList_ptr, QObjectList *)
+PIG_DEFINE_STUB_POP(pig_type_qt_QObjectList_ptr, QObjectList *)
+
+PIG_DEFINE_TYPE_RETURN(pig_type_qt_QObjectList_ptr, QObjectList *) {
+    PIGRET;
+    AV *pigav;
+    if(!pig0) {
+        PIGRETURN(sv_mortalcopy(&PIGsv_undef));
+    }
+
+    pigav = newAV();
+
+    // FIXME
+    // There should only be one instance of a Qt object in Perl at any
+    // one time. This is creating duplicates...
+
+    QObjectListIt pigobjit(*pig0);
+    QObject *pigobj;
+    SV *pigsv;
+    pig_object_data *pigd;
+
+    while(pigobjit.current()) {
+        pigobj = pigobjit.current();
+	pigsv = pig_object_create(pig_map_class(pigobj->className()), &pigd);
+	pigd->pigptr = pigobj;
+	pigd->piginfo = pig_classinfo_fetch("QObject");
+	pigd->pigflags = 0;
+
+	av_push(pigav, pigsv);
+
+	++pigobjit;
+    }
+
+    pigsv = sv_2mortal(newRV((SV *)pigav));
+    SvREFCNT_dec(pigav);
+    PIGRETURN(pigsv);
+}
+
+
+PIG_DEFINE_STUB_ARGUMENT(pig_type_qt_QWidgetList_ptr, QWidgetList *)
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_QWidgetList_ptr, QWidgetList *)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_QWidgetList_ptr, QWidgetList *)
+PIG_DEFINE_STUB_POP(pig_type_qt_QWidgetList_ptr, QWidgetList *)
+
+PIG_DEFINE_TYPE_RETURN(pig_type_qt_QWidgetList_ptr, QWidgetList *) {
+    PIGRET;
+    AV *pigav;
+    if(!pig0) {
+        PIGRETURN(sv_mortalcopy(&PIGsv_undef));
+    }
+
+    pigav = newAV();
+
+    // FIXME
+    // There should only be one instance of a Qt object in Perl at any
+    // one time. This is creating duplicates...
+
+    QWidgetListIt pigobjit(*pig0);
+    QWidget *pigobj;
+    SV *pigsv;
+    pig_object_data *pigd;
+
+    while(pigobjit.current()) {
+        pigobj = pigobjit.current();
+	pigsv = pig_object_create(pig_map_class(pigobj->className()), &pigd);
+	pigd->pigptr = pigobj;
+	pigd->piginfo = pig_classinfo_fetch("QWidget");
+	pigd->pigflags = 0;
+
+	av_push(pigav, pigsv);
+
+	++pigobjit;
+    }
+
+    pigsv = sv_2mortal(newRV((SV *)pigav));
+    SvREFCNT_dec(pigav);
+    PIGRETURN(pigsv);
+}
 
 PIG_DEFINE_TYPE(pig_type_qt_serial)
 PIG_DEFINE_TYPE(pig_type_qt_sender)

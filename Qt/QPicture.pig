@@ -8,6 +8,6 @@ class QPicture : QPaintDevice {
     bool load(const char *);
     bool play(QPainter *);
     bool save(const char *);
-    void setData(const char * {qt_bits}, uint {qt_bitslen(1)});
+    void setData(const char * {qt_bits}, uint {@qt_bitslen(1)});
     uint size() const;
 } Qt::Picture;

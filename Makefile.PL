@@ -26,9 +26,9 @@ use Pig;
     CC => 'g++',
     CCFLAGS => '',
     DEFINE => '',
-    INC => '-I$(QTDIR)/include -I.',
+    INC => '-I/usr/X11R6/include -I$(QTDIR)/include -I.',
     LIBS => '-L$(QTDIR)/lib -lqt -L/usr/X11R6/lib -lX11',
-    OPTIMIZE => '-g'
+    OPTIMIZE => '-O'
 );
 ##########
 

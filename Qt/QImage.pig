@@ -27,7 +27,7 @@ struct QImage {
     QImage convertBitOrder(QImage::Endian) const;
     QImage convertDepth(int) const;
     QImage convertDepth(int, int) const;
-    QImage convertDepthWithPalette(int, QRgb *{intarray}, int {intarrayitems(2)}, int = 0);
+    QImage convertDepthWithPalette(int, QRgb *{intarray}, int {@intarrayitems(2)}, int = 0);
     QImage copy() const;
     QImage copy(QRect &) const;
     QImage copy(int, int, int, int, int = 0) const;

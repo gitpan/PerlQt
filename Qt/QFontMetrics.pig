@@ -6,7 +6,7 @@ struct QFontMetrics {
     ~QFontMetrics();
     QFontMetrics &operator = (const QFontMetrics &);
     int ascent() const;
-    QRect boundingRect( char ) const;
+    QRect boundingRect(char) const;
     QRect boundingRect(const char *, int = -1) const;
     QRect boundingRect(int, int, int, int, int, const char *, int = -1, int = 0, int *{intarray} = 0, char **{internal} = 0) const;
     int descent() const;

@@ -38,6 +38,12 @@ inline ret name(t0 pig0, t1 pig1, t2 pig2) {		\
     return (*(ret (*)(t0, t1, t2))_ ## name)(pig0, pig1, pig2);	\
 }
 
+#define PIG_DECLARE_FUNC_4(ret, name, t0, t1, t2, t3)	\
+PIGFPTR _ ## name;					\
+inline ret name(t0 pig0, t1 pig1, t2 pig2, t3 pig3) {	\
+    return (*(ret (*)(t0, t1, t2, t3))_ ## name)(pig0, pig1, pig2, pig3);\
+}
+
 #define PIG_DECLARE_VOID_FUNC_0(name)		\
 PIGFPTR _ ## name;				\
 inline void name() {				\
@@ -62,6 +68,12 @@ inline void name(t0 pig0, t1 pig1, t2 pig2) {		\
     (*(void (*)(t0, t1, t2))_ ## name)(pig0, pig1, pig2);\
 }
 
+#define PIG_DECLARE_VOID_FUNC_4(name, t0, t1, t2, t3)	\
+PIGFPTR _ ## name;					\
+inline void name(t0 pig0, t1 pig1, t2 pig2, t3 pig3) {	\
+    (*(void (*)(t0, t1, t2, t3))_ ## name)(pig0, pig1, pig2, pig3);\
+}
+
 #define PIG_DEFINE_FUNC_0(ret, name) \
 static ret __ ## name()
 
@@ -74,6 +86,10 @@ static ret __ ## name(t0 pig0, t1 pig1)
 #define PIG_DEFINE_FUNC_3(ret, name, t0, t1, t2) \
 static ret __ ## name(t0 pig0, t1 pig1, t2 pig2)
 
+#define PIG_DEFINE_FUNC_4(ret, name, t0, t1, t2, t3) \
+static ret __ ## name(t0 pig0, t1 pig1, t2 pig2, t3 pig3)
+
+
 #define PIG_DEFINE_VOID_FUNC_0(name) \
 static void __ ## name()
 
@@ -85,6 +101,9 @@ static void __ ## name(t0 pig0, t1 pig1)
 
 #define PIG_DEFINE_VOID_FUNC_3(name, t0, t1, t2) \
 static void __ ## name(t0 pig0, t1 pig1, t2 pig2)
+
+#define PIG_DEFINE_VOID_FUNC_4(name, t0, t1, t2, t3) \
+static void __ ## name(t0 pig0, t1 pig1, t2 pig2, t3 pig3)
 
 
 #define PIG_DEFINE_STUB_0(ret, name) \
@@ -111,6 +130,13 @@ static ret __ ## name(t0, t1, t2) { \
     return 0; \
 }
 
+#define PIG_DEFINE_STUB_4(ret, name, t0, t1, t2, t3) \
+static ret __ ## name(t0, t1, t2, t3) { \
+    croak("Undefined function %s at %s:%d called", #name, __FILE__,__LINE__); \
+    return 0; \
+}
+
+
 #define PIG_DEFINE_VOID_STUB_0(name) \
 static void __ ## name() { \
     croak("Undefined function %s at %s:%d called", #name, __FILE__,__LINE__); \
@@ -128,6 +154,11 @@ static void __ ## name(t0, t1) { \
 
 #define PIG_DEFINE_VOID_STUB_3(name, t0, t1, t2) \
 static void __ ## name(t0, t1, t2) { \
+    croak("Undefined function %s at %s:%d called", #name, __FILE__,__LINE__); \
+}
+
+#define PIG_DEFINE_VOID_STUB_4(name, t0, t1, t2, t3) \
+static void __ ## name(t0, t1, t2, t3) { \
     croak("Undefined function %s at %s:%d called", #name, __FILE__,__LINE__); \
 }
 

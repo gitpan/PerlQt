@@ -157,4 +157,10 @@ PIG_DEFINE_STUB_RETURN(name, type) \
 PIG_DEFINE_STUB_PUSH(name, type) \
 PIG_DEFINE_STUB_POP(name, type)
 
+#define PIG_DEFINE_SCOPE_ARGUMENT(name) \
+static void __ ## name ## _scope_argument(void *pig0)
+
+#define PIG_DEFINE_SCOPE_VIRTUAL(name) \
+static void __ ## name ## _scope_virtual(void *pig0)
+
 #endif  // PIGTYPE_H

@@ -511,6 +511,7 @@ PARSE:
 	    # Class::method(.....) => Class::method(SV *, SV *);
 	    # Class::method(type1 = Thing(6,7,8,9), that2 = this);
 
+#	    while($args =~ s/^,?\s*([^,\{]+)(\{.*\})?\s*//) {
 	    for my $arg (split(/,\s+/, $args)) {
 		push @args, $arg;
 #		if($arg eq "...") {
@@ -803,6 +804,7 @@ sub readtypemap {
 #            print "$typemap $_ [$.] => type $type => $Types{$type}\n";
         } elsif(/^(\w+)\s*=\s*(.*)/) {
 	    $Cast{$1} = $2;
+#	    print "cast $1 => $2\n";
 	}
     }
 
@@ -914,22 +916,36 @@ sub startsource ($) {
     header "#ifndef $ifndef\n";
     header "#define $ifndef\n\n";
 
-    for my $include (@Include, $info->include) {
+    for my $include (@Include) {
 	for my $undef ($Info{$class}->undefine) {
-	    header "#ifdef $undef\n";
 	    header "#undef $undef\n";
-	    header "#endif\n";
 	} 
 	for my $define ($Info{$class}->define) {
 	    if($define =~ /^(\w+)=(.*)$/) {
-		header "#ifdef $1\n#undef $1\n#endif\n";
+		header "#undef $1\n";
 		header "#define $1 $2\n";
 	    } else {
-		header "#ifdef $define\n#undef $define\n#endif\n";
+		header "#undef $define\n";
 		header "#define $define\n";
 	    }
 	}
 	header qq'#include "$include"\n';
+    }
+
+    for my $include ($info->include) {
+	for my $undef ($Info{$class}->undefine) {
+	    header "#undef $undef\n";
+	} 
+	for my $define ($Info{$class}->define) {
+	    if($define =~ /^(\w+)=(.*)$/) {
+		header "#undef $1\n";
+		header "#define $1 $2\n";
+	    } else {
+		header "#undef $define\n";
+		header "#define $define\n";
+	    }
+	}
+	header qq'#include <$include>\n';
     }
 
     if($info->virtual) {
@@ -1463,7 +1479,7 @@ sub i {
 sub pig_type {
     my $argument = shift;
 
-    if($argument =~ /\{(.*?)\}/) {
+    if($argument =~ /\{\@?(.*?)\}/) {
 	return $1;
     } else {
 	return cpp_type($argument);
@@ -1494,6 +1510,19 @@ sub fetch_ret {
     my $cmp = $arg;
     $cmp =~ s/\s*([\*\&])/$1/g;
 
+    my $ex = "";
+    if($argument =~ /\{\s*(\w+)\s*\((.*)\)\}/) {
+	my $list = $2;
+	my @args;
+	for my $x (split /,\s*/, $list) {
+	    $x =~ s/\$[(\d)]/pig$1/g;
+	    $x =~ s/\$this/pig0/g;
+	    push @args, $x;
+	}
+	
+	$ex = ", " . join(", ", @args) if @args;
+    }
+
     if(exists $Types{$type}) {
 	my $c = '';
 	$c = "($Cast{$Types{$type}})" if exists $Cast{$Types{$type}};
@@ -1502,7 +1531,7 @@ sub fetch_ret {
 	if($xtype =~ s/(\W).*//) {
 	    $pre = '&' if $1 eq '&';
 	}
-	$s = "pig_type_${xtype}_return(${pre}${c}pigr)";
+	$s = "pig_type_${xtype}_return(${pre}${c}pigr$ex)";
 #	$s =~ s/\$type/$arg/g;
     } elsif($cmp ne $type) {
 #	print "?$type\n";
@@ -1510,7 +1539,7 @@ sub fetch_ret {
 	if($type =~ s/(\W).*//) {
 	    $pre = '&' if $1 eq '&';
 	}
-	$s = "pig_type_${type}_return(${pre}pigr)";
+	$s = "pig_type_${type}_return(${pre}pigr$ex)";
     } else {
         if($argument =~ /^(?:const\s+)?(\w+)/) {
 	    my $class = $1;
@@ -1770,14 +1799,19 @@ sub group_of_type {
 	return 'string';
     } elsif($cmp ne $type) {
         return group_of_type($arg);
-    } elsif($arg =~ /^(?:const\s+)?(\w+)/ and ismod $1) {
+    } elsif($arg =~ /^(?:const\s+)?([\w:]+)/ and ismod $1) {
 	return 'class';
     } else {
 	$arg =~ s/\s+/ /g;
 	$arg =~ s/\s*([\*\&])/$1/g;
+#	print "okay, $arg => $Types{$arg}\n";
 	if(exists $Types{$arg} && $Types{$arg} ne $arg) {
 #	    print "Getting $Types{$arg} from $arg\n";
 	    return group_of_type($Types{$arg});
+	}
+#	print "Okay, casting $arg to $Cast{$arg}\n";
+	if(exists $Cast{$arg} && $Cast{$arg} ne $arg) {
+	    return group_of_type($Cast{$arg});
 	}
 #	print "UNKNOWN '$type' '$arg' '$cmp'\n";
 #	if(exists $Types{$arg}
@@ -2000,16 +2034,25 @@ sub write_whichproto {
     my @argcnt;
     my $adj = 0;
 
+#    my $v = $protos->[0]{'Class'} eq 'QScrollBar';
+
     $adj = 1 if $method eq 'new';
 
     for(my $item = 0; $item < @$protos; $item++) {
 	my $proto = $protos->[$item];
+	my @arguments;
 	my $x = 0;
 	for my $arg (@{$proto->{'Arguments'}}) {
+	    push @arguments, $arg unless $arg =~ /\{\s*\@/;
+#	    if($v) { print "x[$item] ($arg)\n" }
+	}
+	for my $arg (@arguments) {
+#	    if($v) { print "deftype $arg\n" if  defined cpp_deftype($arg);
+#		 }
 	    last if defined cpp_deftype($arg);
 	    $x++;
 	}
-	for my $i ($x .. scalar(@{$proto->{'Arguments'}})) {
+	for my $i ($x .. scalar(@arguments)) {
 	    push @{$argcnt[$i]}, $item;
 	}
     }
@@ -2065,9 +2108,10 @@ sub write_whichproto {
 		source i."// idx: ".($idx+1)."\n";
 		my $x = 0;
 		for my $arg (@{$protos->[$idx]{'Arguments'}}[0..($i-1)]) {
+		    next if $arg =~ /\{\s*\@/;
 		    my $info = $protomatrix[$x++];
-
 		    my $type = group_of_type($arg);
+#print "got $type of $arg\n" if $v;
 		    source i."// $type\n";
 
 		    $x{$idx+1}++;

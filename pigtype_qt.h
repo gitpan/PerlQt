@@ -64,11 +64,8 @@ PIGTYPE_RETURN(pig_type_serial, const char *)
 
 PIGTYPE_ARGUMENT(pig_type_qt_xpm, const char **)
 PIGTYPE_ARGUMENT(pig_type_qt_bits, char *)
-PIGTYPE_RETURN(pig_type_qt_bits, const char *)
 PIGTYPE_ARGUMENT2(pig_type_qt_bitslen, int, int)
-PIGTYPE_ARGUMENT(pig_type_qt_ubits, const unsigned char *)
 PIGTYPE_RETURN(pig_type_qt_ubits, unsigned char *)
-PIGTYPE_RETURN(pig_type_qt_ubitsarray, unsigned char **)
 PIGTYPE_RETURN(pig_type_qt_uintarray, unsigned int *)
 
 PIGTYPE_ALL(pig_type_qt_HVorientation, int)
@@ -91,6 +88,18 @@ PIGTYPE_RETURN(pig_type_qt_QStrList_ptr, const void *)
 PIGTYPE_RETURN(pig_type_qt_QTabList_ptr, const void *)
 PIGTYPE_RETURN(pig_type_qt_QObjectList_ptr, const void *)
 PIGTYPE_RETURN(pig_type_qt_QWidgetList_ptr, const void *)
+
+PIG_DECLARE_FUNC_1(const unsigned char *, pig_type_qt_ubits_argument_qsize, int)
+PIG_DECLARE_FUNC_2(const unsigned char *, pig_type_qt_ubits_argument_int_int, int, int)
+PIG_DECLARE_VOID_FUNC_2(pig_type_qt_bits_return, const char *, unsigned int)
+PIG_DECLARE_VOID_FUNC_4(pig_type_qt_ubitsarray_return, unsigned char **, int, int, int)
+
+inline const unsigned char *pig_type_qt_ubits_argument(int pig0) {
+    return pig_type_qt_ubits_argument_qsize(pig0);
+}
+inline const unsigned char *pig_type_qt_ubits_argument(int pig0, int pig1) {
+    return pig_type_qt_ubits_argument_int_int(pig0, pig1);
+}
 
 PIG_IMPORT_TABLE(pigtype_qt)
     PIG_IMPORT_TYPE(pig_type_serial, "Qt serial")
@@ -117,6 +126,11 @@ PIG_IMPORT_TABLE(pigtype_qt)
     PIG_IMPORT_TYPE(pig_type_qt_QTabList_ptr, "Qt QTabList*")
     PIG_IMPORT_TYPE(pig_type_qt_QObjectList_ptr, "Qt QObjectList*")
     PIG_IMPORT_TYPE(pig_type_qt_QWidgetList_ptr, "Qt QWidgetList*")
+
+    PIG_IMPORT_FUNC(pig_type_qt_ubits_argument_qsize)
+    PIG_IMPORT_FUNC(pig_type_qt_ubits_argument_int_int)
+    PIG_IMPORT_FUNC(pig_type_qt_bits_return)
+    PIG_IMPORT_FUNC(pig_type_qt_ubitsarray_return)
 PIG_IMPORT_ENDTABLE
 
 #endif  // PIGTYPE_QT_H

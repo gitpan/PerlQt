@@ -107,3 +107,19 @@ void pig_symbol_exchange(pig_symboltable *pig_export, pig_symboltable *pig_impor
 
     delete [] pigsvname;
 }
+
+void pig_croak(const char *pigpat, ...) {
+    dSP;
+    SV *pigmsg = newSV(120);
+    va_list pigargs;
+    perl_require_pv("Carp.pm");
+    va_start(pigargs, pigpat);
+    sv_vsetpvfn(pigmsg, pigpat, strlen(pigpat), &pigargs, Null(SV**), 0, 0);
+    va_end(pigargs);
+    SvREADONLY_on(pigmsg);
+    SAVEFREESV(pigmsg);
+    PUSHMARK(SP);
+    XPUSHs(pigmsg);
+    PUTBACK;
+    perl_call_pv("Carp::croak", G_DISCARD);
+}

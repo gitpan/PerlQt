@@ -38,6 +38,13 @@ extern "C" {
 #error PIGPERL_SUBVERSION must be set to $Config{'SUBVERSION'}
 #endif
 
+#undef die
+#define die pig_croak
+#undef croak
+#define croak pig_croak
+
+extern void pig_croak(const char* pat, ...);
+
 #include "pig.h"
 #include "pigtype.h"
 #include "pigfunc.h"
@@ -91,8 +98,17 @@ extern "C" {
 #define dTHR
 #endif
 
+typedef void (*pigscopefptr)(void *);
+
+struct pig_sub_scope {
+    struct pig_sub_scope *pignext;
+    pigscopefptr pigfptr;
+    void *pigdata;
+};
+
 struct pig_sub_frame {
     struct pig_sub_frame *pignext;
+    struct pig_sub_scope *pigscope;
     I32 pigax;
 };
 
@@ -111,6 +127,8 @@ PIG_DECLARE_FUNC_1(struct pig_object_data *, pig_object_extract, SV *)
 PIG_DECLARE_FUNC_2(void *, pig_object_cast, struct pig_object_data *, const char *)
 PIG_DECLARE_VOID_FUNC_1(pig_sub_enter, struct pig_sub_frame *)
 PIG_DECLARE_VOID_FUNC_0(pig_sub_leave)
+PIG_DECLARE_VOID_FUNC_1(pig_scope_leave, struct pig_sub_scope *)
+
 PIG_DECLARE_VOID_FUNC_2(pig_constant_load, const pig_constant *, const char *)
 
 PIG_DECLARE_FUNC_2(bool, pig_receiver_defined, SV *, SV *)
@@ -129,6 +147,9 @@ PIG_DECLARE_FUNC_1(QMember, pig_sigslot_stub, SV *)
 
 PIG_DECLARE_FUNC_1(SV *, pig_map_proto, SV *)
 PIG_DECLARE_FUNC_1(SV *, pig_parse_proto, SV *)
+
+PIG_DECLARE_VOID_FUNC_2(pig_scope_argument, pigscopefptr, void *)
+PIG_DECLARE_VOID_FUNC_2(pig_scope_virtual, pigscopefptr, void *)
 
 PIG_IMPORT_TABLE(pigperl)
     PIG_IMPORT_VARIABLE(pig_classinfo)
@@ -158,6 +179,8 @@ PIG_IMPORT_TABLE(pigperl)
     PIG_IMPORT_FUNC(pig_sigslot_stub)
     PIG_IMPORT_FUNC(pig_map_proto)
     PIG_IMPORT_FUNC(pig_parse_proto)
+    PIG_IMPORT_FUNC(pig_scope_argument)
+    PIG_IMPORT_FUNC(pig_scope_virtual)
 PIG_IMPORT_ENDTABLE
 
 #define pig_virtual_return PIG_VARIABLE(pig_virtual_return)
@@ -182,5 +205,11 @@ PIG_IMPORT_ENDTABLE
 #define PIGRETURN(value) PIG_RETARG = value; XSRETURN(1)
 #define PIGPUSH(sv) XPUSHs(sv); PUTBACK; return
 #define PIGPOP(value) return SvREFCNT_dec(PIG_TOPSTACK), value
+
+#define PIGSCOPE_ARGUMENT(name, var) \
+pig_scope_argument(&__ ## name ## _scope_argument, var)
+
+#define PIGSCOPE_VIRTUAL(name, var) \
+pig_scope_virtual(&__ ## name ## _scope_virtual, var)
 
 #endif

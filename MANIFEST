@@ -131,39 +131,39 @@ README.QT
 SigSlot.pm
 TODO
 gensigslot
-pig.h
-pigboot.c
-pigclassinfo.c
+pig.h			Symbol-table support and fundamental structures
+pigboot.c		Perl bootstrap function
+pigclassinfo.c		Export XS functions using generated data-structures
 pigclassinfo.h
-pigconstant.c
+pigconstant.c		Create constants using generated data
 pigconstant.h
-pigdebug.h
-pigemit.c
-pigfunc.h
-pigfunc_base.c
+pigdebug.h		#define-able debugging information
+pigemit.c		XS functions for signal/slot support
+pigfunc.h		Definitions for symbol-table functions
+pigfunc_base.c		Base functions, required for Pig
 pigfunc_base.h
-pigfunc_object.c
+pigfunc_object.c	Object-related functions
 pigfunc_object.h
-pigfunc_qt.c
+pigfunc_qt.c		PerlQt-specific functions
 pigfunc_qt.h
-pigmodule_Qt.h
-pigobject.c
-pigperl.c
-pigperl.h
-pigproto.c
-pigsigslot.c
+pigmodule_Qt.h		#includes all headers needed by generated PerlQt source
+pigobject.c		Misc signal/slot & object functions
+pigperl.c		Defines some variables
+pigperl.h		Perl-specific functions, variables, structures, defines
+pigproto.c		Signal/slot prototype parsing function
+pigsigslot.c		Skeleton wrapper around generated signal/slot class
 pigsigslot.h
-pigsymbol.c
+pigsymbol.c		Symbol-table import/export functions
 pigsymbol.h
-pigsymbol_Qt.c
-pigtype.h
-pigtype_base.c
+pigsymbol_Qt.c		Import symbol-table for PerlQt
+pigtype.h		Definitions for symbol-table types
+pigtype_base.c		Pig support for basic C++ types (int, char*, ...)
 pigtype_base.h
-pigtype_object.c
+pigtype_object.c	Pig support for object types
 pigtype_object.h
-pigtype_qt.c
+pigtype_qt.c		Pig support for PerlQt-specific types
 pigtype_qt.h
-pigvirtual.c
+pigvirtual.c		Support class for virtual function overrides
 pigvirtual.h
 tutorials/t1/t1
 tutorials/t10/CannonField.pm
@@ -196,4 +196,4 @@ tutorials/t8/t8
 tutorials/t9/CannonField.pm
 tutorials/t9/LCDRange.pm
 tutorials/t9/t9
-typesizes_c
+typesizes_c		Gets sizeof() information for signals&slots
