@@ -10,7 +10,7 @@ require QButton;
 
 @ISA = qw(DynaLoader QButton);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QRadioButton $VERSION;
 
 1;
@@ -31,6 +31,14 @@ Inherits QButton.
 new,
 isChecked,
 setChecked
+
+=head2 Overridden functions
+
+drawButton,
+drawButtonLabel,
+hitButton,
+mouseReleaseEvent,
+sizeHint
 
 =head1 DESCRIPTION
 

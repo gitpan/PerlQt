@@ -16,6 +16,7 @@
 #include "virtual.h"
 
 typedef QLCDNumber::Mode QLCDNumber__Mode;
+typedef QLCDNumber::SegmentStyle QLCDNumber__SegmentStyle;
 
 class PLCDNumber : public QLCDNumber, public PLCDNumber_virtualize {
     QLCDNumber_virtual_functions

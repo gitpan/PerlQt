@@ -24,7 +24,7 @@ require QSize;
 @ISA = qw(Exporter DynaLoader QObject QPaintDevice);
 @EXPORT = qw(%Focus %Flags %GUI);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 bootstrap QWidget $VERSION;
 
 1;

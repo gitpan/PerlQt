@@ -12,6 +12,8 @@
 
 #undef bool
 #include "qpixmap.h"
+#include "pbitmap.h"
+#include "pimage.h"
 #include "prect.h"
 #include "psize.h"
 #include "pwmatrix.h"

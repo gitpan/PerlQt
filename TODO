@@ -25,6 +25,8 @@ typemap conversion!
 
 * Check for undef in the arguments and/or in the typemaps?
 
+* Perhaps interface QArray to make access to QPointArray easier?
+
 * Write a QGlobal::import() that will only initialize enum values if
 they are requested by a module.
 
@@ -32,7 +34,11 @@ they are requested by a module.
 
 * Create a pembed
 
+* Write a C++ Qt to PerlQt converter (in Perl)
+
 * Add tests
+
+* Config script
 
 * Compile everything as one library, and see if there is any benefit.
 

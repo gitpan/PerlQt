@@ -10,7 +10,7 @@ require QDialog;
 
 @ISA = qw(DynaLoader QDialog);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QMessageBox $VERSION;
 
 1;
@@ -29,13 +29,17 @@ Inherits QDialog.
 =head2 Member functions
 
 new,
-adjustSize,
 buttonText,
 message,
 query,
 setButtonText,
 setText,
 text
+
+=head2 Overridden functions
+
+adjustSize,
+resizeEvent
 
 =head1 DESCRIPTION
 

@@ -16,7 +16,7 @@ require QGlobal;
 
 	     &qBlue &qGray &qGreen &qRgb &qRed);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QColor $VERSION;
 
 1;
@@ -88,7 +88,7 @@ C<&qBlue>, C<&qGray>, C<&qGreen>, C<&qRed>, C<&qRgb>
 
 =head1 SEE ALSO
 
-QColor(3qt)
+qcolor(3qt)
 
 =head1 AUTHOR
 

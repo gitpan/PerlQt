@@ -15,7 +15,7 @@
 inline void init_enum() {
     HV *hv = perl_get_hv("QFrame::Frame", TRUE | GV_ADDMULTI);
 
-    STORE_key(NoFrame);
+    enumIV(hv, "None", QFrame::NoFrame);
     STORE_key(Box);
     STORE_key(Panel);
     STORE_key(WinPanel);
@@ -111,8 +111,11 @@ void
 pFrame::virtual_resizeEvent(event)
     QResizeEvent *event
 
+
+MODULE = QFrame		PACKAGE = QFrame	PREFIX = protected_
+
 void
-pFrame::virtual_setFrameRect(rect)
+pFrame::protected_setFrameRect(rect)
     QRect *rect
     CODE:
-    THIS->virtual_setFrameRect(*rect);
+    THIS->protected_setFrameRect(*rect);

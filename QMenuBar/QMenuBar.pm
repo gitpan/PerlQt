@@ -11,7 +11,7 @@ require QMenuData;
 
 @ISA = qw(DynaLoader QFrame QMenuData);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QMenuBar $VERSION;
 
 1;
@@ -31,9 +31,29 @@ Inherits QFrame and QMenuData.
 
 new
 
+=head2 Overridden functions
+
+drawContents,
+eventFilter,
+hide,
+keyPressEvent,
+menuContentsChanged,
+menuStateChanged,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent,
+resizeEvent,
+show,
+updateItem,
+
 =head1 DESCRIPTION
 
 What you see is what you get.
+
+=head1 ANNOYING
+
+menuInsPopup, menuDelPopup and frameChanged were overridden privately.
+Which means that PerlQt can never call them. Sorry, blame Troll Tech.
 
 =head1 AUTHOR
 

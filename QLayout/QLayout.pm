@@ -2,8 +2,7 @@ package QLayout;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
-use QGlobal qw(%Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
-               $GrayText $DontPrint);
+use QGlobal qw(%Align);
 
 require Exporter;
 require DynaLoader;
@@ -12,12 +11,9 @@ require QMenuBar;
 require QObject;
 
 @ISA = qw(Exporter DynaLoader QObject);
-@EXPORT = qw(%Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
-	     $GrayText $DontPrint
+@EXPORT = qw(%Align %Direction);
 
-	     %Direction);
-
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QLayout $VERSION;
 
 
@@ -59,6 +55,7 @@ Requires QMenuBar.
 activate,
 defaultBorder,
 freeze,
+mainWidget,
 setMenuBar
 
 =head2 QBoxLayout
@@ -97,9 +94,11 @@ What you see is what you get.
 The C<%Direction> hash is exported on behalf of QBoxLayout. It contains
 all of the constants within QBoxLayout.
 
-The %Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
-$GrayText $DontPrint constants are exported. See L<QPainter(3)>
+The C<%Align> hash is exported into the user's namespace. See L<QPainter(3)>
 for info.
+
+The QLayout::unlimited constant is not exported, but is available through
+$QLayout::unlimited.
 
 =head1 AUTHOR
 

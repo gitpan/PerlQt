@@ -105,5 +105,11 @@ pDialog::virtual_show()
 MODULE = QDialog	PACKAGE = QDialog	PREFIX = protected_
 
 void
+pDialog::protected_accept()
+
+void
+pDialog::protected_reject()
+
+void
 pDialog::protected_setResult(r)
     int r

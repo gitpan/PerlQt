@@ -1,5 +1,8 @@
 Revision history for Perl extension QObject.
 
+0.05  Tue Apr 29 13:57:14 1997
+	- added name()
+
 0.04  Sun Apr 27 16:06:08 1997
 	- updated docs, and changed all stack-referencing extract_ptr()'s
 to pextract()s

@@ -17,7 +17,7 @@ require DynaLoader;
 
 		%GUI);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 bootstrap QGlobal $VERSION;
 
 package Qt::Base;
@@ -59,25 +59,20 @@ Everything in here is subject to change at my whim (and probably already has).
 =head2 Object internals
 
 QGlobal is a repository for constansts requires by more than one independant
-class, and contains Qt::Hash which is inherited by all Qt classes.
-The name Qt::Hash is a remnant from when all Qt objects were blessed
-references to tied hashes. It is no-longer relevant because I sacrificed
-safety and a bit of convienience in exchange for speed. Every Qt object
-has two vital elements, C<THIS> and C<DESTROY>. The C<THIS> element
-holds the actual pointer to the C++ object represented in ram. PerlQt
-sub-classes all classes for convienience, access to protected members,
-and garbage-collection.
+class, and contains Qt::Base which is inherited by all Qt classes.
+Every Qt object has two vital hash elements, C<THIS> and C<DESTROY>.
+The C<THIS> element holds the actual pointer to the C++ object represented
+in ram. PerlQt sub-classes all classes for convienience, access to protected
+members, and garbage-collection.
 
 Internally, there are two types of sub-class types, the PClass, and the
-pClass. The pClass is availble only for classes which have protected
-members which are accessible via Perl. There is a macro, C<pQtTHIS(type)>,
-in F<virtual.h> from libperlqt, which automatically typecasts PClass objects
-into pClass objects. The PClass is the main sub-class type. Every class has
-a P version, and when a PClass is returned from an XS function, the
-C<DESTROY> key is created and set to true. Only the existance of
-C<DESTROY> is necessary to delete the object on destruction. PClass
-objects are returned from all constructors, and from all classes returning
-S<QClass &>.
+pClass. The pClass is availble only for classes which have protected or
+virtual members which are accessible via Perl. The PClass is the main
+sub-class type. Every class has a P version, and when a PClass is returned
+from an XS function, the C<DESTROY> key is created and set to true. Only
+the existance of C<DESTROY> is necessary to delete the object on destruction.
+PClass objects are returned from all constructors, and from all classes
+returning S<QClass &> and S<QClass>.
 
 =head2 Object access
 
@@ -105,6 +100,9 @@ a true value if you want the object to be deleted when it is destroyed.
 
 This does the opposite conversion from objectify_ptr. It I<will> cause
 the program to croak if passed what it considers an invalid object.
+In XS files, the macro C<pextract(QClass, stackElem)> is usually used
+to convert stack elements to pointers. It does automatic typecasting
+and ST() and clname.
 
 =back
 
@@ -113,8 +111,9 @@ the program to croak if passed what it considers an invalid object.
 The way in which virtual function-calls from C++ to Perl are achieved
 is pretty simple at the moment. For every virtual function to be
 overridden, a function named QClass_virtualFunction is created in the
-virtualize class. The virtualize class, in turn, is inherited by all
-classes which have virtual functions that can be overridden in Perl.
+QClass_virtualize class. There is a virtualize heirarchy mirroring the
+original QClass heirarchy, which passes virtual function guts along the
+way.
 
 Since the PClasses don't inherit each other, the same virtual function
 must be overridden in all the sub-classes of the class with the virtual
@@ -125,6 +124,12 @@ QClass_virtualFunction.
 
 The QClass_virtualFunction itself just does a method-call to a perl object
 which was automatically saved when the object was created.
+
+Every class has a #define QClass_virtual_functions, which contains a list
+of all virtual functions in that class. This, in turn, it placed in the
+class definition of PClass, and that PClass also inherits PClass_virtualize,
+thereby including everything necessary to successfully interface virtual
+functions.
 
 =head2 Signals and slots
 
@@ -153,8 +158,11 @@ and F<sigslot.xs> from libperlqt.
 
 =head1 EXPORTED
 
-Exports &qRound. EXPORT_OK's a bunch of useful enum values. See
-F<QGlobal.pm> for a list of those.
+QGlobal is a repository of globally useful constants/enums and functions
+for PerlQt.
+
+Among these are C<%Align> and it's friends, C<%Key> and it's friends,
+C<%RasterOp>, and C<%GUI>.
 
 =head1 CAVEATS
 

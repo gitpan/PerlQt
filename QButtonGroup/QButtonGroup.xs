@@ -61,3 +61,12 @@ QButtonGroup::setExclusive(b)
 
 
 MODULE = QButtonGroup	PACKAGE = QButtonGroup	PREFIX = protected_
+
+void
+pButtonGroup::protected_buttonClicked()
+
+void
+pButtonGroup::protected_buttonPressed()
+
+void
+pButtonGroup::protected_buttonReleased()

@@ -23,4 +23,21 @@ public:
 	QTabBar(parent, name) {}
 };
 
+class pTabBar : public QTabBar {
+public:
+    int virtual_addTab(QTab *t) { return QTabBar::addTab(t); }
+    void virtual_keyPressEvent(QKeyEvent *e) { QTabBar::keyPressEvent(e); }
+    void virtual_mousePressEvent(QMouseEvent *e) {
+	QTabBar::mousePressEvent(e);
+    }
+    void virtual_mouseReleaseEvent(QMouseEvent *e) {
+	QTabBar::mouseReleaseEvent(e);
+    }
+    void virtual_paint(QPainter *p, QTab *t, bool b) {
+	QTabBar::paint(p, t, b);
+    }
+    void virtual_paintEvent(QPaintEvent *e) { QTabBar::paintEvent(e); }
+    QTab *virtual_selectTab(const QPoint &p) { return QTabBar::selectTab(p); }
+};
+
 #endif  // PTABBAR_H

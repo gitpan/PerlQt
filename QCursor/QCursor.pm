@@ -13,7 +13,7 @@ require QPoint;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Cursor %Shape);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QCursor $VERSION;
 
 1;
@@ -36,7 +36,9 @@ bitmap,
 hotSpot,
 mask,
 pos,
-setPos
+setPos,
+setShape,
+shape
 
 =head1 DESCRIPTION
 

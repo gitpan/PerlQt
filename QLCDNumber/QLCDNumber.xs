@@ -8,10 +8,35 @@
  */
 
 #include "plcdnum.h"
+#include "enum.h"
+
+#define STORE_key(key) enumIV(hv, MSTR(key), QLCDNumber::key)
+
+inline void init_enum() {
+    HV *hv = perl_get_hv("QLCDNumber::Mode", TRUE | GV_ADDMULTI);
+
+#undef HEX
+#undef DEC
+#undef OCT
+#undef BIN
+    STORE_key(HEX);
+    STORE_key(DEC);
+    STORE_key(OCT);
+    STORE_key(BIN);
+
+    hv = perl_get_hv("QLCDNumber::Segment", TRUE | GV_ADDMULTI);
+
+    STORE_key(Outline);
+    STORE_key(Filled);
+    STORE_key(Flat);
+}
 
 MODULE = QLCDNumber		PACKAGE = QLCDNumber
 
 PROTOTYPES: ENABLE
+
+BOOT:
+    init_enum();
 
 PLCDNumber *
 PLCDNumber::new(...)
@@ -60,6 +85,9 @@ QLCDNumber::mode()
 int
 QLCDNumber::numDigits()
 
+QLCDNumber::SegmentStyle
+QLCDNumber::segmentStyle()
+
 void
 QLCDNumber::setBinMode()
 
@@ -79,6 +107,10 @@ QLCDNumber::setNumDigits(nDigits)
 
 void
 QLCDNumber::setOctMode()
+
+void
+QLCDNumber::setSegmentStyle(style)
+    QLCDNumber::SegmentStyle style
 
 void
 QLCDNumber::setSmallDecimalPoint(b)

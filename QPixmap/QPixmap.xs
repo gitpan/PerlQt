@@ -62,6 +62,30 @@ PPixmap::new(...)
 	OUTPUT:
 	RETVAL
 
+bool
+QPixmap::convertFromImage(image, mode = QPixmap::Auto)
+    QImage *image
+    QPixmap::ColorMode mode
+    CODE:
+    RETVAL = THIS->convertFromImage(*image, mode);
+    OUTPUT:
+    RETVAL
+
+PImage *
+QPixmap::convertToImage()
+    CODE:
+    RETVAL = new PImage(THIS->convertToImage());
+    OUTPUT:
+    RETVAL
+
+PBitmap *
+QPixmap::createHeuristicMask(clipTight = TRUE)
+    bool clipTight
+    CODE:
+    RETVAL = new PBitmap(THIS->createHeuristicMask(clipTight));
+    OUTPUT:
+    RETVAL
+
 int
 defaultDepth()
     CODE:
@@ -96,6 +120,18 @@ QPixmap::fill(...)
 	    (QColor *)extract_ptr(ST(1), "QColor") : &white;
 	CODE:
 	THIS->fill(*color);
+
+PPixmap *
+grabWindow(id, x = 0, y = 0, w = -1, h = -1)
+    WId id
+    int x
+    int y
+    int w
+    int h
+    CODE:
+    RETVAL = new PPixmap(QPixmap::grabWindow(id, x, y, w, h));
+    OUTPUT:
+    RETVAL
 
 int
 QPixmap::height()
@@ -142,6 +178,13 @@ isGloballyOptimized()
 bool
 QPixmap::isNull()
 
+PBitmap *
+QPixmap::mask()
+    CODE:
+    RETVAL = new PBitmap(*(THIS->mask()));
+    OUTPUT:
+    RETVAL
+
 void
 QPixmap::optimize(b)
     bool b
@@ -160,7 +203,7 @@ QPixmap::rect()
     RETVAL
 
 void
-QPixmap::resize()
+QPixmap::resize(...)
     CASE: items > 2
 	PREINIT:
 	int width = SvIV(ST(1));
@@ -177,6 +220,15 @@ bool
 QPixmap::save(fileName, format)
     char *fileName
     char *format
+
+bool
+QPixmap::selfMask()
+
+void
+QPixmap::setMask(mask)
+    QBitmap *mask
+    CODE:
+    THIS->setMask(*mask);
 
 PSize *
 QPixmap::size()

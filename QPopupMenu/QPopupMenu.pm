@@ -5,14 +5,16 @@ use vars qw($VERSION @ISA);
 
 require DynaLoader;
 require QGlobal;
-
-require QMenuData;
-require QPoint;
 require QTableView;
+require QMenuData;
+
+require QEvent;
+require QPainter;
+require QPoint;
 
 @ISA = qw(DynaLoader QTableView QMenuData);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QPopupMenu $VERSION;
 
 1;
@@ -28,12 +30,30 @@ C<use QPopupMenu;>
 
 Inherits QTableView and QMenuData.
 
-Requires QPoint.
+Requires QPainter, QPoint and QEvent.
 
 =head2 Member functions
 
 new,
-popup
+isCheckable,
+popup,
+setCheckable
+
+=head2 Overridden functions
+
+cellHeight,
+cellWidth,
+hide,
+keyPressEvent,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent,
+paintCell,
+paintEvent,
+setFont,
+show,
+timerEvent,
+updateItem,
 
 =head1 DESCRIPTION
 

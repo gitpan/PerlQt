@@ -1,3 +1,16 @@
+This release of PerlQt requires Perl-5.004 (or a beta release). It will
+not compile with Perl-5.003, or a Perl-5.004 which is binary compatible
+with Perl-5.003. It also requires Qt-1.2.
+
+If the stable version of Perl-5.004 hasn't been released when you try
+to compile this version of PerlQt, any beta version >= 5.003_90 will
+do. If you don't know where to find these versions of Perl, go to
+http://www.perl.org/CPAN/src/5.0/ and look for version 5.004. If it's
+not there, enter unsupported/ and download the newest version there. 
+Most of the configuration is irrelevant to PerlQt except two points.
+Your perl *must* have dynamic module loading support, and *must not*
+be binary-compatible with Perl-5.003.
+
 Once you have downloaded PerlQt, you should extract it into some
 convienient directory where it will be built.
 

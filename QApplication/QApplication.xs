@@ -8,10 +8,25 @@
  */
 
 #include "papp.h"
+#include "enum.h"
+
+#define STORE_spec(key) enumIV(hv, MSTR(key), QApplication::key ## Color)
+
+inline void init_enum() {
+    HV *hv = perl_get_hv("QApplication::ColorSpec", TRUE | GV_ADDMULTI);
+
+    STORE_spec(Normal);
+    STORE_spec(Custom);
+    STORE_spec(Private);
+    STORE_spec(True);
+}
 
 MODULE = QApplication		PACKAGE = QApplication		
 
 PROTOTYPES: ENABLE
+
+BOOT:
+    init_enum();
 
 PApplication *
 PApplication::new()
@@ -82,10 +97,10 @@ closingDown()
     OUTPUT:
     RETVAL
 
-QApplication::ColorMode
-colorMode()
+int
+colorSpec()
     CODE:
-    RETVAL = QApplication::colorMode();
+    RETVAL = QApplication::colorSpec();
     OUTPUT:
     RETVAL
 
@@ -183,10 +198,10 @@ sendEvent(receiver, event)
     RETVAL
 
 void
-setColorMode(mode)
-    QApplication::ColorMode mode
+setColorSpec(mode)
+    int mode
     CODE:
-    QApplication::setColorMode(mode);
+    QApplication::setColorSpec(mode);
 
 void
 setFont(font, updateAllWidgets = FALSE)

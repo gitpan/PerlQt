@@ -17,10 +17,12 @@
 inline void init_enum() {
     HV *hv = perl_get_hv("QComboBox::Policy", TRUE | GV_ADDMULTI);
 
-    STORE_key(NoInsertion);
-    STORE_key(AtTop);
-    STORE_key(AtCurrent);
-    STORE_key(AtBottom);
+    enumIV(hv, "None",    QComboBox::NoInsertion  );
+    enumIV(hv, "Top",     QComboBox::AtTop	  );
+    enumIV(hv, "Bottom",  QComboBox::AtBottom	  );
+    enumIV(hv, "Current", QComboBox::AtCurrent	  );
+    enumIV(hv, "Before",  QComboBox::BeforeCurrent);
+    enumIV(hv, "After",   QComboBox::AfterCurrent );
 }
 
 MODULE = QComboBox		PACKAGE = QComboBox
@@ -69,11 +71,17 @@ QComboBox::changeItem(thing, index)
 	char *thing
 	int index
 
+void
+QComboBox::clear()
+
 int
 QComboBox::count()
 
 int
 QComboBox::currentItem()
+
+const char *
+QComboBox::currentText()
 
 QComboBox::Policy
 QComboBox::insertionPolicy()

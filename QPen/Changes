@@ -1,5 +1,9 @@
 Revision history for Perl extension QPen.
 
+0.04  Mon Apr 28 12:52:52 1997
+	- remove postfix Line's from %Pen constants, and renamed $Pen{NoPen}
+to $Pen{None}
+
 0.03  Sun Apr 27 17:52:12 1997
 	- renamed %PenStyle to %Pen
 

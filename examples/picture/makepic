@@ -1,0 +1,54 @@
+#!/usr/bin/perl -w
+#
+# PerlQt Example Program: makepic
+#
+# This program demonstrates how to create a picture and save it to a file.
+#
+
+use Qt;
+use QBrush;
+use QColor;
+use QFont;
+use QPainter;
+use QPicture;
+#use QPixmap;
+
+sub paintCar {
+    my $p = shift;
+    my $a = new QPointArray;
+    my $brush = new QBrush($yellow, $Brush{Solid});
+    $p->setBrush($brush);
+
+    $a->setPoints(50,50, 350,50, 450,120, 450,250, 50,250);
+    $p->drawPolygon($a);
+
+    my $f = new QFont("Courier", 14, $Weight{Bold});
+    $p->setFont($f);
+
+    my $windowColor = new QColor(120, 120, 255);
+    $brush->setColor($windowColor);
+    $p->setBrush($brush);
+    $p->drawRect(80, 80, 250, 70);
+    $p->drawText(110, 80, 200, 70, $Align{Center},
+		 "-- PerlQt --\nIt rocks your world");
+
+#    my $pixmap = new QPixmap;
+#    $p->drawPixmap(100, 90, $pixmap) if $pixmap->load('flag.bmp');
+
+    $p->setBackgroundMode($BGMode{Opaque});
+    $p->setBrush($Brush{DiagCross});
+    $p->drawEllipse(90, 210, 80, 80);
+    $p->setBrush($Brush{Cross});
+    $p->drawEllipse(310, 210, 80, 80);
+}
+
+
+$pict = new QPicture;
+$paint = new QPainter;
+
+$paint->begin($pict);
+paintCar($paint);
+$paint->end();
+
+$fileName = @ARGV ? $ARGV[0] : 'car.pic';
+$pict->save($fileName);

@@ -9,17 +9,17 @@
 
 #include "ppen.h"
 
-#define STORE_key(key) enumIV(hv, MSTR(key), key)
+#define STORE_key(key) enumIV(hv, MSTR(key), key ## Line)
 
 inline void init_enum() {
     HV *hv = perl_get_hv("QPen::Pen", TRUE | GV_ADDMULTI);
 
-    STORE_key(NoPen);
-    STORE_key(SolidLine);
-    STORE_key(DashLine);
-    STORE_key(DotLine);
-    STORE_key(DashDotLine);
-    STORE_key(DashDotDotLine);
+    enumIV(hv, "None", NoPen);
+    STORE_key(Solid);
+    STORE_key(Dash);
+    STORE_key(Dot);
+    STORE_key(DashDot);
+    STORE_key(DashDotDot);
 }
 
 MODULE = QPen		PACKAGE = QPen

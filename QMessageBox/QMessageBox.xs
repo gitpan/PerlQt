@@ -19,9 +19,6 @@ PMessageBox::new(parent = 0, name = 0)
     QWidget *parent
     char *name
 
-void
-QMessageBox::adjustSize()
-
 const char *
 QMessageBox::buttonText()
 
@@ -29,9 +26,9 @@ int
 message(caption, text, buttonText = 0, parent = 0, name = 0)
     char *caption
     char *text
-    char *buttonText
+    pstring buttonText
     QWidget *parent
-    char *name
+    pstring name
     CODE:
     RETVAL = QMessageBox::message(caption, text, buttonText, parent, name);
     OUTPUT:
@@ -41,10 +38,10 @@ bool
 query(caption, text, yesButtonText = 0, noButtonText = 0, parent = 0, name = 0)
     char *caption
     char *text
-    char *yesButtonText
-    char *noButtonText
+    pstring yesButtonText
+    pstring noButtonText
     QWidget *parent
-    char *name
+    pstring name
     CODE:
     RETVAL = QMessageBox::query(caption, text, yesButtonText, noButtonText,
 				parent, name);
@@ -66,5 +63,9 @@ QMessageBox::text()
 MODULE = QMessageBox	PACKAGE = QMessageBox	PREFIX = virtual_
 
 void
+pMessageBox::virtual_adjustSize()
+
+void
 pMessageBox::virtual_resizeEvent(event)
     QResizeEvent *event
+

@@ -10,7 +10,7 @@ require QWidget;
 
 @ISA = qw(DynaLoader QWidget);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QTabBar $VERSION;
 
 package QTab;
@@ -52,8 +52,28 @@ Inherits QWidget.
 
 new,
 addTab,
+currentTab,
 isTabEnabled,
+keyboardFocusTab,
+paint,
+selectTab,
 setTabEnabled
+
+=head2 Overridable functions
+
+addTab,
+paint,
+selectTab
+
+=head2 Overridden functions
+
+keyPressEvent,
+mousePressEvent,
+mouseReleaseEvent,
+paintEvent,
+show,
+sizeHint
+
 
 =head2 QTab
 

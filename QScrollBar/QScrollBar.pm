@@ -13,7 +13,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget QRangeControl);
 @EXPORT = qw(%Orientation);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QScrollBar $VERSION;
 
 1;
@@ -32,12 +32,30 @@ Inherits QWidget and QRangeControl.
 =head2 Member functions
 
 new,
+draggingSlider,
 orientation,
 setOrientation,
 setRange,
 setTracking,
 setValue,
+sliderRect,
+sliderStart,
 tracking
+
+=head2 Overridden functions
+
+keyPressEvent,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent,
+paintEvent,
+rangeChange,
+resizeEvent,
+setPalette,
+sizeHint,
+stepChange,
+timerEvent,
+valueChange,
 
 =head1 DESCRIPTION
 
@@ -51,7 +69,7 @@ the possible orientations of the scrollbar.
 
 =head1 SEE ALSO
 
-QScrollBar(3qt)
+qscrollbar(3qt)
 
 =head1 AUTHOR
 

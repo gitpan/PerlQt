@@ -8,7 +8,7 @@ require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QImage $VERSION;
 
 1;
@@ -26,7 +26,7 @@ C<use QImage;>
 
 =head1 DESCRIPTION
 
-What you see is what you get.
+Null class. Unfortunate.
 
 =head1 SEE ALSO
 

@@ -14,7 +14,7 @@ require QFrame;
 @EXPORT = qw(%Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
              $GrayText $DontPrint);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QGroupBox $VERSION;
 
 1;
@@ -37,6 +37,10 @@ alignment,
 setAlignment,
 setTitle,
 title
+
+=head2 Overridden functions
+
+paintEvent
 
 =head1 DESCRIPTION
 

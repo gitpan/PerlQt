@@ -10,7 +10,7 @@ require QWidget;
 
 @ISA = qw(DynaLoader QWidget);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QWindow $VERSION;
 
 1;

@@ -10,7 +10,7 @@ require QButton;
 
 @ISA = qw(DynaLoader QButton);
 
-$VERSION = '0.01';
+$VERSION = '1.00';
 bootstrap QCheckBox $VERSION;
 
 1;
@@ -31,6 +31,12 @@ Inherits QButton.
 new,
 isChecked,
 setChecked
+
+=head2 Overridden functions
+
+drawButton,
+drawButtonLabel,
+sizeHint
 
 =head1 DESCRIPTION
 

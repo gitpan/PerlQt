@@ -8,7 +8,6 @@
  */
 
 #include "ppaintd.h"
-#include "qwidget.h"
 #include "enum.h"
 
 #define STORE_PDT(key) enumIV(hv, MSTR(key), PDT_ ## key)

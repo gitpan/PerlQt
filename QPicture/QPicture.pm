@@ -8,7 +8,7 @@ require QPaintDevice;
 
 @ISA = qw(DynaLoader QPaintDevice);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QPicture $VERSION;
 
 1;
@@ -26,13 +26,18 @@ Inherits QPaintDevice.
 
 =head2 Member functions
 
+new,
+load,
+play,
+save
+
 =head1 DESCRIPTION
 
 What you see is what you get.
 
 =head1 SEE ALSO
 
-QPicture(3qt)
+qpicture(3qt)
 
 =head1 AUTHOR
 

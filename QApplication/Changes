@@ -1,5 +1,12 @@
 Revision history for Perl extension QApplication.
 
+0.03  Wed Apr 30 11:09:44 1997
+	- export the %ColorSpec hash
+
+0.03  Tue Apr 29 13:20:22 1997
+	- ditched colorMode in favor of colorSpec, and added the ColorSpec
+enum
+
 0.02  Sat Apr  5 10:38:50 1997
 	- executed an s/reciever/receiver/ on the damned thing
 

@@ -36,7 +36,7 @@ sub paintEvent {
     my $self  = shift;
     my $p     = new QPainter;
     my $brush = new QBrush($blue);
-    my $pen   = new QPen($Pen{NoPen});
+    my $pen   = new QPen($Pen{None});
 
     $p->begin($self);
     $p->setBrush($brush);

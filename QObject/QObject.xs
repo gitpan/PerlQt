@@ -245,6 +245,9 @@ QObject::killTimer(id)
 void
 QObject::killTimers()
 
+const char *
+QObject::name()
+
 QObject *
 QObject::parent()
 

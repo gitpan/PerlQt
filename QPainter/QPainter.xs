@@ -8,6 +8,7 @@
  */
 
 #include "ppainter.h"
+#include "ppaintd.h"
 #include "enum.h"
 
 #define STORE_mode(mode) enumIV(hv, MSTR(mode), mode ## Mode)
@@ -27,7 +28,18 @@ BOOT:
     init_BGMode();
 
 PPainter *
-PPainter::new()
+PPainter::new(paintd = 0)
+    CASE: items == 1
+	CODE:
+	RETVAL = new PPainter();
+	OUTPUT:
+	RETVAL
+    CASE:
+	QPaintDevice *paintd
+	CODE:
+	RETVAL = new PPainter(paintd);
+	OUTPUT:
+	RETVAL
 
 PColor *
 QPainter::backgroundColor()
@@ -69,6 +81,12 @@ QPainter::boundingRect(...)
 	OUTPUT:
 	RETVAL
 
+PBrush *
+QPainter::brush()
+    CODE:
+    RETVAL = new PBrush(THIS->brush());
+    OUTPUT:
+    RETVAL
 
 PPoint *
 QPainter::brushOrigin()
@@ -167,6 +185,12 @@ QPainter::drawLineSegments(parray, index = 0, nlines = -1)
     int nlines
     CODE:
     THIS->drawLineSegments(*parray, index, nlines);
+
+void
+QPainter::drawPicture(picture)
+    QPicture *picture
+    CODE:
+    THIS->drawPicture(*picture);
 
 void
 QPainter::drawPie(...)
@@ -387,6 +411,9 @@ QPainter::fillRect(...)
 	CODE:
 	THIS->fillRect(*rect, *brush);
 
+void
+QPainter::flush()
+
 PFont *
 QPainter::font()
     CODE:
@@ -457,6 +484,13 @@ QPainter::pen()
 
 RasterOp
 QPainter::rasterOp()
+
+void
+redirect(pdev, replacement)
+    QPaintDevice *pdev
+    QPaintDevice *replacement
+    CODE:
+    QPainter::redirect(pdev, replacement);
 
 void
 QPainter::resetXForm()
@@ -565,6 +599,10 @@ QPainter::setRasterOp(op)
     THIS->setRasterOp(op);
 
 void
+QPainter::setTabStops(s)
+    int s
+
+void
 QPainter::setViewXForm(b)
     bool b
 
@@ -615,6 +653,9 @@ void
 QPainter::shear(sh, sv)
     float sh
     float sv
+
+int
+QPainter::tabStops()
 
 void
 QPainter::translate(dx, dy)

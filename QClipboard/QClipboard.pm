@@ -11,7 +11,7 @@ require QPixmap;
 
 @ISA = qw(DynaLoader QObject);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QClipboard $VERSION;
 
 1;
@@ -43,7 +43,7 @@ What you see is what you get.
 
 =head1 SEE ALSO
 
-QClipboard(3qt)
+qclipboard(3qt)
 
 =head1 AUTHOR
 

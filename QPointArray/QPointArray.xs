@@ -120,8 +120,8 @@ QPointArray::putPoints(index, firstx, firsty, ...)
     New(123, points, nPoints, QCOORD);
     CODE:
     for(int i = 2; i < items; i++)
-        points[i-1] = (QCOORD)SvIV(ST(i));
-    RETVAL = THIS->putPoints(index, nPoints, points);
+        points[i-2] = (QCOORD)SvIV(ST(i));
+    RETVAL = THIS->putPoints(index, nPoints/2, points);
     Safefree(points);
     OUTPUT:
     RETVAL
@@ -158,7 +158,7 @@ QPointArray::setPoints(firstx, firsty, ...)
     CODE:
     for(int i = 1; i < items; i++)
 	points[i-1] = (QCOORD)SvIV(ST(i));
-    RETVAL = THIS->setPoints(nPoints, points);
+    RETVAL = THIS->setPoints(nPoints/2, points);
     Safefree(points);
     OUTPUT:
     RETVAL

@@ -11,7 +11,7 @@ require QGroupBox;
 
 @ISA = qw(DynaLoader QGroupBox);
 
-$VERSION = '0.01';
+$VERSION = '1.00';
 bootstrap QButtonGroup $VERSION;
 
 1;
@@ -32,6 +32,9 @@ Requires QButton.
 =head2 Member functions
 
 new,
+buttonClicked,
+buttonPressed,
+buttonReleased,
 find,
 insert,
 isExclusive,

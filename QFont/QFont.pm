@@ -10,7 +10,7 @@ require QGlobal;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Style %Weight %CharSet);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QFont $VERSION;
 
 1;
@@ -35,6 +35,7 @@ family,
 fixedPitch,
 insertSubstitution,
 italic,
+key,
 pointSize,
 rawMode,
 removeSubstitution,

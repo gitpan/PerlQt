@@ -13,6 +13,7 @@
 #undef bool
 #include "qpainter.h"
 #include "qwidget.h"
+#include "pbrush.h"
 #include "pcolor.h"
 #include "pfont.h"
 #include "pfontinf.h"
@@ -26,6 +27,7 @@
 class PPainter : public QPainter {
 public:
     PPainter() {}
+    PPainter(QPaintDevice *d) : QPainter(d) {}
 };
 
 #endif  // PPAINTER_H

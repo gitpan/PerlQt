@@ -74,7 +74,7 @@ sub drawShapes {
     my $p = shift;
     my $b1 = new QBrush($blue);
     my $b2 = new QBrush($green, $Brush{Dense6});
-    my $b3 = new QBrush($Brush{NoBrush});
+    my $b3 = new QBrush($Brush{None});
     my $b4 = new QBrush($Brush{Cross});
 
     $p->setPen($red);

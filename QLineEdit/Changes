@@ -1,5 +1,8 @@
 Revision history for Perl extension QLineEdit.
 
+0.03  Wed Apr 30 13:52:24 1997
+	- added frame, setFrame, echoMode, setEchoMode, and %Echo
+
 0.02  Fri Apr 25 18:09:32 1997
 	- added virtual functions
 

@@ -124,3 +124,10 @@ setPos(arg1, ...)
 	int y = SvIV(ST(1));
 	CODE:
 	QCursor::setPos(x, y);
+
+void
+QCursor::setShape(shape)
+    int shape
+
+int
+QCursor::shape()

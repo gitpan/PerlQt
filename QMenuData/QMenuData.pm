@@ -12,7 +12,7 @@ require QPopupMenu;
 
 @ISA = qw(DynaLoader);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QMenuData $VERSION;
 
 1;
@@ -43,6 +43,10 @@ insertItem,
 insertSeparator,
 isItemChecked,
 isItemEnabled,
+menuContentsChanged,
+menuDelPopup,
+menuInsPopup,
+menuStateChanged,
 pixmap,
 removeItem,
 removeItemAt,
@@ -51,6 +55,14 @@ setId,
 setItemChecked,
 setItemEnabled,
 text,
+updateItem
+
+=head2 Overridable functions
+
+menuContentsChanged,
+menuDelPopup,
+menuInsPopup,
+menuStateChanged,
 updateItem
 
 =head1 DESCRIPTION

@@ -12,7 +12,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget);
 @EXPORT = qw(%Dialog);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QDialog $VERSION;
 
 1;
@@ -31,8 +31,24 @@ Inherits QWidget.
 =head2 Member functions
 
 new,
+accept,
 exec,
-result
+reject,
+result,
+setResult
+
+=head2 Overridable functions
+
+done
+
+=head2 Overridden functions
+
+closeEvent
+keyPressEvent,
+move,
+resize,
+setGeometry,
+show,
 
 =head1 DESCRIPTION
 
@@ -40,7 +56,7 @@ What you see is what you get.
 
 =head1 EXPORTED
 
-The C<%DialogCode> hash is exported into the user's namespace. It just
+The C<%Dialog> hash is exported into the user's namespace. It just
 has C<Accepted> and C<Rejected>.
 
 =head1 AUTHOR

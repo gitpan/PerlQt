@@ -1,5 +1,8 @@
 Revision history for Perl extension QFont.
 
+0.05  Wed Apr 30 12:38:04 1997
+	- added key()
+
 0.04  Sun Apr 27 17:42:34 1997
 	- renamed %StyleHint to %Style
 

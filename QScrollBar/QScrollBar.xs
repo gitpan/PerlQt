@@ -79,6 +79,9 @@ PScrollBar::new(...)
 	CODE:
 	croak("Usage: new %s(QWidget = undef, name = undef);\nUsage: new %s(orientation, QWidget = undef, name = undef);\nUsage: new %s(minValue, maxValue, LineStep, PageStep, value, orientation, QWidget = undef, name = undef);", CLASS, CLASS, CLASS);
 
+bool
+QScrollBar::draggingSlider()
+
 QScrollBar::Orientation
 QScrollBar::orientation()
 

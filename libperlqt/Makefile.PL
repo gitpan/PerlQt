@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME'	=> 'libperlqt',
-    'VERSION'	=> '0.04',
+    'VERSION'	=> '1.00',
     'CC'	=> 'g++',
     'INC'	=> '-I$(QTDIR)/include -I../libperlqt/include',
     'OBJECT'	=> q{libperlqt$(OBJ_EXT)

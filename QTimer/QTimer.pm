@@ -10,7 +10,7 @@ require QObject;
 
 @ISA = qw(DynaLoader QObject);
 
-$VERSION = '0.01';
+$VERSION = '1.00';
 bootstrap QTimer $VERSION;
 
 1;

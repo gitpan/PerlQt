@@ -17,8 +17,6 @@
 #include "pqt.h"
 #include "virtual.h"
 
-typedef QApplication::ColorMode QApplication__ColorMode;
-
 class PApplication : public QApplication, public virtualize {
 public:
     PApplication(int &argc, char **argv) : QApplication(argc, argv) {}

@@ -8,9 +8,9 @@ require DynaLoader;
 require QFrame;
 
 @ISA = qw(Exporter DynaLoader QFrame);
-@EXPORT = qw();
+@EXPORT = qw(%Mode %Segment);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QLCDNumber $VERSION;
 
 1;
@@ -34,23 +34,36 @@ display,
 intValue,
 mode,
 numDigits,
+segmentStyle,
 setBinMode,
 setDecMode,
 setHexMode,
 setMode,
 setNumDigits,
 setOctMode,
+setSegmentStyle,
 setSmallDecimalPoint,
 smallDecimalPoint,
 value
+
+=head2 Overridden functions
+
+drawContents,
+resizeEvent
 
 =head1 DESCRIPTION
 
 What you see is what you get.
 
+=head1 EXPORTED
+
+The C<%Mode> and C<%Segment> hashes are exported into the user's namespace.
+C<%Mode> contains the various numeric modes, DEC, HEX, etc.. C<%Segment>
+corresponds to the QLCDNumber::SegmentStyle enum.
+
 =head1 SEE ALSO
 
-QLCDNumber(3qt)
+qlcdnumber(3qt)
 
 =head1 AUTHOR
 

@@ -1,5 +1,8 @@
 Revision history for Perl extension libperlqt.
 
+0.05  Tue Apr 29 14:40:14 1997
+	- changed extract_ptr() from checking for == &sv_undef to SvOK()
+
 0.04  Sun Apr 27 13:40:05 1997
 	- ditched the qslider.h version determination
 

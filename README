@@ -1,84 +1,89 @@
-PerlQt is an incomplete but well-thought-out object-oriented interface
-to the C++ GUI development library, Qt.
+This is the PerlQt 1.00 README.
 
-This release, PerlQt 0.04, is distributed under the LGPL and requires
-Qt-1.2 and Perl 5.004 (or a beta version). I have only successfully
-compiled PerlQt myself on my own RedHat Linux 4.0 system with a 2.0.28
-kernel, running Perl-5.00397i, which is a beta-release of Perl-5.004.
+  PerlQt is an extensive interface between the Perl scripting language, and
+the C++ Qt GUI programming toolkit. It allows Perl programs to not only
+access and display Qt widgets (graphical components), but create new widgets
+through inheritance, in much the same way as it is done in C++.
 
-Important note: Your Perl-5.004 (or beta release) must *not* be
-binary-compatible with Perl-5.003. If it is, there will be namespace
-clashes between Perl and Qt and all hell will break loose. This means
-that most of you who downloaded binary Perl-5.004 releases must
-recompile to get PerlQt working. Sorry.
+  The extent of the interface goes beyond merely inheritance. Qt has a
+powerful call-back mechanism known as signals and slots. It allows the
+programmer to avoid manual call-backs with function-pointers and the like,
+and allows a cleaner programming style. Because C++ was incapable, on it's
+own, of achieving this goal, a 'Meta-object compiler' program, called 'moc',
+was created to automatically create the additional code needed to perform
+call-backs with signals and slots. PerlQt has improved upon this system.
 
-PerlQt has poor documentation: A few pages of pod documentation just
-stating if a method has been interfaced, and description of what few
-changes were needed in the interface. But all of the Qt documentation
-is just as valid with PerlQt as it is with C++ Qt.
+  The signals and slots mechanism, put to such good use in C++ Qt, could
+not be left out of an extensive interface to Perl. It wasn't. Using
+Perl's 'use' function, I made the declaration of signals and slots a
+one-step process. No Meta-object compiler is needed, because Perl can call
+functions from their names, and create functions at run-time.
 
-PerlQt is easy to learn if you know Perl and Qt, because the interface
-is the same as C++ Qt, and it makes the minimum number of changes mandated
-by Perl.
+  Admittedly, the interface to signals and slots in PerlQt is not as
+flexible as in C++ Qt, but that will change soon enough. And what has been
+interfaced so far is enough for most applications already.
 
-PerlQt dramatically cuts down on development time and complexity because
-of the Perl part! PerlQt does not require moc or headers or compiliation.
-In exchange, it has a startup penalty of a few seconds.
+  Creation of new Qt widgets just isn't complete without virtual functions.
+With that in mind, I made sure that every virtual function in every
+class could be overridden in PerlQt. This means that virtual function
+overridding has no restrictions in PerlQt. Just create the function, and
+it 'works'.
 
-PerlQt is fully object-oriented. All widgets and dialogs are Perl objects,
-and, using inheritance, creation of new widgets is easy and natural.
+  Since Qt is written in C++, it was inevitable that it would have
+overloaded functions (functions with more than one prototype). Since Perl
+can determine the number and type of arguments to a function, I chose
+to support all prototypes of all functions. The only drawback I can see
+is with virtual functions. If you override a virtual function that has
+another prototype (perhaps virtual, perhaps not), the programmer will
+have to ensure that both prototypes are supported in the virtual function.
 
-PerlQt's interface to signals and slots allows signals and slots from
-Perl and C++ to be connected to signals and slots in Perl and C++.
+  One of the most notable features of Qt is its extensive documentation.
+I have made great pains to ensure that the PerlQt interface matches the
+C++ Qt interface as much as possible, thereby making the Qt documentation
+as applicable to PerlQt as to C++ Qt.
 
-PerlQt is very fast because it is such a direct interface between Perl
-and Qt. It does no translation of the interface from Qt, because the
-interface is so elegant, well-designed, and easily converted to Perl.
+  I admit that currently, there is not much PerlQt-specific documentation.
+What documentation is provided is in the form of pod documentation, the
+standard Perl documentation format, at the end of each module's .pm file.
+When PerlQt is installed, the pod documentation should be translated into
+the more digestable man format, and installed somewhere.
 
-PerlQt is copyright Ashley Winters <jql@accessone.com> and is distributed
-under the terms of the LGPL and is subject to (as well as compliant with)
-the Qt licensing regulations. AFAIK, PerlQt programs are subject to the Qt
-license just as much as a C++ Qt program; although I think the Qt license
-needs to be much more explicit about Qt clones and language interfaces.
+  Even better than documentation, in my opinion, is code. PerlQt comes
+with over 5000 lines of code which actually runs in PerlQt. And all of
+this code is directly ported from its C++ counterpart which is included
+with Qt. Not only have *all* of the Qt tutorials been converted to PerlQt,
+but most of the Qt examples have been as well. The most notable example
+is the widgets example. Over a dozen widgets, some newly created, are used
+in the same PerlQt program. Unfortunatly, I couldn't manage converting
+tetris in time for this release. :)
 
-PerlQt is available for free, and may be downloaded from any CPAN mirror
-in the authors/Ashley_Winters/ directory as the file PerlQt-0.03.tar.gz.
+  A line-by-line comparison of C++ Qt and PerlQt code yields interesting
+insight into the directness of the interface between them. The Qt tutorial
+documentation is a good place to start learning PerlQt, believe it or not.
+It not only describes the actions of a function in detail, but the
+differences between the C++ Qt and PerlQt interfaces can be clearly seen.
 
-Going to http://www.perl.com/CPAN/ will forward you to a CPAN mirror
-which is close to you.
+  Despite the attempted directness of the PerlQt interface, I could not
+allow the constant/enumeration interface to remain as it was in C++.
+While it was possible to convert everything exactly, doing so would
+have been a really bad idea.
 
-Qt is available for download from http://www.troll.no/dl/ or via
-anonymous ftp to ftp.troll.no. See README.QT for information about
-Qt and details about downloading Qt and licensing restrictions.
+  I believe that I have cleaned up the enumeration/constant interface to
+a great degree. Most constants have been stuffed into Perl hashes, where
+in Qt they were just similarly named constants. Some were logical, like
+Key_X being converted to $Key{X}, yet others were not so obviously logical.
+I've tried to document the changes in the relevant places.
 
-There is no specific discussion area for PerlQt, nor do I forsee one. If
-you find a bug in the software, contact me, Ashley Winters, directly via
-e-mail at jql@accessone.com. Any questions regarding Qt should be directed
-towards the left hemisphere of your brain, which should cause you to begin
-searching the Qt homepage which is at http://www.troll.no/ or the Qt
-documentation in the html/ dir of wherever Qt was installed on your
-computer. You did install Qt already, didn't you?
+  PerlQt 1.00 requires Perl-5.004 and Qt-1.2. A late beta version of Perl,
+>= 5.003_90, should be fine as well. Is should compile on most
+POSIX-compatible Unix platforms, and probably on all Linux systems. It is
+important that your version of Perl-5.004 is *NOT* binary-compatible with
+Perl-5.003. There is a reason I chose not to use Perl-5.003 for PerlQt.
 
-Should those measures fail, send a message to qt-interest@troll.no,
-which is a mailing-list (send a message with "subscribe" in the body to
-qt-interest-request@troll.no to subscribe), and I, as well as many other
-knowledgeable people including the Qt authors, will try to respond to
-your message.
+  Now that you know what PerlQt is, and some of what it does, I hope you'll
+learn it, use it, live it, love it, and report all bugs to jql@accessone.com.
 
-Legal obligations require me to note that PerlQt requires the Qt library,
-which is copyright Troll Tech AS. Freely distributable programs may
-generally use Qt for free, see README.QT for details.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Library General Public
-License as published by the Free Software Foundation; either
-version 2 of the License, or (at your option) any later version.
+PerlQt is my baby,
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Library General Public License for more details.
-
-You should have received a copy of the GNU Library General Public
-License along with this library; if not, write to the Free
-Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+Ashley Winters

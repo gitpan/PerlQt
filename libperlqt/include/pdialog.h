@@ -33,6 +33,8 @@ public:
     }
     void virtual_show() { QDialog::show(); }
 
+    void protected_accept() { QDialog::accept(); }
+    void protected_reject() { QDialog::reject(); }
     void protected_setResult(int r) { QDialog::setResult(r); }
 };
 

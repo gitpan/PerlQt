@@ -23,7 +23,8 @@ public:
 
 class pMessageBox : public QMessageBox {
 public:
-    virtual_resizeEvent(QResizeEvent *e) { QMessageBox::resizeEvent(e); }
+    void virtual_adjustSize() { QMessageBox::adjustSize(); }
+    void virtual_resizeEvent(QResizeEvent *e) { QMessageBox::resizeEvent(e); }
 };
 
 #endif  // PMSGBOX_H

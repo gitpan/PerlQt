@@ -2,15 +2,15 @@ package QEvent;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
-use QGlobal qw(%Key);
+use QGlobal qw(%Key $SHIFT $CTRL $ALT $ASCII_ACCEL);
 
 require Exporter;
 require DynaLoader;
 
 @ISA = qw(Exporter DynaLoader Qt::Base);
-@EXPORT = qw(%Button %Event %Key);
+@EXPORT = qw(%Button %Event %Key $SHIFT $CRTL $ALT $ASCII_ACCEL);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QEvent $VERSION;
 
 
@@ -213,7 +213,7 @@ contains all the F<qkeycode.h> keys without the Key_.
 
 =head1 SEE ALSO
 
-QEvent(3qt)
+qevent(3qt)
 
 =head1 AUTHOR
 

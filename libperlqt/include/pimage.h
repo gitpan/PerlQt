@@ -11,9 +11,14 @@
  */
 
 #undef bool
-#include "pimage.h"
+#include "qimage.h"
 #include "prect.h"
 #include "psize.h"
 #include "pqt.h"
+
+class PImage : public QImage {
+public:
+    PImage(const QImage &image) { *(QImage *)this = image; }
+};
 
 #endif  // PIMAGE_H

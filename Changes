@@ -1,5 +1,9 @@
 Revision history for Perl extension Qt.
 
+0.05  Tue Apr 29 14:36:08 1997
+	- added a pstring typemap entry to allow &sv_undef to be converted
+to NULL in the right places.
+
 0.04  Mon Apr 21 17:00:47 1997
 	- added a DISTNAME => 'PerlQt' to Makefile.PL
 

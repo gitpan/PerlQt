@@ -1,4 +1,9 @@
 #!/usr/bin/perl
+#
+# convert_class QClass QNew
+#
+# eases the creation of largely duplicate virtual function class stubs
+#
 
 if(@ARGV < 2) { print "more args\n"; exit(-1); }
 

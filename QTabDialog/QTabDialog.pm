@@ -10,7 +10,7 @@ require QDialog;
 
 @ISA = qw(DynaLoader QDialog);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QTabDialog $VERSION;
 
 1;
@@ -37,7 +37,15 @@ isTabEnabled,
 setApplyButton,
 setCancelButton,
 setDefaultButton,
+setOKButton,
 setTabEnabled
+
+=head2 Overridden functions
+
+paintEvent,
+resizeEvent,
+show,
+setFont
 
 =head1 DESCRIPTION
 

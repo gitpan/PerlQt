@@ -15,7 +15,7 @@ require QWMatrix;
 @ISA = qw(Exporter DynaLoader QPaintDevice);
 @EXPORT = qw(%ColorMode);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QPixmap $VERSION;
 
 1;
@@ -36,10 +36,14 @@ Requires QBitmap, QColor, QImage, and QWMatrix.
 =head2 Member functions
 
 new,
+convertFromImage,
+convertToImage,
+createHeuristicMask,
 defaultDepth,
 depth,
 detach,
 fill,
+grabWindow,
 height,
 imageFormat,
 isOptimized,
@@ -48,11 +52,14 @@ load,
 loadFromData,
 isGloballyOptimized,
 isNull,
+mask,
 optimize,
 optimizeGlobally,
 rect,
 resize,
 save,
+selfMask,
+setMask,
 size,
 trueMatrix,
 width,
@@ -68,12 +75,12 @@ arguments are normal and in the original order.
 =head1 EXPORTED
 
 The C<%ColorMode> hash is exported into the user's namespace. The elements
-of C<%ColorMode> contain all the constants in QPainter, which come from the
-QPainter::ColorMode enum.
+of C<%ColorMode> contain all the constants in QPixmap, which come from the
+QPixmap::ColorMode enum.
 
 =head1 SEE ALSO
 
-QPixmap(3qt)
+qpixmap(3qt)
 
 =head1 AUTHOR
 

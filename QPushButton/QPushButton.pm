@@ -10,7 +10,7 @@ require QButton;
 
 @ISA = qw(DynaLoader QButton);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QPushButton $VERSION;
 
 1;
@@ -32,7 +32,20 @@ new,
 autoDefault,
 isDefault,
 setAutoDefault,
-setDefault
+setDefault,
+setOn,
+setToggleButton,
+toggle,
+
+=head2 Overridden functions
+
+drawButton,
+drawButtonLabel,
+focusInEvent,
+move,
+resize,
+setGeometry,
+sizeHint
 
 =head1 DESCRIPTION
 
@@ -40,7 +53,7 @@ Fully interfaced.
 
 =head1 SEE ALSO
 
-QPushButton(3qt)
+qpushbutton(3qt)
 
 =head1 AUTHOR
 

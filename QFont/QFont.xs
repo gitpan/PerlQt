@@ -101,6 +101,9 @@ insertSubstitution(familyName, replacementName)
 bool
 QFont::italic()
 
+QString
+QFont::key()
+
 int
 QFont::pointSize()
 

@@ -12,7 +12,7 @@ require QPaintDevice;
 @ISA = qw(Exporter DynaLoader QPaintDevice);
 @EXPORT = qw(%Orientation %Page);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QPrinter $VERSION;
 
 1;
@@ -65,7 +65,8 @@ What you see is what you get.
 =head1 EXPORTED
 
 The C<%Orientation> and C<%Page> hashes are exported to the user's
-namespace. Their keys correspond to the matching enums in QPainter.
+namespace. Their keys correspond to the QPrinter::Orientation and
+QPrinter::PageSize enums defined in F<qprinter.h>.
 
 =head1 AUTHOR
 

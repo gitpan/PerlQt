@@ -31,7 +31,7 @@ require QWMatrix;
 
 	     %RasterOp %BGMode);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 bootstrap QPainter $VERSION;
 
 1;
@@ -55,6 +55,7 @@ backgroundColor,
 backgroundMode,
 begin,
 boundingRect,
+brush,
 brushOrigin,
 clipRegion,
 device,
@@ -63,6 +64,7 @@ drawChord,
 drawEllipse,
 drawLine,
 drawLineSegments,
+drawPicture,
 drawPie,
 drawPixmap,
 drawPoint,
@@ -76,6 +78,7 @@ drawWinFocusRect,
 end,
 eraseRect,
 fillRect,
+flush,
 font,
 fontInfo,
 fontMetrics,
@@ -87,6 +90,7 @@ lineTo,
 moveTo,
 pen,
 rasterOp,
+redirect,
 resetXForm,
 restore,
 rotate,
@@ -102,12 +106,14 @@ setClipRegion,
 setFont,
 setPen,
 setRasterOp,
+setTabStops,
 setViewXForm,
 setViewport,
 setWindow,
 setWorldMatrix,
 setWorldXForm,
 shear,
+tabStops,
 translate,
 viewport,
 window,
@@ -132,6 +138,10 @@ The C<%BGMode> and C<%RasterOp> hashes are also exported. C<%BGMode>
 contains the values in the BGMode enum in F<qpainter.h> without the
 trailing Mode, and C<%RasterOp> contains the values in the RasterOp
 enum in F<qwindefs.h> without the trailing ROP.
+
+=head2 NOTES
+
+tabArray and setTabArray are not interfaced yet, sorry.
 
 =head1 SEE ALSO
 

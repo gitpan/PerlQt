@@ -12,6 +12,7 @@
 
 #undef bool
 #include "qpaintd.h"
+#include "qwidget.h"
 #include "pqt.h"
 
 class PPaintDevice;

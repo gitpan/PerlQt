@@ -1,8 +1,9 @@
 package QApplication;
 
 use strict;
-use vars qw($VERSION @ISA);
+use vars qw($VERSION @ISA @EXPORT);
 
+require Exporter;
 require DynaLoader;
 require QGlobal;
 
@@ -17,8 +18,9 @@ require QPoint;
 require QWidget;
 
 @ISA = qw(DynaLoader QObject);
+@EXPORT = qw(%ColorSpec);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QApplication $VERSION;
 
 1;
@@ -46,7 +48,6 @@ new,
 beep,
 clipboard,
 closingDown,
-colorMode,
 desktop,
 enter_loop,
 exec,
@@ -65,7 +66,6 @@ processEvents,
 quit,
 restoreOverrideCursor,
 sendEvent,
-setColorMode,
 setFont,
 setMainWidget,
 setOverrideCursor,
@@ -82,7 +82,7 @@ What you see is what you get.
 
 =head1 SEE ALSO
 
-QApplication(3qt) QObject(3qt) QObject(3) QGlobal(3)
+qapplication(3qt) qobject(3qt) QObject(3) QGlobal(3)
 
 =head1 NOTES
 
@@ -92,10 +92,6 @@ doesn't S<'use Qt;'>, no QApplication will be created. This is meant to allow
 sub-classing QApplication or allowing a different interface to use the
 PerlQt classes, like S<'use KDE;'>. The QGlobal class is included in
 all PerlQt classes, instead of Qt.
-
-=head1 BUGS
-
-setColorMode() is interfaced, but I don't think it works.
 
 =head1 AUTHOR
 

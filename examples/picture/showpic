@@ -1,0 +1,64 @@
+#!/usr/bin/perl -w
+#
+# PerlQt Example Program: showpic
+#
+# This program demonstrates how to load and display a picture.
+#
+# We create a simple widget that displays (plays) the picture
+# whenever the widget needs to be repainted.
+#
+
+package PictureDisplay;
+
+use QPainter;
+use QPicture;
+use QWidget;
+
+@ISA = qw(QWidget);
+
+sub new {
+    my $self = shift->SUPER::new;
+    my $fileName = shift;
+    my $pict = new QPicture;
+    unless($pict->load($fileName)) {
+	$$self{'name'} = "Not able to load picture: $fileName";
+    } else {
+	@$self{'pict', 'name'} = ($pict, $fileName);
+    }
+
+    return $self;
+}
+
+sub paintEvent {
+    my $self = shift;
+    my $paint = new QPainter;
+    $paint->begin($self);
+    if(exists $$self{'pict'}) {
+	$paint->drawPicture($$self{'pict'});
+    } else {
+	$paint->drawText($self->rect(), $Align{Center}, $$self{'name'});
+    }
+    $paint->end();
+}
+
+sub keyPressEvent {
+    my $self = shift;
+    my $k = shift;
+
+    if($k->ascii() =~ /r/i && exists $$self{'pict'}) {
+	$$self{'pict'}->load($$self{'name'});
+	$self->update();
+    } elsif($k->ascii() =~ /q/i) {
+	QApplication::exit();
+    }
+}
+
+package main;
+
+use Qt;
+
+$fileName = @ARGV ? $ARGV[0] : 'car.pic';
+$test = new PictureDisplay($fileName);
+$qApp->setMainWidget($test);
+$test->show();
+exit $qApp->exec();

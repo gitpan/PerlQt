@@ -1,5 +1,8 @@
 Revision history for Perl extension QCursor.
 
+0.04  Wed Apr 30 12:03:02 1997
+	- added shape() and setShape()
+
 0.03  Sun Apr 27 17:36:21 1997
 	- added the %Shape hash containing the QCursorShape constants
 

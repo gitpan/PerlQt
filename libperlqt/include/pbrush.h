@@ -24,6 +24,8 @@ public:
     PBrush(const QColor &color, const QPixmap &pixmap) :
 	QBrush(color, pixmap) {}
 //    PBrush(const QBrush &brush) : QBrush(brush) {}
+
+    PBrush(const QBrush &brush) { *(QBrush *)this = brush; }
 };
 
 #endif  // PBRUSH_H

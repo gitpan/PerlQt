@@ -16,7 +16,7 @@ require QSize;
 @EXPORT = qw(%Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
 	     $GrayText $DontPrint);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 bootstrap QLabel $VERSION;
 
 1;
@@ -51,9 +51,13 @@ setText,
 setPixmap,
 text
 
+=head2 Overridden functions
+
+drawContents
+
 =head1 DESCRIPTION
 
-QLabel has been completely interfaced.
+QLabel has been completely interfaced. Isn't that nice?
 
 =head1 EXPORTED
 
@@ -64,10 +68,6 @@ $GrayText $DontPrint
 
 The C<%Align> hash contains all the Align* constants without the Align.
 All of these constants are defined in F<qwindefs.h>.
-
-=head1 CAVEATS
-
-I might create C<%Align> for the hell of it. You never know.
 
 =head1 AUTHOR
 

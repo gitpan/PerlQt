@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+#
+# PerlQt example: Table
+#
+# A simple, spreadsheet-like widget, made by inheriting QTableView.
+#
+
+use Qt;
+use Table;
+
+$numRows = 20;
+$numCols = 20;
+
+#
+# The program starts here.
+#
+
+$v = new Table($numRows, $numCols);
+
+#
+# Fill the table with default content: a coordinate string.
+#
+
+for($i = 0; $i < $numRows; $i++) {
+    for($j = 0; $j < $numCols; $j++) {
+	$s = "$j " . chr(ord('A')+($i % 26));
+	$v->setCellContent($i, $j, $s);
+    }
+}
+
+$qApp->setMainWidget($v);
+$v->show();
+exit $qApp->exec();

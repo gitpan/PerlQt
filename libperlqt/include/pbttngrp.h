@@ -26,9 +26,9 @@ public:
 
 class pButtonGroup : public QButtonGroup {
 public:
-    protected_buttonPressed() { QButtonGroup::buttonPressed(); }
-    protected_buttonReleased() { QButtonGroup::buttonReleased(); }
-    protected_buttonClicked() { QButtonGroup::buttonClicked(); }
+    void protected_buttonPressed() { QButtonGroup::buttonPressed(); }
+    void protected_buttonReleased() { QButtonGroup::buttonReleased(); }
+    void protected_buttonClicked() { QButtonGroup::buttonClicked(); }
 };
 
 #endif  // PBTTNGRP_H

@@ -1,16 +1,18 @@
 package QLineEdit;
 
 use strict;
-use vars qw($VERSION @ISA);
+use vars qw($VERSION @ISA @EXPORT);
 
+require Exporter;
 require DynaLoader;
 require QGlobal;
 
 require QWidget;
 
-@ISA = qw(DynaLoader QWidget);
+@ISA = qw(Exporter DynaLoader QWidget);
+@EXPORT = qw(%Echo);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QLineEdit $VERSION;
 
 1;
@@ -30,11 +32,30 @@ Inherits QWidget.
 
 new,
 deselect,
+echoMode,
+frame,
+hasMarkedText,
+markedText,
 maxLength,
 selectAll,
+setEchoMode,
+setFrame,
 setMaxLength,
 setText,
 text
+
+=head2 Overridden functions
+
+focusInEvent,
+focusOutEvent,
+keyPressEvent,
+mouseDoubleClickEvent,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent,
+paintEvent,
+resizeEvent,
+timerEvent
 
 =head1 DESCRIPTION
 

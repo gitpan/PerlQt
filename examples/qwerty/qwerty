@@ -2,10 +2,14 @@
 use Qt;
 use Editor;
 
+$e = new Editor;
+$e->resize(400, 400);
+$e->show();
+
 for(@ARGV) {
-    $e = new Editor->setImmortal;
+    $e = new Editor;
     $e->resize(400, 400);
-    $e->load($_);
+    $e->loadFile($_);
     $e->show();
 }
 $qApp->connect($qApp, 'lastWindowClosed()', 'quit()');

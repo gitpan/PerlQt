@@ -10,7 +10,7 @@ require QDialog;
 
 @ISA = qw(DynaLoader QDialog);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QFileDialog $VERSION;
 
 1;
@@ -36,6 +36,10 @@ rereadDir,
 selectedFile,
 setDir
 
+=head2 Overridden functions
+
+resizeEvent
+
 =head1 DESCRIPTION
 
 What you see is what you get.
@@ -43,7 +47,7 @@ What you see is what you get.
 =head1 CAVEATS
 
 Implementing QDir is not on my todo list. I may provide a dir-name stub,
-but nothing good is likely before PerlQt-1.00. Get used to it.
+but nothing good is likely. Get used to it.
 
 =head1 AUTHOR
 

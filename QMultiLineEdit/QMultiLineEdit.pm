@@ -11,7 +11,7 @@ require QTableView;
 
 @ISA = qw(DynaLoader QTableView);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QMultiLineEdit $VERSION;
 
 1;
@@ -36,16 +36,33 @@ append,
 atBeginning,
 atEnd,
 autoUpdate,
+backspace,
 clear,
 copyText,
+cursorDown,
+cursorLeft,
+cursorRight,
+cursorUp,
 cut,
+del,
 deselect,
+end,
 getCursorPosition,
+getString,
+hasMarkedText,
+home,
 insertAt,
+insertChar,
 insertLine,
 isOverwriteMode,
 isReadOnly,
+killLine,
+lineLength,
+markedText,
+newLine,
 numLines,
+pageDown,
+pageUp,
 paste,
 removeLine,
 selectAll,
@@ -55,7 +72,27 @@ setOverwriteMode,
 setReadOnly,
 setText,
 text,
-textLine
+textLine,
+textWidth
+
+=head2 Overridable functions
+
+backspace,
+cursorDown,
+cursorLeft,
+cursorRight,
+cursorUp,
+del,
+end,
+home,
+insertAt,
+insertChar,
+insertLine,
+killLine,
+newLine,
+pageDown,
+pageUp,
+removeLine
 
 =head1 DESCRIPTION
 

@@ -13,7 +13,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget QRangeControl);
 @EXPORT = qw(%Orientation %Tick);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QSlider $VERSION;
 
 1;
@@ -33,16 +33,41 @@ Inherits QWidget and QRangeControl.
 
 new,
 addStep,
+drawTicks,
+drawWinGroove,
 orientation,
+paintSlider,
 setOrientation,
+setTickInterval,
 setTickmarks,
 setTracking,
 setValue,
 sliderRect,
-subtractSteps,
+subtractStep,
+thickness,
 tickInterval,
 tickmarks,
 tracking
+
+=head2 Overridable functions
+
+paintSlider,
+setTickInterval,
+setTickmarks,
+thickness
+
+=head2 Overridden functions
+
+keyPressEvent,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent,
+paintEvent,
+rangeChange,
+resizeEvent,
+setPalette,
+sizeHint,
+valueChange
 
 =head1 DESCRIPTION
 

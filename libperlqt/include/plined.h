@@ -14,6 +14,8 @@
 #include "qlined.h"
 #include "virtual.h"
 
+typedef QLineEdit::EchoMode QLineEdit__EchoMode;
+
 class PLineEdit : public QLineEdit, public PLineEdit_virtualize {
     QLineEdit_virtual_functions
 public:

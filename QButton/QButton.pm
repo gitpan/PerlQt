@@ -11,7 +11,7 @@ require QWidget;
 
 @ISA = qw(DynaLoader QWidget);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QButton $VERSION;
 
 1;
@@ -31,21 +31,47 @@ Requires QPixmap.
 
 =head2 Member functions
 
-new
+new,
+autoRepeat,
+autoResize,
+drawButton,
+drawButtonLabel,
+hitButton,
+isDown,
+isOn,
+isToggleButton,
+pixmap,
+setAutoRepeat,
+setAutoResize,
+setDown,
+setOn,
+setPixmap,
+setText,
+setToggleButton,
+text
+
+=head2 Overridable functions
+
+drawButton,
+drawButtonLabel,
+hitButton
+
+=head2 Overridden functions
+
+focusInEvent,
+focusOutEvent,
+keyPressEvent,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent
 
 =head1 DESCRIPTION
 
-=over 4
-
-=item $button = QButton->new(parent = undef, name = undef)
-
-Direct interface.
-
-=back
+What you see is what you get.
 
 =head1 SEE ALSO
 
-QButton(3qt)
+qbutton(3qt)
 
 =head1 AUTHOR
 

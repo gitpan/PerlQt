@@ -1,5 +1,11 @@
 Revision history for Perl extension QPainter.
 
+0.05  Wed Apr 30 14:55:30 1997
+	- added redirect, flush, brush, a new constructor prototype
+
+0.05  Mon Apr 28 21:01:04 1997
+	- added drawPicture
+
 0.03  Mon Apr 14 17:15:17 1997
 	- changed from exporting the $Align* constants to exporting %Align
 

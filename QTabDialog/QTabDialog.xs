@@ -52,6 +52,10 @@ QTabDialog::setDefaultButton(text = "Defaults")
     char *text
 
 void
+QTabDialog::setOKButton(text = "OK")
+    char *text
+
+void
 QTabDialog::setTabEnabled(name, enable)
     char *name
     bool enable

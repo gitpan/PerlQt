@@ -76,7 +76,7 @@ SV *objectify_ptr(void *ptr, char *clname, int delete_on_destroy = 0) {
 }
 
 void *extract_ptr(SV *rv, char *clname) {
-    if(rv == &sv_undef) return NULL;
+    if(!SvOK(rv)) return NULL;
     HV *obj = (HV *)obj_check(rv);
     SV *THIS = safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element");
 

@@ -15,7 +15,7 @@
 inline void init_enum() {
     HV *hv = perl_get_hv("QBrush::Brush", TRUE | GV_ADDMULTI);
 
-    enumIV(hv, "NoBrush", NoBrush);
+    enumIV(hv, "None", NoBrush);
     STORE_key(Solid);
     STORE_key(Dense1);
     STORE_key(Dense2);

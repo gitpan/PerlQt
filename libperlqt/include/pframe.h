@@ -32,7 +32,8 @@ public:
     void virtual_frameChanged() { QFrame::frameChanged(); }
     void virtual_paintEvent(QPaintEvent *e) { QFrame::paintEvent(e); }
     void virtual_resizeEvent(QResizeEvent *e) { QFrame::resizeEvent(e); }
-    void virtual_setFrameRect(const QRect &r) { QFrame::setFrameRect(r); }
+
+    void protected_setFrameRect(const QRect &r) { QFrame::setFrameRect(r); }
 };
 
 #endif  // PFRAME_H

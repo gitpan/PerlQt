@@ -175,7 +175,7 @@ sub paintShot {
     my $p = shift;
 
     $p->setBrush($black);
-    $p->setPen($Pen{NoPen});
+    $p->setPen($Pen{None});
     $p->drawRect($self->shotRect());
 }
 
@@ -210,7 +210,7 @@ sub paintCannon {
 
     $tmp->begin($pix);
     $tmp->setBrush($blue);
-    $tmp->setPen($Pen{NoPen});
+    $tmp->setPen($Pen{None});
 
     $tmp->translate(0, $pix->height() - 1);
     $tmp->drawPie(new QRect(-35, -35, 70, 70), 0, 90*16);

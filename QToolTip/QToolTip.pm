@@ -7,7 +7,7 @@ require DynaLoader;
 
 @ISA = qw(DynaLoader);
 
-$VERSION = '0.01';
+$VERSION = '1.00';
 bootstrap QToolTip $VERSION;
 
 1;
@@ -22,6 +22,19 @@ QToolTip - Interface to the Qt QToolTip and QToolTipGroup classes
 =head1 SYNOPSIS
 
 C<use QToolTip;>
+
+=head2 QToolTip
+
+=head2 Member functions
+
+add,
+remove
+
+=head2 QToolTipGroup
+
+=head2 Member functions
+
+new
 
 =head1 DESCRIPTION
 

@@ -13,7 +13,7 @@ require QPixmap;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Brush);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QBrush $VERSION;
 
 1;
@@ -48,7 +48,7 @@ As direct an interface as humanly possible.
 The C<%Brush> hash is exported into the user's namespace. It contains
 the BrushStyle constants. Since there is no chance for namespace pollution,
 all C<%Brush> elements ending in C<Pattern> have been truncated so as to
-remove the C<Pattern>.
+remove the C<Pattern>. C<NoBrush> has been changed to C<$Brush{None}>.
 
 =head1 SEE ALSO
 

@@ -1,6 +1,8 @@
 package Editor;
 
 use Qt;
+use QEvent;
+use QFileDialog;
 use QMenuBar;
 use QMultiLineEdit;
 use QPopupMenu;
@@ -58,8 +60,10 @@ sub loadFile {
     $e->setAutoUpdate(0);
     $e->clear();
 
-    $e->append($_) while defined($_ = <FILE>);
-
+    while(<FILE>) {
+	chomp;
+	$e->append($_);
+    }
     close(FILE);
 
     $e->setAutoUpdate(1);

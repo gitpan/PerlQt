@@ -10,7 +10,7 @@ require QApplication;
 @ISA = qw(Exporter);
 @EXPORT = qw($qApp &qRound);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 
 $qApp = new QApplication;
 

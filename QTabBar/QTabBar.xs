@@ -28,17 +28,57 @@ PTabBar::new(parent, name)
     char *name
 
 int
-QTabBar::addTab(tab)
-    QTab *tab
+QTabBar::currentTab()
 
 bool
 QTabBar::isTabEnabled(id)
     int id
 
+int
+QTabBar::keyboardFocusTab()
+
 void
 QTabBar::setTabEnabled(id, enable)
     int id
     bool enable
+
+
+MODULE = QTabBar	PACKAGE = QTabBar	PREFIX = virtual_
+
+int
+pTabBar::virtual_addTab(tab)
+    QTab *tab
+
+void
+pTabBar::virtual_keyPressEvent(event)
+    QKeyEvent *event
+
+void
+pTabBar::virtual_mousePressEvent(event)
+    QMouseEvent *event
+
+void
+pTabBar::virtual_mouseReleaseEvent(event)
+    QMouseEvent *event
+
+void
+pTabBar::virtual_paint(p, tab, b)
+    QPainter *p
+    QTab *tab
+    bool b
+
+void
+pTabBar::virtual_paintEvent(event)
+    QPaintEvent *event
+
+QTab *
+pTabBar::virtual_selectTab(p)
+    QPoint *p
+    CODE:
+    RETVAL = THIS->virtual_selectTab(*p);
+    OUTPUT:
+    RETVAL
+
 
 MODULE = QTabBar		PACKAGE = QTab
 

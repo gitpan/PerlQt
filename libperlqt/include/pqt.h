@@ -43,6 +43,7 @@ extern "C" {
 
 #define pextract(type, elem) (type *)extract_ptr(ST(elem), MSTR(elem))
 
+typedef char *pstring;
 extern SV *objectify_ptr(void *ptr, char *clname, int delete_on_destroy = 0);
 extern void *extract_ptr(SV *obj, char *clname);
 extern SV *rv_check(SV *rv, char *errmsg = "Not a reference");

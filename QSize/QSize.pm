@@ -10,7 +10,7 @@ require QPoint;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '0.03';
+$VERSION = '1.00';
 bootstrap QSize $VERSION;
 
 1;

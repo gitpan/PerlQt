@@ -13,7 +13,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget);
 @EXPORT = qw(%Policy);
 
-$VERSION = '0.02';
+$VERSION = '1.00';
 bootstrap QComboBox $VERSION;
 
 1;
@@ -36,13 +36,16 @@ Requires QPixmap.
 new,
 autoResize,
 changeItem,
+clear,
 count,
 currentItem,
+currentText,
 insertionPolicy,
 insertItem,
 insertStrList,
 maxCount,
 pixmap,
+popup,
 removeItem,
 setAutoResize,
 setCurrentItem,
@@ -51,6 +54,21 @@ setMaxCount,
 setSizeLimit,
 sizeLimit,
 text
+
+=head2 Overridden functions
+
+keyPressEvent,
+mouseDoubleClickEvent,
+mouseMoveEvent,
+mousePressEvent,
+mouseReleaseEvent,
+paintEvent,
+resizeEvent,
+setBackgroundColor,
+setEnabled,
+setFont,
+setPalette,
+sizeHint
 
 =head1 DESCRIPTION
 
@@ -63,7 +81,18 @@ argument to -1 of you want it the items to be appended.
 =head1 EXPORTED
 
 The C<%Policy> hash is exported into the user's namespace. It contains
-all the constants that were referenced through QComboBox:: in C++.
+the insertion policy constants. I couldn't resist changing everything,
+so here's some sample code...
+
+    Was: QComboBox::NoInsertion
+    Now: $Policy{None}
+    Was: QComboBox::AtTop
+    Now: $Policy{Top}
+    Was: QComboBox::AfterCurrent
+    Now: $Policy{After}
+
+The other constants are consistent with these. And when all else fails,
+there's always C<keys %Policy>.
 
 =head1 CAVEATS
 

@@ -22,6 +22,9 @@ inline void init_enum() {
     STORE_key(RightToLeft);
     STORE_keys(TopToBottom, Down);
     STORE_keys(BottomToTop, Up);
+
+    SV *sv = perl_get_sv("QLayout::unlimited", TRUE | GV_ADDMULTI);
+    sv_setiv(sv, QLayout::unlimited);
 }
 
 MODULE = QLayout		PACKAGE = QLayout
@@ -48,6 +51,9 @@ QLayout::freeze(...)
 	int h = SvIV(ST(2));
 	CODE:
 	THIS->freeze(w, h);
+
+QWidget *
+QLayout::mainWidget()
 
 void
 QLayout::setMenuBar(w)

@@ -9,6 +9,17 @@
 
 #include "plined.h"
 #include "pqt.h"
+#include "enum.h"
+
+#define STORE_key(key) enumIV(hv, MSTR(key), QLineEdit::key)
+
+inline void init_enum() {
+    HV *hv = perl_get_hv("QLineEdit::Echo", TRUE | GV_ADDMULTI);
+
+    enumIV(hv, "None", QLineEdit::NoEcho);
+    STORE_key(Normal);
+    STORE_key(Password);
+}
 
 MODULE = QLineEdit		PACKAGE = QLineEdit
 
@@ -22,11 +33,25 @@ PLineEdit::new(parent, name)
 void
 QLineEdit::deselect()
 
+QLineEdit::EchoMode
+QLineEdit::echoMode()
+
+bool
+QLineEdit::frame()
+
 int
 QLineEdit::maxLength()
 
 void
 QLineEdit::selectAll()
+
+void
+QLineEdit::setEchoMode(mode)
+   QLineEdit::EchoMode mode
+
+void
+QLineEdit::setFrame(b)
+    bool b
 
 void
 QLineEdit::setMaxLength(length)

@@ -8,7 +8,7 @@ require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 bootstrap QObject $VERSION;
 
 sub find_superclass {
@@ -116,8 +116,6 @@ sub import {
 	if(/^(\w+)/) {
 	    addSignal("$caller"."::$1");
 	    $signals{$caller}{$1} = $_;
-#	    print "\$signals{$caller}{$1} = $_;\n";
-#	    print "ADDING $1 = $_ to $caller\n";
 	}
     }
 
@@ -165,7 +163,8 @@ removeChild,
 removeEventFilter,
 setName,
 signalsBlocked,
-startTimer
+startTimer,
+timerEvent
 
 =head2 Overridable functions
 
@@ -209,16 +208,16 @@ Same warning about SIGNAL() and SLOT() as above.
 
 Signals and slots are implemented in a limited way at the moment. You may
 use no-arg signals and slots freely, as well as 1 and 2 integer argument
-signals and slots.
+signals and slots, and string signals.
 
 The declaration of signals and slots is done through the usage
 of 'use signals' and 'use slots'. Any classes which have QObject
 in their inheritance tree are free to use signals/slots after their
-superclass has been included via require/use.
+superclass has been included via use.
 
 =over 4
 
-=item use signals 'sig1()', ..., 'sigx(int,int)'
+=item use signals 'sig1()', ..., 'sigx(int,string)'
 
 The arguments to C<use signals> must be strings representing the signal
 prototypes I<excluding> the object parameter. You may use C<qw()> to quote
@@ -237,7 +236,7 @@ where the emit keyword is just as void. When you emit a signal, you I<must>
 call it as a method-call C<$self-E<gt>signal()>, and not as C<'signal()'>
 or C<signal()> because it is not a string and it is not a normal function.
 
-=item use slots 'slot1()', ..., 'slotx(int)'
+=item use slots 'slot1(int)', ..., 'slotx(const string, int)'
 
 The arguments to C<use slots> must be strings representing the prototypes
 of the slots you want to declare I<excluding> the object parameter. The slot
@@ -250,12 +249,9 @@ connect any signal, Perl or C++, to it.
 
 =head1 BUGS
 
-Signals and slots are seriously crippled. They do not check their arguments,
-they only allow a couple of I<integer only> arguments, and there's a
-serious memory-leak which I can only attribute to signals and slots
-or to virtual member-function overrides. At the moment, PerlQt signals
-and slots are little more than proof-of-concept and it will take
-significant effort to get it working right. Any suggestions are welcome.
+Signals and slots still have a way to go before achieving a state which can
+be considered 'good'. What is available now is good enough for many uses,
+but time and attention must be paid to signals and slots.
 
 =head1 SEE ALSO
 

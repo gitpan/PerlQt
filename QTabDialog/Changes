@@ -1,5 +1,8 @@
 Revision history for Perl extension QTabDialog.
 
+0.03  Wed Apr 30 18:29:53 1997
+	- added setOKButton
+
 0.02  Fri Apr 25 15:50:23 1997
 	- added virtual functions
 

@@ -8,7 +8,7 @@ require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '0.04';
+$VERSION = '1.00';
 bootstrap QRangeControl $VERSION;
 
 1;
@@ -27,16 +27,27 @@ C<use QRangeControl;>
 new,
 addLine,
 addPage,
+directSetValue,
 lineStep,
 maxValue,
 minValue,
 pageStep,
+prevValue,
+rangeChange,
 setRange,
 setSteps,
 setValue,
+stepChange,
 subtractLine,
 subtractPage,
-value
+value,
+valueChange
+
+=head2 Overridable functions
+
+rangeChange,
+stepChange,
+valueChange
 
 =head1 DESCRIPTION
 
