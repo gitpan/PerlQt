@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 package MyWidget;
 
-use Qt qw($app %Weight);
+use Qt qw(%app %Weight);
 
 use LCDRange;
 
@@ -44,7 +44,7 @@ sub resizeEvent {
 
 package main;
 
-use Qt 2.0;
+use Qt;
 
 $w = MyWidget->new;
 $w->setGeometry(100, 100, 400, 400);

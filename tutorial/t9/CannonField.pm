@@ -1,6 +1,6 @@
 package CannonField;
 
-use Qt qw(%Pen %Color);
+use Qt (%Pen %Color);
 
 use signals 'angleChanged(int)';
 use slots 'setAngle(int)';

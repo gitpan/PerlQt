@@ -80,11 +80,9 @@ my($Sourcefile, $Headerfile);
 
 my(@ClassList, %ConstantList);
 
-my(@Modules, @I, @Include, @l, @L, @S, @r, @c);
+my(@Modules, @I, @Include, @l, @L, @S, @r);
 my($verbose, $silent, $pedantic);
 my $Indent;
-
-my $Method;
 
 &main();    # Start of the program, bottom of the application
 
@@ -659,8 +657,6 @@ sub arguments {
 		my $a = $arg ? $arg : $args[++$i];
 		$a = "pqt_$a";
 		push @l, $a;
-	    } elsif($opt eq 'c') {
-		push @c, $arg ? $arg : $args[++$i];
             } else {
                 push @Modules, $args[$i];
             }
@@ -747,29 +743,13 @@ sub startmakefile {
 
     print MAKEFILE "use ExtUtils::MakeMaker;\n";
     print MAKEFILE "require 'perlqt.conf';\n\n";
+    my $dir = cwd;
 
     print MAKEFILE "WriteMakefile(\n";
     print MAKEFILE "    'NAME' => '$Module',\n";
-    print MAKEFILE "    'VERSION_FROM' => 'perlqt.conf',\n";
+    print MAKEFILE "    'VERSION' => 1.0,\n";
     print MAKEFILE "    'CONFIGURE' => sub { return \\%PigConfig },\n";
     print MAKEFILE "    'OBJECT' => q{\n";
-
-
-    for my $dir (@c) {
-	my $path = ($dir =~ m!^/!) ? $dir : "../../$dir";
-	next unless opendir(PQTDIR, $dir);
-	my $file;
-	while(defined($file = readdir(PQTDIR))) {
-	    if($file =~ /^(.*)\.c$/) {
-		symlink("$path/$file", "$Sourcedir/$file");
-		manifest $file;
-		makefile $1;
-	    }
-	}
-	closedir(PQTDIR);
-    }
-
-    return 1;
 }
 
 sub endmakefile {
@@ -779,7 +759,7 @@ sub endmakefile {
 
 sub startmodulecode {
     unless(open MODULEEXPORT, ">$Sourcedir/$Module.entry.c") {
-	warn "Cannot open $Sourcedir/$Module.entry.c for writing: $!";
+	warn "Cannot open $Sourcedir/$Module.entry.c fro writing: $!";
 	return;
     }
 
@@ -1641,11 +1621,7 @@ sub branch_condition {
     my $list = shift;
     my %list;
 
-    if($Method eq 'new') {
-	return 0 unless $idx < @$pm;
-    } else {
-	return 0 unless $idx < $#$pm;
-    }
+    return 0 unless $idx < $#$pm;
 
     for my $item (@$list) { $list{$item}++ }
     source "{\n";
@@ -1661,7 +1637,7 @@ sub branching_conditional {
     my $pm = shift;
     my $idx = shift;
     my $list = shift;
-    my $info = branched_filter(($Method eq 'new') ? $pm->[$idx-1] : $pm->[$idx], $list);
+    my $info = branched_filter($pm->[$idx], $list);
     my $else = 0;
 
     source i."unsigned int pqti$idx = pqt_argument_info($idx);\n";
@@ -1825,7 +1801,6 @@ sub branching_conditional {
 
 sub write_whichproto {
     my $protos = shift;
-    my $method = $protos->[0]{'Name'};
     my @argcnt;
 
     for(my $item = 0; $item < @$protos; $item++) {
@@ -1944,9 +1919,7 @@ sub write_whichproto {
 
 	    }
 
-	    $Method = $protos->[0]{'Name'};
-	    branching_conditional(\@protomatrix, ($Method eq 'new') ? 1 : 0, \%x);
-
+	    branching_conditional(\@protomatrix, 0, \%x);
 	    $Indent--;
 	    source i."}\n";
 	}

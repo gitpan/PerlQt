@@ -1,6 +1,6 @@
 package CannonField;
 
-use Qt qw(%Align %Color %Pen %Weight);
+use Qt qw(%Align %Color %Pen);
 
 use signals 'hit()', 'missed()', 'angleChanged(int)', 'forceChanged(int)';
 use slots 'setAngle(int)', 'setForce(int)', 'shoot()', 'newTarget()';

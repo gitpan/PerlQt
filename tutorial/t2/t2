@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Qt 2.0 qw($app %Weight);
+use Qt qw($app %Weight);
 
 $quit = QPushButton->new('Quit');
 $quit->resize(75, 30);

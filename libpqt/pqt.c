@@ -237,20 +237,6 @@ double pqt_argument_double(double pqt1) {
     return pqtr;
 }
 
-float pqt_argument_float() {
-    PQT_dXSARGS;
-    float pqtr = (float)SvNV(PQT_GOODST);
-    pqtindex++;
-    return pqtr;
-}
-
-float pqt_argument_float(float pqt1) {
-    PQT_dXSARGS;
-    float pqtr = PQT_IFARG((float)SvNV(PQT_ST));
-    pqtindex++;
-    return pqtr;
-}
-
 bool pqt_argument_bool() {
     PQT_dXSARGS;
     bool pqtr = SvTRUE(PQT_GOODST) ? TRUE : FALSE;
@@ -291,14 +277,6 @@ char pqt_argument_char(char pqt1) {
     char pqtr = PQT_IFARG(SvOK(PQT_ST) ? *(SvPV(PQT_ST, na)) : 0);
     pqtindex++;
     return pqtr;
-}
-
-const char **pqt_argument_internal(const char **) {
-    return 0;
-}
-
-bool *pqt_argument_boolptr(bool *pqt1) {
-    return pqt1;
 }
 
 pqt_object_data *pqt_extract_object(SV *pqt1) {
@@ -393,7 +371,7 @@ void *pqt_argument_class_destructor(const char *pqt1) {
         return (void *)SvIV(&sv_undef);
     pqt_object_data *pqtd = pqt_extract_object(PQT_ST);
     pqtindex++;
-    return pqtd->pqtptr;
+    return pqt_cast_object(pqtd, pqt1);
 }
 
 void *pqt_argument_classref(const char *pqt1) {
@@ -668,10 +646,6 @@ void pqt_lastargument() {
 }
 
 void pqt_destroy_object(void *, class pqt_virtual *) {
-}
-
-void pqt_ambiguous(const char *pqt1, const char *pqt2) {
-    die("Ambiguous call to %s::%s", pqt1, pqt2);
 }
 
 bool pqt_can_delete() {

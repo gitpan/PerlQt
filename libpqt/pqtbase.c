@@ -248,28 +248,12 @@ static XS(PQT_import) {
 
 	    HV *pqt_newhv = newHV();
 	    SV *pqt_newsv;
-//printf("Looking for %s\n", pqt_export);
-	    if(pqt_info->pqt_type) {
-	        pqt_object_data *pqtd;
-		pqt_classinfolist *pqti = pqt_find_info(pqt_info->pqt_type);
-	        while(pqt_data->pqt_constant) {
-//printf("Trying to create $%s{%s} from %x\n", pqt_info->pqt_type, pqt_data->pqt_constant, pqt_data->pqt_value);
-		    pqt_newsv = pqt_create_object(pqt_info->pqt_type, pqtd);
-		    SvREADONLY_on(pqt_newsv);
-		    pqt_hv_store(pqt_newhv, pqt_data->pqt_constant, pqt_newsv);
-
-		    pqtd->pqtptr = (void *)pqt_data->pqt_value;
-		    pqtd->pqtinfo = pqti;
-		    pqtd->pqtflags = PQTOBJ_CONST;
-		    pqt_data++;
-	        }
-	    } else {
-	        while(pqt_data->pqt_constant) {
-		    pqt_newsv = newSViv(pqt_data->pqt_value);
-		    SvREADONLY_on(pqt_newsv);
-		    pqt_hv_store(pqt_newhv, pqt_data->pqt_constant, pqt_newsv);
-		    pqt_data++;
-		}
+	    while(pqt_data->pqt_constant) {
+	        pqt_newsv = newSViv(pqt_data->pqt_value);
+		SvREADONLY_on(pqt_newsv);
+	        pqt_hv_store(pqt_newhv, pqt_data->pqt_constant, pqt_newsv);
+//		warn("$%s{'%s'} = 0x%x (%d)\n", pqt_export + 1, pqt_data->pqt_constant, pqt_data->pqt_value, pqt_data->pqt_value);
+		pqt_data++;
 	    }
 
 	    SvREADONLY_on((SV *)pqt_newhv);
@@ -388,12 +372,6 @@ static XS(PQT_signals_import) {
         pqt_signals = newHV();
 	pqt_hv_store(pqthv_class_signals, pqt_caller, newRV((SV *)pqt_signals));
 	SvREFCNT_dec(pqt_signals);
-    }
-
-    {
-        SV *pqt_emit = sv_newmortal();
-	sv_setpvf(pqt_emit, "%s::emit", pqt_caller);
-	newXS(SvPVX(pqt_emit), PQT_signals_emit, __FILE__);
     }
 
     SV *pqt_proto, *pqt_crypt;
@@ -538,17 +516,12 @@ void pqt_load_module(const char *pqt1, pqt_classinfolist *pqt2, pqt_exportinfoli
     strcat(pqt_mem, "::import");
     newXS(pqt_mem, PQT_import, "pqtbase.c");
 
-    strcpy(pqt_mem, pqt1);
-    strcat(pqt_mem, "::VERSION");
-    sv_setpv(perl_get_sv(pqt_mem, TRUE | GV_ADDMULTI), XS_VERSION);
-
     delete [] pqt_mem;
 
     while(pqt3->pqt_hashname) {
         pqt_hv_store(pqthv_export_list, pqt3->pqt_hashname, newSViv((IV)pqt3));
 	pqt3++;
     }
-
 
     /*
     char *pqt_argv[] = { "PerlQt", 0 };

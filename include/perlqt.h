@@ -71,8 +71,6 @@ inline SV *pqt_create_object(const char *pqt1, pqt_object_data *&pqt2) {
     return sv_bless(pqtsv_obj, gv_stashpv((char *)pqt1, TRUE));
 }
 
-pqt_object_data *pqt_extract_object(SV *);
-
 pqt_classinfolist *pqt_find_info(const char *);
 SV *pqt_parse_proto(SV *pqtorigproto);
 

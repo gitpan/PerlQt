@@ -4,6 +4,5 @@ pqt.c
 pqt_v.c
 pqtbase.c
 pqtis.c
-pqtmeta.c
 pqtsigslot.c
 proto.c

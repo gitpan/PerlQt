@@ -3,7 +3,7 @@ require 'perlqt.conf';
 
 WriteMakefile(
     'NAME' => 'libpqt',
-    'VERSION_FROM' => 'perlqt.conf',
+    'VERSION' => 1.0,
     'CONFIGURE' => sub { return \%PigConfig },
     'OBJECT' => q{
 	pqtmeta$(OBJ_EXT)

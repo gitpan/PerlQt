@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Qt 2.0;
+use Qt;
 use GameBoard;
 
 $gb = new GameBoard;

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-use Qt 2.0;
+use Qt;
 
 $hello = QPushButton->new('Hello world!');
 $hello->resize(100, 30);

@@ -61,7 +61,7 @@ sub resizeEvent {
 
 package main;
 
-use Qt 2.0;
+use Qt;
 
 $w = MyWidget->new;
 $w->setGeometry(100, 100, 500, 355);

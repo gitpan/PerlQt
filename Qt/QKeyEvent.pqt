@@ -13,13 +13,6 @@ struct QKeyEvent : QEvent {
 } KeyEvent;
 
 %Key = (
-    CTRL	   => CTRL,
-    SHIFT	   => SHIFT,
-    ALT		   => ALT,
-    ASCII_ACCEL	   => ASCII_ACCEL,
-    Ctrl	   => CTRL,
-    Shift	   => SHIFT,
-    Alt		   => ALT,
     Escape	   => Key_Escape,
     Tab		   => Key_Tab,
     Backtab	   => Key_Backtab,
