@@ -110,6 +110,50 @@ it, specify:
 
  --without-Mesa
 
+=head2 How to install PerlQt with user rights
+
+To install PerlQt without super-user rights, simply follow this procedure:
+
+=over 4
+
+=item *
+
+Perform a normal configuration, specifying as prefix a directory where you have write permissions :
+
+ perl Makefile.PL --prefix=~
+
+The above would install the Smoke library in ~/lib and the puic binary in ~/bin
+
+=item *
+
+Reconfigure the Perl module so that it doesn't target the standard perl hierarchy:
+
+ cd PerlQt
+ perl Makefile.PL PREFIX=~
+ cd ..
+
+Beware : this is not the same Makefile.PL as above, but the one located in the ./PerlQt
+subdirectory
+
+=item *
+
+Compile and Install
+
+ make && make install
+
+In order to use such an installation, you must tell to Perl where to find this extern hierarchy.
+This can be done either on the command line:
+
+ perl -Mlib="~/local/lib/perl/5.x.x" program.pl
+
+or at the top of your program:
+
+ use lib qw( ~/local/lib/perl/5.x.x );
+
+"5.x.x" should be changed to whatever Perl version your system is running.
+
+=back
+
 =head1 Anatomy of PerlQt
 
 A typical Qt program using GUI components is based on an event loop.
@@ -507,7 +551,6 @@ slot with two arguments.
 
 =head1 RAD prototyping with Qt Designer and Puic
 
-
 =head2 Introduction
 
 As efficient and intuitive as Qt can be, building a complete GUI from scratch 
@@ -657,9 +700,45 @@ or
 
 =back
 
+=head1 More development tools
+
+PerlQt comes bundled with two simple programs that can help you to find your way through
+the Qt API:
+
+=head2 pqtapi
+
+pqtapi is a commandline driven introspection tool.
+
+ usage: pqtapi [-r <re>] [<class>]
+
+ options:
+        -r <re> : find all functions matching regular expression/keyword <re>
+        -i : together with -r, performs a case insensitive search
+        -v : print PerlQt and Qt versions
+        -h : print this help message
+
+e.g:
+
+ $>pqtapi -ir 'setpoint.* int'
+        void QCanvasLine::setPoints(int, int, int, int)
+        void QPointArray::setPoint(uint, int, int)
+
+=head2 pqtsh
+
+B<pqtsh> is a graphical shell that can be used to test the API interactively.
+It is fairly self explanatory and includes an interactive example (C<Help-E<gt>Example>)
+
+=for html
+<br/>
+<div class='image'><img src="../images/pqtsh.png"/></div>
+
+=head1 Known Limitations
+
+Templated classes aren't available yet (classes derived from templated classes are).
+
 =head1 Credits
 
-PerlQt-3 is (c) 2002 Ashley Winters
+PerlQt-3 is (c) 2002 Ashley Winters (and (c) 2003 Germain Garand)
 
 Kalyptus and the Smoke generation engine are (c) David Faure and Richard Dale
 
@@ -668,11 +747,11 @@ Puic is (c) TrollTech AS., Phil Thompson and Germain Garand,
 The mentioned software is released under the GNU Public Licence v.2 or later.
 
 
-=head1 Appendix 1 : How to use Qt Documentation
+=head1 Appendix 1 : How to use Qt's Documentation
 
 Whenever you want to use a class/method described in Qt's
-L<documentation|"http://doc.trolltech.com"> from PerlQt, you
-need to follow some simple translation rules.
+L<documentation|"http://doc.trolltech.com"> (see also the 'assistant' program bundled with Qt)
+from PerlQt, you need to follow some simple translation rules.
 
 =over 4
 
@@ -794,9 +873,44 @@ PerlQt :
 
  $apple_plus_orange = &Qt::Fruit::Apple + &Qt::Fruit::Orange;
 
+=item Operators
+
+Within PerlQt, B<operators overloading> works transparently.
+If a given operator is overloaded in a Qt class (which means using it triggers a custom method)
+it will behave identically in PerlQt.
+Beware though that due to limitations of the Smoke binding library, not all overloaded operators are
+available in PerlQt.
+You can check the availability of a given operator by using the pqtapi program.
+Also, due to outstanding differences between C++'s and Perl's object paradigm, the copy constructor operator (a.k.a '=')
+has been disabled.
+
+e.g-1: '+=' overload
+
+ $p1 = Qt::Point(10, 10)
+ $p2 = Qt::Point(30,40)
+ $p2 += $p1; # $p2 becomes (40,50)
+ 
+e.g-2: '<<' overload
+
+ $f = Qt::File("example");
+ $f->open( IO_WriteOnly ); # see 'Constants' below
+ $s = Qt::TextStream( $f );
+ $s << "What can I do with " << 12 << " apples?";
+
+=item Constants
+
+Qt doesn't use many constants, but there is at least one place where they are used : for setting 
+Input/Output flags on files.
+In order to avoid the namespace pollution induced by global constants, PerlQt group them in the B<Qt::constants> module.
+For instance, requesting the importation of all IO constants into the current namespace would be done with:
+
+ use Qt::constants qw(:IO);
+
+You may also import specific symbols:
+
+ use Qt::constants qw( IO_ReadOnly IO_WriteOnly );
 
 =back
-
 
 =head1 Appendix 2 : Internationalization
 
@@ -833,21 +947,23 @@ Once a string contains utf8, you can convert it back to any locale by setting up
 
 Or, with Perl >= 5.8.0, you may use Perl's B<Encode> modules (see C<perldoc Encode>).
 
+=head3 disabling utf-8
+
+Developers who don't want to use UTF-8 or want to temporarily disable UTF-8 marshalling
+for handling legacy programs may use the B<use bytes> pragma (and the corresponding B<no bytes>).
+
+Within the scope of this pragma, QStrings are marshalled back to ISO-Latin1 (default) or to your locale
+(if B<use locale> has been set).
+
+Frivole use of this pragma is strongly discouraged as it ruins worldwide standardization efforts.
+
 =head1 Appendix 3 : Debugging Channels
 
 The B<Qt::debug> module offers various debugging channels/features.
 
-You may enable or disable it scope-wise :
-
  use Qt::debug;
- <...>
- {
-   no Qt::debug;
-   <...>
- }
- <...>
+
  use Qt::debug qw|calls autoload verbose|;
- <...>
 
 With the simple C<use Qt::debug> statement, the B<verbose> and B<ambiguous> channels are activated.
 If you specify a list of channels within the use statement, then only the specified channels will be enabled.
@@ -923,7 +1039,7 @@ PerlQt will translate it to an array reference containing all the object's strin
 In the other way, instead of providing a Qt::StringList object as an argument of a method, one would simply
 provide the reference to an array of Perl strings.
 
-Here is the list of Marshallers as of PerlQt-3.004 :
+Here is the list of Marshallers as of PerlQt-3.006 :
 
  -----------------------------------------------------------------
  float, double                  <=>       Perl real (NV)

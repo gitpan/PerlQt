@@ -28,6 +28,10 @@
 #include "perlqt.h"
 #include "smokeperl.h"
 
+#ifndef HINT_BYTES
+#define HINT_BYTES HINT_BYTE
+#endif
+
 int smokeperl_free(pTHX_ SV *sv, MAGIC *mg) {
     smokeperl_object *o = (smokeperl_object*)mg->mg_ptr;
 
@@ -439,8 +443,15 @@ static void marshall_QString(Marshall *m) {
 	{
 	    QString *s = (QString*)m->item().s_voidp;
 	    if(s) {
-		sv_setpv_mg(m->var(), (const char *)s->utf8());
-                SvUTF8_on(m->var());                                
+                if(!(PL_hints & HINT_BYTES))
+                {
+		    sv_setpv_mg(m->var(), (const char *)s->utf8());
+                    SvUTF8_on(m->var());
+                }
+                else if(PL_hints & HINT_LOCALE)
+                    sv_setpv_mg(m->var(), (const char *)s->local8Bit());
+                else
+                    sv_setpv_mg(m->var(), (const char *)s->latin1());
             }
 	    else
 		sv_setsv_mg(m->var(), &PL_sv_undef);
@@ -452,6 +463,18 @@ static void marshall_QString(Marshall *m) {
 	m->unsupported();
 	break;
     }
+}
+
+static const char *not_ascii(const char *s, uint &len)
+{
+    bool r = false;
+    for(; *s ; s++, len--)
+      if((uint)*s > 0x7F)
+      { 
+        r = true; 
+        break;
+      }
+    return r ? s : 0L;   
 }
 
 static void marshall_QCString(Marshall *m) {
@@ -472,13 +495,18 @@ static void marshall_QCString(Marshall *m) {
 	    QCString *s = (QCString*)m->item().s_voidp;
 	    if(s) {
 		sv_setpv_mg(m->var(), (const char *)*s);
-                #if PERL_VERSION == 6 && PERL_SUBVERSION == 0
-                QTextCodec* c = QTextCodec::codecForName("utf8");
-                if(c->heuristicContentMatch((const char *)*s, s->length()) >= 0)
-                #else
-                if(is_utf8_string((U8 *)(const char *)*s, s->length()))
-                #endif
+                const char * p = (const char *)*s; 
+                uint len =  s->length();
+                if(not_ascii(p,len))
+                {
+                  #if PERL_VERSION == 6 && PERL_SUBVERSION == 0
+                  QTextCodec* c = QTextCodec::codecForMib(106); // utf8
+                  if(c->heuristicContentMatch(p,len) >= 0)
+                  #else
+                  if(is_utf8_string((U8 *)p,len))
+                  #endif
                     SvUTF8_on(m->var());
+                }
             }
             else
 		sv_setsv_mg(m->var(), &PL_sv_undef);
@@ -707,12 +735,26 @@ void marshall_QStringList(Marshall *m) {
 		sv_setsv_mg(m->var(), rv);
 		SvREFCNT_dec(rv);
 	    }
-
-	    for(QStringList::Iterator it = stringlist->begin();
-		it != stringlist->end();
-		++it) {
+            if(!(PL_hints & HINT_BYTES))
+                for(QStringList::Iterator it = stringlist->begin();
+                    it != stringlist->end();
+                    ++it) {
                     SV *sv = newSVpv((const char *)(*it).utf8(), 0);
                     SvUTF8_on(sv);
+                    av_push(av, sv);
+                }
+            else if(PL_hints & HINT_LOCALE)
+                for(QStringList::Iterator it = stringlist->begin();
+                    it != stringlist->end();
+                    ++it) {
+                    SV *sv = newSVpv((const char *)(*it).local8Bit(), 0);
+                    av_push(av, sv);
+                }
+            else
+	        for(QStringList::Iterator it = stringlist->begin();
+		    it != stringlist->end();
+		    ++it) {
+                    SV *sv = newSVpv((const char *)(*it).latin1(), 0);
 		    av_push(av, sv);
                 }
 	    if(m->cleanup())

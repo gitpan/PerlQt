@@ -884,7 +884,7 @@ Optional Packages:
   --with-qt-includes=DIR  where the Qt includes are.
   --with-qt-libraries=DIR where the Qt library is installed.
   --with-x                use the X Window System
- --with-threshold=ARG        Qt tests threshold ARG=0..15 Default:10 Lower=more tests
+ --with-threshold=ARG        Qt tests threshold ARG=0..15 Default:14 Lower=more tests
 
 Some influential environment variables:
   CC          C compiler command
@@ -1538,7 +1538,7 @@ fi
 
 # Define the identity of the package.
 PACKAGE=PerlQt
-VERSION=3.004
+VERSION=3.006
 
 cat >>confdefs.h <<_ACEOF
 #define PACKAGE "$PACKAGE"
@@ -20338,7 +20338,7 @@ echo "$as_me:20337: checking for Qt" >&5
 echo $ECHO_N "checking for Qt... $ECHO_C" >&6
 
 if test "x$kde_use_qt_emb" != "xyes"; then
-LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
+LIBQT="$LIBQT $X_PRE_LIBS $LIBXINERAMA -lXext -lX11 $LIBSM $LIBSOCKET"
 fi
 ac_qt_includes=NO ac_qt_libraries=NO ac_qt_bindir=NO
 qt_libraries=""
@@ -23491,7 +23491,7 @@ if test "${with_threshold+set}" = set; then
   withval="$with_threshold"
    qt_test_threshold="$withval"
 else
-   qt_test_threshold=10
+   qt_test_threshold=14
 
 fi;
 

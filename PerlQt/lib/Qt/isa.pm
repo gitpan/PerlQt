@@ -32,6 +32,7 @@ sub import {
     *{ $caller . '::import' } = sub {
 	my $name = shift;    # classname = function-name
 	my $incaller = (caller)[0];
+        $incaller = (caller(1))[0] if $incaller eq 'if'; # work-around bug in package 'if'  pre 0.02
         (my $cname = $name) =~ s/.*::// and do
         { 
             *{ "$name" } = sub {
@@ -72,6 +73,9 @@ sub import {
 	*{ "$caller\::AUTOLOAD" } = sub { &$autosub };
     }
     Qt::_internal::installthis($caller);
+
+    # operator overloading
+    *{ " $caller\::ISA" } = ["Qt::base::_overload"];
 }
 
 1;

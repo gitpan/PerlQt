@@ -17,7 +17,7 @@ sub import {
     my $parent = ${ $caller . '::ISA' }[0];
     my $parent_qt_invoke = $parent . '::qt_invoke';
 
-    Qt::_internal::installqt_invoke($caller . '::qt_invoke');
+    Qt::_internal::installqt_invoke($caller . '::qt_invoke') unless defined &{ $caller. '::qt_invoke' };
 
 #    *{ $caller . '::qt_invoke' } = sub {
 #	my $meta = \%{ $caller . '::META' };
@@ -65,6 +65,7 @@ sub import {
 	$slot->{mocargs} = $mocargs;
 	$slot->{argcnt} = $argcnt;
     }
+    @_ and $meta->{changed} = 1;
 }
 
 1;

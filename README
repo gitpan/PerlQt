@@ -4,8 +4,8 @@ C++ GUI toolkit.
 
 See INSTALL for quick installation instructions
 
-See doc/index.html for installation procedure and detailed 
-explanations.
+See doc/en/index.html or doc/fr/index.html for installation procedure and detailed 
+documentation.
 
 See also PerlQt/tutorials and PerlQt/examples to get started.
 

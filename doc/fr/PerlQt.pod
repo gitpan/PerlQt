@@ -1,12 +1,12 @@
 
 =head1 Programmer avec PerlQt
 
-B<Germain Garand> traduit par B<Stéphane Payrard>
+B<Germain Garand> traduit par B<Stéphane Payrard>, révisé et augmenté par l'auteur.
 
 Ce document décrit l'interface Perl au toolkit Qt 3.x. Contacter
 l'auteur à <germain@ebooksfrance.com> ou le traducteur à
 <stef@mongueurs.net>.  Vous trouverez le document original sur le site
-<perlqt.infonium.com|"http://perlqt.infonium.com">
+L<perlqt.sourceforge.net|"http://perlqt.sourceforge.net">
 
 =head1 Introduction
 
@@ -64,6 +64,10 @@ une version précompilée de ce module existe pour votre système. Mais
 perlQt inclut une copie, donc la version précompilée n'est pas
 nécessaire.
 
+=item *
+
+Les outils GNU : automake(>=1.5), autoconf (>=2.13), aclocal...
+
 =back
 
 L'installation de Perl et de Qt sont en dehors du sujet du présent
@@ -71,9 +75,13 @@ document. Se référer aux documentations respectives de ces logiciels.
 
 =head2 Compilation de PerlQt
 
-Suivez simplement la procédure standard du système GNU Autoconf.
+Les instructions de cette section présupposent que le répertoire courant est 
+le répertoire racine de l'arborescence des sources de PerlQt.
 
- ./configure
+PerlQt utilise le système GNU Autoconf, mais il est préférable de le lancer via
+le script standard C<Makefile.PL> :
+
+ perl Makefile.PL
 
 B<N.B :> Si la variable d'environnement B<QTDIR> n'est pas définie, vous devrez
 peut-être spécifier manuellement l'emplacement de Qt à l'aide de l'option :
@@ -85,7 +93,7 @@ un sous-répertoire (4 minutes pour un ordinateur moyen).
 
  make
 
-(40 minutes en moyenne).
+(30 minutes en moyenne).
 
  make install
 
@@ -95,23 +103,66 @@ Le lieu d'installation préféré de SMOKE et de PUIC est le système de
 fichiers de KDE3. Si KDE3 n'est pas installé (ou que la variable KDEDIR n'est pas
 définie), spécifier ce lieu avec l'option C<--prefix> de C<configure>'s. Ainsi :
 
- ./configure --prefix=/usr
+ perl Makefile.PL --prefix=/usr
+
+=head2 Installation avec les droits d'utilisateur
+
+Pour réaliser une installation locale, sans les droits de super-utilisateur,
+suivez les instructions suivantes :
+
+=over 4
+
+=item *
+
+Réalisez tout d'abord une configuration normale, en spécifiant le préfixe de la hiérarchie de fichier 
+dans laquelle la bibliothèque Smoke et l'exécutable 'puic' seront installés :
+
+ perl Makefile.PL --prefix=~
+
+Ceci installera Smoke dans ~/lib et puic dans ~/bin
+
+=item *
+
+Reconfigurez le module PerlQt pour qu'il ne s'installe pas dans la hiérarchie Perl ordinaire :
+
+ cd PerlQt
+ perl Makefile.PL PREFIX=~
+ cd ..
+
+Attention : il ne s'agit pas du Makefile.PL situé à la racine de l'arborescence mais bien de celui
+situé dans le sous-répertoire PerlQt
+
+=item *
+
+Lancez la compilation et l'installation
+
+ make && make install
+
+Pour exécuter des programmes PerlQt, il vous faudra désormais indiquer à Perl l'emplacement de cette hiérarchie externe,
+à l'aide d'une ligne de la forme :
+
+ perl -Mlib="~/local/lib/perl/5.x.x" programme.pl
+
+où 5.x.x représente la version de Perl utilisée, ligne qui peut également être placée en tête de programme :
+
+ use lib qw( ~/local/lib/perl/5.x.x );
+
+=back
 
 =head1 Anatomie de PerlQt
 
-Un programme Qt typique utilisant des composants  GUI est fondé sur une
+Un programme Qt typique utilisant des composants GUI est fondé sur une
 boucle événementielle.
 
-Cela signifie qu'un tel programme n'est plus vu comme un contrôle de
-flux séquentiel où vous gérez vous-même chaque évènement (tels
+Il ne se comporte pas comme une suite séquentielle
+d'instructions où vous devriez gérer vous-même chaque événement (tels
 que le clic de la souris ou l'enfoncement d'une touche).
-
 
 Au lieu de cela, vous créez un objet B<Qt::Application> et les composants
 du GUI qu'il utilise, puis vous  définissez les méthodes d'objet à appeler
 lors de l'occurrence d'un évènement, puis démarrez la boucle évènementielle.
 
-C'est tout. Qt gérera les évènements et les multiplexera vers les
+C'est tout. Qt gérera les évènements et les dirigera vers les
 routines appropriées.
 
 Voyons un programme PerlQt minimal.
@@ -166,10 +217,10 @@ nom d'une clasee B<QFoo> en B<Qt::Foo>.
 De manière similaire à C++, un objet est créé par l'appel d'un
 B<constructeur> de même nom que la classe dont il est une méthode.
 
-Vous ne devez donc pas dire C<new Qt::Foo> or C<Qt::Foo-E<gt>new()>
+Vous ne devez donc pas dire C<new Qt::Foo> ou C<Qt::Foo-E<gt>new()>
 contrairement à l'usage commun en Perl.
 
-Vous écrivez donc simplement:
+Dites simplement:
 
  my $object = Qt::<classname>(arg_1, ..., arg_n);
 
@@ -180,7 +231,7 @@ Un constructeur sans argument s'énonce encore plus brièvement :
 
 =item 3
 
-Comme déjà dit, l'équivalent Perl d'un pointeur C++ est le mot-clé
+Comme il a déjà été dit, l'équivalent Perl d'un pointeur C++ est le mot-clé
 Perl B<undef>.
 
 Les pointeurs sont les arguments précédés par le caractère B<*> dans la
@@ -272,8 +323,8 @@ accéder à des clefs non existantes sans déclencher d'erreur.
 
 En lieu et place de cette syntaxe, PerlQt introduit le concept d'B<attributs>.
 
-Les attributs sont de simples variables perl, écrites sans le signe dollar initial, et 
-pouvant contenir toute donnée qui est une propriété de votre objet. 
+Les attributs sont de simples variables perl, écrites sans le signe dollar initial, et
+pouvant contenir toute donnée qui est une propriété de votre objet.
 Leur principal avantage est de fournir une syntaxe très rapide et vérifiable à la compilation.
 
 Pour définir et pouvoir utiliser de nouveaux attributs, il suffit d'utiliser
@@ -402,12 +453,13 @@ Il sera alors disponible comme accesseur :
 
  firstAttribute = myContainedWidget( this );
  firstAttribute->resize( 100, 100 );
- 
+
 B<NB:> Pour ceux qui souhaitent en savoir plus, les attributs sont implémentés
 à l'aide de sub lvalue, c'est à dire de fonctions assignables.
 En interne, elles ne font que pointer sur la clef de hachage correspondante dans
 l'objet B<this>, ce qui rend les tournures "unAttribut->fonction()" et
-"this->{'unAttribut'}->fonction()" strictement équivalentes.
+"this->{'unAttribut'}->fonction()" strictement équivalentes
+(si ce n'est que la première est vérifiée au moment de la compilation).
 
 =item *
 
@@ -518,7 +570,8 @@ appelant de ce fait le slot C<changement(int,int)>, avec deux arguments.
 
 =head2 Introduction
 
-Aussi puissant et intuitif que Qt soit, écrire un GUI complet est une corvée.
+Aussi puissant et intuitif que soit Qt, écrire une GUI complète reste un exercice 
+fastidieux.
 
 Heureusement, Qt est fourni avec un constructeur de GUI sophistiqué
 appelé Qt Designer qui est quasiment un environnement de développement
@@ -673,9 +726,52 @@ ou
 
 =back
 
+=head1 Autres outils de développement
+
+PerlQt comprend également deux programmes pouvant vous aider à maîtriser l'API de Qt :
+
+=head2 pqtapi
+
+pqtapi est un outil d'introspection en ligne de commande.
+
+ utilisation: pqtapi [-r <re>] [<class>]
+
+ options:
+        -r <re> : chercher les méthodes correspondant à l'expression régulière <re>
+        -i : avec -r, effectue une recherche insensible à la casse
+        -v : afficher les versions de PerlQt et de Qt
+        -h : afficher ce message d'aide
+
+ex:
+
+ $>pqtapi -ir 'setpoint.* int'
+        void QCanvasLine::setPoints(int, int, int, int)
+        void QPointArray::setPoint(uint, int, int)
+
+=head2 pqtsh
+
+B<pqtsh> est un shell graphique permettant de tester l'API de manière interactive.
+Un exemple dynamique est accessible dans l'entrée de menu C<Help-E<gt>Example>.
+
+=for html
+<br/>
+<div class='image'><img src="../images/pqtsh.png"/></div>
+
+=head1 Limitations
+
+Les classes à modèle (templates) ne sont pas encore accessibles par PerlQt.
+En revanche, les classes dérivées de classes à modèle sont disponibles.
+
+Vous pouvez reconnaître ce type de classe en ce que leurs arguments comprennent un type générique placé entre
+les signes "<" et ">".
+
+ex:
+  QDictIterator ( const QDict<type> & dict )
+
+
 =head1 Crédits
 
-PerlQt-3 est (c) 2002 Ashley Winters
+PerlQt-3 est (c) 2002 Ashley Winters (et (c) 2003 Germain Garand)
 
 Kalyptus et l'engin de génération  Smoke  sont (c) David Faure and Richard Dale
 
@@ -687,8 +783,8 @@ Ledit logiciel est délivré sous la GNU Public Licence v.2 or later.
 =head1 Appendice: Comment utiliser la Documentation Qt
 
 Lorsque vous voulez utiliser depuis PerlQt une classe ou méthode décrite
-dans la L<documentation|"http://doc.trolltech.com"> Qt, vous devez
-suivre des règles de translation simples décrites ci-dessous
+dans la L<documentation|"http://doc.trolltech.com"> Qt (voyez aussi le programme 'assistant'
+livré avec Qt), vous devez suivre des règles de translation simples
 
 =over 4
 
@@ -753,7 +849,6 @@ Vous écrirez :
 
  Qt::Size(8, 12);
 
-
 =item *  Par référence
 
 Lorsqu'un argument est précédé par le caractère B<&>, Il est une
@@ -812,14 +907,207 @@ Si nous rencontrons sa  définition  dans la classe C<QFruits>, vous
 
  $pomme_plus_orange = &Qt::Fruit::Pomme + &Qt::Fruit::Orange;
 
+=item Opérateurs
+
+Dans PerlQt, la B<surcharge d'opérateurs> fonctionne de manière transparente.
+Si un opérateur est surchargé dans une classe Qt (ce qui signifie que son utilisation
+déclenchera un appel de méthode, au lieu d'utiliser l'opérateur générique)
+il sera également surchargé dans PerlQt.
+
+ex-1: surcharge de '+='
+
+ $p1 = Qt::Point(10, 10)
+ $p2 = Qt::Point(30,40)
+ $p2 += $p1; # $p2 devient (40,50)
+
+ex-2: surcharge de '<<'
+
+ $f = Qt::File("example");
+ $f->open( IO_WriteOnly ); # voir l'entrée 'Constantes' plus bas
+ $s = Qt::TextStream( $f );
+ $s << "Que faire avec " << 12 << " pommes ?";
+
+
+B<Exception notable> : le constructeur de copie (signe égal, '=') n'est jamais surchargé,
+attendu qu'il ne pourrait fonctionner que partiellement et que le paradigme de
+Perl est très différent de C++ en matière de copie d'objets.
+
+=item Constantes
+
+Qt n'utilise pas beaucoup de constantes, mais on en trouve cependant dans le module d'Entrées/Sorties,
+où elles font office de drapeaux pour les modes d'ouverture de fichiers.
+
+Pour éviter de polluer inutilement l'espace de nom, nous avons regroupé les constantes dans le module
+B<Qt::constants>, d'où elles seront chargées à la demande.
+
+Ainsi, pour importer l'ensemble des constantes d'E/S, on écrira :
+
+ use Qt::constants qw(:IO);
+
+Et pour importer quelques symboles seulement :
+
+ use Qt::constants qw( IO_ReadOnly IO_WriteOnly );
 
 =back
 
+=head1 Annexe 2 : Internationalisation
 
+PerlQt résout les problèmes d'internationalisation en convertissant systématiquement les B<QString>
+de Qt en B<utf8> côté Perl.
 
+Les conversions en sens inverse, depuis Perl vers Qt sont traitées différemment suivant le contexte :
 
+=over 4
 
+=item * Si la chaîne de caractère est déjà marquée comme étant utf8
 
+alors elle sera convertie en QString directement.
 
+C'est la manière privilégiée d'opérer, et la plus simple :
+Il vous suffit d'insérer un pragma B<use utf8> en tête de vos programmes, puis d'utiliser un éditeur de
+texte supportant l'utf8 (quasiment tous de nos jours) pour élaborer votre code source.
+Les chaînes seront marquées par Perl automatiquement.
 
+=item * Si la chaîne n'est pas marquée comme utf8, et le pragma 'use locale' n'est pas actif
+
+alors la conversion en QString se fera depuis l'B<ISO-Latin-1>.
+
+=item * Si la chaîne n'est pas marquée comme utf8, et le pragma 'use locale' est actif
+
+alors la conversion en QString se fera depuis votre B<locale>.
+
+=back
+
+Lorsque des chaînes contiennent de l'utf8, Perl adapte automatiquement ses opérateurs pour que
+leur gestion soit entièrement transparente (comprendre opaque, comme toujours...).
+Cependant, vous pourrez avoir besoin à l'occasion de les transcrire en d'autres jeux d'encodage.
+Ceci peut se faire soit avec Qt :
+
+ $tr1=Qt::TextCodec::codecForLocale(); # ceci utilisera la locale en vigueur
+ $tr2=Qt::TextCodec::codecForName("KOI8-R"); # ceci force l'emploi d'une locale spécifique (Russe)
+
+ print $tr1->fromUnicode(Qt::DateTime::currentDateTime()->toString)."\n\n";
+ print $tr2->fromUnicode($une_chaine_utf8);
+
+Soit avec les outils de Perl (pour perl >= 5.8.0).
+Se reporter à ce sujet à la documentation du module B<Encode> (C<perldoc Encode>).
+
+=head3 désactiver l'encodage utf8
+
+Les programmeurs souhaitant désactiver temporairement l'encodage utf8
+(pour la gestion de programmes externes ou de modules anciens ne supportant pas cet encodage)
+pourront utiliser le pragma B<use bytes> (et sa réciproque : B<no bytes>).
+
+Dans la portée de ce pragma, les conversions depuis QString vers les chaînes Perl se feront en ISO-Latin1
+(par défaut) ou suivant la locale en vigueur (si B<use locale> est actif).
+
+Notez bien qu'il est préférable de I<ne pas utiliser ce pragma à la légère>, en ce qu'il ruine totalement les
+efforts de standardisations autour d'utf8 entrepris depuis plusieurs années déjà.
+Il est très préférable de corriger les programmes fautifs.
+
+=head1 Annexe 3 : Canaux de déboguage
+
+Le module B<Qt::debug> offre divers canaux de déboguage permettant de filtrer
+le flux conséquent d'informations disponibles pour l'adapter à vos besoins.
+
+ use Qt::debug;
+
+ use Qt::debug qw|calls autoload verbose|;
+
+Avec le pragma C<use Qt::debug>, seuls les canaux B<verbose> et B<ambiguous> sont activés.
+Si vous le faites suivre d'une liste précise de canaux, seuls ceux-ci seront affichés.
+
+B<Liste et descriptif des canaux :>
+
+=over 4
+
+=item * ambiguous
+
+Vérifier si les appels de méthodes sont ambigus, et dire quelle méthode, parmi le jeux
+d'alternatives, à finalement été choisie.
+
+=item * verbose
+
+Donner davantage d'informations.
+
+Utilisé avec B<ambiguous>, vous donnera les correspondances les plus proches lorsqu'un appel de méthode échoue.
+
+ex:
+
+ use Qt;
+ use Qt::debug;
+ $a= Qt::Application(\@ARGV);
+ $a->libraryPath("chose");
+
+ --- No method to call for :
+        QApplication::libraryPath('chose')
+ Closer candidates are :
+        static void QApplication::addLibraryPath(const QString&)
+        static QStringList QApplication::libraryPaths()
+        static void QApplication::removeLibraryPath(const QString&)
+        static void QApplication::setLibraryPaths(const QStringList&)
+
+=item * calls
+
+Pour chaque appel de méthode, vous dira quelle méthode Qt est finalement appelée,
+en précisant les arguments si B<verbose> est actif.
+
+=item * autoload
+
+Détaille le passage dans le code intermédiaire faisant la jonction entre Perl et Qt.
+
+=item * gc
+
+Donne des informations sur la collection des déchets, c'est à dire sur la destruction des objets,
+qu'ils soient détruits depuis Perl ou Qt.
+
+=item * virtual
+
+Vous averti chaque fois qu'une fonction virtuelle tente d'accéder à sa réimplémentation en Perl
+(que cette réimplémentation existe ou non).
+
+=item * all
+
+Activer tous les canaux.
+
+=back
+
+=head1 Annexe 4 : Marshalleurs
+
+Un marshalleur est un convertisseur permettant de transcrire un type de données en un autre.
+
+Dans PerlQt, la plupart des objets Qt gardent leurs propriétés d'objet, ce qui permet d'invoquer leurs méthodes
+et de changer leurs propriétés comme il se doit.
+Cependant, il arrive que l'objet d'origine corresponde à ce point à un type natif de Perl qu'il serait malséant
+d'utiliser l'interface C++ et beaucoup plus naturel de lui substituer son équivalent.
+
+Ici interviennent les marshalleurs.
+Plutôt que de retourner un objet Qt::StringList, qui serait délicat à manipuler,
+PerlQt le transformera en référence de liste Perl.
+Dès lors, tous les opérateurs de manipulation de liste pourront lui être appliqué :
+on gagne en densité, en cohérence et en simplicité.
+
+Cette transformation s'appliquera aussi en sens inverse, et n'importe quelle liste de chaînes Perl
+pourra être donnée en argument à une méthode attendant une Qt::StringList.
+
+ Liste des marshalleurs (PerlQt-3.006)
+ -----------------------------------------------------------------
+ float, double                  <=>       réel Perl (NV)
+ char, uchar, int, uint, enum
+ long, ulong, short, ushort     <=>       entier Perl (IV)
+ QString, -&, -*                 =>       chaîne Perl (utf8)
+ QString, -&, -*                <=        chaîne Perl (utf8 ou iso-latin1 ou locale)
+ QCString, -&, -*               <=>       chaîne Perl (utf8 ou octets, suivant contenu)
+ QStringList, -&, -*             =>       référence à une liste de chaînes Perl (utf8)
+ QString, -&, -*                 =>       chaîne Perl string (utf8 ou iso-latin1 ou locale)
+ int&, -*                       <=>       entier Perl (IV)
+ bool&, -*                      <=>       booléen Perl
+ char*                          <=>       chaîne Perl (octets)
+ char**                         <=        référence à une liste de chaînes Perl (octets)
+ uchar*                         <=        chaîne Perl(octets)
+ QRgb*                          <=        référence à une liste d'entiers Perl (IV)
+ QCOORD*                        <=        référence à une liste d'entiers Perl (IV)
+ void*                          <=>       référence à un entier Perl (IV)
+ QValueList<int>, - *, - &      <=>       référence à une liste d'entiers Perl (IV)
+ (QUObject*)
 

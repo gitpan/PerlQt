@@ -6,7 +6,6 @@
 
 
 use strict;
-use blib;
 
 package EditorForm;
 use Qt;
@@ -345,9 +344,6 @@ sub helpIndex
 sub changeAlignment
 {
     print "EditorForm->changeAlignment(QAction*): Not implemented yet.\n";
-    my ($a, $b);
-    textEdit->getCursorPosition($a, $b);
-    print "Cursor Position: $a, $b\n";
 }
 
 sub saveAndContinue

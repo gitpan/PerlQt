@@ -1359,7 +1359,7 @@ fi
 AC_MSG_CHECKING([for Qt])
 
 if test "x$kde_use_qt_emb" != "xyes"; then
-LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
+LIBQT="$LIBQT $X_PRE_LIBS $LIBXINERAMA -lXext -lX11 $LIBSM $LIBSOCKET"
 fi
 ac_qt_includes=NO ac_qt_libraries=NO ac_qt_bindir=NO
 qt_libraries=""

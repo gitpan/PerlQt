@@ -283,7 +283,7 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 #>+ 3
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  smoke/Makefile
-	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.004/smoke/Makefile.in
+	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.006/smoke/Makefile.in
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
@@ -525,9 +525,6 @@ uninstall-info: uninstall-info-recursive
 .NOEXPORT:
 
 
-
-
-
 #>+ 2
 docs-am:
 
@@ -535,7 +532,7 @@ docs-am:
 force-reedit:
 		cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  smoke/Makefile
-	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.004/smoke/Makefile.in
+	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.006/smoke/Makefile.in
 
 
 #>+ 2

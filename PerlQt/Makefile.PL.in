@@ -1,6 +1,8 @@
 
 ### do not edit Makefile.PL, edit Makefile.PL.in
 
+use Config;
+
 $x{'LIBPNG'}  =   '@LIBPNG@';
 $x{'LIBJPEG'} =   '@LIBJPEG@';
 $x{'LIBSM'}   =   '@LIBSM@';
@@ -12,7 +14,16 @@ my $objects='Qt$(OBJ_EXT) handlers$(OBJ_EXT)';
 my $qtlib ='@LIB_QT@';
 $qtlib =~s/\$\((.*?)\)/$x{$1}/g;
 my $rpath='@USE_RPATH@';
-$rpath = $rpath eq "yes" ? "-Wl,--rpath -Wl,@kde_libraries@":"";
+
+my $cxx = '@CXX@';
+my $sh= '@SHELL@';
+my $topdir= '@top_builddir@';
+my $libtool_rpath = `${topdir}/libtool --mode=link $cxx -o foo.so foo.o -R @kde_libraries@ 2>/dev/null`;
+$libtool_rpath = "" unless $libtool_rpath =~ s/.*foo.so foo.o//s;
+chomp $libtool_rpath;
+$rpath = $rpath eq "yes" ? ($libtool_rpath ? $libtool_rpath : "-Wl,--rpath -Wl,@kde_libraries@"):"";
+
+my @scripts = ("bin/pqtsh", "bin/pqtapi");
 
 ###
 
@@ -36,6 +47,8 @@ WriteMakefile(
     'XSOPT'		=> "-C++",
     'OBJECT'		=> "$objects",  # Object files
     'CC'		=> '@CXX@',
+    'INST_BIN'          => './bin',
+    'DEFINE'            => '@CXXFLAGS@',
     'H'                 => ["marshall.h", "perlqt.h", "smokeperl.h"],
     'ABSTRACT'		=> "An OO interface to Trolltech's Qt toolkit",
     'dynamic_lib'       => {'OTHERLDFLAGS' => $rpath},
@@ -66,4 +79,19 @@ sub MY::dist {
                    my $i = shift->SUPER::dist(@_);
                    $i =~ s#(DISTVNAME =).*?\n#$1 \$(distdir)\n#s;
                    $i;
+}
+
+for my $s( @scripts )
+{
+    rename( $s, $s.".in");
+    open( IN, "$s.in" );
+    open( OUT, ">$s" );
+    <IN>;
+    print OUT ($Config{'startperl'} ?  $Config{'startperl'}."\n" : $_ );
+    while( <IN> )
+    {  print OUT  }
+    close IN;
+    close OUT;
+    unlink $s . ".in";
+    chmod 0755, $s;
 }

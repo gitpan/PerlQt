@@ -355,7 +355,7 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 #>+ 3
 	cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  puic/Makefile
-	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.004/puic/Makefile.in
+	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.006/puic/Makefile.in
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && \
 	  CONFIG_HEADERS= CONFIG_LINKS= \
@@ -580,8 +580,6 @@ messages:
 .NOEXPORT:
 
 
-
-
 #>+ 2
 docs-am:
 
@@ -589,7 +587,7 @@ docs-am:
 force-reedit:
 		cd $(top_srcdir) && \
 	  $(AUTOMAKE) --gnu  puic/Makefile
-	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.004/puic/Makefile.in
+	cd $(top_srcdir) && perl admin/am_edit PerlQt-3.006/puic/Makefile.in
 
 
 #>+ 11

@@ -27,6 +27,9 @@
 #define QT_VERSION_STR "Unknown"
 #endif
 
+#undef free
+#undef malloc
+
 #include "marshall.h"
 #include "perlqt.h"
 #include "smokeperl.h"
@@ -395,7 +398,7 @@ public:
 class UnencapsulatedQObject : public QObject {
 public:
     QConnectionList *public_receivers(int signal) const { return receivers(signal); }
-    void public_activate_signal(QConnectionList *clist, QUObject *o) { return activate_signal(clist, o); }
+    void public_activate_signal(QConnectionList *clist, QUObject *o) { activate_signal(clist, o); }
 };
 
 class EmitSignal : public Marshall {
@@ -1586,6 +1589,12 @@ setqapp(obj)
     sv_qapp = SvRV(obj);
 
 void
+setThis(obj)
+    SV *obj
+    CODE:
+    sv_setsv_mg(sv_this, obj);
+
+void
 deleteObject(obj)
     SV *obj
     CODE:
@@ -1890,7 +1899,6 @@ installthis(package)
     // *{ $name } = sub () : lvalue;
     CV *thissub = newXS(name, XS_this, file);
     sv_setpv((SV*)thissub, "");    // sub this () : lvalue;
-    CvLVALUE_on(thissub);
     delete[] name;
 
 void
@@ -1906,6 +1914,7 @@ installattribute(package, name)
     CV *attrsub = newXS(attr, XS_attr, file);
     sv_setpv((SV*)attrsub, "");
     CvLVALUE_on(attrsub);
+    CvNODEBUG_on(attrsub);
     delete[] attr;
 
 void

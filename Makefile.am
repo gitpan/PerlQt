@@ -1,7 +1,7 @@
 
 SUBDIRS = $(TOPSUBDIRS)
 
-EXTRA_DIST = admin AUTHORS COPYING ChangeLog INSTALL README TODO Makefile.cvs test.pl Makefile.PL inst-apps smoke/smoke.h smoke/Makefile.in smoke/Makefile.am smoke/qt/qtguess.pl.in smoke/qt/generate.pl.in smoke/qt/qt_smoke.h smoke/qt/generate_makefile_am.pl smoke/qt/Makefile.am smoke/qt/Makefile.in smoke/qt/header_list kalyptus/Ast.pm kalyptus/kalyptus kalyptus/kalyptusDataDict.pm  kalyptus/kdocParseDoc.pm kalyptus/Version kalyptus/ChangeLog kalyptus/kdocUtil.pm kalyptus/kdocAstUtil.pm kalyptus/README kalyptus/Iter.pm kalyptus/kalyptusCxxToSmoke.pm kalyptus/kdocLib.pm kalyptus/TODO doc/en/index.html doc/en/Makefile doc/en/PerlQt.pod doc/fr/index.html doc/fr/Makefile doc/fr/PerlQt.pod doc/css/pod.css doc/images/ex1.png doc/images/ex2.png
+EXTRA_DIST = admin AUTHORS COPYING ChangeLog INSTALL README TODO Makefile.cvs test.pl Makefile.PL inst-apps smoke/smoke.h smoke/Makefile.in smoke/Makefile.am smoke/qt/qtguess.pl.in smoke/qt/generate.pl.in smoke/qt/qt_smoke.h smoke/qt/generate_makefile_am.pl smoke/qt/Makefile.am smoke/qt/Makefile.in smoke/qt/header_list kalyptus/Ast.pm kalyptus/kalyptus kalyptus/kalyptusDataDict.pm  kalyptus/kdocParseDoc.pm kalyptus/Version kalyptus/ChangeLog kalyptus/kdocUtil.pm kalyptus/kdocAstUtil.pm kalyptus/README kalyptus/Iter.pm kalyptus/kalyptusCxxToSmoke.pm kalyptus/kdocLib.pm kalyptus/TODO doc/en/index.html doc/en/Makefile doc/en/PerlQt.pod doc/fr/index.html doc/fr/Makefile doc/fr/PerlQt.pod doc/css/pod.css doc/images/ex1.png doc/images/ex2.png doc/images/pqtsh.png
 
 # not a GNU package. You can remove this line, if 
 # have all needed files, that a GNU package needs
@@ -27,4 +27,4 @@ dist-hook:
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
 
 test:
-	cd $(top_distdir) && perl test.pl
+	cd $(top_distdir) && LD_LIBRARY_PATH="../../smoke/qt/.libs:@qt_libraries@" perl test.pl

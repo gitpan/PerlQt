@@ -33,7 +33,7 @@ Custom important options :
                  set this to zero (paranoid level).
 ====
 
-See doc/index.html for installation procedure, requirements and
+See doc/en/index.html for installation procedure, requirements and
 detailed tutorial.
 
 See also PerlQt/tutorials and PerlQt/examples to get started.

@@ -3,6 +3,8 @@ MANIFEST
 Makefile.PL.in
 Qt.pm
 Qt.xs
+bin/pqtapi
+bin/pqtsh
 examples/aclock/AnalogClock.pm
 examples/aclock/aclock.pl
 examples/buttongroups/ButtonsGroups.pm
@@ -25,6 +27,7 @@ lib/Qt/attributes.pm
 lib/Qt/debug.pm
 lib/Qt/enumerations.pm
 lib/Qt/isa.pm
+lib/Qt/constants.pm
 lib/Qt/properties.pm
 lib/Qt/signals.pm
 lib/Qt/slots.pm
@@ -42,7 +45,6 @@ t/d_sigslot.t
 t/e_sigslot_inherit.t
 t/f_import.t
 t/g_gui.t
-t/h_allstyles.t
 tutorials/runall.pl
 tutorials/t1/t1.pl
 tutorials/t10/CannonField.pm

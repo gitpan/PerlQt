@@ -94,12 +94,13 @@ foreach $filename (readdir(QT)) {
           if ( !defined $excludes{$filename} # Not excluded
               && $includes{$filename}        # Known header
 	      && $filename =~ /\.h$/ ); # Not a backup file etc. Only headers.
+        undef $includes{$filename}
     }
 }
 closedir QT;
 
 # Launch kalyptus
-system "perl kalyptus @ARGV -fsmoke --name=qt $macros --outputdir=$outdir @headers";
+system "perl kalyptus @ARGV -fsmoke --name=qt $macros --no-cache --outputdir=$outdir @headers";
 my $exit = $? >> 8;
 exit $exit if ($exit);
 
@@ -143,4 +144,4 @@ system "rm -rf $outdir";
 
 # Update list of source files in $outdir/Makefile.am
 chdir $finaloutdir;
-exec "perl ./generate_makefile_am.pl";
+require "generate_makefile_am.pl";

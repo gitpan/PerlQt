@@ -6,7 +6,7 @@ INCLUDES         = -I$(srcdir)/.. $(all_includes)
 EXTRA_DIST=generate_makefile_am.pl generate.pl.in qtguess.pl.in qt_smoke.h Makefile.am Makefile.in
 
 # the library search path. 
-libsmokeqt_la_LDFLAGS = -version-info 1:0 -no-undefined $(all_libraries) $(GL_CFLAGS)
+libsmokeqt_la_LDFLAGS = -version-info 1:0 -no-undefined $(all_libraries) $(GL_CFLAGS) $(KDE_RPATH)
 
 # the libraries to link against.
 libsmokeqt_la_LIBADD   = $(LIB_QT) $(GL_LIBS)

@@ -19,7 +19,8 @@ sub import {
     my $parent = ${ $caller . '::ISA' }[0];
     my $parent_qt_emit = $parent . '::qt_emit';
 
-    Qt::_internal::installqt_invoke($caller . '::qt_emit');
+    Qt::_internal::installqt_invoke($caller . '::qt_emit') unless defined &{ $caller. '::qt_emit' };
+
 #    *{ $caller . '::qt_emit' } = sub {
 #	my $meta = \%{ $caller . '::META' };
 #	die unless $meta->{object};
@@ -68,6 +69,7 @@ sub import {
 
 	Qt::_internal::installsignal("$caller\::$signalname");
     }
+    @_ and $meta->{changed} = 1;
 }
 
 1;

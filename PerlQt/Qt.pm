@@ -1,14 +1,177 @@
 package Qt::base;
 
-sub this () : lvalue {}
+sub this () {}
 
 sub new {
     no strict 'refs';
     my $t = this;
     shift->NEW(@_);
     my $ret = this;
-    this = $t;
+    Qt::_internal::setThis($t);
     return $ret;
+}
+
+package Qt::base::_overload;
+
+no strict 'refs';
+use overload
+    "fallback" => 1,
+    "==" => "Qt::base::_overload::op_equal",
+    "!=" => "Qt::base::_overload::op_not_equal",
+    "+=" => "Qt::base::_overload::op_plus_equal",
+    "-=" => "Qt::base::_overload::op_minus_equal",
+    "*=" => "Qt::base::_overload::op_mul_equal",
+    "/=" => "Qt::base::_overload::op_div_equal",
+    ">>" => "Qt::base::_overload::op_shift_right",
+    "<<" => "Qt::base::_overload::op_shift_left",
+    "<=" => "Qt::base::_overload::op_lesser_equal",
+    ">=" => "Qt::base::_overload::op_greater_equal",
+    "^=" => "Qt::base::_overload::op_xor_equal",
+    "|=" => "Qt::base::_overload::op_or_equal",
+    ">"  => "Qt::base::_overload::op_greater",
+    "<"  => "Qt::base::_overload::op_lesser",
+    "+"  => "Qt::base::_overload::op_plus",
+    "-"  => "Qt::base::_overload::op_minus",
+    "*"  => "Qt::base::_overload::op_mul",
+    "^"  => "Qt::base::_overload::op_xor",
+    "|"  => "Qt::base::_overload::op_or",
+    "--" => "Qt::base::_overload::op_decrement",
+    "++" => "Qt::base::_overload::op_increment";
+
+sub op_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator==';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1]));
+}
+
+sub op_not_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator!=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_plus_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator+=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_minus_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator-=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_mul_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator°=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_div_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator/=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_shift_right {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator>>';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_shift_left {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator<<';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_lesser_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator<=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_greater_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator>=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_xor_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator^=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_or_equal {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator|=';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    $_[2] ? $_[1] : $_[0]
+}
+
+sub op_greater {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator>';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_lesser {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator<';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_plus {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator+';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_minus {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator-';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_mul {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator *';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_xor {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator^';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_or {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator|';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+}
+
+sub op_increment {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator++';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[0]);
+    $_[0]
+}
+
+sub op_decrement {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator--';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    $autoload->($_[0]);
+    $_[0]
 }
 
 package Qt::_internal;
@@ -20,7 +183,7 @@ our @IdClass;
 
 our @PersistentObjects;   # objects which need a "permanent" reference in Perl
 
-sub this () : lvalue {}
+sub this () {}
 
 
 sub init_class {
@@ -61,6 +224,8 @@ sub init_class {
 	*{ " $class\::AUTOLOAD" } = sub { &$autosub };
     }
 
+    *{ " $class\::ISA" } = ["Qt::base::_overload"];
+
     *{ "$class\::NEW" } = sub {
 	my $class = shift;
 	$Qt::AutoLoad::AUTOLOAD = "$class\::$c";
@@ -68,7 +233,7 @@ sub init_class {
         {
             no warnings;
             # the next line triggers a warning on SuSE's Perl 5.6.1 (?)
-	    this = bless &$autoload, " $class";
+	    setThis(bless &$autoload, " $class");
         }
 
 	if(!$class->isa("Qt::Object") and
@@ -95,21 +260,21 @@ sub argmatch {
     my $methods = shift;
     my $args = shift;
     my $i = shift;
-    my @match;
+    my %match;
+    my $argtype = getSVt($args->[$i]);
     for my $method (@$methods) {
 	my $typename = getTypeNameOfArg($method, $i);
-	my $argtype = getSVt($args->[$i]);
 	if($argtype eq 'i') {
-	    if($typename =~ /^(short|ushort|int|uint|long|ulong|signed|unsigned)$/) {
-		push @match, $method;
+	    if($typename =~ /^(?:short|ushort|int|uint|long|ulong|signed|unsigned)$/) {
+		$match{$method} = 0;
 	    }
 	} elsif($argtype eq 'n') {
-	    if($typename =~ /^(float|double)$/) {
-		push @match, $method;
+	    if($typename =~ /^(?:float|double)$/) {
+		$match{$method} = 0;
 	    }
 	} elsif($argtype eq 's') {
-	    if($typename =~ /^(char\*|const char\*|(?:const )?QC?String[*&]?)$/) {
-		push @match, $method;
+	    if($typename =~ /^(?:char\*|const char\*|(?:const )?(Q(C?)String)[*&]?)$/) {
+		$match{$method} = defined $2 ? 1 : ( defined $1 ? 2 : 0 );
 	    }
 	} elsif($argtype eq 'a') {
             # FIXME: shouldn't be hardcoded. Installed handlers should tell what perl type they expect.
@@ -123,22 +288,22 @@ sub argmatch {
                                   char\*\*
                                 )
                               )$/x) {
-                push @match, $method;
+                $match{$method} = 0;
             }
 	} elsif($argtype eq 'r' or $argtype eq 'U') {
-	    push @match, $method;
+	    $match{$method} = 0;
 	} else {
 	    my $t = $typename;
 	    $t =~ s/^const\s+//;
 	    $t =~ s/(?<=\w)[&*]$//;
 	    my $isa = classIsa($argtype, $t);
 	    if($isa) {
-		push @match, $method;
+		$match{$method} = 0;
 	    }
 	}
     }
 
-    return @match;
+    return sort { $match{$b} <=> $match{$a} } keys %match;
 }
 
 sub destroy {
@@ -225,6 +390,12 @@ sub do_autoload {
             my $verbose = "";
             if(debug() && (debug() & $Qt::debug::channel{'verbose'})) {
                 my $alt = findAllMethods( $classId );
+                getAllParents($classId, \my @sup);
+                for my $s(@sup)
+                {
+                    my $h = findAllMethods( $s );
+                    map { $alt->{$_} = $h->{$_} } keys %$h
+                }
                 my $pat1 = my $pat2 = $method;
                 my @near = ();
                 while(!@near && length($pat1)>2) {
@@ -314,6 +485,12 @@ sub autoloaded {
             my $verbose = "";
             if(debug() && (debug() & $Qt::debug::channel{'verbose'})) {
                 my $alt = findAllMethods( $classId );
+                getAllParents($classId, \my @sup);
+                for my $s(@sup)
+                {
+                    my $h = findAllMethods( $s );
+                    map { $alt->{$_} = $h->{$_} } keys %$h
+                }
                 my $pat1 = my $pat2 = $method;
                 my @near = ();
                 while(!@near && length($pat1)>2) {
@@ -360,7 +537,7 @@ sub Qt::Application::NEW {
     my $argv = shift;
     unshift @$argv, $0;
     my $count = scalar @$argv;
-    this = bless Qt::Application::QApplication($count, $argv, @_), " $class";
+    setThis( bless Qt::Application::QApplication($count, $argv, @_), " $class" );
     mapObject(this);
     setAllocated(this, 1);
     setqapp(this);
@@ -381,7 +558,7 @@ sub Qt::Image::NEW {
     $Qt::AutoLoad::AUTOLOAD = 'Qt::Image::QImage';
     my $autoload = " Qt::Image::_UTOLOAD";
     dontRecurse();
-    this = $autoload->(@_);
+    setThis( $autoload->(@_) );
     setAllocated(this, 1);
 }
 
@@ -427,13 +604,14 @@ sub getMetaObject {
     no strict 'refs';
     my $class = shift;
     my $meta = \%{ $class . '::META' };
-    return $meta->{object} if $meta->{object};
+    return $meta->{object} if $meta->{object} and !$meta->{changed};
     inheritSuperSigSlots($class);
     my($slot_tbl, $slot_tbl_count) = makeMetaData($meta->{slots});
     my($signal_tbl, $signal_tbl_count) = makeMetaData($meta->{signals});
     $meta->{object} = make_metaObject($class, Qt::this()->staticMetaObject,
 		$slot_tbl, $slot_tbl_count,
 		$signal_tbl, $signal_tbl_count);
+    $meta->{changed} = 0;
     return $meta->{object};
 }
 
@@ -463,10 +641,24 @@ sub inheritSuperSigSlots {
             }
             Qt::_internal::installqt_invoke($class . '::qt_invoke')
                 if( !defined &{ $class. '::qt_invoke' } && exists $meta->{slots} && @{ $meta->{slots} });
+            Qt::_internal::installqt_invoke($class . '::qt_emit')
+                if( !defined &{ $class. '::qt_emit' } && exists $meta->{signals} && @{ $meta->{signals} });
         }
     }
 }
 
+sub getAllParents
+{
+   my $classId = shift;
+   my $res = shift;
+   my @classes = Qt::_internal::getIsa( $classId );
+   for my $s( @classes )
+   {
+       my $c = Qt::_internal::idClass($s);
+       push @{ $res }, $c;
+       getAllParents($c, $res)
+   }
+}
 
 sub Qt::PointArray::setPoints {
     my $points = $_[0];
@@ -502,7 +694,7 @@ use XSLoader;
 
 require Exporter;
 
-our $VERSION = '3.004';
+our $VERSION = '3.006';
 
 our @EXPORT = qw(&SIGNAL &SLOT &CAST &emit &min &max);
 

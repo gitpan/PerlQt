@@ -38,7 +38,7 @@ dnl Perform program name transformation
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(PerlQt, 3.004) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(PerlQt, 3.006) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -315,7 +315,7 @@ dnl Please note that as the ac_opengl macro and the toy example evolves,
 dnl the version number increases, so you may have to adjust the above
 dnl URL accordingly.
 dnl
-dnl @version 0.01 $Id: configure.in,v 1.13 2002/12/16 19:16:11 germaingarand Exp $
+dnl @version 0.01 $Id: configure.in,v 1.16 2003/02/13 12:23:56 germaingarand Exp $
 dnl @author Matthew D. Langston <langston@SLAC.Stanford.EDU>
 
 AC_DEFUN(MDL_HAVE_OPENGL,
@@ -426,7 +426,7 @@ dnl The variable LIBM (which is not an output variable by default) is
 dnl set to a value which is suitable for use in a Makefile (for example,
 dnl in make's LOADLIBES macro) provided you AC_SUBST it first.
 dnl
-dnl @version 0.01 $Id: configure.in,v 1.13 2002/12/16 19:16:11 germaingarand Exp $
+dnl @version 0.01 $Id: configure.in,v 1.16 2003/02/13 12:23:56 germaingarand Exp $
 dnl @author Matthew D. Langston <langston@SLAC.Stanford.EDU>
 
 # AC_CHECK_LIBM - check for math library
@@ -497,9 +497,9 @@ AC_CONFIG_FILES([puic/Makefile])
 
 AC_ARG_WITH(
    threshold,
-   [ --with-threshold[=ARG]        Qt tests threshold ARG=[0..15] Default:10 Lower=more tests],
+   [ --with-threshold[=ARG]        Qt tests threshold ARG=[0..15] Default:14 Lower=more tests],
    [ qt_test_threshold="$withval" ],
-   [ qt_test_threshold=10 ]
+   [ qt_test_threshold=14 ]
 )
 AC_SUBST(qt_test_threshold)
 

@@ -1,6 +1,5 @@
 #!/usr/bin/perl -w
 use strict;
-use blib;
 package DrawView;
 use Qt;
 use Qt::isa qw(Qt::Widget);

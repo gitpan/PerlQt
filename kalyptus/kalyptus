@@ -2,7 +2,7 @@
 
 # KDOC -- C++ and CORBA IDL interface documentation tool.
 # Sirtaj Singh Kang <taj@kde.org>, Jan 1999.
-# $Id: kalyptus,v 1.5 2002/11/18 02:17:49 germaingarand Exp $
+# $Id: kalyptus,v 1.6 2003/02/05 00:19:39 germaingarand Exp $
 
 # All files in this project are distributed under the GNU General
 # Public License. This is Free Software.
@@ -140,7 +140,7 @@ GetOptions( \%options,
 	"skip-deprecated|e",
 	"document-all|a",
 	"compress|z",
-
+        "no-cache",      # do not create $HOME/.kalyptus cache
 	# HTML options
 	"html-cols=i",
 	"html-logo=s",
@@ -388,7 +388,7 @@ sub writeDocumentation
 
 sub writeLibrary
 {
-	if( $libname ne "" ) {
+	if( $libname ne "" and !exists $options{'no-cache'} ) {
 		require kdocLib;
 		foreach my $lang ( keys %rootNodes ) {
 			my $node = $rootNodes{ $lang };

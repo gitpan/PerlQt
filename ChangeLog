@@ -1,3 +1,29 @@
+2002-02-13 GG (v.3.006)
+         - "use bytes" pragma now changes the way QStrings are marshalled 
+           back to Perl : within the scope,  instead of all utf-8, QStrings are
+           marshalled to ISO-Latin1 by default, or to locale if "use locale" is
+           active.
+         - Operator overloading is now functional. 21 operators are available.
+           e.g: 
+           $d = Qt::TextStream( $f );
+           $d << "Foo " << 12 << " Bar"; 
+           N.B: the copy constructor operator('=') isn't overloaded. 
+                It clashes with the perl paradigm.
+         - fixed a bug in QCString Marshaller : plain ASCII was tagged as UTF-8
+         - raised priority of QString in case of ambiguous call
+         - allow runtime definition of signals and slots (via eval)
+         - added two development tools : pqtsh (a graphical PerlQt shell) and
+           pqtapi (a command line introspection tool)
+         - look also in super classes when dumping possible candidates (Qt::debug)
+         - updated french and english documentation
+         - module Qt::constants for on-demand loading of global Qt constants
+           (as of now, only concerns IO_* constants defined in qiodevice.h)
+           e.g:
+               use Qt::constants qw(:IO)
+           or
+               use Qt::constants qw( IO_ReadOnly IO_WriteOnly )
+           from an idea by Marek Rouchal
+ 
 2002-12-16 GG (v.3.004-final)
          - test suite ("make test" target) 
          - one more example (progress.pl)

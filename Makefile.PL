@@ -11,11 +11,13 @@
 
 use strict;
 
+my $libname = "libqt-mt.so";
 my $current_automake="1.5";
 my @prefix = ('/usr', '/usr/local');
 
 my $res="";
 my %p;
+my @alt;
 
 exec "./configure --help" if grep /^-?-h(elp)?$/, @ARGV;
 
@@ -27,16 +29,29 @@ unless ($ENV{'QTDIR'} or grep /--with-qt-dir/, @ARGV)
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
   print "Nevermind, I'll try to guess Qt's location.\n";
   sleep(6);
-  
-  my @alt=`locate libqt-mt.so 2>/dev/null`;
-
-  if(!check_exit_status($?) || !@alt)
+  for(@prefix)
   {
-    print "mmh... locate did not help. We'll try a find then.\n";
-    sleep(2);
+    my $stdpath = $_."/lib/qt3/lib";
+    if(-s $stdpath."/$libname") 
+    { 
+      push @alt, glob($stdpath."/$libname*");
+      print "Found what looks like a Qt-3 tree in $_/lib/qt3\n";
+      sleep(1);
+    }
+  }
+  
+  unless (@alt)
+  {  
+    @alt=`locate $libname 2>/dev/null`;
+
+    if(!check_exit_status($?) || !@alt)
+    {
+      print "mmh... locate did not help. We'll try a find then.\n";
+      sleep(2);
     
-    print "Scanning local file system...\n";
-    @alt=`find / -name "libqt-mt.so*" 2>/dev/null`;    
+      print "Scanning local file system (ctrl-c to abort)...\n";
+      @alt=`find / -name "$libname*" 2>/dev/null`;    
+    }
   }
 
   if(!check_exit_status($?) || !@alt)
@@ -57,7 +72,7 @@ unless ($ENV{'QTDIR'} or grep /--with-qt-dir/, @ARGV)
       my ($ver,$tmp)=(0,0);
       for(@alt)
       { 
-        /libqt-mt\.so(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?$/;
+        /$libname(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?$/o;
         $tmp = (($1?$1:0)*100)+(($2?$2:0)*10)+($3?$3:0);
         if($tmp>=$ver)
         {
@@ -67,7 +82,7 @@ unless ($ENV{'QTDIR'} or grep /--with-qt-dir/, @ARGV)
       }
       $res = each %p if keys %p ==1;
     }
-    print $res?"OK. We can try --with-qt-dir=$res.\n":"Nope, that's too fuzzy. I'll give up and let ./configure decide.\n";  
+    print $res?"OK. We can try --with-qt-dir=$res.\n":"No, that's too fuzzy. I'll give up and let ./configure decide.\n";  
   }
   else
   {
@@ -86,7 +101,7 @@ unless ($ENV{'KDEDIR'} or grep /--prefix/, @ARGV)
         "did not use the '--prefix=' commandline option.\n";
   print "KDE-3 isn't required at all. However, if it's installed on your system,\n".
         "it is much better to specify it's location since PerlQt uses (or build, if\n".
-        "it can't find it) a KDE library named Smoke.\n";
+        "it can't find it) a KDE library named smokeqt.\n";
   print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
   sleep(5);
 }
@@ -116,7 +131,7 @@ if(!check_exit_status($?))
 }
 else
 {
-  if($auto[0] =~/([\d.]+)/ and $& >= ($current_automake + 0.1))
+  if($auto[0] =~/([\d.]{3})/ and $& >= ($current_automake + 0.1))
   {
     print "Automake looks recent... we'd better try to rebuild the framework...\n";
     sleep(2);

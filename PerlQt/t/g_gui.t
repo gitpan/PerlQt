@@ -111,6 +111,8 @@ package main;
 use Qt;
 use ButtonsGroups;
 
+Qt::StyleFactory::keys(); # disable style plugins (hacky)
+
 my $a = Qt::Application(\@ARGV);
 
 my $buttonsgroups = ButtonsGroups;

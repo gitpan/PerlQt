@@ -20,6 +20,7 @@
 		<LI><A HREF="#requirements">Requirements</A></LI>
 		<LI><A HREF="#compilation">Compilation</A></LI>
 		<LI><A HREF="#troubleshooting and configure options">Troubleshooting and Configure Options</A></LI>
+		<LI><A HREF="#how to install perlqt with user rights">How to install PerlQt with user rights</A></LI>
 	</UL>
 
 	<LI><A HREF="#anatomy of perlqt">Anatomy of PerlQt</A></LI>
@@ -44,9 +45,26 @@
 		<LI><A HREF="#working with .ui files">Working With <STRONG>.ui</STRONG> Files</A></LI>
 	</UL>
 
+	<LI><A HREF="#more development tools">More development tools</A></LI>
+	<UL>
+
+		<LI><A HREF="#pqtapi">pqtapi</A></LI>
+		<LI><A HREF="#pqtsh">pqtsh</A></LI>
+	</UL>
+
+	<LI><A HREF="#known limitations">Known Limitations</A></LI>
 	<LI><A HREF="#credits">Credits</A></LI>
-	<LI><A HREF="#appendix 1 : how to use qt documentation">Appendix 1 : How to use Qt Documentation</A></LI>
+	<LI><A HREF="#appendix 1 : how to use qt's documentation">Appendix 1 : How to use Qt's Documentation</A></LI>
 	<LI><A HREF="#appendix 2 : internationalization">Appendix 2 : Internationalization</A></LI>
+	<UL>
+
+		<UL>
+
+			<LI><A HREF="#disabling utf8">disabling utf-8</A></LI>
+		</UL>
+
+	</UL>
+
 	<LI><A HREF="#appendix 3 : debugging channels">Appendix 3 : Debugging Channels</A></LI>
 	<LI><A HREF="#appendix 4 : marshallers">Appendix 4 : Marshallers</A></LI>
 </UL>
@@ -138,6 +156,38 @@ If your system features a proprietary OpenGL library, and you'd like to use
 it, specify:</P>
 <PRE>
  --without-Mesa</PRE>
+<P>
+<H2><A NAME="how to install perlqt with user rights">How to install PerlQt with user rights</A></H2>
+<P>To install PerlQt without super-user rights, simply follow this procedure:</P>
+<UL>
+<LI>
+Perform a normal configuration, specifying as prefix a directory where you have write permissions :
+<PRE>
+ perl Makefile.PL --prefix=~</PRE>
+<P>The above would install the Smoke library in ~/lib and the puic binary in ~/bin</P>
+<P></P>
+<LI>
+Reconfigure the Perl module so that it doesn't target the standard perl hierarchy:
+<PRE>
+ cd PerlQt
+ perl Makefile.PL PREFIX=~
+ cd ..</PRE>
+<P>Beware : this is not the same Makefile.PL as above, but the one located in the ./PerlQt
+subdirectory</P>
+<P></P>
+<LI>
+Compile and Install
+<PRE>
+ make &amp;&amp; make install</PRE>
+<P>In order to use such an installation, you must tell to Perl where to find this extern hierarchy.
+This can be done either on the command line:</P>
+<PRE>
+ perl -Mlib=&quot;~/local/lib/perl/5.x.x&quot; program.pl</PRE>
+<P>or at the top of your program:</P>
+<PRE>
+ use lib qw( ~/local/lib/perl/5.x.x );</PRE>
+<P>``5.x.x'' should be changed to whatever Perl version your system is running.</P>
+<P></P></UL>
 <P>
 <HR>
 <H1><A NAME="anatomy of perlqt">Anatomy of PerlQt</A></H1>
@@ -582,17 +632,47 @@ parent module, and your child will inherit those changes.</P>
 <P></P></UL>
 <P>
 <HR>
+<H1><A NAME="more development tools">More development tools</A></H1>
+<P>PerlQt comes bundled with two simple programs that can help you to find your way through
+the Qt API:</P>
+<P>
+<H2><A NAME="pqtapi">pqtapi</A></H2>
+<P>pqtapi is a commandline driven introspection tool.</P>
+<PRE>
+ usage: pqtapi [-r &lt;re&gt;] [&lt;class&gt;]</PRE>
+<PRE>
+ options:
+        -r &lt;re&gt; : find all functions matching regular expression/keyword &lt;re&gt;
+        -i : together with -r, performs a case insensitive search
+        -v : print PerlQt and Qt versions
+        -h : print this help message</PRE>
+<P>e.g:</P>
+<PRE>
+ $&gt;pqtapi -ir 'setpoint.* int'
+        void QCanvasLine::setPoints(int, int, int, int)
+        void QPointArray::setPoint(uint, int, int)</PRE>
+<P>
+<H2><A NAME="pqtsh">pqtsh</A></H2>
+<P><STRONG>pqtsh</STRONG> is a graphical shell that can be used to test the API interactively.
+It is fairly self explanatory and includes an interactive example (<CODE>Help-&gt;Example</CODE>)</P>
+<br/>
+<div class='image'><img src="../images/pqtsh.png"/></div><P>
+<HR>
+<H1><A NAME="known limitations">Known Limitations</A></H1>
+<P>Templated classes aren't available yet (classes derived from templated classes are).</P>
+<P>
+<HR>
 <H1><A NAME="credits">Credits</A></H1>
-<P>PerlQt-3 is (c) 2002 Ashley Winters</P>
+<P>PerlQt-3 is (c) 2002 Ashley Winters (and (c) 2003 Germain Garand)</P>
 <P>Kalyptus and the Smoke generation engine are (c) David Faure and Richard Dale</P>
 <P>Puic is (c) TrollTech AS., Phil Thompson and Germain Garand,</P>
 <P>The mentioned software is released under the GNU Public Licence v.2 or later.</P>
 <P>
 <HR>
-<H1><A NAME="appendix 1 : how to use qt documentation">Appendix 1 : How to use Qt Documentation</A></H1>
+<H1><A NAME="appendix 1 : how to use qt's documentation">Appendix 1 : How to use Qt's Documentation</A></H1>
 <P>Whenever you want to use a class/method described in Qt's
-<A HREF="http://doc.trolltech.com">documentation</A> from PerlQt, you
-need to follow some simple translation rules.</P>
+<A HREF="http://doc.trolltech.com">documentation</A> (see also the 'assistant' program bundled with Qt)
+from PerlQt, you need to follow some simple translation rules.</P>
 <DL>
 <DT><STRONG><A NAME="item_Classnames">Classnames</A></STRONG><BR>
 <DD>
@@ -687,6 +767,43 @@ recommend the use of the alternate function call syntax : <CODE>&amp;function</C
 PerlQt :</P>
 <PRE>
  $apple_plus_orange = &amp;Qt::Fruit::Apple + &amp;Qt::Fruit::Orange;</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Operators">Operators</A></STRONG><BR>
+<DD>
+Within PerlQt, <STRONG>operators overloading</STRONG> works transparently.
+If a given operator is overloaded in a Qt class (which means using it triggers a custom method)
+it will behave identically in PerlQt.
+Beware though that due to limitations of the Smoke binding library, not all overloaded operators are
+available in PerlQt.
+You can check the availability of a given operator by using the pqtapi program.
+Also, due to outstanding differences between C++'s and Perl's object paradigm, the copy constructor operator (a.k.a '=')
+has been disabled.
+<P>e.g-1: '+=' overload</P>
+<PRE>
+ $p1 = Qt::Point(10, 10)
+ $p2 = Qt::Point(30,40)
+ $p2 += $p1; # $p2 becomes (40,50)
+</PRE>
+<PRE>
+
+e.g-2: '&lt;&lt;' overload</PRE>
+<PRE>
+ $f = Qt::File(&quot;example&quot;);
+ $f-&gt;open( IO_WriteOnly ); # see 'Constants' below
+ $s = Qt::TextStream( $f );
+ $s &lt;&lt; &quot;What can I do with &quot; &lt;&lt; 12 &lt;&lt; &quot; apples?&quot;;</PRE>
+<P></P>
+<DT><STRONG><A NAME="item_Constants">Constants</A></STRONG><BR>
+<DD>
+Qt doesn't use many constants, but there is at least one place where they are used : for setting 
+Input/Output flags on files.
+In order to avoid the namespace pollution induced by global constants, PerlQt group them in the <STRONG>Qt::constants</STRONG> module.
+For instance, requesting the importation of all IO constants into the current namespace would be done with:
+<PRE>
+ use Qt::constants qw(:IO);</PRE>
+<P>You may also import specific symbols:</P>
+<PRE>
+ use Qt::constants qw( IO_ReadOnly IO_WriteOnly );</PRE>
 <P></P></DL>
 <P>
 <HR>
@@ -717,20 +834,20 @@ then the string will be converted to QString's utf8 according to the currently s
  print $tr2-&gt;fromUnicode($my_utf8_string);</PRE>
 <P>Or, with Perl &gt;= 5.8.0, you may use Perl's <STRONG>Encode</STRONG> modules (see <CODE>perldoc Encode</CODE>).</P>
 <P>
+<H3><A NAME="disabling utf8">disabling utf-8</A></H3>
+<P>Developers who don't want to use UTF-8 or want to temporarily disable UTF-8 marshalling
+for handling legacy programs may use the <STRONG>use bytes</STRONG> pragma (and the corresponding <STRONG>no bytes</STRONG>).</P>
+<P>Within the scope of this pragma, QStrings are marshalled back to ISO-Latin1 (default) or to your locale
+(if <STRONG>use locale</STRONG> has been set).</P>
+<P>Frivole use of this pragma is strongly discouraged as it ruins worldwide standardization efforts.</P>
+<P>
 <HR>
 <H1><A NAME="appendix 3 : debugging channels">Appendix 3 : Debugging Channels</A></H1>
 <P>The <STRONG>Qt::debug</STRONG> module offers various debugging channels/features.</P>
-<P>You may enable or disable it scope-wise :</P>
 <PRE>
- use Qt::debug;
- &lt;...&gt;
- {
-   no Qt::debug;
-   &lt;...&gt;
- }
- &lt;...&gt;
- use Qt::debug qw|calls autoload verbose|;
- &lt;...&gt;</PRE>
+ use Qt::debug;</PRE>
+<PRE>
+ use Qt::debug qw|calls autoload verbose|;</PRE>
 <P>With the simple <CODE>use Qt::debug</CODE> statement, the <STRONG>verbose</STRONG> and <STRONG>ambiguous</STRONG> channels are activated.
 If you specify a list of channels within the use statement, then only the specified channels will be enabled.</P>
 <P><STRONG>Available channels :</STRONG></P>
@@ -795,7 +912,7 @@ would feel unnatural and clumsy.</P>
 PerlQt will translate it to an array reference containing all the object's strings.</P>
 <P>In the other way, instead of providing a Qt::StringList object as an argument of a method, one would simply
 provide the reference to an array of Perl strings.</P>
-<P>Here is the list of Marshallers as of PerlQt-3.004 :</P>
+<P>Here is the list of Marshallers as of PerlQt-3.006 :</P>
 <PRE>
  -----------------------------------------------------------------
  float, double                  &lt;=&gt;       Perl real (NV)
