@@ -11,6 +11,8 @@ sub new {
     my $self = shift->SUPER::new(@_);
 
     $self->{'ang'} = 45;
+    $self->setPalette(Qt::Palette->new(Qt::Color->new(250, 250, 200)));
+
     return $self;
 }
 
@@ -30,6 +32,12 @@ sub setAngle {
 
 sub paintEvent {
     my $self = shift;
+    my $p = Qt::Painter->new($self);
 
-    $self->drawText(200, 100, "Angle = $self->{'ang'}");
+    $p->drawText(200, 200, "Angle = $self->{'ang'}");
+}
+
+sub sizePolicy {
+    return Qt::SizePolicy->new(Qt::SizePolicy::Expanding,
+                               Qt::SizePolicy::Expanding);
 }

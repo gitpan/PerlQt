@@ -1,4 +1,17 @@
-Changed from 2.101 to 2.102  (2000-Jan-21)
+Changes from 2.102 to 2.103  (2000-Jan-26)
+---------------------------
+
+- All methods are now AUTOLOADed
+- Fixed several NULL pointer errors on method arguments
+- Ported the Qt-2.0 tutorials (they were different)
+- Moved the headers into the include/ directory
+- Changed Makefile.PL LIBS from $(QTDIR) to $ENV{QTDIR}
+- Added automatic support for argc/argv arguments to QApplication
+- Now compiles cleanly with -Wwrite-strings, which hopefully helps with
+  gcc >= 2.95
+
+
+Changes from 2.101 to 2.102  (2000-Jan-21)
 ---------------------------
 
 - Copied the examples and tutorials directories to make 1.4 and 2.0

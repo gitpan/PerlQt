@@ -201,7 +201,7 @@ PIG_IMPORT_ENDTABLE
 #define PIGPUSHSTACK dSP
 #define PIGPOPSTACK dTHR
 
-#define PIGARGUMENT(value) PIGNEXTARG; return value
+#define PIGARGUMENT(value) STMT_START { PIGNEXTARG; return value; } STMT_END
 #define PIGRETURN(value) PIG_RETARG = value; XSRETURN(1)
 #define PIGPUSH(sv) XPUSHs(sv); PUTBACK; return
 //#define PIGPOP(value) return SvREFCNT_dec(PIG_TOPSTACK), value

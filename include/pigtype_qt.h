@@ -14,6 +14,9 @@
 #include "pigfunc.h"
 #include "pigtype.h"
 
+PIG_DECLARE_TYPE(pig_type_argc)
+PIG_DECLARE_TYPE(pig_type_argv)
+
 PIG_DECLARE_TYPE(pig_type_serial)
 
 PIG_DECLARE_TYPE(pig_type_sender)
@@ -63,6 +66,8 @@ PIG_DECLARE_TYPE(pig_type_qt_QTabList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QObjectList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QWidgetList_ptr)
 
+PIGTYPE_ARGUMENT2(pig_type_argc, int &, int)
+PIGTYPE_ARGUMENT(pig_type_argv, char **)
 
 PIGTYPE_ARGUMENT2(pig_type_sender, class QObject *, int)
 PIGTYPE_DEFARGUMENT2(pig_type_sender, class QObject *, int)
@@ -145,6 +150,8 @@ inline const unsigned char *pig_type_qt_ubits_argument(int pig0, int pig1) {
 }
 
 PIG_IMPORT_TABLE(pigtype_qt)
+    PIG_IMPORT_TYPE(pig_type_argc, "Qt argc")
+    PIG_IMPORT_TYPE(pig_type_argv, "Qt argv")
     PIG_IMPORT_TYPE(pig_type_serial, "Qt serial")
     PIG_IMPORT_TYPE(pig_type_sender, "Qt sender")
     PIG_IMPORT_TYPE(pig_type_signal, "Qt signal")

@@ -41,7 +41,7 @@ PIG_DEFINE_SCOPE_VIRTUAL(pig_type_qt_QStrList_ptr) {
 PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_QStrList_ptr, class QStrList *) {
     PIGARGS;
     if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
-        return 0;
+        PIGARGUMENT(0);
 
     QStrList *pigr = _pig_create_QStrList((AV *)SvRV(PIG_ARG));
 
@@ -52,9 +52,9 @@ PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_QStrList_ptr, class QStrList *) {
 PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_qt_QStrList_ptr, class QStrList *) {
     PIGARGS;
     if(!PIG_ARGOK)
-	return pig0;
+	PIGARGUMENT(pig0);
     if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
-	return 0;
+	PIGARGUMENT(0);
 
     QStrList *pigr = _pig_create_QStrList((AV *)SvRV(PIG_ARG));
 
@@ -80,7 +80,7 @@ PIG_DEFINE_TYPE_POP(pig_type_qt_QStrList_ptr, class QStrList *) {
     PIGPOPSTACK;
     SV *pigsv = PIG_TOPSTACK;
     if(!SvOK(pigsv) || !SvROK(pigsv) || SvTYPE(SvRV(pigsv)) != SVt_PVAV)
-        return 0;
+        PIGPOP(0);
 
     QStrList *pigr = _pig_create_QStrList((AV *)SvRV(pigsv));
 
@@ -92,7 +92,7 @@ PIG_DEFINE_TYPE_POP(pig_type_qt_QStrList_ptr, class QStrList *) {
 PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_leak_QStrList_ptr, class QStrList *) {
     PIGARGS;
     if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
-        return 0;
+        PIGARGUMENT(0);
     AV *pigav = (AV *)SvRV(PIG_ARG);
     QStrList *pigr = _pig_create_QStrList(pigav);
 
@@ -103,9 +103,9 @@ PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_leak_QStrList_ptr, class QStrList *) {
 PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_qt_leak_QStrList_ptr, class QStrList *) {
     PIGARGS;
     if(!PIG_ARGOK)
-	return pig0;
+	PIGARGUMENT(pig0);
     if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
-	return 0;
+	PIGARGUMENT(0);
 
     AV *pigav = (AV *)SvRV(PIG_ARG);
     QStrList *pigr = _pig_create_QStrList(pigav);
@@ -121,7 +121,7 @@ PIG_DEFINE_TYPE_POP(pig_type_qt_leak_QStrList_ptr, class QStrList *) {
     PIGPOPSTACK;
     SV *pigsv = PIG_TOPSTACK;
     if(!SvOK(pigsv) || !SvROK(pigsv) || SvTYPE(SvRV(pigsv)) != SVt_PVAV)
-        return 0;
+        PIGPOP(0);
 
     QStrList *pigr = _pig_create_QStrList((AV *)SvRV(pigsv));
 

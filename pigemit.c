@@ -126,7 +126,7 @@ extern "C" XS(PIG_Qt__signals_import) {
     pigvar = new char [strlen(pigclass) + 2 + strlen(pigname) + strlen(pigmap) + strlen(pigemit) + 1];
 
     sprintf(pigvar, "%s::%s", pigclass, pigemit);
-    newXS(pigvar, PIG_Qt__signals_emit, __FILE__);
+    newXS((char *)pigvar, PIG_Qt__signals_emit, (char *)__FILE__);
 
     sprintf(pigvar, "%s::%s", pigclass, pigname);
 
@@ -153,7 +153,7 @@ extern "C" XS(PIG_Qt__signals_import) {
 	pignewxs = new char [ strlen(pigclass) + 2 + strlen(pigcrypt + 2) + 1 ];
 	sprintf(pignewxs, "%s::%s", pigclass, pigcrypt + 2);
 //	printf("newxs %s\n", pignewxs);
-	newXS(pignewxs, (XS((*)))pig_signal_emit, __FILE__);
+	newXS((char *)pignewxs, (XS((*)))pig_signal_emit, (char *)__FILE__);
 	delete [] pignewxs;
     }
 }

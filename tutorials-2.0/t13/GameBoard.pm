@@ -56,33 +56,33 @@ sub new {
     my $hitsL = Qt::Label->new('HITS', $self, 'hitsLabel');
     my $shotsLeftL = Qt::Label->new('SHOTS LEFT', $self, 'shotsleftLabel');
 
-    $quit->setGeometry(10, 10, 75, 30);
-    $angle->setGeometry(10, $quit->y() + $quit->height() + 10, 75, 130);
-    $force->setGeometry(10, $angle->y() + $angle->height() + 10, 75, 130);
-    $cannonField->move($angle->x() + $angle->width() + 10, $angle->y());
-    $shoot->setGeometry(10, 315, 75, 30);
-    $restart->setGeometry(380, 10, 110, 30);
-    $hits->setGeometry(130, 10, 40, 30);
-    $hitsL->setGeometry($hits->x() + $hits->width() + 5, 10, 60, 30);
-    $shotsLeft->setGeometry(240, 10, 40, 30 );
-    $shotsLeftL->setGeometry($shotsLeft->x() + $shotsLeft->width() + 5, 10,
-			     60, 30);
 
-    @$self{'quit', 'angle', 'force', 'cannonField', 'shoot', 'restart', 'hits',
-       'hitsL', 'shotsLeft', 'shotsleftL'} =
-	($quit, $angle, $force, $cannonField, $shoot, $restart, $hits, $hitsL,
-	 $shotsLeft, $shotsLeftL);
+
+    my $grid = Qt::GridLayout->new($self, 2, 2, 10);
+    $grid->addWidget($quit, 0, 0);
+    $grid->addWidget($cannonField, 1, 1);
+    $grid->setColStretch(1, 10);
+
+    my $leftBox = Qt::VBoxLayout->new;
+    $grid->addLayout($leftBox, 1, 0);
+    $leftBox->addWidget($angle);
+    $leftBox->addWidget($force);
+
+    my $topBox = Qt::HBoxLayout->new;
+    $grid->addLayout($topBox, 0, 1);
+    $topBox->addWidget($shoot);
+    $topBox->addWidget($hits);
+    $topBox->addWidget($hitsL);
+    $topBox->addWidget($shotsLeft);
+    $topBox->addWidget($shotsLeftL);
+    $topBox->addStretch(1);
+    $topBox->addWidget($restart);
+
+    @$self{'hits', 'shotsLeft', 'cannonField'} =
+	($hits, $shotsLeft, $cannonField);
     $self->newGame();
 
     return $self;
-}
-
-sub resizeEvent {
-    my $self = shift;
-    my $cannonField = $self->{'cannonField'};
-
-    $cannonField->resize($self->width()  - $cannonField->x() - 10,
-			 $self->height() - $cannonField->y() - 10);
 }
 
 sub fire {

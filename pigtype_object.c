@@ -63,10 +63,8 @@ PIG_DEFINE_TYPE_ARGUMENT2(pig_type_object_ref, void *, const char *) {
 
 PIG_DEFINE_TYPE_DEFARGUMENT2(pig_type_object_ref, void *, const char *) {
     PIGARGS;
-    if(!PIG_ARGOK) {
-        PIGNEXTARG;
-	return pig0;
-    }
+    if(!PIG_ARGOK)
+	PIGARGUMENT(pig0);
     pig_object_data *pigd = pig_object_extract(PIG_ARG);
     PIGARGUMENT(pig_object_cast(pigd, pig1));
 }
@@ -108,10 +106,8 @@ PIG_DEFINE_TYPE_ARGUMENT2(pig_type_const_object, const void *, const char *) {
 
 PIG_DEFINE_TYPE_DEFARGUMENT2(pig_type_const_object, const void *, const char *) {
     PIGARGS;
-    if(!PIG_ARGOK) {
-        PIGNEXTARG;
-	return pig0;
-    }
+    if(!PIG_ARGOK)
+	PIGARGUMENT(pig0);
     pig_object_data *pigd = pig_object_extract(PIG_ARG);
     PIGARGUMENT(pig_object_cast(pigd, pig1));
 }
@@ -148,15 +144,17 @@ PIG_DEFINE_TYPE_POP2(pig_type_const_object, const void *, const char *) {
 PIG_DEFINE_TYPE_ARGUMENT2(pig_type_const_object_ref, const void *, const char *) {
     PIGARGS;
     pig_object_data *pigd = pig_object_extract(PIG_ARG);
+    if(!pigd) {
+	if(PIGdowarn)
+	    warn("Passing NULL reference argument");
+    }
     PIGARGUMENT(pig_object_cast(pigd, pig0));
 }
 
 PIG_DEFINE_TYPE_DEFARGUMENT2(pig_type_const_object_ref, const void *, const char *) {
     PIGARGS;
-    if(!PIG_ARGOK) {
-        PIGNEXTARG;
-	return pig0;
-    }
+    if(!PIG_ARGOK)
+	PIGARGUMENT(pig0);
     pig_object_data *pigd = pig_object_extract(PIG_ARG);
     PIGARGUMENT(pig_object_cast(pigd, pig1));
 }

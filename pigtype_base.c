@@ -528,11 +528,11 @@ PIG_DEFINE_TYPE_ARGUMENT(pig_type_shortarray, short *) {
     short *pigr;
 
     if(!SvOK(PIG_ARG))
-        return 0;
+        PIGARGUMENT(0);
     if(!SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV) {
         if(PIGdowarn)
            warn("Argument must be an array reference, not a list");
-       return 0;
+       PIGARGUMENT(0);
     }
 
     pigav = (AV *)SvRV(PIG_ARG);

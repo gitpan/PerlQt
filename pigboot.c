@@ -95,7 +95,7 @@ extern "C" XS(PIG_QApplication_new) {
     }
 
     av_unshift(pigargs, 1);
-    av_store(pigargs, 0, newSVsv(perl_get_sv("0", TRUE)));
+    av_store(pigargs, 0, newSVsv(perl_get_sv((char *)"0", TRUE)));
 
     char **pigargv;
     int pigargc;
@@ -126,11 +126,11 @@ extern "C" XS(PIG_app_import) {
     SV *pigsv;
     SV *pigapp;
 
-    pigapp = perl_get_sv("Qt::app", FALSE);
+    pigapp = perl_get_sv((char *)"Qt::app", FALSE);
     if(!pigapp || !SvOK(pigapp)) {
         AV *pigargv;
 	int pigcount;
-	pigargv = perl_get_av("ARGV", TRUE);
+	pigargv = perl_get_av((char *)"ARGV", TRUE);
 
 	ENTER;
 	SAVETMPS;
@@ -141,14 +141,14 @@ extern "C" XS(PIG_app_import) {
 
 //warn("Calling QApplication::new\n");
 
-	pigcount = perl_call_method("new", G_SCALAR);
+	pigcount = perl_call_method((char *)"new", G_SCALAR);
 
 	SPAGAIN;
 
 	if(pigcount != 1)
 	    croak("Cannot call %s::new\n", pig_map_class("QApplication"));
 
-	pigapp = perl_get_sv("Qt::app", TRUE | GV_ADDMULTI);
+	pigapp = perl_get_sv((char *)"Qt::app", TRUE | GV_ADDMULTI);
 	sv_setsv(pigapp, POPs);
 
 	PUTBACK;
@@ -184,8 +184,8 @@ void __pig_module_used(const char *pig0) {
 
 //warn("$INC{\"%s\"} = \"%s\";\n", pigpm, __FILE__);
 
-    HV *pighv_inc = perl_get_hv("main::INC", TRUE);
-    hv_store(pighv_inc, pigpm, strlen(pigpm), newSVpv(__FILE__, 0), 0);
+    HV *pighv_inc = perl_get_hv((char *)"main::INC", TRUE);
+    hv_store(pighv_inc, pigpm, strlen(pigpm), newSVpv((char *)__FILE__, 0), 0);
 }
 
 extern "C" XS(PIG_Qt_import) {
@@ -208,14 +208,14 @@ extern "C" XS(boot_Qt) {
 
     __pig_module_used("Qt::signals");
     __pig_module_used("Qt::slots");
-    newXS("Qt::signals::import", PIG_Qt__signals_import, __FILE__);
-    newXS("Qt::slots::import", PIG_Qt__slots_import, __FILE__);
+    newXS((char *)"Qt::signals::import", PIG_Qt__signals_import, (char *)__FILE__);
+    newXS((char *)"Qt::slots::import", PIG_Qt__slots_import, (char *)__FILE__);
 
     pig_load_classinfo(PIG_module);
     pig_load_constants("Qt", PIG_constant_Qt);
-    newXS("Qt::Application::new", PIG_QApplication_new, __FILE__);
-    newXS("Qt::app::import", PIG_app_import, __FILE__);
-    newXS("Qt::import", PIG_Qt_import, __FILE__);
+//    newXS("Qt::Application::new", PIG_QApplication_new, __FILE__);
+    newXS((char *)"Qt::app::import", PIG_app_import, (char *)__FILE__);
+    newXS((char *)"Qt::import", PIG_Qt_import, (char *)__FILE__);
 
     XSRETURN_UNDEF;
 }

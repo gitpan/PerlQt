@@ -5,8 +5,7 @@ suicidal virtual class QApplication : virtual QObject {
 	CustomColor, ManyColor, NormalColor, PrivateColor, TrueColor
     };
 
-//  QApplication() : pig_QApplication_new($class);
-#   QApplication(int &, char **);
+    QApplication(int &{@argc(1)}, char **{argv});
     virtual ~QApplication();
     static QWidget *activeModalWidget();
     static QWidget *activePopupWidget();

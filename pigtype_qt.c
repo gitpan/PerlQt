@@ -29,6 +29,73 @@ PIG_DEFINE_STUB_TYPE(pig_type_qt_QStringList_ptr, class QStringList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QTabList_ptr, class QTabList *)
 
 
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_argc) {
+//    delete (int *)pig0;
+}
+
+PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qt_argc, int &, int) {
+    PIGARGS;
+    SV *pigav;
+    pigav = ST(pig0);
+    int *pigr = new int;
+    if(!SvOK(pigav) || !SvROK(pigav) || SvTYPE(SvRV(pigav)) != SVt_PVAV)
+        return *pigr;
+    *pigr = av_len((AV *)SvRV(pigav)) + 2;
+//printf("argc == %d\n", *pigr);
+    return *pigr;
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_argc, int &)
+PIG_DEFINE_STUB_RETURN(pig_type_qt_argc, int &)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_argc, int &)
+PIG_DEFINE_STUB_POP(pig_type_qt_argc, int &)
+
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_argv) {
+//    delete [] (char **)pig0;
+}
+
+static char **pig_create_stringarray_from_av(AV *pigav, int &pigcount) {
+    char **pigarray;
+    I32 pigcnt, pigidx, pigarg;
+    STRLEN n_a;
+
+    pigcnt = av_len(pigav);
+    pigarray = new char *[pigcnt + 2];
+    pigarg = 0;
+    for(pigidx = 0; pigidx <= pigcnt; pigidx++) {
+        SV **pigsvp = av_fetch(pigav, pigidx, 0);
+        if(pigsvp)
+            pigarray[pigarg++] = SvPV(*pigsvp, n_a);
+    }
+    pigarray[pigarg] = 0;
+    pigcount = pigarg;
+    return pigarray;
+}
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_argv, char **) {
+    PIGARGS;
+    if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
+        PIGARGUMENT(0);
+
+    AV *pigargs = (AV *)SvRV(PIG_ARG);
+    int pigargc;
+
+    av_unshift(pigargs, 1);
+    av_store(pigargs, 0, newSVsv(perl_get_sv((char *)"0", TRUE)));
+    char **pigr = pig_create_stringarray_from_av(pigargs, pigargc);
+    av_shift(pigargs);
+
+    PIGSCOPE_ARGUMENT(pig_type_qt_argv, pigr);
+    PIGARGUMENT(pigr);
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_argv, char **)
+PIG_DEFINE_STUB_RETURN(pig_type_qt_argv, char **)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_argv, char **)
+PIG_DEFINE_STUB_POP(pig_type_qt_argv, char **)
+
+
 PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qt_sender, class QObject *, int) {
     return (class QObject *)pig_type_object_argument("QObject");
 }
@@ -194,7 +261,7 @@ PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_xpm) {
 PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_xpm, const char **) {
     PIGARGS;
     if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
-        return 0;
+        PIGARGUMENT(0);
     AV *pigav = (AV *)SvRV(PIG_ARG);
     I32 pigcnt = av_len(pigav) + 1;
     char **pigr;
@@ -232,7 +299,7 @@ PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_QByteArray_ptr) {
 
 PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_QByteArray_ptr, QByteArray *) {
     PIGARGS;
-    if(!PIG_ARGOK) return 0;
+    if(!PIG_ARGOK) PIGARGUMENT(0);
     STRLEN n_a;
     QByteArray *pigba = new QByteArray();
     pigba->duplicate(SvPV(PIG_ARG, n_a), SvCUR(PIG_ARG));
@@ -327,6 +394,8 @@ PIG_DEFINE_TYPE_RETURN(pig_type_qt_QWidgetList_ptr, QWidgetList *) {
     PIGRETURN(pigsv);
 }
 
+PIG_DEFINE_TYPE(pig_type_qt_argc)
+PIG_DEFINE_TYPE(pig_type_qt_argv)
 PIG_DEFINE_TYPE(pig_type_qt_serial)
 PIG_DEFINE_TYPE(pig_type_qt_sender)
 PIG_DEFINE_TYPE(pig_type_qt_signal)
@@ -353,6 +422,8 @@ PIG_DECLARE_EXPORT_TABLE(pigtype_qt_QString)
 PIG_DECLARE_EXPORT_TABLE(pigtype_qt_QStrList)
 
 PIG_EXPORT_TABLE(pigtype_qt)
+    PIG_EXPORT_TYPE(pig_type_qt_argc, "Qt argc")
+    PIG_EXPORT_TYPE(pig_type_qt_argv, "Qt argv")
     PIG_EXPORT_TYPE(pig_type_qt_serial, "Qt serial")
     PIG_EXPORT_TYPE(pig_type_qt_sender, "Qt sender")
     PIG_EXPORT_TYPE(pig_type_qt_signal, "Qt signal")

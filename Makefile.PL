@@ -27,8 +27,8 @@ $MAKE = 'Qt-1.4';
     CC => 'g++',
     CCFLAGS => '',
     DEFINE => '',
-    INC => '-I$(QTDIR)/include -I/usr/X11R6/include -I/usr/include/qt -I.',
-    LIBS => '-L$(QTDIR)/lib -L/usr/X11R6/lib -lqt -lX11',
+    INC => '-I$(QTDIR)/include -I/usr/X11R6/include -I/usr/include/qt',
+    LIBS => "-L$ENV{QTDIR}/lib -L/usr/X11R6/lib -lqt -lX11",
     OPTIMIZE => '-O'
 );
 ##########
@@ -44,7 +44,7 @@ unless(@ARGV && $ARGV[0] =~ /^-f/) {
     GenerateSource(
 	DIR => [ $MAKE ],
 	TYPEMAPS => [ "$MAKE/typemap" ],
-	INCLUDE => [ "pigmodule_$MAKE.h" ],
+	INCLUDE => [ "pigmodule_Qt.h" ],
 	VIRTUALHEADER => 'pigvirtual.h',
 	SOURCEDIR => '.',
 	Source => \$filelist
@@ -109,6 +109,8 @@ sub configurate {
 
     return { OBJECT => $object, DEFINE => $define, LIBS => $libs };
 }
+
+$Args{INC} .= ' -I. -I./include';
 
 WriteMakefile(
 # These arguments should remain unchanged.

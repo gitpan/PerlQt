@@ -3,6 +3,60 @@
 #include "pigconstant.h"
 #include "pigclassinfo.h"
 
+static HV *_pig_autoloaded_methods = 0;
+
+static void pig_autoload_class(const char *pigclass) {
+    SV **pigsvp = hv_fetch(_pig_autoloaded_methods,
+			   (char *)pigclass, strlen(pigclass), FALSE);
+    pig_classinfo *piginfo;
+    if(pigsvp) {
+	piginfo = (pig_classinfo *)SvIV(*pigsvp);
+        pig_load_methods(pigclass, piginfo->pigmethodlist);
+        pig_load_isa(pig_map_class(piginfo->pigclassname), piginfo->pigisa);
+        hv_delete(_pig_autoloaded_methods,
+		  (char *)pigclass, strlen(pigclass), G_DISCARD);
+    }
+}
+
+static XS(PIG_import) {
+    dXSARGS;
+    const char *pigclass = HvNAME(GvSTASH(CvGV((CV *)cv)));
+    pig_autoload_class(pigclass);
+    XSRETURN_EMPTY;    
+}
+
+static XS(PIG_AUTOLOAD) {
+    const char *pigclass = HvNAME(GvSTASH(CvGV((CV *)cv)));
+    int pigcount;
+    STRLEN n_a;
+    char *pigmethod = new char [strlen(pigclass) + 11];
+    sprintf(pigmethod, "%s::AUTOLOAD", pigclass);
+    GvCV(CvGV(cv)) = 0;
+
+    pig_autoload_class(pigclass);
+    GV *piggv = gv_fetchmethod(CvSTASH(cv),
+	SvPV(perl_get_sv(pigmethod, FALSE), n_a));
+    SvREFCNT_dec((SV *)cv);
+    perl_call_sv((SV *)GvCV(piggv), GIMME_V);
+//    perl_call_method(SvPV(perl_get_sv(pigmethod, FALSE), n_a), FALSE);
+
+    delete [] pigmethod;
+}
+
+void pig_autoload_methods(const char *pig0, pig_classinfo *pig1) {
+    char *pigmethod;
+    if(!_pig_autoloaded_methods)
+        _pig_autoloaded_methods = newHV();
+    hv_store(_pig_autoloaded_methods,
+	     (char *)pig0, strlen(pig0), newSViv((IV)pig1), 0);
+    pigmethod = new char [strlen(pig0) + 11];
+    sprintf(pigmethod, "%s::AUTOLOAD", pig0);
+    newXS((char *)pigmethod, (XS((*)))PIG_AUTOLOAD, (char *)__FILE__);
+//    sprintf(pigmethod, "%s::import", pig0);
+//    newXS(pigmethod, (XS((*)))PIG_import, __FILE__);
+    delete [] pigmethod;
+}
+
 PIG_DEFINE_VOID_FUNC_1(pig_load_classinfo, pig_classinfo *) {
     pig_classinfo *piginfo = pig0;
     while(piginfo->pigclassname) {
@@ -12,16 +66,20 @@ PIG_DEFINE_VOID_FUNC_1(pig_load_classinfo, pig_classinfo *) {
 	pigmap = pig_map_class(piginfo->pigclassname);
 
 	pig_load_constants(pigmap, piginfo->pigconstant);
+#if PIGLOAD
 	pig_load_methods(pigmap, piginfo->pigmethodlist);
-
+#else
+	pig_autoload_methods(pigmap, piginfo);
+#endif
 	piginfo++;
     }
-
+#if PIGLOAD
     piginfo = pig0;
     while(piginfo->pigclassname) {
 	pig_load_isa(pig_map_class(piginfo->pigclassname), piginfo->pigisa);
 	piginfo++;
     }
+#endif
 }
 
 PIG_DEFINE_VOID_FUNC_2(pig_load_isa, const char *, const char **) {
@@ -41,6 +99,11 @@ PIG_DEFINE_VOID_FUNC_2(pig_load_isa, const char *, const char **) {
         const char *pigmap = pig_map_class(*pig1);
         av_push(pigISAav, newSVpv((char *)pigmap, 0));
 	PIG_DEBUG_INIT(("push @%s::ISA, \"%s\";\n", pig0, pigmap));
+
+#if !PIGLOAD
+	pig_autoload_class(pigmap);
+#endif
+
 	pig1++;
     }
 
@@ -54,7 +117,7 @@ PIG_DEFINE_VOID_FUNC_2(pig_load_methods, const char *, pig_method *) {
     char *pigm = 0;
 
     if(!pig0 || !pig1) return;
-
+//printf("Loading %s\n", pig0);
     pigclasslen = strlen(pig0) + 3;
 
     while(pig1->pigmethodname) {
@@ -69,7 +132,7 @@ PIG_DEFINE_VOID_FUNC_2(pig_load_methods, const char *, pig_method *) {
 
 	strcpy(pigm, pig1->pigmethodname);
 	PIG_DEBUG_INIT(("method &%s::%s = %p\n", pig0, pig1->pigmethodname, pig1->pigmethodfptr));
-	newXS(pigmethod, (XS((*)))pig1->pigmethodfptr, __FILE__);
+	newXS((char *)pigmethod, (XS((*)))pig1->pigmethodfptr, (char *)__FILE__);
         pig1++;
     }
 

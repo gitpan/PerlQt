@@ -13,8 +13,6 @@ use Qt::slots 'fire()', 'hit()', 'missed()', 'newGame()';
 sub new {
     my $self = shift->SUPER::new(@_);
 
-    $self->setMinimumSize(500, 355);
-
     my $quit = Qt::PushButton->new('Quit', $self, 'quit');
     $quit->setFont(Qt::Font->new('Times', 18, Qt::Font::Bold));
 
@@ -26,10 +24,10 @@ sub new {
     my $force = LCDRange->new('FORCE', $self, 'force');
     $force->setRange(10, 50);
 
-    my $frame = Qt::Frame->new($self, 'cannonFrame');
-    $frame->setFrameStyle(Qt::Frame::WinPanel | Qt::Frame::Sunken);
+    my $box = Qt::VBox->new($self, 'cannonFrame');
+    $box->setFrameStyle(Qt::Frame::WinPanel | Qt::Frame::Sunken);
 
-    my $cannonField = new CannonField($self, 'cannonField');
+    my $cannonField = new CannonField($box, 'cannonField');
     $cannonField->setBackgroundColor(Qt::Color->new(250, 250, 200));
 
     $cannonField->connect($angle, 'valueChanged(int)', 'setAngle(int)');
@@ -63,35 +61,31 @@ sub new {
     $accel->connectItem($accel->insertItem(Qt::Key_Space), $self, 'fire()');
     $accel->connectItem($accel->insertItem(Qt::Key_Q), $app, 'quit()');
 
-    $quit->setGeometry(10, 10, 75, 30);
-    $angle->setGeometry(10, $quit->y() + $quit->height() + 10, 75, 130);
-    $force->setGeometry(10, $angle->y() + $angle->height() + 10, 75, 130);
-    $frame->move($angle->x() + $angle->width() + 10, $angle->y());
-    $cannonField->move($frame->x() + 2, $frame->y() + 2);
-    $shoot->setGeometry(10, 315, 75, 30);
-    $restart->setGeometry(380, 10, 110, 30);
-    $hits->setGeometry(130, 10, 40, 30);
-    $hitsL->setGeometry($hits->x() + $hits->width() + 5, 10, 60, 30);
-    $shotsLeft->setGeometry(240, 10, 40, 30 );
-    $shotsLeftL->setGeometry($shotsLeft->x() + $shotsLeft->width() + 5, 10,
-			     60, 30);
+    my $grid = Qt::GridLayout->new($self, 2, 2, 10);
+    $grid->addWidget($quit, 0, 0);
+    $grid->addWidget($box, 1, 1);
+    $grid->setColStretch(1, 10);
 
-    @$self{'quit', 'angle', 'force', 'frame', 'cannonField', 'shoot',
-	   'restart', 'hits', 'hitsL', 'shotsLeft', 'shotsleftL' , 'accel'} =
-	($quit, $angle, $force, $frame, $cannonField, $shoot, $restart, $hits,
-	 $hitsL, $shotsLeft, $shotsLeftL, $accel);
+    my $leftBox = Qt::VBoxLayout->new;
+    $grid->addLayout($leftBox, 1, 0);
+    $leftBox->addWidget($angle);
+    $leftBox->addWidget($force);
+
+    my $topBox = Qt::HBoxLayout->new;
+    $grid->addLayout($topBox, 0, 1);
+    $topBox->addWidget($shoot);
+    $topBox->addWidget($hits);
+    $topBox->addWidget($hitsL);
+    $topBox->addWidget($shotsLeft);
+    $topBox->addWidget($shotsLeftL);
+    $topBox->addStretch(1);
+    $topBox->addWidget($restart);
+
+    @$self{'hits', 'shotsLeft', 'cannonField'} =
+        ($hits, $shotsLeft, $cannonField);
     $self->newGame();
 
     return $self;
-}
-
-sub resizeEvent {
-    my $self = shift;
-    my($frame, $cannonField) = @$self{'frame', 'cannonField'};
-
-    $frame->resize($self->width()  - $frame->x() - 10,
-		   $self->height() - $frame->y() - 10);
-    $cannonField->resize($frame->width() - 4, $frame->height() - 4);
 }
 
 sub fire {

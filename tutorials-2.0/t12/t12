@@ -1,4 +1,7 @@
 #!/usr/bin/perl -w
+use Qt 2.0;
+#BEGIN { Qt::Application::setColorSpec(Qt::Application::CustomColor) }
+
 package MyWidget;
 
 use Qt 2.0;
@@ -15,21 +18,20 @@ sub new {
     $self->setMinimumSize(500, 355);
 
     my $quit = Qt::PushButton->new('Quit', $self, 'quit');
-    $quit->setGeometry(10, 10, 75, 30);
     $quit->setFont(Qt::Font->new('Times', 18, Qt::Font::Bold));
 
     $app->connect($quit, 'clicked()', 'quit()');
 
     my $angle = LCDRange->new('ANGLE', $self, 'angle');
     $angle->setRange(5, 70);
-    $angle->setGeometry(10, $quit->y() + $quit->height() + 10, 75, 130);
 
     my $force = LCDRange->new('FORCE', $self, 'force');
     $force->setRange(10, 50);
-    $force->setGeometry(10, $angle->y() + $angle->height() + 10, 75, 130);
+
+    my $shoot = Qt::PushButton->new('Shoot', $self, 'shoot');
+    $shoot->setFont(Qt::Font->new('Times', 18, Qt::Font::Bold));
 
     my $cannonField = CannonField->new($self, 'cannonField');
-    $cannonField->move($angle->x() + $angle->width() + 10, $angle->y());
     $cannonField->setBackgroundColor(Qt::Color->new(250, 250, 200));
 
     $cannonField->connect($angle, 'valueChanged(int)', 'setAngle(int)');
@@ -38,28 +40,27 @@ sub new {
     $cannonField->connect($force, 'valueChanged(int)', 'setForce(int)');
     $force->connect($cannonField, 'forceChanged(int)', 'setValue(int)');
 
-    $cannonField->connect($cannonField, 'hit()', 'newTarget()');
+    $cannonField->connect($shoot, 'clicked()', 'shoot()');
+
+    my $grid = Qt::GridLayout->new($self, 2, 2, 10);
+    $grid->addWidget($quit, 0, 0);
+    $grid->addWidget($cannonField, 1, 1);
+    $grid->setColStretch(1, 10);
+
+    my $leftBox = Qt::VBoxLayout->new;
+    $grid->addLayout($leftBox, 1, 0);
+    $leftBox->addWidget($angle);
+    $leftBox->addWidget($force);
+
+    my $topBox = Qt::HBoxLayout->new;
+    $grid->addLayout($topBox, 0, 1);
+    $topBox->addWidget($shoot);
+    $topBox->addStretch(1);
 
     $angle->setValue(60);
     $force->setValue(25);
 
-    my $shoot = Qt::PushButton->new('Shoot', $self, 'shoot');
-    $shoot->setGeometry(90, 10, 75, 30);
-    $shoot->setFont(Qt::Font->new('Times', 18, Qt::Font::Bold));
-
-    $cannonField->connect($shoot, 'clicked()', 'shoot()');
-
-    @$self{'quit', 'shoot', 'angle', 'force', 'cannonField'} =
-	($quit, $shoot, $angle, $force, $cannonField);
     return $self;
-}
-
-sub resizeEvent {
-    my $self = shift;
-    my $cannonField = $self->{'cannonField'};
-
-    $cannonField->resize($self->width()  - $cannonField->x() - 10,
-			 $self->height() - $cannonField->y() - 10);
 }
 
 package main;
@@ -68,7 +69,6 @@ use Qt 2.0;
 import Qt::app;
 
 $w = MyWidget->new;
-$w->setGeometry(100, 100, 500, 355);
 $app->setMainWidget($w);
 $w->show();
 exit $app->exec();

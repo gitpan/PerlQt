@@ -76,8 +76,8 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 
     SV *pig_protosv;
     SV *pig_fname, *pig_args;
-    SV *pig_cryptproto = newSVpv("\0", 1);	// beyond this point, there be dragons
-    SV *pig_saneproto = newSVpv("", 0);
+    SV *pig_cryptproto = newSVpv((char *)"\0", 1);	// beyond this point, there be dragons
+    SV *pig_saneproto = newSVpv((char *)"", 0);
     bool pig_constarg = FALSE;		// double-check ourselves
 
 // A simple removal of whitespace and copy to pig_protosv of our favorite
@@ -118,10 +118,10 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 	char pig_len[1] = { SvCUR(pig_fname) + 1 };
 	sv_catpvn(pig_cryptproto, pig_len, 1);
 	sv_catpvn(pig_cryptproto, SvPVX(pig_fname), SvCUR(pig_fname));
-	sv_catpvn(pig_cryptproto, "\0", 1);
+	sv_catpvn(pig_cryptproto, (char *)"\0", 1);
 
 	sv_catsv(pig_saneproto, pig_fname);
-	sv_catpv(pig_saneproto, "(");
+	sv_catpv(pig_saneproto, (char *)"(");
 
 	if(*pig_openparen != '(')	// bad news
 	    croak("The argument-list for '%s' must begin with "
@@ -173,7 +173,7 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 		sv_catpvn(pig_cryptproto, pig_cryptstr, 1);
 	    }
 	    else {
-		SV *pig_tokensv = newSVpv("", 0);
+		SV *pig_tokensv = newSVpv((char *)"", 0);
 		unsigned long pig_intstat = 0;
 		while(isALNUM(*pig_argstart)) {
 		    char *pig_token = NULL, *pig_tokend = pig_argstart;
@@ -197,7 +197,7 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 			    croak("const is a reserved word and must be "
 				  "the first in the type identification");
 			pig_constarg = TRUE;
-			pig_sanestr = "const ";
+			pig_sanestr = (char *)"const ";
 			*pig_cryptstr = PIG_PROTO_CONST;
 
 			sv_catpv(pig_saneproto, pig_sanestr);
@@ -213,7 +213,7 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 			continue;
 		    }
 
-		    if(pig_intstat) sv_catpv(pig_saneproto, " ");
+		    if(pig_intstat) sv_catpv(pig_saneproto, (char *)" ");
 
 		    if(strEQ(pig_token, "int")) pig_int_set(pig_intstat, PIG_NUM_INT);
 		    else if(strEQ(pig_token, "long")) pig_int_set(pig_intstat, PIG_NUM_LONG);
@@ -234,17 +234,17 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 		        if(strEQ(pig_token, "bool")) *pig_cryptstr = PIG_PROTO_BOOL;
 		        else if(strEQ(pig_token, "string")) {
 			    *pig_cryptstr = PIG_PROTO_STRING;
-			    pig_sanestr = "char*";
+			    pig_sanestr = (char *)"char*";
 			}
 			else if(strEQ(pig_token, "cstring")) {
 			    *pig_cryptstr = PIG_PROTO_STRING;
-			    pig_sanestr = "const char*";
+			    pig_sanestr = (char *)"const char*";
 			    if(pig_constarg)
 				croak("const cstring is redundant in '%s'", SvPVX(pig_fname));
 			}
 			else {
 			    sv_catpv(pig_saneproto, pig_token);	// object*
-			    sv_catpv(pig_saneproto, pig_reference ? "&" : "*");
+			    sv_catpv(pig_saneproto, pig_reference ? (char *)"&" : (char *)"*");
 
 			    *pig_cryptstr = PIG_PROTO_OBJECT;		// \1\lenObject\0
 			    sv_catpvn(pig_cryptproto, pig_cryptstr, pig_cryptlen);
@@ -285,14 +285,14 @@ PIG_DEFINE_FUNC_1(SV *, pig_parse_proto, SV *) {	// 75 lines of Perl, to 200+ li
 	    if(*pig_argstart == ',') {
 		pig_argstart++;
 		while(isSPACE(*pig_argstart)) pig_argstart++;
-		if(pig_argstart < pig_argsend) sv_catpv(pig_saneproto, ",");
+		if(pig_argstart < pig_argsend) sv_catpv(pig_saneproto, (char *)",");
 		else {
 		    pig_argstart--;
 		    while(isSPACE(*pig_argstart)) pig_argstart--;	// force error
 		}
 	    }
 	}
-	sv_catpv(pig_saneproto, ")");
+	sv_catpv(pig_saneproto, (char *)")");
     }
 
 #if PIGDEBUG & PIGDEBUG_SIGSLOT

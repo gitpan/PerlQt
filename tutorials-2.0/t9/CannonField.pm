@@ -11,6 +11,8 @@ sub new {
     my $self = shift->SUPER::new(@_);
 
     $self->{'ang'} = 45;
+    $self->setPalette(Qt::Palette->new(Qt::Color->new(250, 250, 200)));
+
     return $self;
 }
 
@@ -30,18 +32,18 @@ sub setAngle {
 
 sub paintEvent {
     my $self  = shift;
-    my $p     = Qt::Painter->new;
-    my $brush = Qt::Brush->new(Qt::blue);
-    my $pen   = Qt::Pen->new(Qt::NoPen);
+    my $p = Qt::Painter->new($self);
 
-    $p->begin($self);
-    $p->setBrush($brush);
-    $p->setPen($pen);
+    $p->setBrush(Qt::blue);
+    $p->setPen(Qt::NoPen);
 
     $p->translate(0, $self->rect()->bottom());
     $p->drawPie(Qt::Rect->new(-35, -35, 70, 70), 0, 90*16);
     $p->rotate(-$self->{'ang'});
     $p->drawRect(Qt::Rect->new(33, -4, 15, 8));
+}
 
-    $p->end();
+sub sizePolicy {
+    return Qt::SizePolicy->new(Qt::SizePolicy::Expanding,
+                               Qt::SizePolicy::Expanding);
 }

@@ -15,7 +15,7 @@ sub new {
 
     @$self{'ang', 'f', 'shooting', 'timerCount', 'shoot_ang', 'shoot_f',
 	   'gameEnded', 'barrelPressed', 'target'} =
-	       (45, 0, 0, 0, 0, 0, 0, 0, Qt::Point->new);
+	       (45, 0, 0, 0, 0, 0, 0, 0, Qt::Point->new(0, 0));
     $self->newTarget();
 
     return $self;
@@ -232,7 +232,7 @@ sub shotRect {
     my $gravity  = 4;
 
     my $time     = $self->{'timerCount'}/4.0;
-    my $velocity = $self->{'shoot_f'}/0.7;
+    my $velocity = $self->{'shoot_f'};
     my $radians  = $self->{'shoot_ang'}*3.14159265/180;
 
     my $velx = $velocity*cos($radians);
@@ -240,7 +240,7 @@ sub shotRect {
     my $x0   = ($barrel_rect->right() + 5)*cos($radians);
     my $y0   = ($barrel_rect->right() + 5)*sin($radians);
     my $x    = $x0 + $velx*$time;
-    my $y    = $y0 + $vely*$time - $gravity*$time*$time;
+    my $y    = $y0 + $vely*$time - 0.5*$gravity*$time*$time;
 
     my $r = Qt::Rect->new(0, 0, 6, 6);
     $r->moveCenter(Qt::Point->new(qRound($x), $self->height() - 1 - qRound($y)));
@@ -272,4 +272,13 @@ sub barrelHit {
     $mtx->rotate(-$self->{'ang'});
     $mtx = $mtx->invert();
     return $barrel_rect->contains($mtx->map($p));
+}
+
+sub sizeHint {
+    return Qt::Size->new(400, 300);
+}
+
+sub sizePolicy {
+    return Qt::SizePolicy->new(Qt::SizePolicy::Expanding,
+                               Qt::SizePolicy::Expanding);
 }

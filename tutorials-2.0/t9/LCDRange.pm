@@ -3,35 +3,34 @@ package LCDRange;
 use Qt 2.0;
 
 use Qt::signals 'valueChanged(int)';
-use Qt::slots 'setValue(int)', 'setRange(int,int)';
+use Qt::slots 'setValue(int)', 'setRange(int, int)';
 
-@ISA = qw(Qt::Widget);
+@ISA = qw(Qt::VBox);
 
 sub new {
     my $self = shift->SUPER::new(@_);
 
     my $lcd = Qt::LCDNumber->new(2, $self, 'lcd');
-    $lcd->move(0, 0);
-    my $sBar =
-	Qt::ScrollBar->new(0, 99,			# range
-			1, 10,				# line/page steps
-			0,				# initial value
-			Qt::Horizontal,			# orientation
-			$self, 'scrollbar');
-    $lcd->connect($sBar, 'valueChanged(int)', 'display(int)');
-    $self->connect($sBar, 'valueChanged(int)', 'valueChanged(int)');
+    my $slider =
+	Qt::Slider->new(0, 99,			# range
+			10,			# page steps
+			0,			# initial value
+			Qt::Horizontal,		# orientation
+			$self, 'slider');
+    $lcd->connect($slider, 'valueChanged(int)', 'display(int)');
+    $self->connect($slider, 'valueChanged(int)', 'valueChanged(int)');
 
-    @$self{'sBar', 'lcd'} = ($sBar, $lcd);
+    $self->{'slider'} = $slider;
     return $self;
 }
 
-sub value { return shift->{'sBar'}->value() }
+sub value { return shift->{'slider'}->value() }
 
 sub setValue {
     my $self = shift;
     my $value = shift;
 
-    $self->{'sBar'}->setValue($value);
+    $self->{'slider'}->setValue($value);
 }
 
 sub setRange {
@@ -45,13 +44,5 @@ sub setRange {
 	and minVal must not be greater than maxVal";
 	return;
     }
-    $self->{'sBar'}->setRange($minVal, $maxVal);
-}
-
-sub resizeEvent {
-    my $self = shift;
-    my($sBar, $lcd) = @$self{'sBar', 'lcd'};
-
-    $lcd->resize($self->width(), $self->height() - 16 - 5);
-    $sBar->setGeometry(0, $lcd->height() + 5, $self->width(), 16);
+    $self->{'slider'}->setRange($minVal, $maxVal);
 }

@@ -2,7 +2,7 @@
 use Qt 2.0;
 import Qt::app;
 
-$hello = Qt::PushButton->new('Hello World!');
+$hello = Qt::PushButton->new('Hello World!', undef);
 $hello->resize(100, 30);
 
 $app->setMainWidget($hello);

@@ -215,7 +215,7 @@ static bool isa_lookup(HV *stash, char *name, int len, int level) {
     if (level > 100)
         croak("Recursive inheritance detected in package '%s'", HvNAME(stash));
 
-    gvp = (GV**)hv_fetch(stash, "::ISA::CACHE::", 14, FALSE);
+    gvp = (GV**)hv_fetch(stash, (char *)"::ISA::CACHE::", 14, FALSE);
 
     if (gvp && (gv = *gvp) != (GV*)&PIGsv_undef && (hv = GvHV(gv))) {
         SV* sv;
@@ -224,16 +224,16 @@ static bool isa_lookup(HV *stash, char *name, int len, int level) {
             return SvTRUE(sv);
     }
 
-    gvp = (GV**)hv_fetch(stash,"ISA",3,FALSE);
+    gvp = (GV**)hv_fetch(stash,(char *)"ISA",3,FALSE);
 
     if (gvp && (gv = *gvp) != (GV*)&PIGsv_undef && (av = GvAV(gv))) {
         if(!hv) {
-            gvp = (GV**)hv_fetch(stash, "::ISA::CACHE::", 14, TRUE);
+            gvp = (GV**)hv_fetch(stash, (char *)"::ISA::CACHE::", 14, TRUE);
 
             gv = *gvp;
 
             if (SvTYPE(gv) != SVt_PVGV)
-                gv_init(gv, stash, "::ISA::CACHE::", 14, TRUE);
+                gv_init(gv, stash, (char *)"::ISA::CACHE::", 14, TRUE);
 
             hv = GvHVn(gv);
         }
@@ -330,7 +330,7 @@ static QMetaData *pig_createMetaData(HV *pighv, bool pigslot, int *pigcount = 0)
     }
 
     if(pigslot) {
-        pigtbl[pigcnt].name = "pig_S_destroyed()";
+        pigtbl[pigcnt].name = (char *)"pig_S_destroyed()";
 	pigtbl[pigcnt].ptr = (QMember)&pig_S::pig_S_destroyed;
 	pigcnt++;
     }
@@ -352,9 +352,9 @@ PIG_DEFINE_FUNC_2(class QMetaObject *, pig_createMetaObject, const char *, class
     objectDict->remove(pig0);
 
     pigstash = gv_stashpv((char *)pig0, TRUE);
-    pigsvp = hv_fetch(pigstash, ".signals", 8, FALSE);
+    pigsvp = hv_fetch(pigstash, (char *)".signals", 8, FALSE);
     if(pigsvp) pigsighv = GvHV(*pigsvp);
-    pigsvp = hv_fetch(pigstash, ".slots", 6, FALSE);
+    pigsvp = hv_fetch(pigstash, (char *)".slots", 6, FALSE);
     if(pigsvp) pigslothv = GvHV(*pigsvp);
     
     pigsigmeta = pig_createMetaData(pigsighv, FALSE, &pigsigcnt);
@@ -371,7 +371,7 @@ PIG_DEFINE_FUNC_1(class QMetaObject *, pig_initMetaObject, const char *) {
 
     {
 	HV *pigstash = gv_stashpv((char *)pig0, TRUE);
-	pigsvp_isa = hv_fetch(pigstash, "ISA", 3, FALSE);
+	pigsvp_isa = hv_fetch(pigstash, (char *)"ISA", 3, FALSE);
 	pigav_isa = GvAV((GV *)*pigsvp_isa);
 	if(!pigav_isa) return 0;
     }

@@ -2,7 +2,7 @@
 use Qt 2.0;
 import Qt::app;
 
-$quit = Qt::PushButton->new('Quit');
+$quit = Qt::PushButton->new('Quit', undef);
 $quit->resize(75, 30);
 $quit->setFont(Qt::Font->new('Times', 18, Qt::Font::Bold));
 
