@@ -108,6 +108,50 @@ void activateII(QObject *self, const char *signal, IV t0, IV t1) {
     }
 }
 
+void activateIII(QObject *self, const char *signal, IV t0, IV t1, IV t2) {
+    QConnectionList *clist = ((pObject *)self)->protected_receivers(signal);
+    if(!clist || self->signalsBlocked()) return;
+    typedef void (QObject::*RT0)();
+    typedef RT0 *PRT0;
+    typedef void (QObject::*RT1)(IV);
+    typedef RT1 *PRT1;
+    typedef void (QObject::*RT2)(IV, IV);
+    typedef RT2 *PRT2;
+    typedef void (QObject::*RT3)(IV, IV, IV);
+    typedef RT3 *PRT3;
+    RT0 r0;
+    RT1 r1;
+    RT2 r2;
+    RT3 r3;
+
+    QConnectionListIt it(*clist);
+    QConnection *c;
+    QSenderObject *object;
+    while((c=it.current())) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender(self);
+	switch(c->numArgs()) {
+	    case 0:
+		r0 = *((PRT0)(c->member()));
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = *((PRT1)(c->member()));
+		(object->*r1)(t0);
+		break;
+	    case 2:
+		r2 = *((PRT2)(c->member()));
+		(object->*r2)(t0, t1);
+		break;
+	    case 3:
+		r3 = *((PRT3)(c->member()));
+		(object->*r3)(t0, t1, t2);
+		break;
+	}
+    }
+}
+
 IV gimmie_iv(SV *sv, char **proto) {
     bool fin = FALSE;
     IV ret;
@@ -127,10 +171,10 @@ IV gimmie_iv(SV *sv, char **proto) {
 	    ret = SvIV(sv);
 	    break;
 	case 3:				// float
-	    if(sizeof(int) == sizeof(float)) {
-		union { int i; float f; } n;
+	    if(sizeof(IV) == sizeof(float)) {
+		union { IV i; float f; } n;
 		n.f = SvNV(sv);
-		ret = (IV)n.i;
+		ret = n.i;
 	    } else {
 		warn("sizeof(int) != sizeof(float) in signal");
 		ret = (IV)-1;
@@ -179,29 +223,35 @@ XS(perl_emit_signal) {
     PObject *obj = (PObject *)pextract(QObject, 0);
 
     int argcnt = *p;
+    if(argcnt > items-1)
+	croak("In signal %s: Expected %d arguments, got %d",
+	      proto, argcnt, items-1);
     p = 1 + p[1] + p;
     if(argcnt == 0)
 	activate(obj, proto);
-    else if(argcnt == 1) {
-//	printf("argcnt == 1\n");
-	IV i1 = gimmie_iv(ST(1), &p);
-//	printf("IV = %#x\n", i1);
-	activateI(obj, proto, i1);
-    } else if(argcnt == 2) {
-//	printf("argcnt == 2\n");
-	IV i1 = gimmie_iv(ST(1), &p);
-	IV i2 = gimmie_iv(ST(2), &p);
-	activateII(obj, proto, i1, i2);
+
+    {
+	IV i1;
+	IV i2;
+	IV i3;
+	switch(argcnt) {
+	case 1:
+	    i1 = gimmie_iv(ST(1), &p);
+	    activateI(obj, proto, i1);
+	    break;
+	case 2:
+	    i1 = gimmie_iv(ST(1), &p);
+	    i2 = gimmie_iv(ST(2), &p);
+	    activateII(obj, proto, i1, i2);
+	    break;
+	case 3:
+	    i1 = gimmie_iv(ST(1), &p);
+	    i2 = gimmie_iv(ST(2), &p);
+	    i3 = gimmie_iv(ST(3), &p);
+	    activateIII(obj, proto, i1, i2, i3);
+	    break;
+	}
     }
-/*
-    if(items == 1)
-	activate(obj, proto);
-    else if(items > 1) {
-	if(SvIOK(ST(1)))
-	    activateI(obj, proto, SvIV(ST(1)));
-	else if(SvPOK(ST(1)))
-	    activateI(obj, proto, (IV)SvPV(ST(1), na));
-    }*/
 }
 
 MODULE = QObject		PACKAGE = signals
@@ -235,11 +285,6 @@ QObject::DESTROY()
     CODE:
     if(want_destroy(ST(0)))
 	delete THIS;
-
-void
-QObject::refcnt()
-    CODE:
-    printf("qobject refcnt %p: %d %d\n", THIS, SvREFCNT(ST(0)), SvREFCNT(obj_check(ST(0))));
 
 void
 QObject::blockSignals(b)

@@ -1,5 +1,14 @@
 Revision history for Perl extension Qt.
 
+1.06  Sun Jun 29 01:13:34 1997
+	- added automatic -L$(QTDIR) detection to Configure
+
+1.06  Mon Jun 16 16:21:56 1997
+        - Configure and build scripts added
+
+1.05  Sat May 31 19:45:07 1997
+	- released version 1.05
+
 1.05  Fri May 30 00:36:59 1997
 	- added working destructors to all of PerlQt
 

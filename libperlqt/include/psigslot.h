@@ -28,12 +28,11 @@ public:
     ~pQtSigSlot();
     QMetaObject *metaObject() const;
     const char *className() const;
-    void gimmie_iv(IV);
-//    void slot1(SV *);
-//    void slot2(SV *, SV *);
     void s();
     void sI(IV);
     void sII(IV, IV);
+//    void sIII(IV, IV, IV);
+    void gimmie_iv(IV);
 };
 
 QMember stub_func(char *member);
@@ -42,5 +41,6 @@ extern HV *Protos;
 extern HV *Signals;
 extern HV *Slots;
 extern HV *MetaObjects;
+
 
 #endif  // PSIGSLOT_H

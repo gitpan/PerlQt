@@ -18,3 +18,7 @@ forever example
 Franklin R. Belew
 	- noticed a lack of a warning on passing an undef argument which
 is converted to a NULL pointer to a function not expecting one
+
+Bernd Johannes Wuebben
+	- pointed out that a non-negligible number of people have -lqt
+hidden in $(QTDIR)/lib

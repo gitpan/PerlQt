@@ -82,8 +82,6 @@ WriteMakefile(
 			QWMatrix
 			QWidget
 			QWindow) ],
+    'realclean' => { 'FILES' => '*.config' },
+    'dist'  => { 'COMPRESS' => 'gzip -9', 'SUFFIX' => 'gz' },
 );
-
-unless(defined $ENV{'QTDIR'}) {
-    warn "Be sure PerlQt has a QTDIR when compiling. See INSTALL.\n";
-}

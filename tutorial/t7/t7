@@ -22,13 +22,9 @@ sub new {
     $qApp->connect($quit, 'clicked()', 'quit()');
 
     for my $x (0..15) {
-#	print "Whoa\n";
 	$$value[$x] = new LCDRange($self);
-#	print "\$x = $x\n";
-#	print "$x: $$value[$x], $$value[$x-1]\n";
 	$$value[$x-1]->connect($$value[$x], 'valueChanged(int)',
 			       'setValue(int)') if $x;
-#	print "Hmm\n";
     }
 
     @$self{'quit', 'value'} = ($quit, $value);

@@ -15,7 +15,7 @@ bootstrap QObject $VERSION;
 sub find_superclass {
     my $class = shift;
     no strict 'refs';
-    foreach(@{"${class}::ISA"}) { return $_ if $_->isa('QObject') }
+    foreach my $c (@{"${class}::ISA"}) { return $c if $c->isa('QObject') }
     return undef;
 }
 
@@ -55,9 +55,9 @@ sub proto {
 	my @args = split ',', $args;
 	croak "Too many arguments (max 3) in $orig" if scalar(@args) > 3;
 	while(@args) {
-	    $_ = $args[0];
-            s/^\s*(.*)\s*$/$1/;
-	    my @arg = split;
+	    my $a = $args[0];
+            $a =~ s/^\s*(.*)\s*$/$1/;
+	    my @arg = split ' ', $a;
 	    if($arg[0] eq 'const') {
 		$type .= chr(0);  # Perhaps in the future. But not today.
 		shift @arg;
@@ -132,12 +132,12 @@ sub unproto {
     $i++;
     $proto .= '(';
     while($i < @type) {
-        $_ = ord($type[$i]);
-        if($_ == 0) {
+        my $t = ord($type[$i]);
+        if($t == 0) {
             $proto .= 'const ';
             $i++;
             redo;
-        } elsif($_ == 1) {
+        } elsif($t == 1) {
             $len = ord($type[++$i]);
             $j = 1;
             while($j < $len) {
@@ -146,19 +146,19 @@ sub unproto {
             }
             $i++;  # strip off terminating \0
             $proto .= '*';
-        } elsif($_ == 2) {
+        } elsif($t == 2) {
             $proto .= 'int';
-        } elsif($_ == 3) {
+        } elsif($t == 3) {
             $proto .= 'float';
-        } elsif($_ == 4) {
+        } elsif($t == 4) {
             $proto .= 'double';
-        } elsif($_ == 5) {
+        } elsif($t == 5) {
             $proto .= 'bool';
-        } elsif($_ == 6) {
+        } elsif($t == 6) {
             $proto .= 'char*';
-        } elsif($_ == 8 || $_ == 9 || $_ == 10 || $_ == 11) {
+        } elsif($t == 8 || $t == 9 || $t == 10 || $t == 11) {
             $proto .= 'SV*';
-        } elsif($_ == 12) {
+        } elsif($t == 12) {
             $proto .= 'AV*';
         }
     } continue {

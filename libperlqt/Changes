@@ -1,5 +1,8 @@
 Revision history for Perl extension libperlqt.
 
+1.05  Sun Jun 29 03:25:25 1997
+	- renamed the .xs files to .c
+
 1.04  Sat May 31 00:57:07 1997
 	- Added a default message argument to safe_hv_fetch
 
