@@ -197,7 +197,13 @@ PIG_IMPORT_ENDTABLE
 #define PIG_RETARG ST(0)
 #define PIGNEXTARG pig_argument_idx++
 
-#define PIGARGS dTHR; I32 ax = pig_frame_ax
+#define PIGARGUMENTS dTHR; I32 ax = pig_frame_ax
+#define PIGARGS \
+    dTHR; \
+    I32 ax = pig_frame_ax; \
+    if(pig_argument_idx < pig_argument_max_idx && SvGMAGICAL(PIG_ARG)) \
+        mg_get(PIG_ARG)
+
 #define PIGRET PIGARGS
 #define PIGPUSHSTACK dSP
 #define PIGPOPSTACK dTHR

@@ -68,8 +68,11 @@ PIG_DEFINE_FUNC_0(int, pig_argumentcount) {
 }
 
 PIG_DEFINE_FUNC_1(unsigned int, pig_argument_info, int) {
-    PIGARGS;
+    PIGARGUMENTS;
     SV *pigsv = ST(pig0);
+    if(SvGMAGICAL(pigsv))
+	mg_get(pigsv);
+
     unsigned int pigr = 0;
     if(!SvOK(pigsv)) {
         pigr = PIGTYPE_UNDEF;

@@ -1,3 +1,11 @@
+Changes from 2.007 to 2.008  (1999-Jul-1)
+---------------------------
+
+- Added support for magical SV* arguments
+- Added proper support for return-by-reference arguments
+	bool *, int *, and float *
+
+
 Changes from 2.006 to 2.007  (1999-Jun-22)
 ---------------------------
 

@@ -94,12 +94,16 @@ PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_cstring, const char *) {
 
 PIG_DEFINE_TYPE_RETURN(pig_type_cstring, const char *) {
     PIGRET;
-    PIGRETURN(pig0 ? sv_2mortal(newSVpv((char *)pig0, 0)) : sv_mortalcopy(&PIGsv_undef));
+    PIGRETURN(pig0 ?
+	      sv_2mortal(newSVpv((char *)pig0, 0)) :
+	      sv_mortalcopy(&PIGsv_undef));
 }
 
 PIG_DEFINE_TYPE_PUSH(pig_type_cstring, const char *) {
     PIGPUSHSTACK;
-    PIGPUSH(sv_2mortal(newSVpv((char *)pig0, 0)));
+    PIGPUSH(pig0 ?
+	    sv_2mortal(newSVpv((char *)pig0, 0)) :
+	    sv_mortalcopy(&PIGsv_undef));
 }
 
 PIG_DEFINE_TYPE_POP(pig_type_cstring, const char *) {
@@ -312,16 +316,154 @@ PIG_DEFINE_TYPE_POP(pig_type_ptr, void *) {
     PIGPOP(pigr);
 }
 
-PIG_DEFINE_STUB_ARGUMENT(pig_type_boolptr, void *)
+struct _pig_type_boolptr_variable {
+    SV *pigsv;
+    bool pigvar;
+};
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_boolptr) {
+    _pig_type_boolptr_variable *pigr = (_pig_type_boolptr_variable *)pig0;
+    sv_setsv(pigr->pigsv, pigr->pigvar ? &PIGsv_yes : &PIGsv_no);
+    delete pigr;
+}
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_boolptr, void *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_boolptr_variable *pigr = new _pig_type_boolptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvTRUE(PIG_ARG) ? TRUE : FALSE;
+	PIGSCOPE_ARGUMENT(pig_type_boolptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(0);
+    }
+}
 
 PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_boolptr, bool *) {
     PIGARGS;
-    PIGARGUMENT(pig0);
+    if(PIG_ARGOK) {
+	_pig_type_boolptr_variable *pigr = new _pig_type_boolptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvTRUE(PIG_ARG) ? TRUE : FALSE;
+	PIGSCOPE_ARGUMENT(pig_type_boolptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(pig0);
+    }
 }
 
-PIG_DEFINE_STUB_RETURN(pig_type_boolptr, void *)
-PIG_DEFINE_STUB_PUSH(pig_type_boolptr, void *)
-PIG_DEFINE_STUB_POP(pig_type_boolptr, void *)
+PIG_DEFINE_TYPE_RETURN(pig_type_boolptr, bool *) {
+    PIGRET;
+    PIGRETURN(sv_mortalcopy(pig0 ? boolSV(*pig0) : &PIGsv_undef));
+}
+
+PIG_DEFINE_TYPE_PUSH(pig_type_boolptr, bool *) {
+    PIGPUSHSTACK;
+    PIGPUSH(sv_mortalcopy(pig0 ? boolSV(*pig0) : &PIGsv_undef));
+}
+
+PIG_DEFINE_STUB_POP(pig_type_boolptr, bool *)
+
+
+struct _pig_type_intptr_variable {
+    SV *pigsv;
+    int pigvar;
+};
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_intptr) {
+    _pig_type_intptr_variable *pigr = (_pig_type_intptr_variable *)pig0;
+    sv_setiv(pigr->pigsv, pigr->pigvar);
+    delete pigr;
+};
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_intptr, int *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_intptr_variable *pigr = new _pig_type_intptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvIV(PIG_ARG);
+	PIGSCOPE_ARGUMENT(pig_type_intptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(0);
+    }
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_intptr, int *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_intptr_variable *pigr = new _pig_type_intptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvIV(PIG_ARG);
+	PIGSCOPE_ARGUMENT(pig_type_intptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(pig0);
+    }
+}
+
+PIG_DEFINE_TYPE_RETURN(pig_type_intptr, int *) {
+    PIGRET;
+    PIGRETURN(pig0 ? sv_2mortal(newSViv(*pig0)) : sv_mortalcopy(&PIGsv_undef));
+}
+
+PIG_DEFINE_TYPE_PUSH(pig_type_intptr, int *) {
+    PIGPUSHSTACK;
+    PIGPUSH(pig0 ? sv_2mortal(newSViv(*pig0)) : sv_mortalcopy(&PIGsv_undef));
+}
+
+PIG_DEFINE_STUB_POP(pig_type_intptr, int *)
+
+
+struct _pig_type_floatptr_variable {
+    SV *pigsv;
+    float pigvar;
+};
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_floatptr) {
+    _pig_type_floatptr_variable *pigr = (_pig_type_floatptr_variable *)pig0;
+    sv_setnv(pigr->pigsv, pigr->pigvar);
+    delete pigr;
+};
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_floatptr, float *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_floatptr_variable *pigr = new _pig_type_floatptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvNV(PIG_ARG);
+	PIGSCOPE_ARGUMENT(pig_type_floatptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(0);
+    }
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_floatptr, float *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_floatptr_variable *pigr = new _pig_type_floatptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvNV(PIG_ARG);
+	PIGSCOPE_ARGUMENT(pig_type_floatptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(pig0);
+    }
+}
+
+PIG_DEFINE_TYPE_RETURN(pig_type_floatptr, float *) {
+    PIGRET;
+    PIGRETURN(pig0 ? sv_2mortal(newSVnv(*pig0)) : sv_mortalcopy(&PIGsv_undef));
+}
+
+PIG_DEFINE_TYPE_PUSH(pig_type_floatptr, float *) {
+    PIGPUSHSTACK;
+    PIGPUSH(pig0 ? sv_2mortal(newSVnv(*pig0)) : sv_mortalcopy(&PIGsv_undef));
+}
+
+PIG_DEFINE_STUB_POP(pig_type_floatptr, float *)
 
 
 PIG_DEFINE_SCOPE_ARGUMENT(pig_type_shortarray) {
@@ -392,6 +534,8 @@ PIG_DEFINE_TYPE(pig_type_long)
 PIG_DEFINE_TYPE(pig_type_short)
 PIG_DEFINE_TYPE(pig_type_ptr)
 PIG_DEFINE_TYPE(pig_type_boolptr)
+PIG_DEFINE_TYPE(pig_type_intptr)
+PIG_DEFINE_TYPE(pig_type_floatptr)
 PIG_DEFINE_TYPE(pig_type_shortarray)
 PIG_DEFINE_TYPE(pig_type_shortarrayitems)
 
@@ -410,6 +554,8 @@ PIG_EXPORT_TABLE(pigtype_base)
     PIG_EXPORT_TYPE(pig_type_short, "short")
     PIG_EXPORT_TYPE(pig_type_ptr, "*")
     PIG_EXPORT_TYPE(pig_type_boolptr, "bool*")
+    PIG_EXPORT_TYPE(pig_type_intptr, "int*")
+    PIG_EXPORT_TYPE(pig_type_floatptr, "float*")
     PIG_EXPORT_TYPE(pig_type_shortarray, "short[]")
     PIG_EXPORT_TYPE(pig_type_shortarrayitems, "sizeof(short[])")
 PIG_EXPORT_ENDTABLE
