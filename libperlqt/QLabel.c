@@ -1,5 +1,5 @@
 /*
- * PLabel definitions.
+ * VQLabel definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,202 +7,197 @@
  * README file
  */
 
-#include "plabel.h"
+#include <pqlabel.h>
 
-const char *PLabel::className() const {
-    return PObject_className();
+const char *VQLabel::className() const {
+    return QObject_className();
 }
 
-bool PLabel::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QLabel::event(event);
-    return ret;
+void VQLabel::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PLabel::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QLabel::eventFilter(obj, event);
-    return ret;
+void VQLabel::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PLabel::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QLabel::metaObject();
-    return ret;
+bool VQLabel::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PLabel::initMetaObject() {
+bool VQLabel::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQLabel::initMetaObject() {
     if(!QLabel::metaObject()) QLabel::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PLabel::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QLabel::timerEvent(event);
+QMetaObject *VQLabel::metaObject() const {
+    return QObject_metaObject();
 }
 
-
-void PLabel::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QLabel::adjustSize();
-}
-
-bool PLabel::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QLabel::close(b);
-    return ret;
-}
-
-void PLabel::hide() {
-    PWidget_hide();
-    if(pfailed) QLabel::hide();
-}
-
-void PLabel::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QLabel::move(x, y);
-}
-
-void PLabel::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QLabel::resize(w, h);
-}
-
-void PLabel::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QLabel::setBackgroundColor(c);
-}
-
-void PLabel::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QLabel::setBackgroundPixmap(p);
-}
-
-void PLabel::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QLabel::setCursor(c);
-}
-
-void PLabel::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QLabel::setEnabled(b);
-}
-
-void PLabel::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QLabel::setFont(f);
-}
-
-void PLabel::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QLabel::setGeometry(x, y, w, h);
-}
-
-void PLabel::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QLabel::setPalette(p);
-}
-
-void PLabel::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QLabel::setStyle(s);
-}
-
-void PLabel::show() {
-    PWidget_show();
-    if(pfailed) QLabel::show();
-}
-
-QSize PLabel::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QLabel::sizeHint();
-    return ret;
-}
-
-void PLabel::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QLabel::closeEvent(event);
-}
-
-void PLabel::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QLabel::enterEvent(event);
-}
-
-void PLabel::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QLabel::focusInEvent(event);
-}
-
-void PLabel::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QLabel::focusOutEvent(event);
-}
-
-void PLabel::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QLabel::keyPressEvent(event);
-}
-
-void PLabel::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QLabel::keyReleaseEvent(event);
-}
-
-void PLabel::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QLabel::leaveEvent(event);
-}
-
-void PLabel::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QLabel::mouseDoubleClickEvent(event);
-}
-
-void PLabel::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QLabel::mouseMoveEvent(event);
-}
-
-void PLabel::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QLabel::mousePressEvent(event);
-}
-
-void PLabel::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QLabel::mouseReleaseEvent(event);
-}
-
-void PLabel::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QLabel::moveEvent(event);
-}
-
-void PLabel::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QLabel::paintEvent(event);
-}
-
-void PLabel::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QLabel::resizeEvent(event);
+void VQLabel::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PLabel::drawContents(QPainter *p) {
-    PFrame_drawContents(p);
-    if(pfailed) QLabel::drawContents(p);
+void VQLabel::adjustSize() {
+    QWidget_adjustSize();
 }
 
-void PLabel::drawFrame(QPainter *p) {
-    PFrame_drawFrame(p);
-    if(pfailed) QLabel::drawFrame(p);
+void VQLabel::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PLabel::frameChanged() {
-    PFrame_frameChanged();
-    if(pfailed) QLabel::frameChanged();
+void VQLabel::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
+}
+
+bool VQLabel::close(bool forceKill) {
+    return QWidget_close(forceKill);
+}
+
+void VQLabel::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
+}
+
+void VQLabel::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
+}
+
+void VQLabel::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
+}
+
+void VQLabel::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
+}
+
+bool VQLabel::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
+}
+
+void VQLabel::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
+}
+
+void VQLabel::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
+}
+
+void VQLabel::hide() {
+    QWidget_hide();
+}
+
+void VQLabel::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
+}
+
+void VQLabel::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
+}
+
+void VQLabel::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
+}
+
+void VQLabel::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
+}
+
+void VQLabel::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
+}
+
+void VQLabel::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
+}
+
+void VQLabel::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
+}
+
+void VQLabel::move(int x, int y) {
+    QWidget_move(x, y);
+}
+
+void VQLabel::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
+}
+
+void VQLabel::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
+}
+
+void VQLabel::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
+}
+
+void VQLabel::resize(int w, int h) {
+    QWidget_resize(w, h);
+}
+
+void VQLabel::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
+}
+
+void VQLabel::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
+}
+
+void VQLabel::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
+}
+
+void VQLabel::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
+}
+
+void VQLabel::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQLabel::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQLabel::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQLabel::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQLabel::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQLabel::show() {
+    QWidget_show();
+}
+
+QSize VQLabel::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQLabel::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
+}
+
+
+void VQLabel::drawContents(QPainter *p) {
+    QFrame_drawContents(p);
+}
+
+void VQLabel::drawFrame(QPainter *p) {
+    QFrame_drawFrame(p);
+}
+
+void VQLabel::frameChanged() {
+    QFrame_frameChanged();
 }
 
 

@@ -1,5 +1,5 @@
 /*
- * PObject definitions and sig/slot implementation.
+ * VQObject definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,175 +7,89 @@
  * README file
  */
 
-#include "pobject.h"
-#include "psigslot.h"
+#include <pqobject.h>
 
-HV *Signals = NULL;
-HV *Slots = NULL;
-HV *MetaObjects = NULL;
-
-char *getPerlSuperClass(char *clname) {
-    dSP;
-    int count;
-    SV *ret;
-
-    PUSHMARK(sp);
-    XPUSHs(sv_2mortal(newSVpv(clname, 0)));
-    PUTBACK;
-
-    count = perl_call_pv("QObject::find_superclass", G_SCALAR);
-    SPAGAIN;
-    if(count != 1) croak("Bad perl_call_pv, bad");
-    ret = POPs;
-    PUTBACK;
-
-    return SvTRUE(ret) ? SvPV(ret, na) : 0;
+const char *VQObject::className() const {
+    return QObject_className();
 }
 
-QMetaData *initMetaData(HV *hv) {
-    if(!hv || HvKEYS(hv) < 1) return NULL;
-    int keys = HvKEYS(hv);
-    QMetaData *tbl = new QMetaData[keys];
-    SV *proto;
-
-    SV *value;
-    char *key;
-    I32 klen;
-
-    hv_iterinit(hv);
-    for(int i = 0; i < keys; i++) {
-	value = hv_iternextsv(hv, &key, &klen);
-	proto = unproto(value);
-	SvREFCNT_inc(proto);
-	tbl[i].name = SvPV(proto, na);
-	tbl[i].ptr = stub_func(SvPV(value, na));
-//	printf("name = %s\n", tbl[i].name);
-
-//	value = hv_iternextsv(hv, &key, &klen);
-//	SvREFCNT_inc(value);
-//	tbl[i].name = SvPV(value, na);
-//	tbl[i].ptr = stub_func(tbl[i].name);
-    }
-
-    return tbl;
+void VQObject::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-QMetaObject *metaObjectSetup(char *clname) {
-    int cllen = strlen(clname);
-    if(hv_exists(MetaObjects, clname, cllen)) {
-	SV **ret = hv_fetch(MetaObjects, clname, cllen, 0);
-	if(ret) {
-	    QMetaObject *obj = (QMetaObject *)SvIV(*ret);
-	    return (QMetaObject *)SvIV(*ret);
-	}
-	return NULL;
-    }
-
-    SV **svp;
-    HV *slothv = NULL, *signalhv = NULL; //, *metaData = newHV();
-    int slot_keys = 0, signal_keys = 0;
-    QMetaData *slot_tbl = NULL, *signal_tbl = NULL;
-    QMetaObject *metaObj;
-    char *superclass;
-
-    char *s = getPerlSuperClass(clname);
-    if(!s) croak("Class '%s' is not derived from QObject\n", clname);
-
-    superclass = (char *)malloc(strlen(s)+1);
-    strcpy(superclass, s);
-
-    svp = hv_fetch(Signals, clname, cllen, 0);
-    if(svp) {
-	signalhv = (HV *)rv_check(*svp);
-	signal_keys = HvKEYS(signalhv) > 0 ? HvKEYS(signalhv) : 0;
-    }
-    svp = hv_fetch(Slots, clname, cllen, 0);
-    if(svp) {
-	slothv = (HV *)rv_check(*svp);
-	slot_keys = HvKEYS(slothv) > 0 ? HvKEYS(slothv) : 0;
-    }
-
-    slot_tbl = initMetaData(slothv);
-    signal_tbl = initMetaData(signalhv);
-    metaObj = new QMetaObject(clname, superclass,
-	slot_tbl, slot_keys,
-	signal_tbl, signal_keys);
-    safe_hv_store(MetaObjects, clname, newSViv((IV)metaObj));
-    return metaObj;
+void VQObject::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-const char *PObject::className() const {
-    return PObject_className();
+bool VQObject::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-bool PObject::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QObject::event(event);
-    return ret;
+bool VQObject::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
 }
 
-bool PObject::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QObject::eventFilter(obj, event);
-    return ret;
-}
-
-QMetaObject *PObject::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QObject::metaObject();
-    return ret;
-}
-
-void PObject::initMetaObject() {
+void VQObject::initMetaObject() {
     if(!QObject::metaObject()) QObject::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PObject::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QObject::timerEvent(event);
+QMetaObject *VQObject::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQObject::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-const char *PObject_virtualize::PObject_className() const {
-    return getQtClassName();
+const char *QObject_virtualize::QObject_className() const {
+    return getClassName();
 }
 
-bool PObject_virtualize::PObject_event(QEvent *event) {
-    SV *r = retCallObj("event", event, "QEvent");
-    if(pfailed) return FALSE;
-    bool ret = SvTRUE(r) ? TRUE : FALSE;
-    SvREFCNT_dec(r);
-    return ret;
+void QObject_virtualize::QObject_connectNotify(const char *signal) {
+    voidCall("connectNotify", pArgPV(signal));
 }
 
-bool PObject_virtualize::PObject_eventFilter(QObject *obj, QEvent *event) {
-    SV *r = retCallObj("eventFilter", obj, "QObject", event, "QEvent");
-    if(pfailed) return FALSE;
-    bool ret = SvTRUE(r) ? TRUE : FALSE;
-    SvREFCNT_dec(r);
-    return ret;
+void QObject_virtualize::QObject_disconnectNotify(const char *signal) {
+    voidCall("disconnectNotify", pArgPV(signal));
 }
 
-void PObject_virtualize::PObject_initMetaObject() {
-    char *clname = (char *)getQtClassName();
-    SV **svp = hv_fetch(MetaObjects, clname, strlen(clname), 1);
-
-    if(svp && SvTRUE(*svp)) return;
-    safe_hv_store(MetaObjects, clname, newSViv(0));
+bool QObject_virtualize::QObject_event(QEvent *event) {
+    return prBOOL(retCall("event", pArgREF(event, QEvent)));
 }
 
-QMetaObject *PObject_virtualize::PObject_metaObject() const {
-    pfailed = FALSE;
-    char *clname = (char *)getQtClassName();
-    if(!hv_exists(Signals, clname, strlen(clname)) &&
-       !hv_exists(Slots, clname, strlen(clname))) {
-	pfailed = TRUE;
-	return NULL;
+bool QObject_virtualize::QObject_eventFilter(QObject *obj, QEvent *event) {
+    return prBOOL(
+	retCall("eventFilter", pArgREF(obj, QObject), pArgREF(event, QEvent))
+    );
+}
+
+void QObject_virtualize::QObject_initMetaObject() {
+    char *superClass = NULL;
+    {
+	QString name = getClassName();
+	name += "::ISA";
+	AV *av = perl_get_av(name.data(), TRUE);
+	I32 len = av_len(av) + 1;
+	for(int i = 0; i < len; i++) {
+	    SV *sv = safe_av_fetch(av, i);
+	    if(sv_derived_from(sv, "QObject")) {
+		superClass = SvPV(sv, na);
+		break;
+	    }
+	}
     }
-    return metaObjectSetup(clname);
 }
 
-void PObject_virtualize::PObject_timerEvent(QTimerEvent *event) {
-    voidCallObj("timerEvent", event, "QTimerEvent");
+#include <qdict.h>
+#include <qmetaobj.h>
+
+QMetaObject *QObject_virtualize::QObject_metaObject() const {
+    QDict<QMetaObject> MetaObjectDict;
+    return MetaObjectDict[getClassName()];
+}
+
+void QObject_virtualize::QObject_timerEvent(QTimerEvent *event) {
+    voidCall("timerEvent", pArgREF(event, QTimerEvent));
 }

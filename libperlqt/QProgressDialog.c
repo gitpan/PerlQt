@@ -1,5 +1,5 @@
 /*
- * PProgressDialog definitions.
+ * VQProgressDialog definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,186 +7,184 @@
  * README file
  */
 
-#include "pprogdlg.h"
+#include <pqprogdlg.h>
 
-const char *PProgressDialog::className() const {
-    return PObject_className();
+const char *VQProgressDialog::className() const {
+    return QObject_className();
 }
 
-bool PProgressDialog::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QProgressDialog::event(event);
-    return ret;
+void VQProgressDialog::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PProgressDialog::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QProgressDialog::eventFilter(obj, event);
-    return ret;
+void VQProgressDialog::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PProgressDialog::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QProgressDialog::metaObject();
-    return ret;
+bool VQProgressDialog::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PProgressDialog::initMetaObject() {
+bool VQProgressDialog::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQProgressDialog::initMetaObject() {
     if(!QProgressDialog::metaObject()) QProgressDialog::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PProgressDialog::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QProgressDialog::timerEvent(event);
+QMetaObject *VQProgressDialog::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQProgressDialog::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PProgressDialog::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QProgressDialog::adjustSize();
+void VQProgressDialog::adjustSize() {
+    QWidget_adjustSize();
 }
 
-bool PProgressDialog::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QProgressDialog::close(b);
-    return ret;
+void VQProgressDialog::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PProgressDialog::hide() {
-    PWidget_hide();
-    if(pfailed) QProgressDialog::hide();
+void VQProgressDialog::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
 }
 
-void PProgressDialog::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QProgressDialog::move(x, y);
+bool VQProgressDialog::close(bool forceKill) {
+    return QWidget_close(forceKill);
 }
 
-void PProgressDialog::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QProgressDialog::resize(w, h);
+void VQProgressDialog::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
 }
 
-void PProgressDialog::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QProgressDialog::setBackgroundColor(c);
+void VQProgressDialog::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
 }
 
-void PProgressDialog::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QProgressDialog::setBackgroundPixmap(p);
+void VQProgressDialog::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
 }
 
-void PProgressDialog::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QProgressDialog::setCursor(c);
+void VQProgressDialog::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
 }
 
-void PProgressDialog::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QProgressDialog::setEnabled(b);
+bool VQProgressDialog::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
 }
 
-void PProgressDialog::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QProgressDialog::setFont(f);
+void VQProgressDialog::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
 }
 
-void PProgressDialog::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QProgressDialog::setGeometry(x, y, w, h);
+void VQProgressDialog::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
 }
 
-void PProgressDialog::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QProgressDialog::setPalette(p);
+void VQProgressDialog::hide() {
+    QWidget_hide();
 }
 
-void PProgressDialog::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QProgressDialog::setStyle(s);
+void VQProgressDialog::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
 }
 
-void PProgressDialog::show() {
-    PWidget_show();
-    if(pfailed) QProgressDialog::show();
+void VQProgressDialog::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
 }
 
-QSize PProgressDialog::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QProgressDialog::sizeHint();
-    return ret;
+void VQProgressDialog::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
 }
 
-void PProgressDialog::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QProgressDialog::closeEvent(event);
+void VQProgressDialog::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
 }
 
-void PProgressDialog::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QProgressDialog::enterEvent(event);
+void VQProgressDialog::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
 }
 
-void PProgressDialog::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QProgressDialog::focusInEvent(event);
+void VQProgressDialog::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
 }
 
-void PProgressDialog::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QProgressDialog::focusOutEvent(event);
+void VQProgressDialog::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
 }
 
-void PProgressDialog::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QProgressDialog::keyPressEvent(event);
+void VQProgressDialog::move(int x, int y) {
+    QWidget_move(x, y);
 }
 
-void PProgressDialog::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QProgressDialog::keyReleaseEvent(event);
+void VQProgressDialog::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
 }
 
-void PProgressDialog::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QProgressDialog::leaveEvent(event);
+void VQProgressDialog::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
 }
 
-void PProgressDialog::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QProgressDialog::mouseDoubleClickEvent(event);
+void VQProgressDialog::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
 }
 
-void PProgressDialog::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QProgressDialog::mouseMoveEvent(event);
+void VQProgressDialog::resize(int w, int h) {
+    QWidget_resize(w, h);
 }
 
-void PProgressDialog::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QProgressDialog::mousePressEvent(event);
+void VQProgressDialog::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
 }
 
-void PProgressDialog::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QProgressDialog::mouseReleaseEvent(event);
+void VQProgressDialog::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
 }
 
-void PProgressDialog::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QProgressDialog::moveEvent(event);
+void VQProgressDialog::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
 }
 
-void PProgressDialog::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QProgressDialog::paintEvent(event);
+void VQProgressDialog::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
 }
 
-void PProgressDialog::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QProgressDialog::resizeEvent(event);
+void VQProgressDialog::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQProgressDialog::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQProgressDialog::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQProgressDialog::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQProgressDialog::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQProgressDialog::show() {
+    QWidget_show();
+}
+
+QSize VQProgressDialog::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQProgressDialog::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
 }
 
 

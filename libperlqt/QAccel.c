@@ -1,5 +1,5 @@
 /*
- * PAccel definitions.
+ * VQAccel definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,38 +7,39 @@
  * README file
  */
 
-#include "paccel.h"
+#include <pqaccel.h>
 
-const char *PAccel::className() const {
-    return PObject_className();
+const char *VQAccel::className() const {
+    return QObject_className();
 }
 
-bool PAccel::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QAccel::event(event);
-    return ret;
+void VQAccel::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PAccel::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QAccel::eventFilter(obj, event);
-    return ret;
+void VQAccel::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PAccel::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QAccel::metaObject();
-    return ret;
+bool VQAccel::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PAccel::initMetaObject() {
+bool VQAccel::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQAccel::initMetaObject() {
     if(!QAccel::metaObject()) QAccel::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PAccel::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QAccel::timerEvent(event);
+QMetaObject *VQAccel::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQAccel::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 

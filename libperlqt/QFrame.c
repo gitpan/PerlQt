@@ -1,5 +1,5 @@
 /*
- * PFrame definitions.
+ * VQFrame definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,213 +7,208 @@
  * README file
  */
 
-#include "pframe.h"
+#include <pqframe.h>
 
-const char *PFrame::className() const {
-    return PObject_className();
+const char *VQFrame::className() const {
+    return QObject_className();
 }
 
-bool PFrame::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QFrame::event(event);
-    return ret;
+void VQFrame::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PFrame::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QFrame::eventFilter(obj, event);
-    return ret;
+void VQFrame::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PFrame::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QFrame::metaObject();
-    return ret;
+bool VQFrame::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PFrame::initMetaObject() {
+bool VQFrame::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQFrame::initMetaObject() {
     if(!QFrame::metaObject()) QFrame::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PFrame::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QFrame::timerEvent(event);
+QMetaObject *VQFrame::metaObject() const {
+    return QObject_metaObject();
 }
 
-
-void PFrame::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QFrame::adjustSize();
-}
-
-bool PFrame::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QFrame::close(b);
-    return ret;
-}
-
-void PFrame::hide() {
-    PWidget_hide();
-    if(pfailed) QFrame::hide();
-}
-
-void PFrame::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QFrame::move(x, y);
-}
-
-void PFrame::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QFrame::resize(w, h);
-}
-
-void PFrame::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QFrame::setBackgroundColor(c);
-}
-
-void PFrame::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QFrame::setBackgroundPixmap(p);
-}
-
-void PFrame::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QFrame::setCursor(c);
-}
-
-void PFrame::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QFrame::setEnabled(b);
-}
-
-void PFrame::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QFrame::setFont(f);
-}
-
-void PFrame::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QFrame::setGeometry(x, y, w, h);
-}
-
-void PFrame::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QFrame::setPalette(p);
-}
-
-void PFrame::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QFrame::setStyle(s);
-}
-
-void PFrame::show() {
-    PWidget_show();
-    if(pfailed) QFrame::show();
-}
-
-QSize PFrame::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QFrame::sizeHint();
-    return ret;
-}
-
-void PFrame::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QFrame::closeEvent(event);
-}
-
-void PFrame::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QFrame::enterEvent(event);
-}
-
-void PFrame::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QFrame::focusInEvent(event);
-}
-
-void PFrame::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QFrame::focusOutEvent(event);
-}
-
-void PFrame::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QFrame::keyPressEvent(event);
-}
-
-void PFrame::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QFrame::keyReleaseEvent(event);
-}
-
-void PFrame::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QFrame::leaveEvent(event);
-}
-
-void PFrame::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QFrame::mouseDoubleClickEvent(event);
-}
-
-void PFrame::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QFrame::mouseMoveEvent(event);
-}
-
-void PFrame::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QFrame::mousePressEvent(event);
-}
-
-void PFrame::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QFrame::mouseReleaseEvent(event);
-}
-
-void PFrame::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QFrame::moveEvent(event);
-}
-
-void PFrame::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QFrame::paintEvent(event);
-}
-
-void PFrame::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QFrame::resizeEvent(event);
+void VQFrame::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PFrame::drawContents(QPainter *p) {
-    PFrame_drawContents(p);
-    if(pfailed) QFrame::drawContents(p);
+void VQFrame::adjustSize() {
+    QWidget_adjustSize();
 }
 
-void PFrame::drawFrame(QPainter *p) {
-    PFrame_drawFrame(p);
-    if(pfailed) QFrame::drawFrame(p);
+void VQFrame::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PFrame::frameChanged() {
-    PFrame_frameChanged();
-    if(pfailed) QFrame::frameChanged();
+void VQFrame::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
+}
+
+bool VQFrame::close(bool forceKill) {
+    return QWidget_close(forceKill);
+}
+
+void VQFrame::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
+}
+
+void VQFrame::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
+}
+
+void VQFrame::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
+}
+
+void VQFrame::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
+}
+
+bool VQFrame::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
+}
+
+void VQFrame::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
+}
+
+void VQFrame::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
+}
+
+void VQFrame::hide() {
+    QWidget_hide();
+}
+
+void VQFrame::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
+}
+
+void VQFrame::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
+}
+
+void VQFrame::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
+}
+
+void VQFrame::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
+}
+
+void VQFrame::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
+}
+
+void VQFrame::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
+}
+
+void VQFrame::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
+}
+
+void VQFrame::move(int x, int y) {
+    QWidget_move(x, y);
+}
+
+void VQFrame::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
+}
+
+void VQFrame::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
+}
+
+void VQFrame::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
+}
+
+void VQFrame::resize(int w, int h) {
+    QWidget_resize(w, h);
+}
+
+void VQFrame::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
+}
+
+void VQFrame::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
+}
+
+void VQFrame::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
+}
+
+void VQFrame::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
+}
+
+void VQFrame::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQFrame::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQFrame::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQFrame::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQFrame::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQFrame::show() {
+    QWidget_show();
+}
+
+QSize VQFrame::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQFrame::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
 }
 
 
-void PFrame_virtualize::PFrame_drawContents(QPainter *p) {
-    voidCallObj("drawContents", p, "QPainter");
+void VQFrame::drawContents(QPainter *p) {
+    QFrame_drawContents(p);
 }
 
-void PFrame_virtualize::PFrame_drawFrame(QPainter *p) {
-    voidCallObj("drawFrame", p, "QPainter");
+void VQFrame::drawFrame(QPainter *p) {
+    QFrame_drawFrame(p);
 }
 
-void PFrame_virtualize::PFrame_frameChanged() {
+void VQFrame::frameChanged() {
+    QFrame_frameChanged();
+}
+
+
+void QFrame_virtualize::QFrame_drawContents(QPainter *p) {
+    voidCall("drawContents", pArgREF(p, QPainter));
+}
+
+void QFrame_virtualize::QFrame_drawFrame(QPainter *p) {
+    voidCall("drawFrame", pArgREF(p, QPainter));
+}
+
+void QFrame_virtualize::QFrame_frameChanged() {
     voidCall("frameChanged");
 }

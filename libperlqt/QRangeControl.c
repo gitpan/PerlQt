@@ -1,5 +1,5 @@
 /*
- * PRangeControl definitions.
+ * VQRangeControl definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,32 +7,29 @@
  * README file
  */
 
-#include "prangect.h"
+#include <pqrangect.h>
 
-void PRangeControl::rangeChange() {
-    PRangeControl_rangeChange();
-    if(pfailed) QRangeControl::rangeChange();
+void VQRangeControl::rangeChange() {
+    QRangeControl_rangeChange();
 }
 
-void PRangeControl::stepChange() {
-    PRangeControl_stepChange();
-    if(pfailed) QRangeControl::stepChange();
+void VQRangeControl::stepChange() {
+    QRangeControl_stepChange();
 }
 
-void PRangeControl::valueChange() {
-    PRangeControl_valueChange();
-    if(pfailed) QRangeControl::valueChange();
+void VQRangeControl::valueChange() {
+    QRangeControl_valueChange();
 }
 
 
-void PRangeControl_virtualize::PRangeControl_rangeChange() {
+void QRangeControl_virtualize::QRangeControl_rangeChange() {
     voidCall("rangeChange");
 }
 
-void PRangeControl_virtualize::PRangeControl_stepChange() {
+void QRangeControl_virtualize::QRangeControl_stepChange() {
     voidCall("stepChange");
 }
 
-void PRangeControl_virtualize::PRangeControl_valueChange() {
+void QRangeControl_virtualize::QRangeControl_valueChange() {
     voidCall("valueChange");
 }

@@ -1,5 +1,5 @@
 /*
- * PComboBox definitions.
+ * VQComboBox definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,187 +7,180 @@
  * README file
  */
 
-#include "pcombo.h"
+#include <pqcombo.h>
 
-const char *PComboBox::className() const {
-    return PObject_className();
+const char *VQComboBox::className() const {
+    return QObject_className();
 }
 
-bool PComboBox::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QComboBox::event(event);
-    return ret;
+void VQComboBox::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PComboBox::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-//  if(pfailed) ret = QComboBox::eventFilter(obj, event);	// AHHH!!!!!
-    if(pfailed) ret = QObject::eventFilter(obj, event);		// FIX ME!
-    return ret;
+void VQComboBox::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PComboBox::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QComboBox::metaObject();
-    return ret;
+bool VQComboBox::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PComboBox::initMetaObject() {
+void VQComboBox::initMetaObject() {
     if(!QComboBox::metaObject()) QComboBox::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PComboBox::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QComboBox::timerEvent(event);
+QMetaObject *VQComboBox::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQComboBox::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PComboBox::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QComboBox::adjustSize();
+void VQComboBox::adjustSize() {
+    QWidget_adjustSize();
 }
 
-bool PComboBox::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QComboBox::close(b);
-    return ret;
+void VQComboBox::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PComboBox::hide() {
-    PWidget_hide();
-    if(pfailed) QComboBox::hide();
+void VQComboBox::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
 }
 
-void PComboBox::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QComboBox::move(x, y);
+bool VQComboBox::close(bool forceKill) {
+    return QWidget_close(forceKill);
 }
 
-void PComboBox::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QComboBox::resize(w, h);
+void VQComboBox::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
 }
 
-void PComboBox::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QComboBox::setBackgroundColor(c);
+void VQComboBox::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
 }
 
-void PComboBox::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QComboBox::setBackgroundPixmap(p);
+void VQComboBox::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
 }
 
-void PComboBox::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QComboBox::setCursor(c);
+void VQComboBox::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
 }
 
-void PComboBox::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QComboBox::setEnabled(b);
+bool VQComboBox::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
 }
 
-void PComboBox::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QComboBox::setFont(f);
+void VQComboBox::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
 }
 
-void PComboBox::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QComboBox::setGeometry(x, y, w, h);
+void VQComboBox::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
 }
 
-void PComboBox::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QComboBox::setPalette(p);
+void VQComboBox::hide() {
+    QWidget_hide();
 }
 
-void PComboBox::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QComboBox::setStyle(s);
+void VQComboBox::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
 }
 
-void PComboBox::show() {
-    PWidget_show();
-    if(pfailed) QComboBox::show();
+void VQComboBox::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
 }
 
-QSize PComboBox::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QComboBox::sizeHint();
-    return ret;
+void VQComboBox::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
 }
 
-void PComboBox::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QComboBox::closeEvent(event);
+void VQComboBox::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
 }
 
-void PComboBox::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QComboBox::enterEvent(event);
+void VQComboBox::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
 }
 
-void PComboBox::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QComboBox::focusInEvent(event);
+void VQComboBox::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
 }
 
-void PComboBox::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QComboBox::focusOutEvent(event);
+void VQComboBox::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
 }
 
-void PComboBox::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QComboBox::keyPressEvent(event);
+void VQComboBox::move(int x, int y) {
+    QWidget_move(x, y);
 }
 
-void PComboBox::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QComboBox::keyReleaseEvent(event);
+void VQComboBox::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
 }
 
-void PComboBox::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QComboBox::leaveEvent(event);
+void VQComboBox::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
 }
 
-void PComboBox::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QComboBox::mouseDoubleClickEvent(event);
+void VQComboBox::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
 }
 
-void PComboBox::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QComboBox::mouseMoveEvent(event);
+void VQComboBox::resize(int w, int h) {
+    QWidget_resize(w, h);
 }
 
-void PComboBox::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QComboBox::mousePressEvent(event);
+void VQComboBox::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
 }
 
-void PComboBox::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QComboBox::mouseReleaseEvent(event);
+void VQComboBox::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
 }
 
-void PComboBox::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QComboBox::moveEvent(event);
+void VQComboBox::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
 }
 
-void PComboBox::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QComboBox::paintEvent(event);
+void VQComboBox::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
 }
 
-void PComboBox::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QComboBox::resizeEvent(event);
+void VQComboBox::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQComboBox::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQComboBox::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQComboBox::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQComboBox::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQComboBox::show() {
+    QWidget_show();
+}
+
+QSize VQComboBox::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQComboBox::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
 }
 
 

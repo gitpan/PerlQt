@@ -1,5 +1,5 @@
 /*
- * PWidget definitions.
+ * VQWidget definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,328 +7,327 @@
  * README file
  */
 
-#include "pwidget.h"
+#include <pqwidget.h>
 
-const char *PWidget::className() const {
-    return PObject_className();
+const char *VQWidget::className() const {
+    return QObject_className();
 }
 
-bool PWidget::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QWidget::event(event);
-    return ret;
+void VQWidget::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PWidget::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QWidget::eventFilter(obj, event);
-    return ret;
+void VQWidget::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PWidget::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QWidget::metaObject();
-    return ret;
+bool VQWidget::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PWidget::initMetaObject() {
+bool VQWidget::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQWidget::initMetaObject() {
     if(!QWidget::metaObject()) QWidget::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PWidget::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QWidget::timerEvent(event);
+QMetaObject *VQWidget::metaObject() const {
+    return QObject_metaObject();
 }
 
-
-void PWidget::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QWidget::adjustSize();
-}
-
-bool PWidget::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QWidget::close(b);
-    return ret;
-}
-
-void PWidget::hide() {
-    PWidget_hide();
-    if(pfailed) QWidget::hide();
-}
-
-void PWidget::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QWidget::move(x, y);
-}
-
-void PWidget::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QWidget::resize(w, h);
-}
-
-void PWidget::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QWidget::setBackgroundColor(c);
-}
-
-void PWidget::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QWidget::setBackgroundPixmap(p);
-}
-
-void PWidget::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QWidget::setCursor(c);
-}
-
-void PWidget::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QWidget::setEnabled(b);
-}
-
-void PWidget::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QWidget::setFont(f);
-}
-
-void PWidget::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QWidget::setGeometry(x, y, w, h);
-}
-
-void PWidget::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QWidget::setPalette(p);
-}
-
-void PWidget::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QWidget::setStyle(s);
-}
-
-void PWidget::show() {
-    PWidget_show();
-    if(pfailed) QWidget::show();
-}
-
-QSize PWidget::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QWidget::sizeHint();
-    return ret;
-}
-
-void PWidget::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QWidget::closeEvent(event);
-}
-
-void PWidget::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QWidget::enterEvent(event);
-}
-
-void PWidget::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QWidget::focusInEvent(event);
-}
-
-void PWidget::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QWidget::focusOutEvent(event);
-}
-
-void PWidget::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QWidget::keyPressEvent(event);
-}
-
-void PWidget::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QWidget::keyReleaseEvent(event);
-}
-
-void PWidget::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QWidget::leaveEvent(event);
-}
-
-void PWidget::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QWidget::mouseDoubleClickEvent(event);
-}
-
-void PWidget::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QWidget::mouseMoveEvent(event);
-}
-
-void PWidget::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QWidget::mousePressEvent(event);
-}
-
-void PWidget::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QWidget::mouseReleaseEvent(event);
-}
-
-void PWidget::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QWidget::moveEvent(event);
-}
-
-void PWidget::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QWidget::paintEvent(event);
-}
-
-void PWidget::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QWidget::resizeEvent(event);
+void VQWidget::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PWidget_virtualize::PWidget_adjustSize() {
+void VQWidget::adjustSize() {
+    QWidget_adjustSize();
+}
+
+void VQWidget::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
+}
+
+void VQWidget::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
+}
+
+bool VQWidget::close(bool forceKill) {
+    return QWidget_close(forceKill);
+}
+
+void VQWidget::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
+}
+
+void VQWidget::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
+}
+
+void VQWidget::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
+}
+
+void VQWidget::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
+}
+
+bool VQWidget::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
+}
+
+void VQWidget::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
+}
+
+void VQWidget::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
+}
+
+void VQWidget::hide() {
+    QWidget_hide();
+}
+
+void VQWidget::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
+}
+
+void VQWidget::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
+}
+
+void VQWidget::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
+}
+
+void VQWidget::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
+}
+
+void VQWidget::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
+}
+
+void VQWidget::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
+}
+
+void VQWidget::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
+}
+
+void VQWidget::move(int x, int y) {
+    QWidget_move(x, y);
+}
+
+void VQWidget::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
+}
+
+void VQWidget::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
+}
+
+void VQWidget::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
+}
+
+void VQWidget::resize(int w, int h) {
+    QWidget_resize(w, h);
+}
+
+void VQWidget::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
+}
+
+void VQWidget::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
+}
+
+void VQWidget::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
+}
+
+void VQWidget::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
+}
+
+void VQWidget::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQWidget::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQWidget::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQWidget::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQWidget::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQWidget::show() {
+    QWidget_show();
+}
+
+QSize VQWidget::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQWidget::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
+}
+
+
+void QWidget_virtualize::QWidget_adjustSize() {
     voidCall("adjustSize");
 }
 
-bool PWidget_virtualize::PWidget_close(bool b) {
-    SV *r = retCall("close", b ? &sv_yes : &sv_no);
-    if(pfailed) return FALSE;
-    bool ret = SvTRUE(r) ? TRUE : FALSE;
-    SvREFCNT_dec(r);
-    return ret;
+void QWidget_virtualize::QWidget_backgroundColorChange(const QColor &color) {
+    voidCall("backgroundColorChange", pArgREF(&color, const QColor));
 }
 
-void PWidget_virtualize::PWidget_hide() {
+void QWidget_virtualize::QWidget_backgroundPixmapChange(const QPixmap &pm) {
+    voidCall("backgroundPixmapChange", pArgREF(&pm, const QPixmap));
+}
+
+bool QWidget_virtualize::QWidget_close(bool forceKill) {
+    return prBOOL(retCall("close", pArgBOOL(forceKill)));
+}
+
+void QWidget_virtualize::QWidget_closeEvent(QCloseEvent *event) {
+    voidCall("closeEvent", pArgREF(event, QCloseEvent));
+}
+
+void QWidget_virtualize::QWidget_enabledChange(bool enabled) {
+    voidCall("enabledChange", pArgBOOL(enabled));
+}
+
+void QWidget_virtualize::QWidget_enterEvent(QEvent *event) {
+    voidCall("enterEvent", pArgREF(event, QEvent));
+}
+
+void QWidget_virtualize::QWidget_focusInEvent(QFocusEvent *event) {
+    voidCall("focusInEvent", pArgREF(event, QFocusEvent));
+}
+
+bool QWidget_virtualize::QWidget_focusNextPrevChild(bool next) {
+    return prBOOL(retCall("focusNextPrevChild", pArgBOOL(next)));
+}
+
+void QWidget_virtualize::QWidget_focusOutEvent(QFocusEvent *event) {
+    voidCall("focusOutEvent", pArgREF(event, QFocusEvent));
+}
+
+void QWidget_virtualize::QWidget_fontChange(const QFont &font) {
+    voidCall("fontChange", pArgREF(&font, const QFont));
+}
+
+void QWidget_virtualize::QWidget_hide() {
     voidCall("hide");
 }
 
-void PWidget_virtualize::PWidget_move(int x, int y) {
-    SV *arg1 = newSViv(x);
-    SV *arg2 = newSViv(y);
-    voidCall("move", arg1, arg2);
-    SvREFCNT_dec(arg1);
-    SvREFCNT_dec(arg2);
+void QWidget_virtualize::QWidget_keyPressEvent(QKeyEvent *event) {
+    voidCall("keyPressEvent", pArgREF(event, QKeyEvent));
 }
 
-void PWidget_virtualize::PWidget_resize(int w, int h) {
-    SV *arg1 = newSViv(w);
-    SV *arg2 = newSViv(h);
-    voidCall("resize", arg1, arg2);
-    SvREFCNT_dec(arg1);
-    SvREFCNT_dec(arg2);
+void QWidget_virtualize::QWidget_keyReleaseEvent(QKeyEvent *event) {
+    voidCall("keyReleaseEvent", pArgREF(event, QKeyEvent));
 }
 
-void PWidget_virtualize::PWidget_setBackgroundColor(const QColor &color) {
-    voidCallObj("setBackgroundColor", &color, "QColor");
+void QWidget_virtualize::QWidget_leaveEvent(QEvent *event) {
+    voidCall("leaveEvent", pArgREF(event, QEvent));
 }
 
-void PWidget_virtualize::PWidget_setBackgroundPixmap(const QPixmap &pixmap) {
-    voidCallObj("setBackgroundColor", &pixmap, "QPixmap");
+void QWidget_virtualize::QWidget_mouseDoubleClickEvent(QMouseEvent *event) {
+    voidCall("mouseDoubleClickEvent", pArgREF(event, QMouseEvent));
 }
 
-void PWidget_virtualize::PWidget_setCursor(const QCursor &cursor) {
-    voidCallObj("setBackgroundColor", &cursor, "QCursor");
+void QWidget_virtualize::QWidget_mouseMoveEvent(QMouseEvent *event) {
+    voidCall("mouseMoveEvent", pArgREF(event, QMouseEvent));
 }
 
-void PWidget_virtualize::PWidget_setEnabled(bool enable) {
-    voidCall("setEnabled", enable ? &sv_yes : &sv_no);
+void QWidget_virtualize::QWidget_mousePressEvent(QMouseEvent *event) {
+    voidCall("mousePressEvent", pArgREF(event, QMouseEvent));
 }
 
-void PWidget_virtualize::PWidget_setFont(const QFont &font) {
-    voidCallObj("setFont", &font, "QFont");
+void QWidget_virtualize::QWidget_mouseReleaseEvent(QMouseEvent *event) {
+    voidCall("mouseReleaseEvent", pArgREF(event, QMouseEvent));
 }
 
-void PWidget_virtualize::PWidget_setGeometry(int x, int y, int w, int h) {
-    SV *arg1 = newSViv(x);
-    SV *arg2 = newSViv(y);
-    SV *arg3 = newSViv(w);
-    SV *arg4 = newSViv(h);
-    voidCall("setGeometry", arg1, arg2, arg3, arg4);
-    SvREFCNT_dec(arg4);
-    SvREFCNT_dec(arg3);
-    SvREFCNT_dec(arg2);
-    SvREFCNT_dec(arg1);
+void QWidget_virtualize::QWidget_move(int x, int y) {
+    voidCall("move", pArgIV(x), pArgIV(y));
 }
 
-void PWidget_virtualize::PWidget_setPalette(const QPalette &palette) {
-    voidCallObj("setPalette", &palette, "QPalette");
+void QWidget_virtualize::QWidget_moveEvent(QMoveEvent *event) {
+    voidCall("moveEvent", pArgREF(event, QMoveEvent));
 }
 
-void PWidget_virtualize::PWidget_setStyle(GUIStyle style) {
-    SV *arg1 = newSViv(style);
-    voidCall("setStyle", arg1);
-    SvREFCNT_dec(arg1);
+void QWidget_virtualize::QWidget_paintEvent(QPaintEvent *event) {
+    voidCall("paintEvent", pArgREF(event, QPaintEvent));
 }
 
-void PWidget_virtualize::PWidget_show() {
+void QWidget_virtualize::QWidget_paletteChange(const QPalette &palette) {
+    voidCall("paletteChange", pArgREF(&palette, const QPalette));
+}
+
+void QWidget_virtualize::QWidget_resize(int w, int h) {
+    voidCall("resize", pArgIV(w), pArgIV(h));
+}
+
+void QWidget_virtualize::QWidget_resizeEvent(QResizeEvent *event) {
+    voidCall("resizeEvent", pArgREF(event, QResizeEvent));
+}
+
+void QWidget_virtualize::QWidget_setBackgroundColor(const QColor &color) {
+    voidCall("setBackgroundColor", pArgREF(&color, const QColor));
+}
+
+void QWidget_virtualize::QWidget_setBackgroundPixmap(const QPixmap &pixmap) {
+    voidCall("setBackgroundPixmap", pArgREF(&pixmap, const QPixmap));
+}
+
+void QWidget_virtualize::QWidget_setCursor(const QCursor &cursor) {
+    voidCall("setCursor", pArgREF(&cursor, const QCursor));
+}
+
+void QWidget_virtualize::QWidget_setEnabled(bool enable) {
+    voidCall("setEnabled", pArgBOOL(enable));
+}
+
+void QWidget_virtualize::QWidget_setFont(const QFont &font) {
+    voidCall("setFont", pArgREF(&font, const QFont));
+}
+
+void QWidget_virtualize::QWidget_setGeometry(int x, int y, int w, int h) {
+    voidCall("setGeometry", pArgIV(x), pArgIV(y), pArgIV(w), pArgIV(h));
+}
+
+void QWidget_virtualize::QWidget_setPalette(const QPalette &palette) {
+    voidCall("setPalette", pArgREF(&palette, const QPalette));
+}
+
+void QWidget_virtualize::QWidget_setStyle(GUIStyle style) {
+    voidCall("setStyle", pArgIV(style));
+}
+
+void QWidget_virtualize::QWidget_show() {
     voidCall("show");
 }
 
-QSize PWidget_virtualize::PWidget_sizeHint() const {
-    SV *r = retCall("sizeHint");
-    if(pfailed) return QSize();
-    QSize *ret = (QSize *)extract_ptr(r, "QSize");
-    SvREFCNT_dec(r);
-    return *ret;
+QSize QWidget_virtualize::QWidget_sizeHint() const {
+    return prDEREF(retCallConst("sizeHint"), QSize);
 }
 
-void PWidget_virtualize::PWidget_closeEvent(QCloseEvent *event) {
-    voidCallObj("closeEvent", event, "QCloseEvent");
+void QWidget_virtualize::QWidget_styleChange(GUIStyle style) {
+    voidCall("styleChange", pArgIV(style));
 }
-
-void PWidget_virtualize::PWidget_enterEvent(QEvent *event) {
-    voidCallObj("enterEvent", event, "QEvent");
-}
-
-void PWidget_virtualize::PWidget_focusInEvent(QFocusEvent *event) {
-    voidCallObj("focusInEvent", event, "QFocusEvent");
-}
-
-void PWidget_virtualize::PWidget_focusOutEvent(QFocusEvent *event) {
-    voidCallObj("focusOutEvent", event, "QFocusEvent");
-}
-
-void PWidget_virtualize::PWidget_keyPressEvent(QKeyEvent *event) {
-    voidCallObj("keyPressEvent", event, "QKeyEvent");
-}
-
-void PWidget_virtualize::PWidget_keyReleaseEvent(QKeyEvent *event) {
-    voidCallObj("keyReleaseEvent", event, "QKeyEvent");
-}
-
-void PWidget_virtualize::PWidget_leaveEvent(QEvent *event) {
-    voidCallObj("leaveEvent", event, "QEvent");
-}
-
-void PWidget_virtualize::PWidget_mouseDoubleClickEvent(QMouseEvent *event) {
-    voidCallObj("mouseDoubleClickEvent", event, "QMouseEvent");
-}
-
-void PWidget_virtualize::PWidget_mouseMoveEvent(QMouseEvent *event) {
-    voidCallObj("mouseMoveEvent", event, "QMouseEvent");
-}
-
-void PWidget_virtualize::PWidget_mousePressEvent(QMouseEvent *event) {
-    voidCallObj("mousePressEvent", event, "QMouseEvent");
-}
-
-void PWidget_virtualize::PWidget_mouseReleaseEvent(QMouseEvent *event) {
-    voidCallObj("mouseReleaseEvent", event, "QMouseEvent");
-}
-
-void PWidget_virtualize::PWidget_moveEvent(QMoveEvent *event) {
-    voidCallObj("moveEvent", event, "QMoveEvent");
-}
-
-void PWidget_virtualize::PWidget_paintEvent(QPaintEvent *event) {
-    voidCallObj("paintEvent", event, "QPaintEvent");
-}
-
-void PWidget_virtualize::PWidget_resizeEvent(QResizeEvent *event) {
-    voidCallObj("resizeEvent", event, "QResizeEvent");
-}
-

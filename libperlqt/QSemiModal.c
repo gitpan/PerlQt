@@ -1,5 +1,5 @@
 /*
- * PSemiModal definitions.
+ * VQSemiModal definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,186 +7,184 @@
  * README file
  */
 
-#include "psemimodal.h"
+#include <pqsemimodal.h>
 
-const char *PSemiModal::className() const {
-    return PObject_className();
+const char *VQSemiModal::className() const {
+    return QObject_className();
 }
 
-bool PSemiModal::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QSemiModal::event(event);
-    return ret;
+void VQSemiModal::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PSemiModal::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QSemiModal::eventFilter(obj, event);
-    return ret;
+void VQSemiModal::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PSemiModal::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QSemiModal::metaObject();
-    return ret;
+bool VQSemiModal::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PSemiModal::initMetaObject() {
+bool VQSemiModal::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQSemiModal::initMetaObject() {
     if(!QSemiModal::metaObject()) QSemiModal::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PSemiModal::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QSemiModal::timerEvent(event);
+QMetaObject *VQSemiModal::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQSemiModal::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PSemiModal::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QSemiModal::adjustSize();
+void VQSemiModal::adjustSize() {
+    QWidget_adjustSize();
 }
 
-bool PSemiModal::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QSemiModal::close(b);
-    return ret;
+void VQSemiModal::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PSemiModal::hide() {
-    PWidget_hide();
-    if(pfailed) QSemiModal::hide();
+void VQSemiModal::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
 }
 
-void PSemiModal::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QSemiModal::move(x, y);
+bool VQSemiModal::close(bool forceKill) {
+    return QWidget_close(forceKill);
 }
 
-void PSemiModal::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QSemiModal::resize(w, h);
+void VQSemiModal::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
 }
 
-void PSemiModal::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QSemiModal::setBackgroundColor(c);
+void VQSemiModal::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
 }
 
-void PSemiModal::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QSemiModal::setBackgroundPixmap(p);
+void VQSemiModal::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
 }
 
-void PSemiModal::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QSemiModal::setCursor(c);
+void VQSemiModal::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
 }
 
-void PSemiModal::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QSemiModal::setEnabled(b);
+bool VQSemiModal::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
 }
 
-void PSemiModal::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QSemiModal::setFont(f);
+void VQSemiModal::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
 }
 
-void PSemiModal::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QSemiModal::setGeometry(x, y, w, h);
+void VQSemiModal::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
 }
 
-void PSemiModal::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QSemiModal::setPalette(p);
+void VQSemiModal::hide() {
+    QWidget_hide();
 }
 
-void PSemiModal::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QSemiModal::setStyle(s);
+void VQSemiModal::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
 }
 
-void PSemiModal::show() {
-    PWidget_show();
-    if(pfailed) QSemiModal::show();
+void VQSemiModal::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
 }
 
-QSize PSemiModal::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QSemiModal::sizeHint();
-    return ret;
+void VQSemiModal::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
 }
 
-void PSemiModal::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QSemiModal::closeEvent(event);
+void VQSemiModal::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
 }
 
-void PSemiModal::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QSemiModal::enterEvent(event);
+void VQSemiModal::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
 }
 
-void PSemiModal::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QSemiModal::focusInEvent(event);
+void VQSemiModal::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
 }
 
-void PSemiModal::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QSemiModal::focusOutEvent(event);
+void VQSemiModal::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
 }
 
-void PSemiModal::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QSemiModal::keyPressEvent(event);
+void VQSemiModal::move(int x, int y) {
+    QWidget_move(x, y);
 }
 
-void PSemiModal::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QSemiModal::keyReleaseEvent(event);
+void VQSemiModal::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
 }
 
-void PSemiModal::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QSemiModal::leaveEvent(event);
+void VQSemiModal::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
 }
 
-void PSemiModal::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QSemiModal::mouseDoubleClickEvent(event);
+void VQSemiModal::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
 }
 
-void PSemiModal::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QSemiModal::mouseMoveEvent(event);
+void VQSemiModal::resize(int w, int h) {
+    QWidget_resize(w, h);
 }
 
-void PSemiModal::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QSemiModal::mousePressEvent(event);
+void VQSemiModal::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
 }
 
-void PSemiModal::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QSemiModal::mouseReleaseEvent(event);
+void VQSemiModal::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
 }
 
-void PSemiModal::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QSemiModal::moveEvent(event);
+void VQSemiModal::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
 }
 
-void PSemiModal::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QSemiModal::paintEvent(event);
+void VQSemiModal::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
 }
 
-void PSemiModal::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QSemiModal::resizeEvent(event);
+void VQSemiModal::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQSemiModal::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQSemiModal::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQSemiModal::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQSemiModal::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQSemiModal::show() {
+    QWidget_show();
+}
+
+QSize VQSemiModal::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQSemiModal::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
 }
 
 

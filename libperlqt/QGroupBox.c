@@ -1,5 +1,5 @@
 /*
- * PGroupBox definitions.
+ * VQGroupBox definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,202 +7,197 @@
  * README file
  */
 
-#include "pgrpbox.h"
+#include <pqgrpbox.h>
 
-const char *PGroupBox::className() const {
-    return PObject_className();
+const char *VQGroupBox::className() const {
+    return QObject_className();
 }
 
-bool PGroupBox::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QGroupBox::event(event);
-    return ret;
+void VQGroupBox::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PGroupBox::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QGroupBox::eventFilter(obj, event);
-    return ret;
+void VQGroupBox::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PGroupBox::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QGroupBox::metaObject();
-    return ret;
+bool VQGroupBox::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PGroupBox::initMetaObject() {
+bool VQGroupBox::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQGroupBox::initMetaObject() {
     if(!QGroupBox::metaObject()) QGroupBox::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PGroupBox::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QGroupBox::timerEvent(event);
+QMetaObject *VQGroupBox::metaObject() const {
+    return QObject_metaObject();
 }
 
-
-void PGroupBox::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QGroupBox::adjustSize();
-}
-
-bool PGroupBox::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QGroupBox::close(b);
-    return ret;
-}
-
-void PGroupBox::hide() {
-    PWidget_hide();
-    if(pfailed) QGroupBox::hide();
-}
-
-void PGroupBox::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QGroupBox::move(x, y);
-}
-
-void PGroupBox::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QGroupBox::resize(w, h);
-}
-
-void PGroupBox::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QGroupBox::setBackgroundColor(c);
-}
-
-void PGroupBox::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QGroupBox::setBackgroundPixmap(p);
-}
-
-void PGroupBox::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QGroupBox::setCursor(c);
-}
-
-void PGroupBox::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QGroupBox::setEnabled(b);
-}
-
-void PGroupBox::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QGroupBox::setFont(f);
-}
-
-void PGroupBox::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QGroupBox::setGeometry(x, y, w, h);
-}
-
-void PGroupBox::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QGroupBox::setPalette(p);
-}
-
-void PGroupBox::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QGroupBox::setStyle(s);
-}
-
-void PGroupBox::show() {
-    PWidget_show();
-    if(pfailed) QGroupBox::show();
-}
-
-QSize PGroupBox::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QGroupBox::sizeHint();
-    return ret;
-}
-
-void PGroupBox::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QGroupBox::closeEvent(event);
-}
-
-void PGroupBox::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QGroupBox::enterEvent(event);
-}
-
-void PGroupBox::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QGroupBox::focusInEvent(event);
-}
-
-void PGroupBox::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QGroupBox::focusOutEvent(event);
-}
-
-void PGroupBox::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QGroupBox::keyPressEvent(event);
-}
-
-void PGroupBox::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QGroupBox::keyReleaseEvent(event);
-}
-
-void PGroupBox::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QGroupBox::leaveEvent(event);
-}
-
-void PGroupBox::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QGroupBox::mouseDoubleClickEvent(event);
-}
-
-void PGroupBox::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QGroupBox::mouseMoveEvent(event);
-}
-
-void PGroupBox::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QGroupBox::mousePressEvent(event);
-}
-
-void PGroupBox::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QGroupBox::mouseReleaseEvent(event);
-}
-
-void PGroupBox::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QGroupBox::moveEvent(event);
-}
-
-void PGroupBox::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QGroupBox::paintEvent(event);
-}
-
-void PGroupBox::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QGroupBox::resizeEvent(event);
+void VQGroupBox::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PGroupBox::drawContents(QPainter *p) {
-    PFrame_drawContents(p);
-    if(pfailed) QGroupBox::drawContents(p);
+void VQGroupBox::adjustSize() {
+    QWidget_adjustSize();
 }
 
-void PGroupBox::drawFrame(QPainter *p) {
-    PFrame_drawFrame(p);
-    if(pfailed) QGroupBox::drawFrame(p);
+void VQGroupBox::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PGroupBox::frameChanged() {
-    PFrame_frameChanged();
-    if(pfailed) QGroupBox::frameChanged();
+void VQGroupBox::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
+}
+
+bool VQGroupBox::close(bool forceKill) {
+    return QWidget_close(forceKill);
+}
+
+void VQGroupBox::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
+}
+
+void VQGroupBox::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
+}
+
+void VQGroupBox::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
+}
+
+void VQGroupBox::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
+}
+
+bool VQGroupBox::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
+}
+
+void VQGroupBox::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
+}
+
+void VQGroupBox::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
+}
+
+void VQGroupBox::hide() {
+    QWidget_hide();
+}
+
+void VQGroupBox::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
+}
+
+void VQGroupBox::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
+}
+
+void VQGroupBox::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
+}
+
+void VQGroupBox::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
+}
+
+void VQGroupBox::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
+}
+
+void VQGroupBox::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
+}
+
+void VQGroupBox::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
+}
+
+void VQGroupBox::move(int x, int y) {
+    QWidget_move(x, y);
+}
+
+void VQGroupBox::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
+}
+
+void VQGroupBox::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
+}
+
+void VQGroupBox::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
+}
+
+void VQGroupBox::resize(int w, int h) {
+    QWidget_resize(w, h);
+}
+
+void VQGroupBox::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
+}
+
+void VQGroupBox::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
+}
+
+void VQGroupBox::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
+}
+
+void VQGroupBox::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
+}
+
+void VQGroupBox::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQGroupBox::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQGroupBox::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQGroupBox::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQGroupBox::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQGroupBox::show() {
+    QWidget_show();
+}
+
+QSize VQGroupBox::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQGroupBox::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
+}
+
+
+void VQGroupBox::drawContents(QPainter *p) {
+    QFrame_drawContents(p);
+}
+
+void VQGroupBox::drawFrame(QPainter *p) {
+    QFrame_drawFrame(p);
+}
+
+void VQGroupBox::frameChanged() {
+    QFrame_frameChanged();
 }
 
 

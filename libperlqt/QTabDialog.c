@@ -1,5 +1,5 @@
 /*
- * PTabDialog definitions.
+ * VQTabDialog definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,192 +7,189 @@
  * README file
  */
 
-#include "ptabdlg.h"
+#include <pqtabdlg.h>
 
-const char *PTabDialog::className() const {
-    return PObject_className();
+const char *VQTabDialog::className() const {
+    return QObject_className();
 }
 
-bool PTabDialog::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QTabDialog::event(event);
-    return ret;
+void VQTabDialog::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PTabDialog::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QTabDialog::eventFilter(obj, event);
-    return ret;
+void VQTabDialog::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PTabDialog::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QTabDialog::metaObject();
-    return ret;
+bool VQTabDialog::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PTabDialog::initMetaObject() {
+bool VQTabDialog::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQTabDialog::initMetaObject() {
     if(!QTabDialog::metaObject()) QTabDialog::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PTabDialog::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QTabDialog::timerEvent(event);
+QMetaObject *VQTabDialog::metaObject() const {
+    return QObject_metaObject();
 }
 
-
-void PTabDialog::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QTabDialog::adjustSize();
-}
-
-bool PTabDialog::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QTabDialog::close(b);
-    return ret;
-}
-
-void PTabDialog::hide() {
-    PWidget_hide();
-    if(pfailed) QTabDialog::hide();
-}
-
-void PTabDialog::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QTabDialog::move(x, y);
-}
-
-void PTabDialog::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QTabDialog::resize(w, h);
-}
-
-void PTabDialog::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QTabDialog::setBackgroundColor(c);
-}
-
-void PTabDialog::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QTabDialog::setBackgroundPixmap(p);
-}
-
-void PTabDialog::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QTabDialog::setCursor(c);
-}
-
-void PTabDialog::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QTabDialog::setEnabled(b);
-}
-
-void PTabDialog::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QTabDialog::setFont(f);
-}
-
-void PTabDialog::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QTabDialog::setGeometry(x, y, w, h);
-}
-
-void PTabDialog::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QTabDialog::setPalette(p);
-}
-
-void PTabDialog::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QTabDialog::setStyle(s);
-}
-
-void PTabDialog::show() {
-    PWidget_show();
-    if(pfailed) QTabDialog::show();
-}
-
-QSize PTabDialog::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QTabDialog::sizeHint();
-    return ret;
-}
-
-void PTabDialog::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QTabDialog::closeEvent(event);
-}
-
-void PTabDialog::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QTabDialog::enterEvent(event);
-}
-
-void PTabDialog::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QTabDialog::focusInEvent(event);
-}
-
-void PTabDialog::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QTabDialog::focusOutEvent(event);
-}
-
-void PTabDialog::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QTabDialog::keyPressEvent(event);
-}
-
-void PTabDialog::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QTabDialog::keyReleaseEvent(event);
-}
-
-void PTabDialog::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QTabDialog::leaveEvent(event);
-}
-
-void PTabDialog::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QTabDialog::mouseDoubleClickEvent(event);
-}
-
-void PTabDialog::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QTabDialog::mouseMoveEvent(event);
-}
-
-void PTabDialog::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QTabDialog::mousePressEvent(event);
-}
-
-void PTabDialog::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QTabDialog::mouseReleaseEvent(event);
-}
-
-void PTabDialog::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QTabDialog::moveEvent(event);
-}
-
-void PTabDialog::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QTabDialog::paintEvent(event);
-}
-
-void PTabDialog::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QTabDialog::resizeEvent(event);
+void VQTabDialog::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PTabDialog::done(int result) {
-    PDialog_done(result);
-    if(pfailed) QTabDialog::done(result);
+void VQTabDialog::adjustSize() {
+    QWidget_adjustSize();
+}
+
+void VQTabDialog::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
+}
+
+void VQTabDialog::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
+}
+
+bool VQTabDialog::close(bool forceKill) {
+    return QWidget_close(forceKill);
+}
+
+void VQTabDialog::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
+}
+
+void VQTabDialog::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
+}
+
+void VQTabDialog::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
+}
+
+void VQTabDialog::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
+}
+
+bool VQTabDialog::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
+}
+
+void VQTabDialog::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
+}
+
+void VQTabDialog::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
+}
+
+void VQTabDialog::hide() {
+    QWidget_hide();
+}
+
+void VQTabDialog::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
+}
+
+void VQTabDialog::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
+}
+
+void VQTabDialog::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
+}
+
+void VQTabDialog::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
+}
+
+void VQTabDialog::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
+}
+
+void VQTabDialog::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
+}
+
+void VQTabDialog::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
+}
+
+void VQTabDialog::move(int x, int y) {
+    QWidget_move(x, y);
+}
+
+void VQTabDialog::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
+}
+
+void VQTabDialog::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
+}
+
+void VQTabDialog::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
+}
+
+void VQTabDialog::resize(int w, int h) {
+    QWidget_resize(w, h);
+}
+
+void VQTabDialog::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
+}
+
+void VQTabDialog::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
+}
+
+void VQTabDialog::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
+}
+
+void VQTabDialog::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
+}
+
+void VQTabDialog::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQTabDialog::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQTabDialog::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQTabDialog::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQTabDialog::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQTabDialog::show() {
+    QWidget_show();
+}
+
+QSize VQTabDialog::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQTabDialog::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
+}
+
+
+void VQTabDialog::done(int r) {
+    QDialog_done(r);
 }
 
 

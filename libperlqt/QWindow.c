@@ -1,5 +1,5 @@
 /*
- * PWindow definitions.
+ * VQWindow definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,186 +7,184 @@
  * README file
  */
 
-#include "pwindow.h"
+#include <pqwindow.h>
 
-const char *PWindow::className() const {
-    return PObject_className();
+const char *VQWindow::className() const {
+    return QObject_className();
 }
 
-bool PWindow::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QWindow::event(event);
-    return ret;
+void VQWindow::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PWindow::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QWindow::eventFilter(obj, event);
-    return ret;
+void VQWindow::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PWindow::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QWindow::metaObject();
-    return ret;
+bool VQWindow::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PWindow::initMetaObject() {
+bool VQWindow::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQWindow::initMetaObject() {
     if(!QWindow::metaObject()) QWindow::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PWindow::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QWindow::timerEvent(event);
+QMetaObject *VQWindow::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQWindow::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PWindow::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QWindow::adjustSize();
+void VQWindow::adjustSize() {
+    QWidget_adjustSize();
 }
 
-bool PWindow::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QWindow::close(b);
-    return ret;
+void VQWindow::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PWindow::hide() {
-    PWidget_hide();
-    if(pfailed) QWindow::hide();
+void VQWindow::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
 }
 
-void PWindow::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QWindow::move(x, y);
+bool VQWindow::close(bool forceKill) {
+    return QWidget_close(forceKill);
 }
 
-void PWindow::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QWindow::resize(w, h);
+void VQWindow::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
 }
 
-void PWindow::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QWindow::setBackgroundColor(c);
+void VQWindow::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
 }
 
-void PWindow::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QWindow::setBackgroundPixmap(p);
+void VQWindow::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
 }
 
-void PWindow::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QWindow::setCursor(c);
+void VQWindow::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
 }
 
-void PWindow::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QWindow::setEnabled(b);
+bool VQWindow::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
 }
 
-void PWindow::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QWindow::setFont(f);
+void VQWindow::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
 }
 
-void PWindow::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QWindow::setGeometry(x, y, w, h);
+void VQWindow::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
 }
 
-void PWindow::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QWindow::setPalette(p);
+void VQWindow::hide() {
+    QWidget_hide();
 }
 
-void PWindow::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QWindow::setStyle(s);
+void VQWindow::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
 }
 
-void PWindow::show() {
-    PWidget_show();
-    if(pfailed) QWindow::show();
+void VQWindow::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
 }
 
-QSize PWindow::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QWindow::sizeHint();
-    return ret;
+void VQWindow::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
 }
 
-void PWindow::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QWindow::closeEvent(event);
+void VQWindow::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
 }
 
-void PWindow::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QWindow::enterEvent(event);
+void VQWindow::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
 }
 
-void PWindow::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QWindow::focusInEvent(event);
+void VQWindow::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
 }
 
-void PWindow::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QWindow::focusOutEvent(event);
+void VQWindow::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
 }
 
-void PWindow::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QWindow::keyPressEvent(event);
+void VQWindow::move(int x, int y) {
+    QWidget_move(x, y);
 }
 
-void PWindow::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QWindow::keyReleaseEvent(event);
+void VQWindow::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
 }
 
-void PWindow::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QWindow::leaveEvent(event);
+void VQWindow::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
 }
 
-void PWindow::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QWindow::mouseDoubleClickEvent(event);
+void VQWindow::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
 }
 
-void PWindow::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QWindow::mouseMoveEvent(event);
+void VQWindow::resize(int w, int h) {
+    QWidget_resize(w, h);
 }
 
-void PWindow::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QWindow::mousePressEvent(event);
+void VQWindow::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
 }
 
-void PWindow::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QWindow::mouseReleaseEvent(event);
+void VQWindow::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
 }
 
-void PWindow::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QWindow::moveEvent(event);
+void VQWindow::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
 }
 
-void PWindow::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QWindow::paintEvent(event);
+void VQWindow::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
 }
 
-void PWindow::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QWindow::resizeEvent(event);
+void VQWindow::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQWindow::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQWindow::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQWindow::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQWindow::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQWindow::show() {
+    QWidget_show();
+}
+
+QSize VQWindow::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQWindow::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
 }
 
 

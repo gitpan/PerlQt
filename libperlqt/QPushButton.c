@@ -1,5 +1,5 @@
 /*
- * PPushButton definitions.
+ * VQPushButton definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,203 +7,197 @@
  * README file
  */
 
-#include "ppushbt.h"
+#include <pqpushbt.h>
 
-const char *PPushButton::className() const {
-    return PObject_className();
+const char *VQPushButton::className() const {
+    return QObject_className();
 }
 
-bool PPushButton::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QPushButton::event(event);
-    return ret;
+void VQPushButton::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PPushButton::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QPushButton::eventFilter(obj, event);
-    return ret;
+void VQPushButton::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PPushButton::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QPushButton::metaObject();
-    return ret;
+bool VQPushButton::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PPushButton::initMetaObject() {
+bool VQPushButton::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQPushButton::initMetaObject() {
     if(!QPushButton::metaObject()) QPushButton::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PPushButton::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QPushButton::timerEvent(event);
+QMetaObject *VQPushButton::metaObject() const {
+    return QObject_metaObject();
 }
 
-
-void PPushButton::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QPushButton::adjustSize();
-}
-
-bool PPushButton::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QPushButton::close(b);
-    return ret;
-}
-
-void PPushButton::hide() {
-    PWidget_hide();
-    if(pfailed) QPushButton::hide();
-}
-
-void PPushButton::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QPushButton::move(x, y);
-}
-
-void PPushButton::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QPushButton::resize(w, h);
-}
-
-void PPushButton::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QPushButton::setBackgroundColor(c);
-}
-
-void PPushButton::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QPushButton::setBackgroundPixmap(p);
-}
-
-void PPushButton::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QPushButton::setCursor(c);
-}
-
-void PPushButton::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QPushButton::setEnabled(b);
-}
-
-void PPushButton::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QPushButton::setFont(f);
-}
-
-void PPushButton::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QPushButton::setGeometry(x, y, w, h);
-}
-
-void PPushButton::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QPushButton::setPalette(p);
-}
-
-void PPushButton::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QPushButton::setStyle(s);
-}
-
-void PPushButton::show() {
-    PWidget_show();
-    if(pfailed) QPushButton::show();
-}
-
-QSize PPushButton::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QPushButton::sizeHint();
-    return ret;
-}
-
-void PPushButton::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QPushButton::closeEvent(event);
-}
-
-void PPushButton::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QPushButton::enterEvent(event);
-}
-
-void PPushButton::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QPushButton::focusInEvent(event);
-}
-
-void PPushButton::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QPushButton::focusOutEvent(event);
-}
-
-void PPushButton::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QPushButton::keyPressEvent(event);
-}
-
-void PPushButton::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QPushButton::keyReleaseEvent(event);
-}
-
-void PPushButton::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QPushButton::leaveEvent(event);
-}
-
-void PPushButton::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QPushButton::mouseDoubleClickEvent(event);
-}
-
-void PPushButton::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QPushButton::mouseMoveEvent(event);
-}
-
-void PPushButton::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QPushButton::mousePressEvent(event);
-}
-
-void PPushButton::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QPushButton::mouseReleaseEvent(event);
-}
-
-void PPushButton::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QPushButton::moveEvent(event);
-}
-
-void PPushButton::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QPushButton::paintEvent(event);
-}
-
-void PPushButton::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QPushButton::resizeEvent(event);
+void VQPushButton::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PPushButton::drawButton(QPainter *p) {
-    PButton_drawButton(p);
-    if(pfailed) QPushButton::drawButton(p);
+void VQPushButton::adjustSize() {
+    QWidget_adjustSize();
 }
 
-void PPushButton::drawButtonLabel(QPainter *p) {
-    PButton_drawButtonLabel(p);
-    if(pfailed) QPushButton::drawButtonLabel(p);
+void VQPushButton::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-bool PPushButton::hitButton(const QPoint &p) const {
-    bool ret = PButton_hitButton(p);
-    if(pfailed) ret = QPushButton::hitButton(p);
-    return ret;
+void VQPushButton::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
+}
+
+bool VQPushButton::close(bool forceKill) {
+    return QWidget_close(forceKill);
+}
+
+void VQPushButton::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
+}
+
+void VQPushButton::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
+}
+
+void VQPushButton::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
+}
+
+void VQPushButton::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
+}
+
+bool VQPushButton::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
+}
+
+void VQPushButton::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
+}
+
+void VQPushButton::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
+}
+
+void VQPushButton::hide() {
+    QWidget_hide();
+}
+
+void VQPushButton::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
+}
+
+void VQPushButton::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
+}
+
+void VQPushButton::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
+}
+
+void VQPushButton::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
+}
+
+void VQPushButton::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
+}
+
+void VQPushButton::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
+}
+
+void VQPushButton::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
+}
+
+void VQPushButton::move(int x, int y) {
+    QWidget_move(x, y);
+}
+
+void VQPushButton::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
+}
+
+void VQPushButton::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
+}
+
+void VQPushButton::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
+}
+
+void VQPushButton::resize(int w, int h) {
+    QWidget_resize(w, h);
+}
+
+void VQPushButton::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
+}
+
+void VQPushButton::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
+}
+
+void VQPushButton::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
+}
+
+void VQPushButton::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
+}
+
+void VQPushButton::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQPushButton::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQPushButton::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQPushButton::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQPushButton::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQPushButton::show() {
+    QWidget_show();
+}
+
+QSize VQPushButton::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQPushButton::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
+}
+
+
+void VQPushButton::drawButton(QPainter *p) {
+    QButton_drawButton(p);
+}
+
+void VQPushButton::drawButtonLabel(QPainter *p) {
+    QButton_drawButtonLabel(p);
+}
+
+bool VQPushButton::hitButton(const QPoint &pos) const {
+    return QButton_hitButton(pos);
 }
 
 

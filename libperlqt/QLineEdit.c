@@ -1,5 +1,5 @@
 /*
- * PLineEdit definitions.
+ * VQLineEdit definitions.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -7,186 +7,184 @@
  * README file
  */
 
-#include "plined.h"
+#include <pqlined.h>
 
-const char *PLineEdit::className() const {
-    return PObject_className();
+const char *VQLineEdit::className() const {
+    return QObject_className();
 }
 
-bool PLineEdit::event(QEvent *event) {
-    bool ret = PObject_event(event);
-    if(pfailed) ret = QLineEdit::event(event);
-    return ret;
+void VQLineEdit::connectNotify(const char *signal) {
+    QObject_connectNotify(signal);
 }
 
-bool PLineEdit::eventFilter(QObject *obj, QEvent *event) {
-    bool ret = PObject_eventFilter(obj, event);
-    if(pfailed) ret = QLineEdit::eventFilter(obj, event);
-    return ret;
+void VQLineEdit::disconnectNotify(const char *signal) {
+    QObject_disconnectNotify(signal);
 }
 
-QMetaObject *PLineEdit::metaObject() const {
-    QMetaObject *ret = PObject_metaObject();
-    if(pfailed) ret = QLineEdit::metaObject();
-    return ret;
+bool VQLineEdit::event(QEvent *event) {
+    return QObject_event(event);
 }
 
-void PLineEdit::initMetaObject() {
+bool VQLineEdit::eventFilter(QObject *obj, QEvent *event) {
+    return QObject_eventFilter(obj, event);
+}
+
+void VQLineEdit::initMetaObject() {
     if(!QLineEdit::metaObject()) QLineEdit::initMetaObject();
-    PObject_initMetaObject();
+    QObject_initMetaObject();
 }
 
-void PLineEdit::timerEvent(QTimerEvent *event) {
-    PObject_timerEvent(event);
-    if(pfailed) QLineEdit::timerEvent(event);
+QMetaObject *VQLineEdit::metaObject() const {
+    return QObject_metaObject();
+}
+
+void VQLineEdit::timerEvent(QTimerEvent *event) {
+    QObject_timerEvent(event);
 }
 
 
-void PLineEdit::adjustSize() {
-    PWidget_adjustSize();
-    if(pfailed) QLineEdit::adjustSize();
+void VQLineEdit::adjustSize() {
+    QWidget_adjustSize();
 }
 
-bool PLineEdit::close(bool b) {
-    bool ret = PWidget_close(b);
-    if(pfailed) ret = QLineEdit::close(b);
-    return ret;
+void VQLineEdit::backgroundColorChange(const QColor &color) {
+    QWidget_backgroundColorChange(color);
 }
 
-void PLineEdit::hide() {
-    PWidget_hide();
-    if(pfailed) QLineEdit::hide();
+void VQLineEdit::backgroundPixmapChange(const QPixmap &pixmap) {
+    QWidget_backgroundPixmapChange(pixmap);
 }
 
-void PLineEdit::move(int x, int y) {
-    PWidget_move(x, y);
-    if(pfailed) QLineEdit::move(x, y);
+bool VQLineEdit::close(bool forceKill) {
+    return QWidget_close(forceKill);
 }
 
-void PLineEdit::resize(int w, int h) {
-    PWidget_resize(w, h);
-    if(pfailed) QLineEdit::resize(w, h);
+void VQLineEdit::closeEvent(QCloseEvent *event) {
+    QWidget_closeEvent(event);
 }
 
-void PLineEdit::setBackgroundColor(const QColor &c) {
-    PWidget_setBackgroundColor(c);
-    if(pfailed) QLineEdit::setBackgroundColor(c);
+void VQLineEdit::enabledChange(bool enable) {
+    QWidget_enabledChange(enable);
 }
 
-void PLineEdit::setBackgroundPixmap(const QPixmap &p) {
-    PWidget_setBackgroundPixmap(p);
-    if(pfailed) QLineEdit::setBackgroundPixmap(p);
+void VQLineEdit::enterEvent(QEvent *event) {
+    QWidget_enterEvent(event);
 }
 
-void PLineEdit::setCursor(const QCursor &c) {
-    PWidget_setCursor(c);
-    if(pfailed) QLineEdit::setCursor(c);
+void VQLineEdit::focusInEvent(QFocusEvent *event) {
+    QWidget_focusInEvent(event);
 }
 
-void PLineEdit::setEnabled(bool b) {
-    PWidget_setEnabled(b);
-    if(pfailed) QLineEdit::setEnabled(b);
+bool VQLineEdit::focusNextPrevChild(bool next) {
+    return QWidget_focusNextPrevChild(next);
 }
 
-void PLineEdit::setFont(const QFont &f) {
-    PWidget_setFont(f);
-    if(pfailed) QLineEdit::setFont(f);
+void VQLineEdit::focusOutEvent(QFocusEvent *event) {
+    QWidget_focusOutEvent(event);
 }
 
-void PLineEdit::setGeometry(int x, int y, int w, int h) {
-    PWidget_setGeometry(x, y, w, h);
-    if(pfailed) QLineEdit::setGeometry(x, y, w, h);
+void VQLineEdit::fontChange(const QFont &font) {
+    QWidget_fontChange(font);
 }
 
-void PLineEdit::setPalette(const QPalette &p) {
-    PWidget_setPalette(p);
-    if(pfailed) QLineEdit::setPalette(p);
+void VQLineEdit::hide() {
+    QWidget_hide();
 }
 
-void PLineEdit::setStyle(GUIStyle s) {
-    PWidget_setStyle(s);
-    if(pfailed) QLineEdit::setStyle(s);
+void VQLineEdit::keyPressEvent(QKeyEvent *event) {
+    QWidget_keyPressEvent(event);
 }
 
-void PLineEdit::show() {
-    PWidget_show();
-    if(pfailed) QLineEdit::show();
+void VQLineEdit::keyReleaseEvent(QKeyEvent *event) {
+    QWidget_keyReleaseEvent(event);
 }
 
-QSize PLineEdit::sizeHint() const {
-    QSize ret = PWidget_sizeHint();
-    if(pfailed) ret = QLineEdit::sizeHint();
-    return ret;
+void VQLineEdit::leaveEvent(QEvent *event) {
+    QWidget_leaveEvent(event);
 }
 
-void PLineEdit::closeEvent(QCloseEvent *event) {
-    PWidget_closeEvent(event);
-    if(pfailed) QLineEdit::closeEvent(event);
+void VQLineEdit::mouseDoubleClickEvent(QMouseEvent *event) {
+    QWidget_mouseDoubleClickEvent(event);
 }
 
-void PLineEdit::enterEvent(QEvent *event) {
-    PWidget_enterEvent(event);
-    if(pfailed) QLineEdit::enterEvent(event);
+void VQLineEdit::mouseMoveEvent(QMouseEvent *event) {
+    QWidget_mouseMoveEvent(event);
 }
 
-void PLineEdit::focusInEvent(QFocusEvent *event) {
-    PWidget_focusInEvent(event);
-    if(pfailed) QLineEdit::focusInEvent(event);
+void VQLineEdit::mousePressEvent(QMouseEvent *event) {
+    QWidget_mousePressEvent(event);
 }
 
-void PLineEdit::focusOutEvent(QFocusEvent *event) {
-    PWidget_focusOutEvent(event);
-    if(pfailed) QLineEdit::focusOutEvent(event);
+void VQLineEdit::mouseReleaseEvent(QMouseEvent *event) {
+    QWidget_mouseReleaseEvent(event);
 }
 
-void PLineEdit::keyPressEvent(QKeyEvent *event) {
-    PWidget_keyPressEvent(event);
-    if(pfailed) QLineEdit::keyPressEvent(event);
+void VQLineEdit::move(int x, int y) {
+    QWidget_move(x, y);
 }
 
-void PLineEdit::keyReleaseEvent(QKeyEvent *event) {
-    PWidget_keyReleaseEvent(event);
-    if(pfailed) QLineEdit::keyReleaseEvent(event);
+void VQLineEdit::moveEvent(QMoveEvent *event) {
+    QWidget_moveEvent(event);
 }
 
-void PLineEdit::leaveEvent(QEvent *event) {
-    PWidget_leaveEvent(event);
-    if(pfailed) QLineEdit::leaveEvent(event);
+void VQLineEdit::paintEvent(QPaintEvent *event) {
+    QWidget_paintEvent(event);
 }
 
-void PLineEdit::mouseDoubleClickEvent(QMouseEvent *event) {
-    PWidget_mouseDoubleClickEvent(event);
-    if(pfailed) QLineEdit::mouseDoubleClickEvent(event);
+void VQLineEdit::paletteChange(const QPalette &palette) {
+    QWidget_paletteChange(palette);
 }
 
-void PLineEdit::mouseMoveEvent(QMouseEvent *event) {
-    PWidget_mouseMoveEvent(event);
-    if(pfailed) QLineEdit::mouseMoveEvent(event);
+void VQLineEdit::resize(int w, int h) {
+    QWidget_resize(w, h);
 }
 
-void PLineEdit::mousePressEvent(QMouseEvent *event) {
-    PWidget_mousePressEvent(event);
-    if(pfailed) QLineEdit::mousePressEvent(event);
+void VQLineEdit::resizeEvent(QResizeEvent *event) {
+    QWidget_resizeEvent(event);
 }
 
-void PLineEdit::mouseReleaseEvent(QMouseEvent *event) {
-    PWidget_mouseReleaseEvent(event);
-    if(pfailed) QLineEdit::mouseReleaseEvent(event);
+void VQLineEdit::setBackgroundColor(const QColor &color) {
+    QWidget_setBackgroundColor(color);
 }
 
-void PLineEdit::moveEvent(QMoveEvent *event) {
-    PWidget_moveEvent(event);
-    if(pfailed) QLineEdit::moveEvent(event);
+void VQLineEdit::setBackgroundPixmap(const QPixmap &pixmap) {
+    QWidget_setBackgroundPixmap(pixmap);
 }
 
-void PLineEdit::paintEvent(QPaintEvent *event) {
-    PWidget_paintEvent(event);
-    if(pfailed) QLineEdit::paintEvent(event);
+void VQLineEdit::setCursor(const QCursor &cursor) {
+    QWidget_setCursor(cursor);
 }
 
-void PLineEdit::resizeEvent(QResizeEvent *event) {
-    PWidget_resizeEvent(event);
-    if(pfailed) QLineEdit::resizeEvent(event);
+void VQLineEdit::setEnabled(bool enable) {
+    QWidget_setEnabled(enable);
+}
+
+void VQLineEdit::setFont(const QFont &font) {
+    QWidget_setFont(font);
+}
+
+void VQLineEdit::setGeometry(int x, int y, int w, int h) {
+    QWidget_setGeometry(x, y, w, h);
+}
+
+void VQLineEdit::setPalette(const QPalette &palette) {
+    QWidget_setPalette(palette);
+}
+
+void VQLineEdit::setStyle(GUIStyle style) {
+    QWidget_setStyle(style);
+}
+
+void VQLineEdit::show() {
+    QWidget_show();
+}
+
+QSize VQLineEdit::sizeHint() const {
+    return QWidget_sizeHint();
+}
+
+void VQLineEdit::styleChange(GUIStyle style) {
+    QWidget_styleChange(style);
 }
 
 

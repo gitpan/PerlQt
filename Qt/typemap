@@ -1,0 +1,175 @@
+QWidget::BackgroundMode		T_ENUM
+QWidget::FocusPolicy		T_ENUM
+GUIStyle			T_ENUM
+HANDLE				T_IV
+Display *			T_IV
+WFlags				T_IV
+WId				T_IV
+bool				Q_BOOL
+
+pcchar				CONST_CHAR
+pcchar DEF			DEFINED_CONST_CHAR
+
+# QPoint				Q_DEREF_OBJECT
+# QRect				Q_DEREF_OBJECT
+# QSize				Q_DEREF_OBJECT
+const QPixmap *			Q_OBJECT
+
+CQColor				Q__CONST_OBJECT
+CQColorGroup			Q__CONST_OBJECT
+CQCursor			Q__CONST_OBJECT
+CQFont				Q__CONST_OBJECT
+CQFontInfo			Q__CONST_OBJECT
+CQFontMetrics			Q__CONST_OBJECT
+CQPalette			Q__CONST_OBJECT
+CQPixmap			Q__CONST_OBJECT
+CQPoint				Q__CONST_OBJECT
+CQRect				Q__CONST_OBJECT
+CQSize				Q__CONST_OBJECT
+
+MQColor				Q__MUTABLE_OBJECT
+MQColorGroup			Q__MUTABLE_OBJECT
+MQCursor			Q__MUTABLE_OBJECT
+MQFont				Q__MUTABLE_OBJECT
+MQFontInfo			Q__MUTABLE_OBJECT
+MQFontMetrics			Q__MUTABLE_OBJECT
+MQPalette			Q__MUTABLE_OBJECT
+MQPixmap			Q__MUTABLE_OBJECT
+MQPoint				Q__MUTABLE_OBJECT
+MQRect				Q__MUTABLE_OBJECT
+MQSize				Q__MUTABLE_OBJECT
+
+QClipboard *			Q_OBJECT
+QCloseEvent *			Q_OBJECT
+QCursor *			Q_OBJECT
+QEvent *			Q_OBJECT
+QEvent DEF *			Q_OBJECT
+QFocusEvent *			Q_OBJECT
+QFont *				Q_OBJECT
+QKeyEvent *			Q_OBJECT
+QMouseEvent *			Q_OBJECT
+QPainter *			Q_OBJECT
+QPaintEvent *			Q_OBJECT
+QPalette *			Q_OBJECT
+QResizeEvent *			Q_OBJECT
+QTimerEvent *			Q_OBJECT
+
+
+const QObjectList *		UNDEF_OBJECT
+QConnectionList *		UNDEF_OBJECT
+QWidgetList *			UNDEF_OBJECT
+
+QPaintDevice *			Q_QPAINTDEVICE
+QPaintDevice DEF *		Q_QPAINTDEVICE
+const QPaintDevice *		Q_QPAINTDEVICE
+const QPaintDevice DEF *	Q_QPAINTDEVICE
+CQPaintDevice *			Q__CONST_QPAINTDEVICE
+
+QObject *			Q_QOBJECT
+QObject DEF *			Q_QOBJECT
+const QObject *			Q_QOBJECT
+const QObject DEF *		Q_QOBJECT
+CQObject *			Q__CONST_QOBJECT
+PQObject *			Q__QOBJECT
+VQObject *			Q_NEW_QOBJECT
+
+QWidget *			Q_QOBJECT
+QWidget DEF *			Q_QOBJECT
+const QWidget *			Q_QOBJECT
+const QWidget DEF *		Q_QOBJECT
+CQWidget *			Q__CONST_QOBJECT
+CPQWidget *			Q__CONST_QOBJECT
+PQWidget *			Q__QOBJECT
+VQWidget *			Q_NEW_QOBJECT
+
+QButton *			Q_QOBJECT
+QButton DEF *			Q_QOBJECT
+const QButton *			Q_QOBJECT
+const QButton DEF *		Q_QOBJECT
+CQButton *			Q__CONST_QOBJECT
+CPQButton *			Q__CONST_QOBJECT
+PQButton *			Q__QOBJECT
+VQButton *			Q_NEW_QOBJECT
+
+QPushButton *			Q_QOBJECT
+QPushButton DEF *		Q_QOBJECT
+const QPushButton *		Q_QOBJECT
+const QPushButton DEF *		Q_QOBJECT
+CQPushButton *			Q__CONST_QOBJECT
+CPQPushButton *			Q__CONST_QOBJECT
+PQPushButton *			Q__QOBJECT
+VQPushButton *			Q_NEW_QOBJECT
+
+QApplication *			Q_QOBJECT
+QApplication DEF *		Q_QOBJECT
+const QApplication *		Q_QOBJECT
+const QApplication DEF *	Q_QOBJECT
+CQApplication *			Q__CONST_QOBJECT
+CPQApplication *		Q__CONST_QOBJECT
+PQApplication *			Q__QOBJECT
+VQApplication *			Q_NEW_QOBJECT
+
+OUTPUT
+Q_BOOL
+    $arg = newSVsv(boolSV($var));
+
+CONST_CHAR
+    $arg = pcchar_sv($var);
+
+UNDEF_OBJECT
+    XSRETURN_UNDEF;
+
+Q_OBJECT
+    $arg = objectify_ptr((void*)$var, \"$type\");
+
+Q__CONST_OBJECT
+    $arg =
+	objectify_ptr((void*)$var, \"const @{[do{$type=~s/^[^Q]*//;$type}]}\");
+
+Q__MUTABLE_OBJECT
+    $arg = objectify_ptr((void*)$var, \"@{[do{$type=~s/^[^Q]*//;$type}]}\");
+
+Q_QOBJECT
+    $arg = objectify_qobject((QObject*)$var, \"$type\");
+
+Q_NEW_QOBJECT
+    $arg = objectify_new_qobject((QObject*)$var, (virtualize*)$var, CLASS);
+
+Q_QPAINTDEVICE
+    $arg = objectify_ptr((void*)$var, \"$type\");
+
+INPUT
+Q_BOOL
+    $var = SvTRUE($arg) ? TRUE : FALSE
+
+CONST_CHAR
+    $var = pcchar_pv($arg)
+
+DEFINED_CONST_CHAR
+    $var = pcchar_pv($arg, 1)
+
+Q_OBJECT
+    $var = ($type)extract_ptr($arg, \"@{[do{$type=~s/DEF/\&/;$type}]}\")
+
+Q__CONST_OBJECT
+    $var =
+	(@{[do{$type=~s/^[^Q]*//;$type}]} *) extract_ptr($arg, \"const $type\")
+
+Q__MUTABLE_OBJECT
+    $var = (@{[do{$type=~s/^[^Q]*//;$type}]} *) extract_ptr($arg, \"$type\")
+
+Q_QOBJECT
+    $var = ($type)extract_ptr($arg, \"@{[do{$type=~s/DEF/\&/;$type}]}\")
+
+Q__QOBJECT
+    $var = ($type)extract_ptr($arg, \"@{[do{$type=~s/^[^Q]*//;$type}]}\")
+
+Q__CONST_QOBJECT
+    $var = ($type)extract_ptr($arg, \"const @{[do{$type=~s/^[^Q]*//;$type}]}\")
+
+Q_QPAINTDEVICE
+    $var = ($type)extract_ptr($arg, \"@{[do{$type=~s/DEF/\&/;$type}]}\")
+
+Q__CONST_QPAINTDEVICE
+    $var = (const @{[do{$type=~s/^[^Q]*//;$type}]})
+	extract_ptr($arg, \"const @{[do{$type=~s/DEF/\&/;$type}]}\")
