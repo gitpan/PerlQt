@@ -1,3 +1,14 @@
+Changes from 2.103 to 2.104  (2000-Feb-5)
+---------------------------
+
+- QTDIR is now set to /usr/lib/qt for LIBS search if it's not already set
+- The pig_alias classes are now only for making protected methods public,
+  public virtual methods are now called directly with this->QClass::method
+- Typemaps were modified so they can be included in sub-modules
+- Qt-2.0 templates had xfd() and some qglobal.h methods added in
+- Attempted to weed out the abbreviated Qt-1.x era #include filenames
+
+
 Changes from 2.102 to 2.103  (2000-Jan-26)
 ---------------------------
 

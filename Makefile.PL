@@ -21,6 +21,8 @@ $MAKE = 'Qt-1.4';
 # If you want to compile using Qt-2.0, uncomment the next line
 #$MAKE = 'Qt-2.0';
 
+$ENV{QTDIR} = '/usr/lib/qt' unless $ENV{QTDIR};
+
 ##########
 # Please modify these arguments as needed
 %Args = (

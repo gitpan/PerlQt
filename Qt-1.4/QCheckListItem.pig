@@ -10,7 +10,6 @@ suicidal virtual class QCheckListItem : virtual QListViewItem {
     virtual void paintCell(QPainter *, const QColorGroup &, int, int, int);
     void setOn(bool);
     virtual void setup();
-    virtual void stateChange(bool);
     const char *text() const;
     const char *text(int) const;
     QCheckListItem::Type type() const;
@@ -18,5 +17,6 @@ suicidal virtual class QCheckListItem : virtual QListViewItem {
 protected:
     void activate();
     virtual void paintBranches(QPainter *, const QColorGroup &, int, int, int, GUIStyle);
+    virtual void stateChange(bool);
     void turnOffChild();
 } Qt::CheckListItem;

@@ -128,7 +128,7 @@ static struct pig_type __ ## name = { \
     (pigfptr)__ ## name ## _return, \
     (pigfptr)__ ## name ## _push, \
     (pigfptr)__ ## name ## _pop, \
-    (pigfptr)0 \
+    (void *)0 \
 };
 
 

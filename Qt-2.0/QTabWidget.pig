@@ -10,7 +10,6 @@ suicidal virtual class QTabWidget : virtual QWidget {
     void changeTab(QWidget *, const QString &);
     void changeTab(QWidget *, const QIconSet &, const QString &);
     QWidget *currentPage() const;
-    virtual bool eventFilter(QObject *, QEvent *);
     void insertTab(QWidget *, const QString &, int = -1);
     void insertTab(QWidget *, QTab *, int = -1);
     void insertTab(QWidget *, const QIconSet &, const QString &, int = -1);
@@ -26,6 +25,7 @@ suicidal virtual class QTabWidget : virtual QWidget {
     QString tabLabel(QWidget *);
     QTabWidget::TabPosition tabPosition() const;
 protected:
+    virtual bool eventFilter(QObject *, QEvent *);
     virtual void resizeEvent(QResizeEvent *);
     void selected(const QString &) signal;
     void setTabBar(QTabBar *);

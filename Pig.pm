@@ -1039,20 +1039,24 @@ sub endiheader {
 }
 
 sub writeheader {
+    my $start = "struct pig_alias_$Class : $Class {\n";
     return if exists $Info{$Class}{'Class'};
-    header "struct pig_alias_$Class : $Class {\n";
     for my $proto (@{$Methods{$Class}{'new'}}) {
 	next if $proto->perlonly;
 	my $decl = cpp_constructor_decl($proto);
 	next unless $decl;    # BUG
+	header $start;
+	$start = "";
 	header "    pig_alias_$decl {}\n";
     }
     for my $proto (sort { $a->{'Method'} cmp $b->{'Method'} }
 		   values %{$Prototypes{$Class}}) {
-	next unless $proto->virtual || $proto->protected;
+	next unless $proto->protected;    # || $proto->virtual 
 	next if $proto->constructor || $proto->destructor ||
 	        $proto->private || $proto->variable || $proto->{'Code'};
 
+	header $start;
+	$start = "";
 	my $decl = cpp_decl_proto($proto, 'pig');
         $decl =~ s/(\w+\()/pig_alias_$1/;
 	header "    ";
@@ -1063,7 +1067,7 @@ sub writeheader {
 	    cpp_argname_list($proto, 'pig') . "\);";
 	header " }\n";
     }
-    header "};\n\n";
+    header "};\n\n" unless $start;
 }
 
 sub by_protection {         # SLOW!!!
@@ -1782,8 +1786,10 @@ sub write_proto_method {
 	    source "$Class\::";
 	}
     } else {
-	if($proto->protected || $proto->virtual) {
+	if($proto->protected) {
 	    source "((pig_alias_$Class *)pig0)->pig_alias_";
+	} elsif($proto->virtual) {
+	    source "pig0->$Class\::";
 	} else {
 	    source "pig0->";
 	}

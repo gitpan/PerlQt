@@ -24,3 +24,5 @@ These first two are fundamental design limitations for PerlQt.
 13. Avoid polymorphism on numerical types alone
 	Avoid: void thingy(int); void thingy(enum); void thingy(bool);
 14. QStrList arguments should be const, and must deep copy the QStrList
+15. Protected methods in classes with private constructors will not be
+    accessible from Perl.
