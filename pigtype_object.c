@@ -182,14 +182,54 @@ PIG_DEFINE_TYPE_POP2(pig_type_const_object_ref, const void *, const char *) {
     PIGPOP(pig_object_cast(pigd, pig0));
 }
 
+
+PIG_DEFINE_TYPE_ARGUMENT2(pig_type_this_object, void *, const char *) {
+    void *pigr = pig_type_object_argument(pig0);
+    if(!pigr) croak("Cannot call method without valid object reference");
+    return pigr;
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT2(pig_type_this_object, void *, const char *) {
+    void *pigr = pig_type_object_defargument(pig0, pig1);
+    if(!pigr) croak("Cannot call method without valid object reference");
+    return pigr;
+}
+
+PIG_DEFINE_STUB_RETURN(pig_type_this_object, void *)
+PIG_DEFINE_STUB_PUSH(pig_type_this_object, void *)
+PIG_DEFINE_STUB_POP(pig_type_this_object, void *)
+
+
+PIG_DEFINE_TYPE_ARGUMENT2(pig_type_this_const_object, const void *, const char
+		   *) {
+    const void *pigr = pig_type_const_object_argument(pig0);
+    if(!pigr) croak("Cannot call method without valid object reference");
+    return pigr;
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT2(pig_type_this_const_object, const void *, const char *) {
+    const void *pigr = pig_type_const_object_defargument(pig0, pig1);
+    if(!pigr) croak("Cannot call method without valid object reference");
+    return pigr;
+}
+
+PIG_DEFINE_STUB_RETURN(pig_type_this_const_object, void *)
+PIG_DEFINE_STUB_PUSH(pig_type_this_const_object, void *)
+PIG_DEFINE_STUB_POP(pig_type_this_const_object, void *)
+
+
 PIG_DEFINE_TYPE(pig_type_object)
 PIG_DEFINE_TYPE(pig_type_object_ref)
 PIG_DEFINE_TYPE(pig_type_const_object)
 PIG_DEFINE_TYPE(pig_type_const_object_ref)
+PIG_DEFINE_TYPE(pig_type_this_object)
+PIG_DEFINE_TYPE(pig_type_this_const_object)
 
 PIG_EXPORT_TABLE(pigtype_object)
     PIG_EXPORT_TYPE(pig_type_object, "object")
     PIG_EXPORT_TYPE(pig_type_object_ref, "object&")
     PIG_EXPORT_TYPE(pig_type_const_object, "const object")
     PIG_EXPORT_TYPE(pig_type_const_object_ref, "const object&")
+    PIG_EXPORT_TYPE(pig_type_this_object, "this")
+    PIG_EXPORT_TYPE(pig_type_this_const_object, "const this")
 PIG_EXPORT_ENDTABLE

@@ -1550,11 +1550,11 @@ sub fetch_ret {
 
 sub fetch_arg {
     my $argument = shift;
+    my $prefix = shift || 'pig_type_';
     my $arg = cpp_type($argument);
     my $def = cpp_deftype($argument);
     my $cast = cpp_cast($argument);
     my $defarg = defined($def) ? "($cast)($def)" : "";
-
 
     my $type = pig_type($argument);
     $type =~ s/^\s*//;
@@ -1583,17 +1583,13 @@ sub fetch_arg {
 	    $t = "*($xarg *)"
 	}
 	if($defarg) {
-	    $s .= "${t}pig_type_${xtype}_defargument(${pre}${c}$defarg)";
+	    $s .= "$t$prefix${xtype}_defargument(${pre}${c}$defarg)";
 	} else {
-	    $s .= "${t}pig_type_${xtype}_argument()";
+	    $s .= "$t$prefix${xtype}_argument()";
 	}
-#	$s .= "($arg)" if exists $Cast{$type};
-#	$s .= 'pig_argument_' . $Types{$type};
-#	$s =~ s/\$default/$defarg/g;
-#	$s =~ s/\$type/$arg/g;
     } elsif($cmp ne $type) {
 	if($type =~ /^(\w+)\s*\*$/) {
-	    $s = "*($arg *)pig_type_${1}_argument($defarg)";
+	    $s = "*($arg *)$prefix${1}_argument($defarg)";
 	} else {
 	    my $xarg = "";
 	    my $commaxarg = "";
@@ -1605,17 +1601,17 @@ sub fetch_arg {
 	    $type =~ s/\W.*//;
 	    if($arg =~ /\&\s*$/) {
 		if($defarg) {
-		    $s = "pig_type_${type}_defargument($defarg$commaxarg)";
+		    $s = "$prefix${type}_defargument($defarg$commaxarg)";
 		} else {
-		    $s = "pig_type_${type}_argument($xarg)";
+		    $s = "$prefix${type}_argument($xarg)";
 		}
 	    } else {
 		if($defarg) {
-		    $s = "($arg)pig_type_${type}_defargument($defarg$commaxarg)";
+		    $s = "($arg)$prefix${type}_defargument($defarg$commaxarg)";
 		} else {
-		    $s = "($arg)pig_type_${type}_argument($xarg)";
+		    $s = "($arg)$prefix${type}_argument($xarg)";
 		}
-#		$s = "($arg)pig_type_${type}_argument($defarg)";
+#		$s = "($arg)$prefix${type}_argument($defarg)";
 	    }
 	}
     } elsif($cast =~ /^(?:const\s+)?(\w+)/) {
@@ -1624,27 +1620,27 @@ sub fetch_arg {
 	
 	if($cast =~ /^const\s+(\w+)\s*\*$/) {
 	    if(defined($def)) {
-		$s .= qq'(const $1 *)pig_type_const_object_defargument($def, "$1")';
+		$s .= qq'(const $1 *)${prefix}const_object_defargument($def, "$1")';
 	    } else {
-		$s .= qq'(const $1 *)pig_type_const_object_argument("$1")';
+		$s .= qq'(const $1 *)${prefix}const_object_argument("$1")';
 	    }
 	} elsif($cast =~ /^const\s+(\w+)\s*\&$/) {
 	    if(defined($def)) {
-		$s .= qq'*(const $1 *)pig_type_const_object_ref_defargument(&$def, "$1")';
+		$s .= qq'*(const $1 *)${prefix}const_object_ref_defargument(&$def, "$1")';
 	    } else {
-		$s .= qq'*(const $1 *)pig_type_const_object_ref_argument("$1")';
+		$s .= qq'*(const $1 *)${prefix}const_object_ref_argument("$1")';
 	    }
 	} elsif($cast =~ /^(\w+)\s*\*$/) {
 	    if(defined($def)) {
-		$s .= qq'($1 *)pig_type_object_defargument($def, "$1")';
+		$s .= qq'($1 *)${prefix}object_defargument($def, "$1")';
 	    } else {
-		$s .= qq'($1 *)pig_type_object_argument("$1")';
+		$s .= qq'($1 *)${prefix}object_argument("$1")';
 	    }
 	} elsif($cast =~ /^(\w+)\s*\&?$/) {
 	    if(defined($def)) {
-		$s .= qq'*($1 *)pig_type_object_ref_defargument(&$def, "$1")';
+		$s .= qq'*($1 *)${prefix}object_ref_defargument(&$def, "$1")';
 	    } else {
-		$s .= qq'*($1 *)pig_type_object_ref_argument("$1")';
+		$s .= qq'*($1 *)${prefix}object_ref_argument("$1")';
 	    }
 	} else {
 	    print "NO $argument\n";
@@ -1671,7 +1667,11 @@ sub write_proto_method {
 	    source i.$arg;
 	    source " pig$x";
 	    source " = ";
-	    source fetch_arg($argument);
+            if($x == 0 && !$proto->static && !$proto->constructor) {
+                source fetch_arg($argument, 'pig_type_this_');
+            } else {
+                source fetch_arg($argument);
+            }
 	    source ";\n";
 	    $x++;
 	}

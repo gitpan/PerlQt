@@ -58,12 +58,15 @@ PIG_DECLARE_TYPE(pig_type_object)
 PIG_DECLARE_TYPE(pig_type_object_ref)
 PIG_DECLARE_TYPE(pig_type_const_object)
 PIG_DECLARE_TYPE(pig_type_const_object_ref)
+PIG_DECLARE_TYPE(pig_type_this_object)
+PIG_DECLARE_TYPE(pig_type_this_const_object)
 
 PIGTYPEOBJECT_ALL(pig_type_object, void *)
 PIGTYPEOBJECT_ALL(pig_type_object_ref, void *)
 PIGTYPEOBJECT_ALL(pig_type_const_object, const void *)
 PIGTYPEOBJECT_ALL(pig_type_const_object_ref, const void *)
-
+PIGTYPEOBJECT_ALL(pig_type_this_object, void *)
+PIGTYPEOBJECT_ALL(pig_type_this_const_object, void *)
 
 struct pig_object_data {
     const void *pigptr;
@@ -80,6 +83,8 @@ PIG_IMPORT_TABLE(pigtype_object)
     PIG_IMPORT_TYPE(pig_type_object_ref, "object&")
     PIG_IMPORT_TYPE(pig_type_const_object, "const object")
     PIG_IMPORT_TYPE(pig_type_const_object_ref, "const object&")
+    PIG_IMPORT_TYPE(pig_type_this_object, "this")
+    PIG_IMPORT_TYPE(pig_type_this_const_object, "const this")
     PIG_IMPORT_FUNC(pig_type_new_object_return)
     PIG_IMPORT_FUNC(pig_type_new_castobject_return)
     PIG_IMPORT_FUNC(pig_type_object_destructor_argument)

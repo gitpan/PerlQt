@@ -1,4 +1,5 @@
 Artistic
+CHANGES
 COPYING
 INSTALL
 MANIFEST
@@ -128,6 +129,7 @@ README
 README.LICENSE
 README.QT
 SigSlot.pm
+TODO
 gensigslot
 pig.h
 pigboot.c

@@ -21,16 +21,30 @@ use Config;
 use File::Copy;
 use Pig;
 
+# Please modify these arguments as needed
+%Args = (
+    CC => 'g++',
+    CCFLAGS => '',
+    DEFINE => '',
+    INC => '-I$(QTDIR)/include -I.',
+    LIBS => '-L$(QTDIR)/lib -lqt -L/usr/X11R6/lib -lX11',
+    OPTIMIZE => '-g'
+);
+##########
+
+
 my $filelist;
 
-GenerateSource(
-    DIR => [ 'Qt' ],
-    TYPEMAPS => [ 'Qt.typemap' ],
-    INCLUDE => [ 'pigmodule_Qt.h' ],
-    VIRTUALHEADER => 'pigvirtual.h',
-    SOURCEDIR => '.',
-    Source => \$filelist
-);
+unless(@ARGV && $ARGV[0] =~ /^-f/) {
+    GenerateSource(
+	DIR => [ 'Qt' ],
+	TYPEMAPS => [ 'Qt.typemap' ],
+	INCLUDE => [ 'pigmodule_Qt.h' ],
+	VIRTUALHEADER => 'pigvirtual.h',
+	SOURCEDIR => '.',
+	Source => \$filelist
+    );
+}
 
 $debug = 0;
 
@@ -41,22 +55,16 @@ unlink "typesizes$Config{'exe_ext'}";
 unlink "typesizes.c";
 unlink "typelist";
 
-WriteMakefile(
-# Add or modify these arguments as required.
-    CC => 'g++',
-    CCFLAGS => '',
-    DEFINE => "-DPIGDEBUG=$debug -DPIG_QT -DPIGPERL_PATCHLEVEL=$Config{PATCHLEVEL} -DPIGPERL_SUBVERSION=$Config{SUBVERSION}",
-    INC => '-I$(QTDIR)/include -I.',
-    LIBS => '-lqt',
-    OPTIMIZE => '-g',
+if($Config{bincompat3} =~ /y/) {
+    $pl = 3;
+} else {
+    $pl = $Config{PATCHLEVEL};
+}
 
-# These arguments should remain unchanged.
+$sv = $Config{SUBVERSION};
 
-    NAME => 'Qt',
-    DISTNAME => 'PerlQt',
-    VERSION_FROM => 'Qt.pm',
-    PM => { 'Qt.pm', '$(INST_LIBDIR)/Qt.pm' },
-    OBJECT => qq{
+sub configurate {
+    my $object = qq{
 	pigboot\$(OBJ_EXT)
 	pigclassinfo\$(OBJ_EXT)
 	pigconstant\$(OBJ_EXT)
@@ -75,7 +83,34 @@ WriteMakefile(
 	pigfunc_object\$(OBJ_EXT)
 	pigfunc_qt\$(OBJ_EXT)
 	@$filelist
-    },
+    };
+
+    my $define = "-DPIGDEBUG=$debug -DPIG_QT " .
+	"-DPIGPERL_PATCHLEVEL=$pl -DPIGPERL_SUBVERSION=$sv $Args{DEFINE}";
+
+    my $libs = $Args{LIBS};
+
+    eval {
+	open(SAVEERR, ">&STDERR") || die "Cannot redirect stderr";
+#	open(STDERR, ">&STDOUT") || die "Cannot >&";   # doesn't work
+	open(STDERR, ">/dev/null") || die "Cannot redirect stderr";
+	my $filename = `$Args{CC} -print-libgcc-file-name`;
+	$libs .= " -L$1 -lgcc" if $filename =~ /(.*)\/libgcc\.a/;
+	open(STDERR, ">&SAVEERR") || die "Cannot restore stderr";
+	close(SAVEERR);
+    };
+
+    return { OBJECT => $object, DEFINE => $define, LIBS => $libs };
+}
+
+WriteMakefile(
+# These arguments should remain unchanged.
+    %Args,
+    NAME => 'Qt',
+    DISTNAME => 'PerlQt',
+    VERSION_FROM => 'Qt.pm',
+    PM => { 'Qt.pm', '$(INST_LIBDIR)/Qt.pm' },
+    CONFIGURE => \&configurate,
     depend => { '$(C_FILES)' => '_pigsigslot.h' },
     realclean => { FILES => 'pig_* _pig* typesizes$(EXE_EXT) typesizes.c typelist' }
 );

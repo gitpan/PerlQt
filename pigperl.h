@@ -12,9 +12,16 @@
  */
 
 extern "C" {
+#if PIGPERL_PATCHLEVEL < 4
+#define debug PIGdebug
+#endif
+
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+
+#undef debug
+#undef dirty
 }
 
 #undef bool

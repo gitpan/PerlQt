@@ -110,6 +110,15 @@ extern "C" XS(PIG_QApplication_new) {
     XSRETURN(1);
 }
 
+SV *gv_store(const char *name, SV *value) {    // kludge
+    GV *gv = gv_fetchpv((char *)name, TRUE | GV_ADDMULTI, SVt_PVGV);
+    SvREFCNT_inc(value);
+    if(GvSV(gv)) SvREFCNT_dec(GvSV(gv));
+    GvSV(gv) = value;
+    GvIMPORTED_SV_on(gv);
+    return value;
+}
+
 extern "C" XS(PIG_app_import) {
     dXSARGS;
     const char *pigclass = HvNAME(PIGcurcop->cop_stash);
@@ -149,9 +158,8 @@ extern "C" XS(PIG_app_import) {
 
     pigvar = new char[strlen(pigclass) + 7];
     sprintf(pigvar, "%s::app", pigclass);
-//warn("Assigning %s = %p\n", pigvar, pigapp);
-    pigsv = perl_get_sv(pigvar, TRUE | GV_ADDMULTI);
-    sv_setsv(pigsv, pigapp);
+    gv_store(pigvar, pigapp);
+    SvREFCNT_dec(pigapp);
     delete [] pigvar;
 
     XSRETURN_EMPTY;

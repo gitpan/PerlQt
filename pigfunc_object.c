@@ -31,7 +31,7 @@ PIG_DEFINE_FUNC_2(SV *, pig_object_create, const char *, struct pig_object_data 
 
 
 PIG_DEFINE_FUNC_1(pig_object_data *, pig_object_extract, SV *) {
-    if(!SvROK(pig0)) return 0;
+    if(!pig0 || !SvROK(pig0)) return 0;
     HV *pighv_obj;
     MAGIC *pigmg;
     pig_object_data *pigd;
@@ -45,6 +45,7 @@ PIG_DEFINE_FUNC_1(pig_object_data *, pig_object_extract, SV *) {
 }
 
 PIG_DEFINE_FUNC_2(void *, pig_object_cast, struct pig_object_data *, const char *) {
+    if(!pig0) return 0;
     pig_classinfo *piginfo = pig0->piginfo;
     //printf("casting %s(%p) to %s\n", piginfo->pigclassname, pig0->pigptr, pig1);
     void *pigr = (*piginfo->pigtocastfunc)(pig1, (void *)pig0->pigptr);

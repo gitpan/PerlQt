@@ -2,6 +2,7 @@ This is the PerlQt-2 alpha README.
 
 PerlQt is a Perl interface to the C++ GUI toolkit, Qt.
 For installation instructions, see the INSTALL file.
+You must have Qt installed before installing PerlQt.
 The homepage for Qt is http://www.troll.no/.
 
 Included with this release are the class templates for Qt-1.42.

@@ -9,3 +9,4 @@ My TODO list in no particular order:
 - Port Qt examples.
 - Fix QPaintDevice::bitBlt.
 - Prune Pig.pm and repackage as ExtUtils::Pig
+- Test suite

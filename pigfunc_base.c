@@ -33,6 +33,7 @@ PIG_DEFINE_VOID_FUNC_2(pig_begin, void *, const char *) {
     pigf.pigax = TOPMARK + 1;
     pig_sub_enter(&pigf);
 
+    pig_argument_idx = 0;
     pig_argument_max_idx = PIGstack_sp - (PIGstack_base + TOPMARK);
 
     pig_depth++;
@@ -94,7 +95,7 @@ PIG_DEFINE_FUNC_2(int, pig_find_in_array, const char *, const char **) {
 
     while(pig1[pigidx]) {
         while(pig1[pigidx][pigcur] == pig0[pigcur]) {
-	    if(!pig1[pigcur]) {
+	    if(!pig0[pigcur]) {
 	        return pigidx;
 	    }
 	    pigcur++;

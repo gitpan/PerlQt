@@ -10,7 +10,7 @@ package Qt;
 require DynaLoader;
 
 @ISA = qw(DynaLoader);
-$VERSION = '2.002';
+$VERSION = '2.003';
 
 bootstrap Qt $VERSION;
 
