@@ -66,14 +66,18 @@ WriteMakefile(
 			QPointArray
 			QPopupMenu
 			QPrinter
+			QProgressBar
+			QProgressDialog
 			QPushButton
 			QRadioButton
 			QRangeControl
 			QRect
 			QRegion
 			QScrollBar
+			QSemiModal
 			QSize
 			QSlider
+			QSocketNotifier
 			QTabBar
 			QTabDialog
 			QTableView

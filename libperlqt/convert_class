@@ -14,8 +14,8 @@ $ew = $new;
 $ld =~ s/^.//;
 $ew =~ s/^.//;
 
-open(IN, "$old.xs") || die "$old.xs: $!";
-open(OUT, ">$new.xs") || die "$new.xs: $!";
+open(IN, "$old.c") || die "$old.xs: $!";
+open(OUT, ">$new.c") || die "$new.xs: $!";
 
 while(<IN>) {
     last if /virtualize/;
