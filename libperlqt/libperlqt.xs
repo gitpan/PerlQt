@@ -155,3 +155,56 @@ SV *parse_member(SV *member) {
 
     return ret;
 }
+
+HV *Protos;
+
+SV *unproto(SV *type) {
+    STRLEN len;
+    char *proto = SvPV(type, len);
+    SV **svp = hv_fetch(Protos, proto, len, 0);
+    if(svp) {
+//	printf("%d: svp = '%s'\n", len, SvPV(*svp, na));
+	return sv_mortalcopy(*svp);
+//	return *svp;
+    } else {
+	warn("no prototype, damn\n");
+    }
+}
+
+/*
+SV *unproto(SV *type) {
+    dSP;
+    int count;
+    SV *ret;
+
+    PUSHMARK(sp);
+    XPUSHs(type);
+    PUTBACK;
+
+    count = perl_call_pv("QObject::unproto", G_SCALAR);
+    SPAGAIN;
+    if(count != 1) croak("Bad perl_call_pv, bad");
+    ret = POPs;
+    PUTBACK;
+
+    return ret;
+}
+*/
+SV *proto(SV *p) {
+    dSP;
+    int count;
+    SV *ret;
+
+    PUSHMARK(sp);
+    XPUSHs(p);
+    PUTBACK;
+
+    count = perl_call_pv("QObject::proto", G_SCALAR);
+    SPAGAIN;
+    if(count != 1) croak("Bad perl_call_pv, bad");
+    ret = POPs;
+    PUTBACK;
+
+    return ret;
+}
+

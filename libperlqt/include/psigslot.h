@@ -19,21 +19,25 @@ class pQtSigSlot : public QObject {
     SV *object;
     pObject *qobj;
     char *sname;
+    char *ptr;           // semi-static pointer to proto
+    char *proto;
 protected:
     void initMetaObject();
 public:
-    pQtSigSlot(SV *obj, char *name) {
+    pQtSigSlot(SV *obj, char *type, STRLEN tlen) {
         object = newSVsv(obj);
 //	warn("OBJECT = %p\n", object);
 	qobj = (pObject *)extract_ptr(object, "QObject");
-	sname = new char[strlen(name)+1];
-	strcpy(sname, name);
+	proto = new char[tlen];
+	memcpy(proto, type, tlen);
+	sname = proto+2;
     }
     ~pQtSigSlot() { delete [] sname; SvREFCNT_dec(object); }
     QMetaObject *metaObject() const;
     const char *className() const;
-    void slot1(SV *);
-    void slot2(SV *, SV *);
+    void gimmie_iv(IV);
+//    void slot1(SV *);
+//    void slot2(SV *, SV *);
     void s();
     void sI(IV);
     void sII(IV, IV);
@@ -41,6 +45,7 @@ public:
 
 QMember stub_func(char *member);
 
+extern HV *Protos;
 extern HV *Signals;
 extern HV *Slots;
 extern HV *MetaObjects;

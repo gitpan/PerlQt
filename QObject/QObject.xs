@@ -44,7 +44,7 @@ void activate(QObject *self, const char *signal) {
     }
 }
 
-void activateI(QObject *self, const char *signal, IV param) {
+void activateI(QObject *self, const char *signal, IV t0) {
     QConnectionList *clist = ((pObject *)self)->protected_receivers(signal);
     if(!clist || self->signalsBlocked()) return;
     typedef void (QObject::*RT0)();
@@ -63,12 +63,97 @@ void activateI(QObject *self, const char *signal, IV param) {
 	object->setSender(self);
 	if(c->numArgs()) {
 	    r1 = *((PRT1)(c->member()));
-	    (object->*r1)(param);
+	    (object->*r1)(t0);
 	} else {
 	    r0 = *((PRT0)(c->member()));
 	    (object->*r0)();
 	}
     }
+}
+
+void activateII(QObject *self, const char *signal, IV t0, IV t1) {
+    QConnectionList *clist = ((pObject *)self)->protected_receivers(signal);
+    if(!clist || self->signalsBlocked()) return;
+    typedef void (QObject::*RT0)();
+    typedef RT0 *PRT0;
+    typedef void (QObject::*RT1)(IV);
+    typedef RT1 *PRT1;
+    typedef void (QObject::*RT2)(IV, IV);
+    typedef RT2 *PRT2;
+    RT0 r0;
+    RT1 r1;
+    RT2 r2;
+
+    QConnectionListIt it(*clist);
+    QConnection *c;
+    QSenderObject *object;
+    while((c=it.current())) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender(self);
+	switch(c->numArgs()) {
+	    case 0:
+		r0 = *((PRT0)(c->member()));
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = *((PRT1)(c->member()));
+		(object->*r1)(t0);
+		break;
+	    case 2:
+		r2 = *((PRT2)(c->member()));
+		(object->*r2)(t0, t1);
+		break;
+	}
+    }
+}
+
+IV gimmie_iv(SV *sv, char **proto) {
+    bool fin = FALSE;
+    IV ret;
+
+    while(!fin) {
+	fin = TRUE;
+	switch(**proto) {
+	case 0:				// const
+	    fin = FALSE;
+	    break;   // ignore const
+	case 1:				// object
+	    (*proto)++;
+	    ret = (IV)extract_ptr(sv, (*proto)+1);
+	    *proto += **proto;
+	    break;
+	case 2:				// int
+	    ret = SvIV(sv);
+	    break;
+	case 3:				// float
+	    if(sizeof(int) == sizeof(float)) {
+		union { int i; float f; } n;
+		n.f = SvNV(sv);
+		ret = (IV)n.i;
+	    } else {
+		warn("sizeof(int) != sizeof(float) in signal");
+		ret = (IV)-1;
+	    }
+	    break;
+//	case 4:  // this is a double
+	case 5:				// bool
+	    ret = SvTRUE(sv) ? TRUE : FALSE;
+	    break;
+	case 6:				// string
+	    ret = (IV)SvPV(sv, na);
+//	    printf("str = %p\n", (char *)ret);
+	    break;
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	    ret = (IV)sv;
+	    break;
+	}
+	(*proto)++;
+    }
+    return ret;
 }
 
 XS(perl_emit_signal) {
@@ -86,9 +171,29 @@ XS(perl_emit_signal) {
 	warn("Not a signal!\n");
 	return;
     }
-    proto = SvPV(*svp, na);
+    STRLEN plen;
+    char *p = SvPV(*svp, plen);
+    proto = SvPV(unproto(*svp), na);
+//    printf("proto = %s\n", proto);
 
     PObject *obj = (PObject *)pextract(QObject, 0);
+
+    int argcnt = *p;
+    p = 1 + p[1] + p;
+    if(argcnt == 0)
+	activate(obj, proto);
+    else if(argcnt == 1) {
+//	printf("argcnt == 1\n");
+	IV i1 = gimmie_iv(ST(1), &p);
+//	printf("IV = %#x\n", i1);
+	activateI(obj, proto, i1);
+    } else if(argcnt == 2) {
+//	printf("argcnt == 2\n");
+	IV i1 = gimmie_iv(ST(1), &p);
+	IV i2 = gimmie_iv(ST(2), &p);
+	activateII(obj, proto, i1, i2);
+    }
+/*
     if(items == 1)
 	activate(obj, proto);
     else if(items > 1) {
@@ -96,7 +201,7 @@ XS(perl_emit_signal) {
 	    activateI(obj, proto, SvIV(ST(1)));
 	else if(SvPOK(ST(1)))
 	    activateI(obj, proto, (IV)SvPV(ST(1), na));
-    }
+    }*/
 }
 
 MODULE = QObject		PACKAGE = signals
@@ -113,6 +218,8 @@ PROTOTYPES: DISABLE
 
 BOOT:
     MetaObjects = newHV();
+//    Protos = newHV();
+    Protos = perl_get_hv("QObject::Protos", TRUE);
     Signals = perl_get_hv("signals::signals", TRUE);
     Slots = perl_get_hv("slots::slots", TRUE);
     SvREFCNT_inc((SV *)Signals);
@@ -138,22 +245,42 @@ connect(...)
     bool virtual_call = sv_isobject(ST(1));
     QObject *receiver = pextract(QObject, virtual_call ? 0 : 2);
     QObject *sender = pextract(QObject, virtual_call ? 1 : 0);
-    SV *si = parse_member(ST(virtual_call ? 2 : 1));
-    SV *m = parse_member(ST(3));
-    char *signal = SvPV(si, na);
-    char *member = SvPV(m, na); // SvPV(ST(3), na);
+//    SV *si = parse_member(ST(virtual_call ? 2 : 1));
+//    SV *m = parse_member(ST(3));
+//    SV *si = unproto(proto(ST(virtual_call ? 2 : 1)));
+//    SV *m = unproto(proto(ST(3)));
+//    printf("'%s'; '%s'\n", SvPV(si, na), SvPV(m, na));
+
+    SV *sproto = proto(ST(virtual_call ? 2 : 1));
+    SV *mproto = proto(ST(3));
+//    STRLEN slen;
+//    char *stype = SvPV(sproto, slen);
+    STRLEN mlen;
+    char *mtype = SvPV(mproto, mlen);
+
+    SV *sp = unproto(sproto);
+    SV *mp = unproto(mproto);
+
+    char *signal = SvPV(sp, na);
+    char *member = SvPV(mp, na);
+
     SV *sig = sv_2mortal(newSViv(SIGNAL_CODE));		// Emulate SIGNAL()
     SV *memb = sv_newmortal();
-    char *s = find_signal(ST(virtual_call ? 0 : 2), member);
+
+    char *s = find_signal(ST(virtual_call ? 0 : 2), member);  // FIX ME
     sv_setiv(memb, s ? SIGNAL_CODE : SLOT_CODE);
-    if(s) receiver = new pQtSigSlot(ST(virtual_call ? 0 : 2), s);
+    if(s) {
+//	receiver = new pQtSigSlot(ST(virtual_call ? 0 : 2), s);
+	receiver = new pQtSigSlot(ST(virtual_call ? 0 : 2), mtype, mlen);
+    }
     else {
-	s = find_slot(ST(virtual_call ? 0 : 2), member);
-	if(s) receiver = new pQtSigSlot(ST(virtual_call ? 0 : 2), s);
+	s = find_slot(ST(virtual_call ? 0 : 2), member);  // FIX ME
+	if(s) receiver = new pQtSigSlot(ST(virtual_call ? 0 : 2), mtype, mlen);
     }
     CODE:
     sv_catpv(sig, signal);
     sv_catpv(memb, member);
+//    printf("'%s'; '%s'\n", SvPV(sig, na), SvPV(memb, na));
     RETVAL = receiver->connect(sender, SvPV(sig, na), SvPV(memb, na));
     OUTPUT:
     RETVAL

@@ -36,6 +36,7 @@ QMetaData *initMetaData(HV *hv) {
     if(!hv || HvKEYS(hv) < 1) return NULL;
     int keys = HvKEYS(hv);
     QMetaData *tbl = new QMetaData[keys];
+    SV *proto;
 
     SV *value;
     char *key;
@@ -44,9 +45,16 @@ QMetaData *initMetaData(HV *hv) {
     hv_iterinit(hv);
     for(int i = 0; i < keys; i++) {
 	value = hv_iternextsv(hv, &key, &klen);
-	SvREFCNT_inc(value);
-	tbl[i].name = SvPV(value, na);
-	tbl[i].ptr = stub_func(tbl[i].name);
+	proto = unproto(value);
+	SvREFCNT_inc(proto);
+	tbl[i].name = SvPV(proto, na);
+	tbl[i].ptr = stub_func(SvPV(value, na));
+//	printf("name = %s\n", tbl[i].name);
+
+//	value = hv_iternextsv(hv, &key, &klen);
+//	SvREFCNT_inc(value);
+//	tbl[i].name = SvPV(value, na);
+//	tbl[i].ptr = stub_func(tbl[i].name);
     }
 
     return tbl;

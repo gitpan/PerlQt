@@ -52,5 +52,7 @@ public:
 
 extern char *getPerlSuperClass(char *clname);
 extern QMetaObject *metaObjectSetup(char *clname);
+extern SV *proto(SV *p);
+extern SV *unproto(SV *type);
 
 #endif  // POBJECT_H

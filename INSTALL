@@ -60,7 +60,7 @@ Then, you run the tutorials by going into the tutorial's directory
 
 or, if you didn't install PerlQt:
 
-perl -I../../blib/lib -I../../blib/arch t1
+perl -Mblib t1
 
 And that's it.
 

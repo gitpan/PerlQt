@@ -7,7 +7,7 @@ use Hello;
 
 $s = @ARGV ? "@ARGV" : 'Hello, World';
 $h = new Hello($s);
-$h->setCaption('Qt says hello');
+$h->setCaption('PerlQt says hello');
 $qApp->connect($h, 'clicked()', 'quit()');
 $h->setFont(new QFont('Times', 32, $Weight{Bold}));
 $h->setBackgroundColor($white);

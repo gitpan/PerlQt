@@ -1,14 +1,15 @@
 package QObject;
 
 use strict;
-use vars qw($VERSION @ISA);
+use vars qw($VERSION @ISA %Protos);
+use Carp;
 
 require DynaLoader;
 require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QObject $VERSION;
 
 sub find_superclass {
@@ -34,6 +35,142 @@ sub parse_member {
     $member =~ s/(\W)string(\W)/$1char*$2/g;
     return $member;
 }
+
+sub proto {
+    my $orig = shift;
+    my($fname, $proto) = $orig =~ /^(\w*)\s*(.*)\s*$/;
+
+    croak "Missing function-name in prototype '$orig'" unless $fname;
+    croak "Missing argument prototype in '$orig'" unless $proto;
+    croak "The arguments to '$fname' must begin with an opening parenthesis"
+	unless $proto =~ /^\(/;
+    croak "The arguments to '$fname' must end with a closing parenthesis"
+	unless $proto =~ /\)$/;
+
+    $proto =~ /^\(\s*(.*)\s*\)$/;
+    my $type = chr(length($fname)+1) . $fname . chr(0);
+    my $args = $1;
+    my $argcnt = 0;
+    if($args) {
+	my @args = split ',', $args;
+	croak "Too many arguments (max 3) in $orig" if scalar(@args) > 3;
+	while(@args) {
+	    $_ = $args[0];
+            s/^\s*(.*)\s*$/$1/;
+	    my @arg = split;
+	    if($arg[0] eq 'const') {
+		$type .= chr(0);  # Perhaps in the future. But not today.
+		shift @arg;
+	    }
+	    my $arg = shift @arg;
+            if($arg eq 'int') {
+                $type .= chr(2);
+            } elsif($arg eq 'float') {
+                $type .= chr(3);
+            } elsif($arg eq 'double') {
+                $type .= chr(4);
+            } elsif($arg eq 'bool') {
+                $type .= chr(5);
+            } elsif($arg eq 'string') {
+                $type .= chr(6);
+	    } elsif($arg eq '...') {
+		$type .= chr(12);
+
+# this croak may be unnecessary in the future, because I could concievably
+# create an argument to \12 which would tell how many arguments come after
+# it on the stack. We'll see...
+
+		croak "There's something after ... in '$orig'" if @args > 1;
+	    } elsif($arg =~ /^\@\$/) {
+                $type .= chr(10);
+            } elsif($arg =~ /^\%\$/) {
+                $type .= chr(11);
+            } elsif($arg =~ /^\$\$/) {
+                $type .= chr(9);
+            } elsif($arg =~ /^\$/) {
+                $type .= chr(8);
+	    } elsif($arg =~ /\*$/) {
+		croak "Explicit pointers in PerlQt signals/slots is illegal.";
+	    } else {
+		unless($arg =~ /^\w+$/) {
+		    croak "Type '$arg' is not alphanumeric";
+		} else {
+		    $type .= chr(1) . chr(length($arg)+1) . $arg . chr(0);
+		}
+	    }
+	} continue {
+            shift @args;
+            $argcnt++ unless $argcnt;
+            if(scalar(@args)) {
+                $argcnt++;
+            }
+        }
+    }
+
+    $type = chr($argcnt) . $type;
+    $Protos{$type} = &unproto($type) unless exists $Protos{$type};
+    return($type);
+}
+
+#sub unproto {
+#    return $Protos{$_[0]};
+#}
+
+sub unproto {
+    my $type = shift;
+    my $proto;
+    my $i = 0;
+    my @type = split '', $type;
+
+    my $argcnt = ord($type[$i++]);
+    my $len = ord($type[$i++]);
+    my $j = 1;
+    while($j < $len) {
+        $proto .= $type[$i++];
+        $j++;
+    }
+    $i++;
+    $proto .= '(';
+    while($i < @type) {
+        $_ = ord($type[$i]);
+        if($_ == 0) {
+            $proto .= 'const ';
+            $i++;
+            redo;
+        } elsif($_ == 1) {
+            $len = ord($type[++$i]);
+            $j = 1;
+            while($j < $len) {
+                $proto .= $type[++$i];
+                $j++;
+            }
+            $i++;  # strip off terminating \0
+            $proto .= '*';
+        } elsif($_ == 2) {
+            $proto .= 'int';
+        } elsif($_ == 3) {
+            $proto .= 'float';
+        } elsif($_ == 4) {
+            $proto .= 'double';
+        } elsif($_ == 5) {
+            $proto .= 'bool';
+        } elsif($_ == 6) {
+            $proto .= 'char*';
+        } elsif($_ == 8 || $_ == 9 || $_ == 10 || $_ == 11) {
+            $proto .= 'SV*';
+        } elsif($_ == 12) {
+            $proto .= 'AV*';
+        }
+    } continue {
+        $i++;
+        if($i < @type) {
+            $proto .= ',';
+        }
+    }
+    $proto .= ')';
+    return $proto;
+}
+
 
 package slots;
 
@@ -65,15 +202,27 @@ sub import {
     shift;
     my $caller = (caller)[0];
 
-    if(@_) {
-	foreach my $m (@_) {
-	    $_ = QObject::parse_member($m);
-	    /^([^\(]+)/;
-	    $slots{$caller}{$1} = $_;
-	}
+    if($^W && !@_) { carp "'use slots' without arguments"; return }
+    foreach my $m (@_) {
+	my($type, $args) = QObject::proto($m);
+	my($fname) = QObject::unproto($type) =~ /^(\w+)/;
+	$slots{$caller}{$fname} = $type;
     }
-    elsif($^W) { carp "'use slots' without arguments" }
 }
+
+#sub import {
+#    shift;
+#    my $caller = (caller)[0];
+
+#    if(@_) {
+#	foreach my $m (@_) {
+#	    $_ = QObject::parse_member($m);
+#	    /^([^\(]+)/;
+#	    $slots{$caller}{$1} = $_;
+#	}
+#    }
+#    elsif($^W) { carp "'use slots' without arguments" }
+#}
 
 package signals;
 
@@ -110,18 +259,36 @@ sub import {
     my $class = shift;
     my $caller = (caller)[0];
 
-    if(!@_ and $^W) { carp "'use signals' without arguments" }
+    if($^W and !@_) { carp "'use signals' without arguments"; return }
     foreach my $m (@_) {
-	$_ = QObject::parse_member($m);
+	my $proto = QObject::proto($m);
+	$_ = QObject::unproto($proto);
 	if(/^(\w+)/) {
 	    addSignal("$caller"."::$1");
-	    $signals{$caller}{$1} = $_;
+	    $signals{$caller}{$1} = $proto;
 	}
     }
 
     @_ = ($class);
     goto &Exporter::import;    # Export &emit
 }
+
+#sub import {
+#    my $class = shift;
+#    my $caller = (caller)[0];
+#
+#    if($^W and !@_) { carp "'use signals' without arguments" }
+#    foreach my $m (@_) {
+#	$_ = QObject::parse_member($m);
+#	if(/^(\w+)/) {
+#	    addSignal("$caller"."::$1");
+#	    $signals{$caller}{$1} = $_;
+#	}
+#    }
+#
+#    @_ = ($class);
+#    goto &Exporter::import;    # Export &emit
+#}
 
 1;
 __END__

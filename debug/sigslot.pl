@@ -2,16 +2,16 @@
 
 package SigSlot;
 
-#use QObject;
+use QObject;
 #use QFrame;
-use QLabel;
+#use QLabel;
 
 use signals 'foo()';
 use slots 'bar()';
 
-#@ISA = qw(QObject);
+@ISA = qw(QObject);
 #@ISA = qw(QFrame);
-@ISA = qw(QLabel);
+#@ISA = qw(QLabel);
 
 sub new {
     my $self = shift->SUPER::new(@_);

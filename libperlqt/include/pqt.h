@@ -39,6 +39,8 @@ extern "C" {
 #include "XSUB.h"
 }
 
+#undef bool
+
 #define MSTR(str) # str
 
 #define pextract(type, elem) (type *)extract_ptr(ST(elem), MSTR(type ## *))

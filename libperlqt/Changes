@@ -1,5 +1,11 @@
 Revision history for Perl extension libperlqt.
 
+1.03  Wed May 21 17:58:02 1997
+	- major signal/slot enhancements started
+
+1.03  Mon May 12 14:34:13 1997
+	- enhanced bool protection (for FreeBSD, Solaris, SunOS, etc...)
+
 1.02  Sat May 10 00:26:16 1997
 	- modified extract_ptr() and objectify_ptr() to add idiot-proof
 type-safety

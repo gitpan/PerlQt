@@ -52,7 +52,9 @@ sub new {
 
     $qApp->connect($quit, 'clicked()', 'quit()');
 
-    for(0..15) { $$value[$_] = new LCDRange($self) }
+    for my $i (0..15) {    # $_ is contaminated, find and fix
+	$$value[$i] = new LCDRange($self);
+    }
 
     @$self{'quit', 'value'} = ($quit, $value);
     return $self;

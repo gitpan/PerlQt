@@ -1,3 +1,16 @@
+What's new in PerlQt 1.03:
+- Fixed compiliation errors for most non-Linux platforms regarding Perl's
+bool handling. This was the main reason for this release.
+
+- Signals and slots enhancement. You may now pass strings, ints, floats,
+objects, and scalars through signals, and recieve them through slots.
+There is more thorough prototype checking and enhanced everything.
+This enhancement is far from finished at this point yet. There is much
+code-cleaning up to do, and there are still features to add
+(doubles, 3 arguments, and '...')
+
+- Now requires Perl-5.004
+
 What's new in PerlQt 1.02:
 - Type-safeness. You can no-longer pass a QRect to setMainWidget()!
 
@@ -37,7 +50,7 @@ which line it seg-faulted at.
 if it cannot find libperlqt when it is run.
 
 
-This is the PerlQt 1.01 README.
+This is the PerlQt 1.03 README.
 
   PerlQt is an extensive interface between the Perl scripting language, and
 the C++ Qt GUI programming toolkit. It allows Perl programs to not only
@@ -113,8 +126,7 @@ in Qt they were just similarly named constants. Some were logical, like
 Key_X being converted to $Key{X}, yet others were not so obviously logical.
 I've tried to document the changes in the relevant places.
 
-  PerlQt 1.01 requires Perl-5.004 and Qt-1.2. A late beta version of Perl,
->= 5.003_90, should be fine as well. Is should compile on most
+  PerlQt 1.03 requires Perl-5.004 and Qt-1.2. It should compile on most
 POSIX-compatible Unix platforms, and probably on all Linux systems. It is
 important that your version of Perl-5.004 is *NOT* binary-compatible with
 Perl-5.003. There is a reason I chose not to use Perl-5.003 for PerlQt.
