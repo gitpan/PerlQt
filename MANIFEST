@@ -238,10 +238,8 @@ README
 README.PERLQT
 README.QT
 TODO
-debug/event.pl
-debug/events.pl
-debug/sig.pl
-debug/sigslot.pl
+contrib/README
+contrib/pqtsh
 examples/README
 examples/aclock/AnalogClock.pm
 examples/aclock/aclock
@@ -305,6 +303,7 @@ libperlqt/QSlider.xs
 libperlqt/QTabBar.xs
 libperlqt/QTabDialog.xs
 libperlqt/QTableView.xs
+libperlqt/QTimer.xs
 libperlqt/QWidget.xs
 libperlqt/QWindow.xs
 libperlqt/README

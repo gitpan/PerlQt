@@ -9,21 +9,29 @@ Here is my list of things to do in a random descending list of priority.
 
 * Find and fix the $_ contamination with signals/slots
 
-* Fix bugs (read memory leaks)
+* Delete pQtSigSlots on disconnect()
 
-* Get the typemap to read from className and convert to THAT type, not the
-one requested
+* Don't forget to try making want_destroy() test for a dead SvREFCNT()
+to see if DESTROY() is being called manually.
+
+* Make DELETE a permanent key, and compare directly with &sv_yes, &sv_no,
+and &sv_undef
 
 * Write a QGlobal::import() that will only initialize enum values if
 they are requested by a module.
+
+* Config script
+
+* Fix bugs
+
+* Get the typemap to read from className and convert to THAT type, not the
+one requested
 
 * Create a pembed
 
 * Write a C++ Qt to PerlQt converter (in Perl)
 
 * Add tests
-
-* Config script
 
 * Compile everything as one library, and see if there is any benefit.
 

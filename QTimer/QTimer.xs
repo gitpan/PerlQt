@@ -21,6 +21,12 @@ PTimer::new(parent = 0, name = 0)
     char *name
 
 void
+QTimer::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QTimer::changeInterval(msec)
     int msec
 

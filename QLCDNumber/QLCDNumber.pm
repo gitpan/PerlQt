@@ -10,7 +10,7 @@ require QFrame;
 @ISA = qw(Exporter DynaLoader QFrame);
 @EXPORT = qw(%Mode %Segment);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QLCDNumber $VERSION;
 
 1;

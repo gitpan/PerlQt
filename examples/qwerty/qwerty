@@ -2,12 +2,12 @@
 use Qt;
 use Editor;
 
-$e = new Editor;
+$e = new Editor->immortal;
 $e->resize(400, 400);
 $e->show();
 
 for(@ARGV) {
-    $e = new Editor;
+    $e = new Editor->immortal;
     $e->resize(400, 400);
     $e->loadFile($_);
     $e->show();

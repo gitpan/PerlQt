@@ -179,10 +179,9 @@ sub new {
     }
     $maxwidth += 20;
 
-#    for $i (0 .. $#ourDrawFunctions) {
     for($i = 0; $i < @ourDrawFunctions; $i++) {
 	$n = $ourDrawFunctions[$i]{'name'};
-	my $rb = new QRadioButton($n, $bgroup)->setImmortal;
+	my $rb = new QRadioButton($n, $bgroup)->immortal;
 	$rb->setGeometry(10, $i*30+10, $maxwidth, 30);
 	$rb->setChecked(1) if $i == 0;
     }

@@ -20,6 +20,12 @@ PAccel::new(parent, name = 0)
     pChar *name
 
 void
+QAccel::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QAccel::clear()
 
 bool

@@ -71,6 +71,12 @@ PImage::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QImage::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 QImage::Endian
 QImage::bitOrder()
 

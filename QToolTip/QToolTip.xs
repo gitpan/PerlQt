@@ -18,6 +18,13 @@ PToolTipGroup::new(parent, name)
     QObject *parent
     char *name
 
+void
+QToolTipGroup::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+
 MODULE = QToolTip		PACKAGE = QToolTip
 
 void

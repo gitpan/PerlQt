@@ -10,7 +10,7 @@ require QFont;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QFontInfo $VERSION;
 
 1;

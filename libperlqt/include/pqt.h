@@ -49,10 +49,11 @@ typedef char pChar;
 
 extern SV *objectify_ptr(void *, const char *, int = 0);
 extern void *extract_ptr(SV *, const char *);
+extern bool want_destroy(SV *);
 extern SV *rv_check(SV *, const char * = "Not a reference");
 extern SV *obj_check(SV *, const char * = "Invalid object");
 extern SV *safe_hv_store(HV *, const char *, SV *);
-extern SV *safe_hv_fetch(HV *, const char *, const char *);
+extern SV *safe_hv_fetch(HV *, const char *, const char * = NULL);
 
 extern char *find_signal(SV *obj, char *signal);
 extern char *find_slot(SV *obj, char *slot);

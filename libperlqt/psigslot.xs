@@ -9,6 +9,23 @@
 
 #include "psigslot.h"
 
+pQtSigSlot::pQtSigSlot(SV *obj, char *type, STRLEN tlen) {
+//    object = newSVsv(obj);
+//    SvREFCNT_dec(obj_check(obj));
+//	warn("OBJECT = %p\n", object);
+    object = newRV_noinc(obj_check(obj));
+    qobj = (pObject *)extract_ptr(object, "QObject");
+    proto = new char[tlen];
+    memcpy(proto, type, tlen);
+    sname = proto+2;
+}
+
+pQtSigSlot::~pQtSigSlot() {
+    delete [] sname;
+    SvFLAGS(object) = (SvFLAGS(object) & ~SVTYPEMASK) | SVt_NULL;
+    SvREFCNT_dec(object);
+}
+
 void pQtSigSlot::initMetaObject() {
     char *clname = (char *)qobj->className();
     SV **svp = hv_fetch(MetaObjects, clname, strlen(clname), 0);

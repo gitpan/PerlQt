@@ -25,9 +25,15 @@ MODULE = QLineEdit		PACKAGE = QLineEdit
 PROTOTYPES: DISABLE
 
 PLineEdit *
-PLineEdit::new(parent, name)
-    QWidget *parent
-    char *name
+PLineEdit::new(parent = 0, name = 0)
+    pWidget *parent
+    pChar *name
+
+void
+QLineEdit::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 void
 QLineEdit::deselect()

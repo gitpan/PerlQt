@@ -1,5 +1,8 @@
 Revision history for Perl extension QTabBar.
 
+1.02  Tue May 27 23:09:04 1997
+	- added destructor
+
 1.01  Fri May  9 19:05:30 1997
 	- disabled prototypes
 

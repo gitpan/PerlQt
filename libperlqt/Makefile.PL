@@ -2,7 +2,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME'	=> 'libperlqt',
-    'VERSION'	=> '1.02',
+    'VERSION'	=> '1.04',
     'CC'	=> 'g++',
     'INC'	=> '-I$(QTDIR)/include -I../libperlqt/include',
     'OBJECT'	=> q{libperlqt$(OBJ_EXT)
@@ -36,6 +36,7 @@ WriteMakefile(
 		     QTabBar$(OBJ_EXT)
 		     QTabDialog$(OBJ_EXT)
 		     QTableView$(OBJ_EXT)
+		     QTimer$(OBJ_EXT)
 		     QWidget$(OBJ_EXT)
 		     QWindow$(OBJ_EXT)},
 );

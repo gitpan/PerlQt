@@ -39,6 +39,12 @@ PCheckBox::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QCheckBox::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QCheckBox::isChecked()
 

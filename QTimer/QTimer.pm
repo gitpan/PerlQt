@@ -10,7 +10,7 @@ require QObject;
 
 @ISA = qw(DynaLoader QObject);
 
-$VERSION = '1.03';
+$VERSION = '1.04';
 bootstrap QTimer $VERSION;
 
 1;
@@ -34,6 +34,10 @@ isActive,
 singleShot,
 start,
 stop
+
+=head2 Overridden functions
+
+event
 
 =head1 DESCRIPTION
 

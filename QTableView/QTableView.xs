@@ -49,6 +49,12 @@ PTableView::new(parent = 0, name = 0, f = 0)
     char *name
     WFlags f
 
+void
+pTableView::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 
 MODULE = QTableView	PACKAGE = QTableView	PREFIX = virtual_
 

@@ -34,6 +34,12 @@ PPushButton::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QPushButton::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QPushButton::autoDefault()
 

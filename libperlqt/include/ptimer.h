@@ -12,11 +12,21 @@
 
 #undef bool
 #include "qtimer.h"
-#include "pqt.h"
+#include "pobject.h"
 
-class PTimer : public QTimer {
+#define QTimer_virtual_functions QObject_virtual_functions
+
+class PTimer_virtualize : public PObject_virtualize {};
+
+class PTimer : public QTimer, public PTimer_virtualize {
+    QTimer_virtual_functions
 public:
     PTimer(QObject *parent = 0, const char *name = 0) : QTimer(parent, name) {}
+};
+
+class pTimer : public QTimer {
+public:
+    bool virtual_event(QEvent *e) { return QTimer::event(e); }
 };
 
 #endif  // PTIMER_H

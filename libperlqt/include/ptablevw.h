@@ -43,6 +43,7 @@ public:
 
 class pTableView : public QTableView {
 public:
+    ~pTableView() {}
     int virtual_cellHeight(int row) { return QTableView::cellHeight(row); }
     int virtual_cellWidth(int col) { return QTableView::cellWidth(col); }
     void virtual_paintEvent(QPaintEvent *e) { QTableView::paintEvent(e); }

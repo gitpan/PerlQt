@@ -18,6 +18,12 @@ PROTOTYPES: DISABLE
 PMenuData *
 PMenuData::new()
 
+void
+QMenuData::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QMenuData::accel(id)
     int id

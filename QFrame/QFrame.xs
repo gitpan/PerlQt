@@ -43,6 +43,12 @@ PFrame::new(parent = 0, name = 0, f = 0, allowLines = TRUE)
     WFlags f
     bool allowLines
 
+void
+QFrame::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PRect *
 QFrame::contentsRect()
     CODE:

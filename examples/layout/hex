@@ -28,14 +28,14 @@ $gm->addLayout($box, 0, 0);
 $above = new QBoxLayout($Direction{LeftToRight});
 $box->addLayout($above, 7);
 for my $i (0..3) {
-    my $lab = new QLabel($f)->setImmortal;
+    my $lab = new QLabel($f)->immortal;
     $lab->setBackgroundColor($darkGreen);
     $above->addWidget($lab);
 }
 $below = new QBoxLayout($Direction{LeftToRight});
 $box->addLayout($below, 4);
 for my $i (0..2) {
-    my $lab = new QLabel($f)->setImmortal;
+    my $lab = new QLabel($f)->immortal;
     $lab->setBackgroundColor($darkBlue);
     $below->addWidget($lab);
 }

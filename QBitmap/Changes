@@ -1,5 +1,8 @@
 Revision history for Perl extension QBitmap.
 
+1.03  Tue May 27 20:59:39 1997
+	- added destructor
+
 1.02  Fri May  9 18:49:34 1997
 	- disabled prototypes
 

@@ -80,6 +80,12 @@ PScrollBar::new(...)
 	CODE:
 	croak("Usage: new %s(QWidget = undef, name = undef);\nUsage: new %s(orientation, QWidget = undef, name = undef);\nUsage: new %s(minValue, maxValue, LineStep, PageStep, value, orientation, QWidget = undef, name = undef);", CLASS, CLASS, CLASS);
 
+void
+QScrollBar::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QScrollBar::draggingSlider()
 

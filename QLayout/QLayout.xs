@@ -87,6 +87,12 @@ PBoxLayout::new(...)
 	RETVAL
 
 void
+QBoxLayout::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QBoxLayout::addLayout(layout, stretch = 0)
     QLayout *layout
     int stretch

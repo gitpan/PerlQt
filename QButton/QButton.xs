@@ -19,6 +19,12 @@ PButton::new(parent = 0, name = 0)
     pWidget *parent
     pChar *name
 
+void
+QButton::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QButton::autoRepeat()
 

@@ -10,7 +10,7 @@ require QButton;
 
 @ISA = qw(DynaLoader QButton);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QPushButton $VERSION;
 
 1;

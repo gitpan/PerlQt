@@ -18,6 +18,12 @@ PMessageBox::new(parent = 0, name = 0)
     pWidget *parent
     pChar *name
 
+void
+QMessageBox::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 const char *
 QMessageBox::buttonText()
 

@@ -10,7 +10,7 @@ require QDialog;
 
 @ISA = qw(DynaLoader QDialog);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QMessageBox $VERSION;
 
 1;

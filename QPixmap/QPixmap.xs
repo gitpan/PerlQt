@@ -79,6 +79,12 @@ PPixmap::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QPixmap::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QPixmap::convertFromImage(image, mode = QPixmap::Auto)
     QImage *image

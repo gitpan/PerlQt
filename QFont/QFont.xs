@@ -78,6 +78,12 @@ PFont::new(family = 0, pointSize = 12, weight = QFont::Normal, italic = FALSE)
 	int weight
 	bool italic
 
+void
+QFont::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QFont::bold()
 

@@ -56,6 +56,12 @@ PRect::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QRect::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QRect::bottom()
 

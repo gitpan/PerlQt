@@ -32,6 +32,12 @@ PFontMetrics::new(copy)
 	OUTPUT:
 	RETVAL
 
+void
+QFontMetrics::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QFontMetrics::ascent()
 

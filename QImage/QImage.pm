@@ -10,7 +10,7 @@ require QGlobal;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Endian);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QImage $VERSION;
 
 1;

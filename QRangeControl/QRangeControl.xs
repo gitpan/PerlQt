@@ -33,6 +33,12 @@ PRangeControl::new(...)
 	croak("Usage: new %s;\nUsage: new %s(minValue, maxValue, lineStep, pageStep, value);", CLASS, CLASS);
 
 void
+QRangeControl::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QRangeControl::addLine()
 
 void

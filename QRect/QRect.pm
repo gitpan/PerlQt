@@ -15,7 +15,7 @@ require QSize;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QRect $VERSION;
 
 1;

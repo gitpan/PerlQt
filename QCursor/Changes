@@ -1,5 +1,8 @@
 Revision history for Perl extension QCursor.
 
+1.03  Tue May 27 22:09:54 1997
+	- added destructor
+
 1.02  Fri May  9 18:54:52 1997
 	- disabled prototypes
 

@@ -1,5 +1,8 @@
 Revision history for Perl extension QPalette.
 
+1.03  Tue May 27 22:51:39 1997
+	- added destructors
+
 1.02  Fri May  9 19:00:26 1997
 	- disabled prototypes
 

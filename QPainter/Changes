@@ -1,5 +1,8 @@
 Revision history for Perl extension QPainter.
 
+1.03  Tue May 27 22:48:34 1997
+	- added destructor
+
 1.02  Fri May  9 19:00:12 1997
 	- disabled prototypes
 

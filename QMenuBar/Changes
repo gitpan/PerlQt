@@ -1,5 +1,8 @@
 Revision history for Perl extension QMenuBar.
 
+1.03  Tue May 27 22:40:16 1997
+	- added destructor
+
 1.02  Fri May  9 18:59:00 1997
 	- disabled prototypes
 

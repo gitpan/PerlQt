@@ -151,6 +151,12 @@ PColor::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QColor::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 uint
 QColor::alloc()
 

@@ -11,7 +11,7 @@ require QGroupBox;
 
 @ISA = qw(DynaLoader QGroupBox);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QButtonGroup $VERSION;
 
 1;

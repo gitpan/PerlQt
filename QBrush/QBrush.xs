@@ -80,6 +80,12 @@ PBrush::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QBrush::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PColor *
 QBrush::color()
     CODE:

@@ -28,7 +28,7 @@ sub new {
     my $self = shift->SUPER::new(@_);
 
     $$self{'time'} = [ localtime ];			# get current time
-    my $internalTimer = new QTimer($self)->setImmortal; # create internal timer
+    my $internalTimer = new QTimer($self)->immortal;	# create internal timer
     $self->connect($internalTimer, 'timeout()', 'timeout()');
     $internalTimer->start(5000);		# emit signal every 5 seconds
 

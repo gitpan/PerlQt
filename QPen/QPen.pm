@@ -16,7 +16,7 @@ require QColor;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Pen);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QPen $VERSION;
 
 1;

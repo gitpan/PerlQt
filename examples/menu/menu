@@ -34,14 +34,14 @@ use slots qw{
 
 sub new {
     my $self = shift->SUPER::new(@_);
-    my $print = new QPopupMenu->setImmortal;
+    my $print = new QPopupMenu->immortal;
     $print->insertItem('Print to printer', $self, 'printer()');
     $print->insertItem('Print to file', $self, 'file()');
     $print->insertItem('Print to fax', $self, 'fax()');
     $print->insertSeparator();
     $print->insertItem('Printer Setup', $self, 'printerSetup()');
 
-    my $file = new QPopupMenu->setImmortal;
+    my $file = new QPopupMenu->immortal;
     $file->insertItem('Open', $self, 'open()', $CTRL+$Key{O});
     $file->insertItem('Save', $self, 'save()', $CTRL+$Key{S});
     $file->insertItem('Close', $self, 'closeDoc()', $CTRL+$Key{W});
@@ -50,7 +50,7 @@ sub new {
     $file->insertSeparator();
     $file->insertItem('Exit', $qApp, 'quit()', $CTRL+$Key{Q});
 
-    my $edit = new QPopupMenu->setImmortal;
+    my $edit = new QPopupMenu->immortal;
     my $undoID = $edit->insertItem('Undo', $self, 'undo()');
     my $redoID = $edit->insertItem('Redo', $self, 'redo()');
     $edit->setItemEnabled($undoID, 0);
@@ -65,7 +65,7 @@ sub new {
     my $isUnderline = 0;
     $options->setCheckable(1);
 
-    my $help = new QPopupMenu->setImmortal;
+    my $help = new QPopupMenu->immortal;
     $help->insertItem('About', $self, 'about()', $CTRL+$Key{H});
 
     my $menu = new QMenuBar($self);

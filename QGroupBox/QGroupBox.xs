@@ -38,6 +38,12 @@ PGroupBox::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QGroupBox::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QGroupBox::alignment()
 

@@ -20,7 +20,7 @@ require QWidget;
 @ISA = qw(DynaLoader QObject);
 @EXPORT = qw(%ColorSpec);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QApplication $VERSION;
 
 1;

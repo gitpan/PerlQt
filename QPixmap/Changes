@@ -1,5 +1,8 @@
 Revision history for Perl extension QPixmap.
 
+1.03  Tue May 27 22:55:16 1997
+	- added destructor
+
 1.02  Fri May  9 19:01:07 1997
 	- disabled prototypes
 

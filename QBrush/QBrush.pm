@@ -17,7 +17,7 @@ require QPixmap;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Brush);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QBrush $VERSION;
 
 1;

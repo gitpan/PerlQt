@@ -231,6 +231,17 @@ PObject::new(parent=0, name=0)
     char *name
 
 void
+QObject::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
+QObject::refcnt()
+    CODE:
+    printf("qobject refcnt %p: %d %d\n", THIS, SvREFCNT(ST(0)), SvREFCNT(obj_check(ST(0))));
+
+void
 QObject::blockSignals(b)
     bool b
 

@@ -92,6 +92,12 @@ PCursor::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QCursor::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PBitmap *
 QCursor::bitmap()
     CODE:

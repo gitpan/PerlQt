@@ -18,3 +18,9 @@ PWindow::new(parent = 0, name = 0, f = 0)
     pWidget *parent
     char *name
     WFlags f
+
+void
+QWindow::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;

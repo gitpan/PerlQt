@@ -11,7 +11,7 @@ require QTableView;
 
 @ISA = qw(DynaLoader QTableView);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QMultiLineEdit $VERSION;
 
 1;

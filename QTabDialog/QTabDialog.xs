@@ -21,6 +21,12 @@ PTabDialog::new(parent = 0, name = 0, modal = FALSE, f = 0)
     WFlags f
 
 void
+QTabDialog::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QTabDialog::addTab(child, label)
     QWidget *child
     char *label

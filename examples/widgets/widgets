@@ -57,8 +57,8 @@ sub new {
 
     # Create an analog and a digital clock
 
-    my $aclock = new AnalogClock($self);
-    my $dclock = new DigitalClock($self);
+    my $aclock = new AnalogClock($self)->immortal;
+    my $dclock = new DigitalClock($self)->immortal;
     $aclock->setGeometry(300, 100, 100, 100);
     $dclock->setGeometry(300, 220, 100, 60);
 
@@ -76,12 +76,12 @@ sub new {
 
     # Create two push buttons, a text button and a pixmap button
 
-    my $pb = new QPushButton($self, 'button1');
+    my $pb = new QPushButton($self, 'button1')->immortal;
     $pb->setText('Push Button 1');
     $pb->setGeometry(10, 30, 120, 30);
     $self->connect($pb, 'clicked()', 'button1Clicked()');
     QToolTip::add($pb, 'push button 1');
-    $pb = new QPushButton($self, 'button2');
+    $pb = new QPushButton($self, 'button2')->immortal;
     my $pm = new QPixmap;
     my $pix = 1;
     unless($pm->load('perlqt.bmp')) {
@@ -98,7 +98,7 @@ sub new {
     # Create a quit button
     # Pressing the quit button will terminate the application
 
-    my $quitButton = new QPushButton($self, 'quitButton');
+    my $quitButton = new QPushButton($self, 'quitButton')->immortal;
     $quitButton->setText('Quit');
     $quitButton->setGeometry(300, 30, 80, 30);
     $qApp->connect($quitButton, 'clicked()', 'quit()');
@@ -115,7 +115,7 @@ sub new {
 
     # Create a group of check boxes
 
-    my $bg = new QButtonGroup($self, 'checkGroup');
+    my $bg = new QButtonGroup($self, 'checkGroup')->immortal;
     $bg->setTitle('Check boxes');
     my @cb;
     $cb[0] = new QCheckBox($bg);
@@ -137,17 +137,17 @@ sub new {
     # Create a group of radio buttons
 
     my $rb;
-    $bg = new QButtonGroup($self, 'radioGroup');
+    $bg = new QButtonGroup($self, 'radioGroup')->immortal;
     $bg->setTitle('Radio buttons');
-    $rb = new QRadioButton($bg);
+    $rb = new QRadioButton($bg)->immortal;
     $rb->setText('AM');
     $rb->setGeometry(10, 15, 100, 25);
     QToolTip::add($rb, 'radio button 1');
-    $rb = new QRadioButton($bg);
+    $rb = new QRadioButton($bg)->immortal;
     $rb->setText('FM');
     $rb->setGeometry(10, 45, 100, 25);
     QToolTip::add($rb, 'radio button 2');
-    $rb = new QRadioButton($bg);
+    $rb = new QRadioButton($bg)->immortal;
     $rb->setText('Short Wave');
     $rb->setGeometry(10, 75, 100, 25);
     $bg->setGeometry(140, 80, 120, 110);
@@ -156,7 +156,7 @@ sub new {
 
     # Create a list box
 
-    my $lb = new QListBox($self, 'listBox');
+    my $lb = new QListBox($self, 'listBox')->immortal;
     for my $i (0..99) {
 	if($i == 42 && $pix) {
 	    $lb->insertItem($pm);
@@ -173,7 +173,7 @@ sub new {
 
     # Create a slider
 
-    my $sb = new QSlider($Orientation{Horizontal}, $self, 'Slider');
+    my $sb = new QSlider($Orientation{Horizontal}, $self, 'Slider')->immortal;
     $sb->setTickmarks($Tick{Below});
     $sb->setGeometry(140, 200, 120, $sb->sizeHint()->height());
     $self->connect($sb, 'valueChanged(int)', 'sliderValueChanged(int)');
@@ -181,7 +181,7 @@ sub new {
 
     # Create a combo box
 
-    my $combo = new QComboBox(0, $self, 'comboBox');
+    my $combo = new QComboBox(0, $self, 'comboBox')->immortal;
     $combo->insertItem('True');
     $combo->insertItem('False');
     $combo->insertItem('Maybe');
@@ -193,7 +193,7 @@ sub new {
 
     # Create an editable combo box
 
-    $edCombo = new QComboBox(1, $self, 'edComboBox');
+    $edCombo = new QComboBox(1, $self, 'edComboBox')->immortal;
     $edCombo->insertItem('Permutable');
     $edCombo->insertItem('Malleable');
     $edCombo->insertItem('Adaptable');
@@ -206,7 +206,7 @@ sub new {
 
     # Create a line edit
 
-    my $le = new QLineEdit($self, 'lineEdit');
+    my $le = new QLineEdit($self, 'lineEdit')->immortal;
     $le->setGeometry(140, 340, 230, 25);
     $self->connect($le, 'textChanged(const string)',
 		   'lineEditTextChanged(const string)');
@@ -215,7 +215,7 @@ sub new {
     # Create a message label
     # The message is updated when buttons are clicked etc.
 
-    my $msgLabel = new QLabel($self, 'msgLabel');
+    my $msgLabel = new QLabel($self, 'msgLabel')->immortal;
     $msgLabel->setText('Message:');
     $msgLabel->setAlignment($Align{Right} | $Align{VCenter});
     $msgLabel->setGeometry(10, 400, 85, 30);
@@ -230,7 +230,7 @@ sub new {
 
     # Create a horizontal line (sort of QFrame) above the quit button
 
-    my $separator = new QFrame($self, 'separatorLine');
+    my $separator = new QFrame($self, 'separatorLine')->immortal;
     $separator->setFrameStyle($Frame{HLine} | $Frame{Sunken});
     $separator->setGeometry(5, 390, 440, 4);
     QToolTip::add($separator, 'tool tips on a separator! wow!');

@@ -13,7 +13,7 @@ require QPoint;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Cursor %Shape);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QCursor $VERSION;
 
 1;

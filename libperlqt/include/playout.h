@@ -12,9 +12,10 @@
 
 #undef bool
 #include "qlayout.h"
-#include "pqt.h"
+//#include "pobject.h"   // Not yet
+#include "pvirtual.h"
 
-class PBoxLayout : public QBoxLayout {
+class PBoxLayout : public QBoxLayout, public virtualize {
 public:
     PBoxLayout(QWidget *parent, QBoxLayout::Direction direction,
 	       int border = 0, int autoBorder = -1, const char *name = 0) :
@@ -24,7 +25,7 @@ public:
 	QBoxLayout(direction, autoBorder, name) {}
 };
 
-class PGridLayout : public QGridLayout {
+class PGridLayout : public QGridLayout, public virtualize {
 public:
     PGridLayout(QWidget *parent, int nRows, int nCols, int border = 0,
 		int autoBorder = -1, const char *name = 0) :

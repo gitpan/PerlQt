@@ -18,7 +18,7 @@ class virtualize {
 public:
     virtualize() { qtObject = NULL; }
     virtual ~virtualize();
-    void setQtObject(SV *obj) { qtObject = obj; SvREFCNT_inc(obj); }
+    void setQtObject(SV *obj); // { qtObject = obj; SvREFCNT_inc(obj); }
     SV *getQtObject() const { return qtObject; }
     char *setQtClassName(char *cname);
     char *getQtClassName() const { return qtClassName; }

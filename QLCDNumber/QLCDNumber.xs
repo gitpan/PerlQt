@@ -58,6 +58,12 @@ PLCDNumber::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QLCDNumber::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QLCDNumber::checkOverflow(num)
     CASE: SvIOK(ST(1))

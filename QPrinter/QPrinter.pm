@@ -12,7 +12,7 @@ require QPaintDevice;
 @ISA = qw(Exporter DynaLoader QPaintDevice);
 @EXPORT = qw(%Orientation %Page);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QPrinter $VERSION;
 
 1;

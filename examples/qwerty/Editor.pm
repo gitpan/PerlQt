@@ -16,7 +16,7 @@ sub new {
     my $self = shift->SUPER::new(@_);
 
     my $m = new QMenuBar($self, 'menu');
-    my $file = new QPopupMenu->setImmortal;
+    my $file = new QPopupMenu->immortal;
     $m->insertItem('&File', $file);
 
     $file->insertItem('New', $self, 'create()', $ALT+$Key{N});

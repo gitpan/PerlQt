@@ -58,6 +58,7 @@ QTabBar *		RQt_OBJECT
 QTabDialog *		RQt_OBJECT
 QTableView *		RQt_OBJECT
 QWidget *		RQt_OBJECT
+QWindow *		RQt_OBJECT
 
 QBitmap *		Qt_OBJECT
 QBoxLayout *		Qt_OBJECT
@@ -77,6 +78,8 @@ QImage *		Qt_OBJECT
 QKeyEvent *		Qt_OBJECT
 QLayout *		Qt_OBJECT
 QListBoxItem *		Qt_OBJECT
+QListBoxPixmap *	Qt_OBJECT
+QListBoxText *		Qt_OBJECT
 QMouseEvent *		Qt_OBJECT
 QMoveEvent *		Qt_OBJECT
 QPaintEvent *		Qt_OBJECT
@@ -107,6 +110,7 @@ QRangeControl *		Qt_QRangeControl_KLUDGE
 
 PAccel *		VQt_OBJECT
 PApplication *		VQt_OBJECT
+PBoxLayout *		VQt_OBJECT
 PButton *		VQt_OBJECT
 PButtonGroup *		VQt_OBJECT
 PCheckBox *		VQt_OBJECT
@@ -114,6 +118,7 @@ PComboBox *		VQt_OBJECT
 PDialog *		VQt_OBJECT
 PFileDialog *		VQt_OBJECT
 PFrame *		VQt_OBJECT
+PGridLayout *		VQt_OBJECT
 PGroupBox *		VQt_OBJECT
 PLCDNumber *		VQt_OBJECT
 PLabel *		VQt_OBJECT
@@ -132,11 +137,13 @@ PScrollBar *		VQt_OBJECT
 PSlider *		VQt_OBJECT
 PTabDialog *		VQt_OBJECT
 PTableView *		VQt_OBJECT
+PTimer *		VQt_OBJECT
+PToolTip *		VQt_OBJECT
+PToolTipGroup *		VQt_OBJECT
 PWidget *		VQt_OBJECT
 PWindow *		VQt_OBJECT
 
 PBitmap *		PQt_OBJECT
-PBoxLayout *		PQt_OBJECT
 PBrush *		PQt_OBJECT
 PCloseEvent *		PQt_OBJECT
 PColor *		PQt_OBJECT
@@ -147,7 +154,6 @@ PFocusEvent *		PQt_OBJECT
 PFont *			PQt_OBJECT
 PFontInfo *		PQt_OBJECT
 PFontMetrics *		PQt_OBJECT
-PGridLayout *		PQt_OBJECT
 PImage *		PQt_OBJECT
 PKeyEvent *		PQt_OBJECT
 PListBoxPixmap *	PQt_OBJECT
@@ -169,10 +175,7 @@ PRegion *		PQt_OBJECT
 PResizeEvent *		PQt_OBJECT
 PSize *			PQt_OBJECT
 PTabBar *		PQt_OBJECT
-PTimer *		PQt_OBJECT
 PTimerEvent *		PQt_OBJECT
-PToolTip *		PQt_OBJECT
-PToolTipGroup *		PQt_OBJECT
 PWMatrix *		PQt_OBJECT
 
 pAccel *		pQt_OBJECT
@@ -202,31 +205,40 @@ pSlider *		pQt_OBJECT
 pTabBar *		pQt_OBJECT
 pTabDialog *		pQt_OBJECT
 pTableView *		pQt_OBJECT
+pTimer *		pQt_OBJECT
 pWidget *		pQt_OBJECT
 
 OUTPUT
 Qt_OBJECT
-    $arg = objectify_ptr((void*)$var, MSTR($type));
+    if(!$var) XSRETURN_UNDEF;
+    $arg = sv_2mortal(objectify_ptr((void*)$var, MSTR($type)));
 
 PQt_OBJECT
-    $arg = objectify_ptr((void*)$var, MSTR($type), 1);
+    if(!$var) XSRETURN_UNDEF;
+    $arg = sv_2mortal(objectify_ptr((void*)$var, MSTR($type), 1));
 
 RQt_OBJECT
-    $arg = objectify_ptr((void*)$var, MSTR($type));
+    if(!$var) XSRETURN_UNDEF;
+    $arg = sv_2mortal(objectify_ptr((void*)$var, MSTR($type)));
 
 VQt_OBJECT
     if(!$var) XSRETURN_UNDEF;
-    $arg = objectify_ptr((void*)$var, $var->setQtClassName(CLASS), 1);
+    $arg = sv_2mortal(
+        objectify_ptr((void*)$var, $var->setQtClassName(CLASS), 1)
+    );
     $var->setQtObject($arg);
 
 Qt_QMenuData_KLUDGE
-    $arg = objectify_ptr((void*)$var, MSTR($type), 1);
+    if(!$var) XSRETURN_UNDEF;
+    $arg = sv_2mortal(objectify_ptr((void*)$var, MSTR($type), 1));
 
 Qt_QPaintDevice_KLUDGE
-    $arg = objectify_ptr((void*)$var, MSTR($type), 1);
+    if(!$var) XSRETURN_UNDEF;
+    $arg = sv_2mortal(objectify_ptr((void*)$var, MSTR($type), 1));
 
 Qt_QRangeControl_KLUDGE
-    $arg = objectify_ptr((void*)$var, MSTR($type), 1);
+    if(!$var) XSRETURN_UNDEF;
+    $arg = sv_2mortal(objectify_ptr((void*)$var, MSTR($type), 1));
 
 Q_String
     if($var.isNull()) sv_setsv($arg, &sv_undef);

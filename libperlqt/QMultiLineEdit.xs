@@ -324,22 +324,22 @@ void PMultiLineEdit::pageDown(bool mark) {
 
 void PMultiLineEdit_virtualize::PMultiLineEdit_insertAt(const char *s,
 							int line, int col) {
-    SV *arg1 = newSVpv((char *)s, 0);
+    SV *arg1 = s ? newSVpv((char *)s, 0) : &sv_undef;
     SV *arg2 = newSViv(line);
     SV *arg3 = newSViv(col);
     voidCall("insertAt", arg1, arg2, arg3);
     SvREFCNT_dec(arg3);
     SvREFCNT_dec(arg2);
-    SvREFCNT_dec(arg1);
+    if(s) SvREFCNT_dec(arg1);
 }
 
 void PMultiLineEdit_virtualize::PMultiLineEdit_insertLine(const char *s,
 							  int line) {
-    SV *arg1 = newSVpv((char *)s, 0);
+    SV *arg1 = s ? newSVpv((char *)s, 0) : &sv_undef;
     SV *arg2 = newSViv(line);
     voidCall("insertLine", arg1, arg2);
     SvREFCNT_dec(arg2);
-    SvREFCNT_dec(arg1);
+    if(s) SvREFCNT_dec(arg1);
 }
 
 void PMultiLineEdit_virtualize::PMultiLineEdit_removeLine(int line) {

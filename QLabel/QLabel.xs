@@ -41,6 +41,12 @@ PLabel::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QLabel::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QLabel::alignment()
 

@@ -40,6 +40,12 @@ PWMatrix::new(...)
 	croak("Usage: new %s(m11, m12, m21, m22, dx, dy);\nUsage: new %s;",
 	      CLASS, CLASS);
 
+void
+QWMatrix::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 float
 QWMatrix::dx()
 

@@ -38,6 +38,12 @@ PButtonGroup::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QButtonGroup::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 QButton *
 QButtonGroup::find(id)
     int id

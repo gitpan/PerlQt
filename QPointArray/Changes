@@ -1,5 +1,8 @@
 Revision history for Perl extension QPointArray.
 
+1.03  Tue May 27 23:01:07 1997
+	- added destructor
+
 1.02  Sat May 10 23:59:14 1997
 	- added detach, isEmpty, isNull, resize, size, truncate, and operator
 == and !=

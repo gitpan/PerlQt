@@ -78,6 +78,12 @@ PSlider::new(...)
 	RETVAL
 
 void
+QSlider::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QSlider::addStep()
 
 QSlider::Orientation

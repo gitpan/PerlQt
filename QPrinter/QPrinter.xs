@@ -36,6 +36,12 @@ BOOT:
 PPrinter *
 PPrinter::new()
 
+void
+QPrinter::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QPrinter::abort()
 

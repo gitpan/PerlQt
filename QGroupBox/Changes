@@ -1,5 +1,8 @@
 Revision history for Perl extension QGroupBox.
 
+1.03  Tue May 27 22:30:55 1997
+	- added destructor
+
 1.02  Fri May  9 18:57:15 1997
 	- disabled prototypes
 

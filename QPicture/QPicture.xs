@@ -16,6 +16,12 @@ PROTOTYPES: DISABLE
 PPicture *
 PPicture::new()
 
+void
+QPicture::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QPicture::load(fileName)
     char *fileName

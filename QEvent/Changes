@@ -1,5 +1,8 @@
 Revision history for Perl extension QEvent.
 
+1.02  Tue May 27 22:23:07 1997
+	- added destructors
+
 1.01  Fri May  9 18:55:24 1997
 	- disabled prototypes
 

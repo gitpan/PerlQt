@@ -41,6 +41,12 @@ PFileDialog::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QFileDialog::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 const char *
 QFileDialog::dirPath()
 

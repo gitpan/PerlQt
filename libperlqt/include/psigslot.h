@@ -24,15 +24,8 @@ class pQtSigSlot : public QObject {
 protected:
     void initMetaObject();
 public:
-    pQtSigSlot(SV *obj, char *type, STRLEN tlen) {
-        object = newSVsv(obj);
-//	warn("OBJECT = %p\n", object);
-	qobj = (pObject *)extract_ptr(object, "QObject");
-	proto = new char[tlen];
-	memcpy(proto, type, tlen);
-	sname = proto+2;
-    }
-    ~pQtSigSlot() { delete [] sname; SvREFCNT_dec(object); }
+    pQtSigSlot(SV *obj, char *type, STRLEN tlen);
+    ~pQtSigSlot();
     QMetaObject *metaObject() const;
     const char *className() const;
     void gimmie_iv(IV);

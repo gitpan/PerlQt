@@ -11,7 +11,7 @@ require QObject;
 @ISA = qw(Exporter DynaLoader QObject);
 @EXPORT = qw(%Key $SHIFT $CTRL $ALT $ASCII_ACCEL);
 
-$VERSION = '1.03';
+$VERSION = '1.04';
 bootstrap QAccel $VERSION;
 
 1;

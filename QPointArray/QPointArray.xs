@@ -55,6 +55,12 @@ PPointArray::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QPointArray::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PPoint *
 QPointArray::at(i)
     int i

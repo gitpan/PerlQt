@@ -14,7 +14,7 @@ require QGlobal;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Style %Weight %CharSet);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QFont $VERSION;
 
 1;

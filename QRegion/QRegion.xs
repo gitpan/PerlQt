@@ -58,6 +58,12 @@ PRegion::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QRegion::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QRegion::contains(thing)
     CASE: sv_derived_from(ST(1), "QPoint")

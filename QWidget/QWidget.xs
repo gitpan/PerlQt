@@ -104,6 +104,12 @@ PWidget::new(parent = 0, name = 0, f = 0)
     char *name
     WFlags f
 
+void
+QWidget::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PColor *
 QWidget::backgroundColor()
     CODE:

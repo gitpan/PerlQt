@@ -14,21 +14,21 @@ use slots 'setup()', 'apply()';
 
 sub new {
     my $self = shift->SUPER::new(@_);
-    my $tab = new QTabDialog(undef, 'top-level dialog')->setImmortal;
+    my $tab = new QTabDialog(undef, 'top-level dialog')->immortal;
     $tab->setCaption('Ugly Tab Dialog');
 
     # set up page one of the tab dialog
-    my $w = new QWidget($tab, 'page one')->setImmortal;
+    my $w = new QWidget($tab, 'page one')->immortal;
 
     # stuff the labels and lineedits into a grid layout
     my $g = new QGridLayout($w, 2, 2, 5);
 
     # two multilineedits in column 1
-    my $ed1 = new QMultiLineEdit($w)->setImmortal;
+    my $ed1 = new QMultiLineEdit($w)->immortal;
     $g->addWidget($ed1, 0, 1);
     $ed1->setText('');
     $ed1->setMinimumSize(new QSize(100, 10));
-    my $ed2 = new QMultiLineEdit($w)->setImmortal;
+    my $ed2 = new QMultiLineEdit($w)->immortal;
     $g->addWidget($ed2, 1, 1);
     $ed2->setText('');
     $ed2->setMinimumSize(new QSize(100, 10));
@@ -37,12 +37,12 @@ sub new {
     $g->setColStretch(1, 1);
 
     # two labels in column 0
-    my $l = new QLabel($w)->setImmortal;
+    my $l = new QLabel($w)->immortal;
     $g->addWidget($l, 0, 0);
     $l->setText('&Name');
     $l->setBuddy($ed1);
     $l->setMinimumSize($l->sizeHint());
-    $l = new QLabel($w)->setImmortal;
+    $l = new QLabel($w)->immortal;
     $g->addWidget($l, 1, 0);
     $l->setText('&Email');
     $l->setBuddy($ed2);
@@ -56,25 +56,25 @@ sub new {
     $g->activate();
 
     # that was page one, now for page two, where we use a box layout
-    $w = new QWidget($tab, 'page two')->setImmortal;
-    my $b = new QBoxLayout($w, $Direction{LeftToRight}, 5)->setImmortal;
+    $w = new QWidget($tab, 'page two')->immortal;
+    my $b = new QBoxLayout($w, $Direction{LeftToRight}, 5)->immortal;
 
     # two vertical boxes in the horizontal one
-    my $radioBoxes = new QBoxLayout($Direction{Down})->setImmortal;
+    my $radioBoxes = new QBoxLayout($Direction{Down})->immortal;
     $b->addLayout($radioBoxes);
 
     # fill the leftmost vertical box
-    my $b1 = new QRadioButton($w, 'radio button 1')->setImmortal;
+    my $b1 = new QRadioButton($w, 'radio button 1')->immortal;
     $b1->setText('Male');
     $b1->setMinimumSize($b1->sizeHint());
     $b1->setMaximumSize(500, $b1->minimumSize()->height());
     $radioBoxes->addWidget($b1, $Align{Left}|$Align{Top});
-    my $b2 = new QRadioButton($w, 'radio button 2')->setImmortal;
+    my $b2 = new QRadioButton($w, 'radio button 2')->immortal;
     $b2->setText('Female');
     $b2->setMinimumSize($b2->sizeHint());
     $b2->setMaximumSize(500, $b2->minimumSize()->height());
     $radioBoxes->addWidget($b2, $Align{Left}|$Align{Top});
-    my $b3 = new QRadioButton($w, 'radio button 3')->setImmortal;
+    my $b3 = new QRadioButton($w, 'radio button 3')->immortal;
     $b3->setText('Duo Pack');
     $b3->setMinimumSize($b3->sizeHint());
     $b3->setMaximumSize(500, $b3->minimumSize()->height());
@@ -85,7 +85,7 @@ sub new {
 
     # insert all of the radio boxes into the button group, so they'll
     # switch each other off
-    my $bg = new QButtonGroup->setImmortal;
+    my $bg = new QButtonGroup->immortal;
     $bg->insert($b1);
     $bg->insert($b2);
     $bg->insert($b3);
@@ -95,24 +95,24 @@ sub new {
 
     # make the central slider
     my $mood =
-	new QSlider($Orientation{Vertical}, $w, 'mood slider')->setImmortal;
+	new QSlider($Orientation{Vertical}, $w, 'mood slider')->immortal;
     $mood->setRange(0, 127);
     $mood->setMinimumSize($mood->sizeHint());
     $mood->setMaximumSize($mood->minimumSize->width(), 500);
     $b->addWidget($mood, $Align{Left}|$Align{Top}|$Align{Bottom});
 
     # make the top and bottom labels for the slider
-    my $labels = new QBoxLayout($Direction{Down})->setImmortal;
+    my $labels = new QBoxLayout($Direction{Down})->immortal;
     $b->addLayout($labels);
     $b->addLayout($labels);
-    $l = new QLabel('Optimistic', $w, 'optimistic')->setImmortal;
+    $l = new QLabel('Optimistic', $w, 'optimistic')->immortal;
     $l->setFixedSize($l->sizeHint());
     $labels->addWidget($l, $Align{Top}|$Align{Left});
 
     # spacing in the middle, so the labels are located right
     $labels->addStretch(1);
 
-    $l = new QLabel('Pessimistic', $w, 'pessimistic')->setImmortal;
+    $l = new QLabel('Pessimistic', $w, 'pessimistic')->immortal;
     $l->setFixedSize($l->sizeHint());
     $labels->addWidget($l, $Align{Bottom}|$Align{Left});
 

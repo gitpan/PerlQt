@@ -12,15 +12,16 @@
 
 #undef bool
 #include "qtooltip.h"
-#include "pqt.h"
+//#include "pqt.h"
+#include "pvirtual.h"
 
-class PToolTipGroup : public QToolTipGroup {
+class PToolTipGroup : public QToolTipGroup, public virtualize {
 public:
     PToolTipGroup(QObject *parent, const char *name = 0) :
 	QToolTipGroup(parent, name) {}
 };
 
-class PToolTip : public QToolTip {
+class PToolTip : public QToolTip, public virtualize {
     PToolTip(QWidget *parent, QToolTipGroup *group = 0) :
 	QToolTip(parent, group) {}
 };

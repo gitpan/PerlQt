@@ -17,7 +17,7 @@ $b1 = new QBoxLayout($Direction{LeftToRight});
 $gm->addLayout($b1);
 
 for my $i (0..3) {
-    my $lab = new QLabel($f)->setImmortal;
+    my $lab = new QLabel($f)->immortal;
     $lab->setText('Testing');
     $lab->adjustSize();
     $lab->setMinimumSize($lab->size());
@@ -48,7 +48,7 @@ $gm->addLayout($b2, 50);
 $b2->addWidget($large, 100);
 
 {
-    my $s = new QLabel($f)->setImmortal;
+    my $s = new QLabel($f)->immortal;
     $s->setMaximumSize(150, 150);
     $s->setText("This\n is\n supposed\n to be\n centered\n relatively.");
     $s->adjustSize();
@@ -60,7 +60,7 @@ $b2->addWidget($large, 100);
 }
 
 {
-    my $s = new QLabel($f)->setImmortal;
+    my $s = new QLabel($f)->immortal;
     $s->setMaximumSize($QLayout::unlimited, 50);
     $s->setText('This is a widget inside the outermost box');
     $s->adjustSize();

@@ -8,7 +8,7 @@ require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QRangeControl $VERSION;
 
 1;

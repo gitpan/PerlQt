@@ -43,12 +43,24 @@ PListBoxPixmap::new(pixmap)
     OUTPUT:
     RETVAL
 
+void
+QListBoxPixmap::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 
 MODULE = QListBox		PACKAGE = QListBoxText
 
 PListBoxText *
 PListBoxText::new(text)
     char *text
+
+void
+QListBoxText::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 
 MODULE = QListBox		PACKAGE = QListBox
@@ -58,6 +70,12 @@ PListBox::new(parent = 0, name = 0, f = 0)
     pWidget *parent
     pChar *name
     WFlags f
+
+void
+QListBox::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 bool
 QListBox::autoBottomScrollBar()

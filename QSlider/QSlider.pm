@@ -13,7 +13,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget QRangeControl);
 @EXPORT = qw(%Orientation %Tick);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QSlider $VERSION;
 
 1;

@@ -43,6 +43,12 @@ PColorGroup::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QColorGroup::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PColor *
 QColorGroup::background()
     CODE:
@@ -135,6 +141,12 @@ PPalette::new(...)
 	RETVAL = new PPalette(*normal, *disabled, *active);
 	OUTPUT:
 	RETVAL
+
+void
+QPalette::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 PColorGroup *
 QPalette::active()

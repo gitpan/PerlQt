@@ -1,5 +1,11 @@
 Revision history for Perl extension QLineEdit.
 
+1.03  Tue May 27 22:36:03 1997
+	- added destructor
+
+1.03  Fri May 23 00:20:21 1997
+        - added default values to the constructor
+
 1.02  Fri May  9 18:58:34 1997
 	- disabled prototypes
 

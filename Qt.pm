@@ -11,7 +11,7 @@ require QApplication;
 @ISA = qw(Exporter);
 @EXPORT = qw($qApp &qRound);
 
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 $qApp = new QApplication;
 

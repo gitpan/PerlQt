@@ -18,6 +18,12 @@ PPopupMenu::new(parent = 0, name = 0)
     pWidget *parent
     pChar *name
 
+void
+QPopupMenu::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QPopupMenu::isCheckable()
 

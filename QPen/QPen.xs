@@ -62,6 +62,12 @@ PPen::new(...)
 	OUTPUT:
 	RETVAL
 
+void
+QPen::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PColor *
 QPen::color()
     CODE:

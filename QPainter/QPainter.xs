@@ -51,6 +51,12 @@ PPainter::new(paintd = 0)
 	OUTPUT:
 	RETVAL
 
+void
+QPainter::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PColor *
 QPainter::backgroundColor()
     CODE:

@@ -1,5 +1,14 @@
 Revision history for Perl extension Qt.
 
+1.05  Fri May 30 00:36:59 1997
+	- added working destructors to all of PerlQt
+
+1.04  Thu May 22 17:54:31 1997
+	- released version 1.04
+
+1.04  Thu May 22 17:21:18 1997
+	- fixed the bugs that prevented 1.03 from compiling
+
 1.03  Wed May 21 20:16:31 1997
 	- released version 1.03
 

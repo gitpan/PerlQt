@@ -10,7 +10,7 @@ require QWidget;
 
 @ISA = qw(DynaLoader QWidget);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QTabBar $VERSION;
 
 package QTab;

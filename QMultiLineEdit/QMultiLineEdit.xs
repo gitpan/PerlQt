@@ -19,6 +19,12 @@ PMultiLineEdit::new(parent = 0, name = 0)
     pChar *name
 
 void
+QMultiLineEdit::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 QMultiLineEdit::append(text)
     char *text
 

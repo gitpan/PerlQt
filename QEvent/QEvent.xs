@@ -73,6 +73,12 @@ PEvent *
 PEvent::new(type)
     int type
 
+void
+QEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QEvent::type()
 
@@ -80,6 +86,12 @@ MODULE = QEvent		PACKAGE = QCloseEvent
 
 PCloseEvent *
 PCloseEvent::new()
+
+void
+QCloseEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 void
 QCloseEvent::accept()
@@ -96,6 +108,12 @@ PFocusEvent *
 PFocusEvent::new(type)
     int type
 
+void
+QFocusEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QFocusEvent::gotFocus()
 
@@ -110,6 +128,12 @@ PKeyEvent::new(type, key, ascii, state)
     int key
     int ascii
     int state
+
+void
+QKeyEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 void
 QKeyEvent::accept()
@@ -142,6 +166,12 @@ PMouseEvent::new(type, pos, button, state)
     OUTPUT:
     RETVAL
 
+void
+QMouseEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QMouseEvent::button()
 
@@ -172,6 +202,12 @@ PMoveEvent::new(pos, oldPos)
     OUTPUT:
     RETVAL
 
+void
+QMoveEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PPoint *
 QMoveEvent::oldPos()
     CODE:
@@ -196,6 +232,12 @@ PPaintEvent::new(paintRect)
     OUTPUT:
     RETVAL
 
+void
+QPaintEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 PRect *
 QPaintEvent::rect()
     CODE:
@@ -213,6 +255,12 @@ PResizeEvent::new(size, oldSize)
     RETVAL = new PResizeEvent(*size, *oldSize);
     OUTPUT:
     RETVAL
+
+void
+QResizeEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 PSize *
 QResizeEvent::oldSize()
@@ -233,6 +281,12 @@ MODULE = QEvent		PACKAGE = QTimerEvent
 PTimerEvent *
 PTimerEvent::new(timerId)
     int timerId
+
+void
+QTimerEvent::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
 
 int
 QTimerEvent::timerId()

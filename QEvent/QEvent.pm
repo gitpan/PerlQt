@@ -10,7 +10,7 @@ require DynaLoader;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Button %Event %Key $SHIFT $CRTL $ALT $ASCII_ACCEL);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QEvent $VERSION;
 
 

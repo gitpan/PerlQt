@@ -31,6 +31,12 @@ PPoint::new(xpos = 0, ypos = 0)
 	int xpos
 	int ypos
 
+void
+QPoint::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QPoint::isNull()
 

@@ -14,7 +14,7 @@ require QPoint;
 
 @ISA = qw(DynaLoader QTableView QMenuData);
 
-$VERSION = '1.02';
+$VERSION = '1.03';
 bootstrap QPopupMenu $VERSION;
 
 1;

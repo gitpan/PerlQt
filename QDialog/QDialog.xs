@@ -32,6 +32,12 @@ PDialog::new(parent = 0, name = 0, modal = FALSE, f = 0)
     bool modal
     WFlags f
 
+void
+QDialog::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QDialog::exec()
 

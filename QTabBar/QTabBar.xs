@@ -26,6 +26,12 @@ PTabBar::new(parent, name)
     QWidget *parent
     char *name
 
+void
+QTabBar::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 int
 QTabBar::currentTab()
 

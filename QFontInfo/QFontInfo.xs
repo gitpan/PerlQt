@@ -31,6 +31,12 @@ PFontInfo::new(copy)
 	OUTPUT:
 	RETVAL
 
+void
+QFontInfo::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
 bool
 QFontInfo::bold()
 

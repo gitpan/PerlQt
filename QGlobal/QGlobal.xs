@@ -306,22 +306,36 @@ qRound(d)
 
 MODULE = QGlobal		PACKAGE = Qt::Base
 
-void
-DESTROY(rv)
+SV *
+immortal(rv)
     SV *rv
     CODE:
     HV *obj = (HV *)obj_check(rv);
-
-    if(hv_exists(obj, "DELETE", 6)) {
-//	SV *THIS =
-//	    safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element");
-//	delete (void *)SvIV(THIS);
-	HV *THIS =
-	    (HV *)rv_check(
-		safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element")
-	    );
-	SV *ptr = safe_hv_fetch(THIS, "CORE", "CORE inaccessible");
-	if(!SvREADONLY(ptr))
-	    croak("Attempt to destroy bogus THIS pointer");
-	delete (void *)SvIV(ptr);
+    SV **svp = hv_fetch(obj, "DELETE", 6, 0);
+    if(svp) {
+	if(SvTRUE(*svp)) {
+	    hv_delete(obj, "DELETE", 6, G_DISCARD);
+	    SvREFCNT_inc(obj);
+	} else {
+	    warn("Attempt to immortalize a permanently immortal object");
+	}
+    } else {
+	warn("Attempt to re-immortalize object");
     }
+
+SV *
+mortal(rv)
+    SV *rv
+    CODE:
+    HV *obj = (HV *)obj_check(rv);
+    if(hv_exists(obj, "DELETE", 6)) {	// Error, take as long as we like
+	SV **svp = hv_fetch(obj, "DELETE", 6, 0);
+	if(svp) {
+	    if(SvTRUE(*svp)) warn("Attempt to re-mortalize a mortal object");
+	    else warn("Attempt to mortalize a permanently immortal object");
+	}
+	else warn("Anomalous inability to mortalize object");
+	return;
+    }
+    SvREFCNT_dec(obj);	// sv_2mortal() imitation. Delayed destruction
+    hv_store(obj, "DELETE", 6, &sv_yes, 0);

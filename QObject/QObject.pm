@@ -9,7 +9,7 @@ require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.03';
+$VERSION = '1.04';
 bootstrap QObject $VERSION;
 
 sub find_superclass {

@@ -81,6 +81,12 @@ PApplication::new()
     RETVAL
 
 void
+QApplication::DESTROY()
+    CODE:
+    if(want_destroy(ST(0)))
+	delete THIS;
+
+void
 beep()
     CODE:
     QApplication::beep();
