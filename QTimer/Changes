@@ -1,5 +1,8 @@
 Revision history for Perl extension QTimer.
 
+1.03  Thu May 22 17:12:37 1997
+	- started updating prototypes
+
 1.02  Fri May  9 19:06:47 1997
 	- disabled prototypes
 

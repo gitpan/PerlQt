@@ -9,7 +9,8 @@ http://www.perl.org/CPAN/src/5.0/ and look for version 5.004. If it's
 not there, enter unsupported/ and download the newest version there. 
 Most of the configuration is irrelevant to PerlQt except two points.
 Your perl *must* have dynamic module loading support, and *must not*
-be binary-compatible with Perl-5.003.
+be binary-compatible with Perl-5.003. If it is, your compile will croak
+with a "redefinition of 'debug'" error, probably.
 
 Once you have downloaded PerlQt, you should extract it into some
 convienient directory where it will be built.

@@ -1,5 +1,5 @@
 package Qt;
-use 5.004;    # Never <5.004
+use 5.004;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT $qApp);
@@ -11,7 +11,7 @@ require QApplication;
 @ISA = qw(Exporter);
 @EXPORT = qw($qApp &qRound);
 
-$VERSION = '1.03';
+$VERSION = '1.04';
 
 $qApp = new QApplication;
 

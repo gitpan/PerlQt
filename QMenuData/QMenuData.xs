@@ -41,15 +41,21 @@ QMenuData::connectItem(id, receiver, member)
     int id
     QObject *receiver
     CODE:
-    SV *m = parse_member(ST(3));
-    char *member = SvPV(m, na);
+//    SV *m = parse_member(ST(3));
+    SV *mproto = proto(ST(3));
+    STRLEN mlen;
+    char *mtype = SvPV(mproto, mlen);
+
+    SV *mp = unproto(mproto);
+    char *member = SvPV(mp, na);
+
     char *s = find_signal(ST(2), member);
     SV *memb = newSViv(s ? SIGNAL_CODE : SLOT_CODE);
     sv_catpv(memb, member);
-    if(s) receiver = new pQtSigSlot(ST(2), s);
+    if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
     else {
         s = find_slot(ST(2), member);
-        if(s) receiver = new pQtSigSlot(ST(2), s);
+        if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
     }
     RETVAL = THIS->connectItem(id, receiver, SvPVX(memb));
     OUTPUT:
@@ -106,17 +112,23 @@ QMenuData::insertItem(arg1, ...)
 	char *text = SvPV(ST(1), na);
 	QObject *receiver = pextract(QObject, 2);
 //	char *member = SvPV(ST(3), na);
-	SV *m = parse_member(ST(3));
-	char *member = SvPV(m, na);
+//	SV *m = parse_member(ST(3));
+    SV *mproto = proto(ST(3));
+    STRLEN mlen;
+    char *mtype = SvPV(mproto, mlen);
+
+    SV *mp = unproto(mproto);
+    char *member = SvPV(mp, na);
+
 	int accel = (items > 4) ? SvIV(ST(4)) : 0;
 	CODE:
 	char *s = find_signal(ST(2), member);
 	SV *memb = newSViv(s ? SIGNAL_CODE : SLOT_CODE);
 	sv_catpv(memb, member);
-	if(s) receiver = new pQtSigSlot(ST(2), s);
+	if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
 	else {
 	    s = find_slot(ST(2), member);
-	    if(s) receiver = new pQtSigSlot(ST(2), s);
+	    if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
 	}
 
 	RETVAL = THIS->insertItem(text, receiver, SvPVX(memb), accel);
@@ -156,17 +168,24 @@ QMenuData::insertItem(arg1, ...)
 	QPixmap *pixmap = pextract(QPixmap, 1);
 	QObject *receiver = pextract(QObject, 2);
 //	char *member = SvPV(ST(3), na);
-	SV *m = parse_member(ST(3));
-	char *member = SvPV(m, na);
+//	SV *m = parse_member(ST(3));
+
+    SV *mproto = proto(ST(3));
+    STRLEN mlen;
+    char *mtype = SvPV(mproto, mlen);
+
+    SV *mp = unproto(mproto);
+    char *member = SvPV(mp, na);
+
 	int accel = (items > 4) ? SvIV(ST(4)) : 0;
 	CODE:
 	char *s = find_signal(ST(2), member);
 	SV *memb = newSViv(s ? SIGNAL_CODE : SLOT_CODE);
 	sv_catpv(memb, member);
-	if(s) receiver = new pQtSigSlot(ST(2), s);
+	if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
 	else {
 	    s = find_slot(ST(2), member);
-	    if(s) receiver = new pQtSigSlot(ST(2), s);
+	    if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
 	}
 
 	RETVAL = THIS->insertItem(*pixmap, receiver, SvPVX(memb), accel);

@@ -27,15 +27,21 @@ QAccel::connectItem(id, receiver, member)
     int id
     QObject *receiver
     CODE:
-    SV *m = parse_member(ST(3));
-    char *member = SvPV(m, na);
+//    SV *m = parse_member(ST(3));
+    SV *mproto = proto(ST(3));
+    STRLEN mlen;
+    char *mtype = SvPV(mproto, mlen);
+
+    SV *mp = unproto(mproto);
+    char *member = SvPV(mp, na);
+
     char *s = find_signal(ST(2), member);
     SV *memb = newSViv(s ? SIGNAL_CODE : SLOT_CODE);
     sv_catpv(memb, member);
-    if(s) receiver = new pQtSigSlot(ST(2), s);
+    if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
     else {
 	s = find_slot(ST(2), member);
-	if(s) receiver = new pQtSigSlot(ST(2), s);
+	if(s) receiver = new pQtSigSlot(ST(2), mtype, mlen);
     }
     RETVAL = THIS->connectItem(id, receiver, SvPVX(memb));
     OUTPUT:

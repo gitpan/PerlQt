@@ -1,5 +1,8 @@
 Revision history for Perl extension QAccel.
 
+1.03  Thu May 22 15:53:28 1997
+	- began upgrading signals/slots
+
 1.02  Fri May  9 18:48:15 1997
 	- disabled prototypes
 

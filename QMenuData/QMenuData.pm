@@ -12,7 +12,7 @@ require QPopupMenu;
 
 @ISA = qw(DynaLoader);
 
-$VERSION = '1.01';
+$VERSION = '1.03';
 bootstrap QMenuData $VERSION;
 
 1;

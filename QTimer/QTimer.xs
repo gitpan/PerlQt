@@ -31,15 +31,21 @@ void
 singleShot(msec, receiver, member)
     int msec
     QObject *receiver
-    char *member
     CODE:
+    SV *mproto = proto(ST(3));
+    STRLEN mlen;
+    char *mtype = SvPV(mproto, mlen);
+
+    SV *mp = unproto(mproto);
+    char *member = SvPV(mp, na);
+
     char *s = find_signal(ST(1), member);
     SV *memb = newSViv(s ? SIGNAL_CODE : SLOT_CODE);
     sv_catpv(memb, member);
-    if(s) receiver = new pQtSigSlot(ST(1), s);
+    if(s) receiver = new pQtSigSlot(ST(1), mtype, mlen);
     else {
         s = find_slot(ST(1), member);
-        if(s) receiver = new pQtSigSlot(ST(1), s);
+        if(s) receiver = new pQtSigSlot(ST(1), mtype, mlen);
     }
     QTimer::singleShot(msec, receiver, member);
 
