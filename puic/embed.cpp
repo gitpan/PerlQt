@@ -85,7 +85,7 @@ static void embedData( QTextStream& out, const uchar* input, int nbytes )
 	if ( i < nbytes-1 )
 	    s += ", ";
 	else
-	    s += ";\n";
+	    s += "\n";
     }
     if ( s.length() )
 	out << (const char*)s;
@@ -174,7 +174,7 @@ void Uic::embed( QTextStream& out, const char* project, const QStringList& image
 	}
         out << endl;
 	if ( e->numColors ) {
-	    out << indent << "my" << imgname << "_ctable = " << endl;
+	    out << indent << "my " << imgname << "_ctable = " << endl;
 	    out << indent << "[" << endl;
 	    embedData( out, e->colorTable, e->numColors );
             out << endl;

@@ -2,7 +2,7 @@
 
 # KDOC -- C++ and CORBA IDL interface documentation tool.
 # Sirtaj Singh Kang <taj@kde.org>, Jan 1999.
-# $Id: kalyptus,v 1.6 2003/02/05 00:19:39 germaingarand Exp $
+# $Id: kalyptus,v 1.9 2003/08/31 15:35:11 germaingarand Exp $
 
 # All files in this project are distributed under the GNU General
 # Public License. This is Free Software.
@@ -20,11 +20,12 @@ use kdocUtil;
 use kdocAstUtil;
 use kdocParseDoc;
 
-use vars qw/ %rootNodes $declNodeType %options @formats_wanted
+use vars qw/ %rootNodes $declNodeType @includes_list %options @formats_wanted $allow_k_dcop_accessors
         @includeclasses $includeclasses $skipInternal %defines $defines $match_qt_defines
-	$libdir $libname $outputdir @libs $striphpath $doPrivate $readstdin
+	$libdir $libname $outputdir @libs $parse_global_space $striphpath $doPrivate $readstdin
 	$Version $quiet $debug $debuggen $parseonly $currentfile $cSourceNode $exe
-	%formats %flagnames $rootNode @classStack $cNode
+	%formats %flagnames @allowed_k_dcop_accesors $allowed_k_dcop_accesors_re $rootNode 
+	@classStack $cNode $globalSpaceClassName
 	$lastLine $docNode @includes $cpp $defcppcmd $cppcmd $docincluded
 	$inExtern %stats %definitions @inputqueue @codeqobject /;
      
@@ -32,6 +33,8 @@ use vars qw/ %rootNodes $declNodeType %options @formats_wanted
 
 %rootNodes = ();			# root nodes for each file type
 $declNodeType = undef;			# last declaration type
+
+@includes_list = ();			# list of files included from the parsed .h
 
 # All options
 
@@ -53,6 +56,7 @@ $quiet = 0;
 $debug = 0;
 $debuggen = 0;
 $parseonly = 0;
+$globalSpaceClassName = "QGlobalSpace";
 
 $currentfile = "";
 
@@ -80,14 +84,18 @@ CODE
 
 # Supported formats
 %formats = ( "java" => "kalyptusCxxToJava", "c" => "kalyptusCxxToC",
-	"objc" => "kalyptusCxxToObjc", "ruby" => "kalyptusCxxToRuby",
+	"objc" => "kalyptusCxxToObjc", "dcopidl" => "kalyptusCxxToDcopIDL",
 	"smoke" => "kalyptusCxxToSmoke", "csharp" => "kalyptusCxxToCSharp",
-        "ECMA" => "kalyptusCxxToECMA" );
+        "ECMA" => "kalyptusCxxToECMA", "swig" => "kalyptusCxxToSwig" );
 
 # these are for expansion of method flags
 %flagnames = ( v => 'virtual', 's' => 'static', p => 'pure',
-	c => 'const', l => 'slot', i => 'inline', n => 'signal' );
+	c => 'const', l => 'slot', i => 'inline', n => 'signal',
+ 	d => 'k_dcop', z => 'k_dcop_signals', y => 'k_dcop_hidden' );
 
+@allowed_k_dcop_accesors = qw(k_dcop k_dcop_hidden k_dcop_signals);
+$allowed_k_dcop_accesors_re = join("|", @allowed_k_dcop_accesors);
+        
 %definitions = {
     _STYLE_CDE => '',
     _STYLE_MOTIF => '',
@@ -123,7 +131,7 @@ private:
 CODE
 };
 
-=head1 KDOC -- Source documentation tool 
+=head1 KDOC -- Source documentation tool
 
 	Sirtaj Singh Kang <taj@kde.org>, Dec 1998.
 
@@ -155,6 +163,8 @@ GetOptions( \%options,
 	"libdir|L=s",	\$libdir,
 	"xref|l=s",	\@libs,
 	"classes|c=s",    \@includeclasses,
+	"globspace",	\$parse_global_space,
+	"allow_k_dcop_accessors", \$allow_k_dcop_accessors,
 
 	"cpp|P",	\$cpp,
 	"docincluded",  \$docincluded,
@@ -328,7 +338,7 @@ sub parseFiles
 				|| croak "Can't read from $currentfile";
 		}
 
-		print "$exe: processing $currentfile\n" unless $quiet;
+		print STDERR "$exe: processing $currentfile\n" unless $quiet;
 
 		# reset vars
 		$rootNode = getRoot( $lang );
@@ -337,12 +347,10 @@ sub parseFiles
 		# add to file lookup table
 		my $showname = $striphpath ? basename( $currentfile )
 						: $currentfile;
-
 		$cSourceNode = Ast::New( $showname );
 		$cSourceNode->AddProp( "NodeType", "source" );
 		$cSourceNode->AddProp( "Path", $currentfile );
 		$rootNode->AddPropList( "Sources", $cSourceNode );
-
 
 		# reset state
 		@classStack = ();
@@ -377,8 +385,8 @@ sub writeDocumentation
 			my $pack = $formats{ $format };
 			require $pack.".pm";
 
-			print "Generating bindings for $format ",
-				"language...\n" unless $quiet;
+			print STDERR "Generating bindings for $format ",
+				          "language...\n" unless $quiet;
 
 			my $f = "$pack\::writeDoc";
 			&$f( $libname, $node, $outputdir, \%options );
@@ -465,6 +473,7 @@ LOOP:
 		next if ( $p =~ /^\s*$/s ); 		# blank lines
 #			|| $p =~ /^\s*Q_OBJECT/		# QObject macro
 #			);
+#
 
 		next if ( $p =~ /^\s*Q_ENUMS/           # ignore Q_ENUMS
                         || $p =~ /^\s*Q_PROPERTY/       # and Q_PROPERTY
@@ -473,9 +482,10 @@ LOOP:
                         || $p =~ /^\s*Q_DUMMY_COMPARISON_OPERATOR/
                         || $p =~ /^\s*K_SYCOCATYPE/     # and K_SYCOCA stuff
                         || $p =~ /^\s*K_SYCOCAFACTORY/  #
-                        || $p =~ /^\s*K_DCOP/           # and DCOP stuff
                         || $p =~ /^\s*KSVG_/            # and KSVG stuff ;)
 			);
+
+		push @includes_list, $1 if $p =~ /^#include\s+<?(.*?)>?\s*$/;
 
 		# remove all preprocessor macros
 		if( $p =~ /^\s*#\s*(\w+)/ ) {
@@ -496,6 +506,7 @@ LOOP:
 				if ( $p =~ m/^#\s*ifdef\s*Q_WS_/ or
 				     $p =~ m/^#\s*if\s+defined\(Q_WS_/ or
 				     $p =~ m/^#\s*if\s+defined\(Q_OS_/ or
+				     $p =~ m/^#\s*if\s+defined\(Q_CC_/ or
 				     $p =~ m/^#\s*if\s+defined\(QT_THREAD_SUPPORT/ or
 				     $p =~ m/^#\s*else/ or
 				     $p =~ m/^#\s*if\s+defined\(Q_FULL_TEMPLATE_INSTANTIATION/ or
@@ -608,15 +619,21 @@ sub readDecl
 	my $l = readCxxLine();
 	my ( $decl ) = "";
 
+	my $allowed_accesors = "private|public|protected|signals";
+	$allowed_accesors .= "|$allowed_k_dcop_accesors_re" if $allow_k_dcop_accessors;
+
 	if( !defined $l ) {
 		return undef;
 	}
-	elsif ( $l =~ /^\s*(private|public|protected|signals)
-		(\s+\w+)?\s*:/x ) { # access specifier
+	elsif ( $l =~ /^\s*($allowed_accesors)
+		       (\s+\w+)?\s*:/x) { # access specifier
 		$declNodeType = "a";
-
 		return $l;
 	}
+        elsif ( $l =~ /K_DCOP/ ) {
+		$declNodeType = "k";
+		return $l;
+        }
 	elsif ( $l =~ m#^\s*/\*\*# ) {	# doc comment
 		$declNodeType = "c";
 		return $l;
@@ -693,6 +710,9 @@ sub identifyDecl
 	elsif ( $declNodeType eq "a" ) {
 		newAccess( $decl );
 	}
+        elsif ( $declNodeType eq "k" ) {
+	        $cNode->AddProp( "DcopExported", 1 );
+        }
 
 	# Typedef struct/class
 	elsif ( $decl =~ /^\s*typedef
@@ -1308,6 +1328,9 @@ sub newTypedefComp
 	Handles a new method declaration or definition.
 
 =cut
+BEGIN {
+
+my $theSourceNode = $cSourceNode;
 
 sub newMethod
 {
@@ -1328,6 +1351,8 @@ sub newMethod
 
 	# A 'friend method' declaration isn't a real method declaration
 	return undef if ( $retType =~ /^friend\s+/ || $retType =~ /^friend\s+class\s+/ );
+
+	my $isGlobalSpace = 0;
 
 	if( $name =~ /^\s*(.*?)\s*::\s*(.*?)\s*$/ ) {
 		# Fully qualified method name.
@@ -1365,21 +1390,38 @@ sub newMethod
 			$parent = $node;
 		}
 	}
-	else {
-		# Within current class/global
-	}
+	# TODO  fix for $retType =~ /template<.*?>/
+	elsif( $parse_global_space && $parent->{NodeType} eq "root" && $name !~ /\s*qt_/ && $retType !~ /template\s*<.*?>/ ) {
+	    $class = $globalSpaceClassName; # FIXME - sanitize the naming system?
+	    $isGlobalSpace = 1;
 
+	    my $opsNode = kdocAstUtil::findRef( $cNode, $class );
+	    if (!$opsNode) {
+		# manually create a "GlobalSpace" class
+		$opsNode = Ast::New( $class );
+		$opsNode->AddProp( "NodeType", "class" );
+		$opsNode->AddProp( "Compound", 1 );
+		$opsNode->AddProp( "Source", $cSourceNode ); # dummy
+		$opsNode->AddProp( "KidAccess", "public" );
+		kdocAstUtil::attachChild( $cNode, $opsNode );
+	    }
+            unless( $theSourceNode == $cSourceNode ) {
+                $theSourceNode = $cSourceNode;
+                $opsNode->AddPropList( "Sources", $theSourceNode ); # sources are scattered across Qt
+            }
+	    $parent = $opsNode;
+	} 
 
 	# flags
 
 	my $flags = "";
 
-	if( $retType =~ /static/ ) {
+	if( $retType =~ /static/ || $isGlobalSpace ) {
 		$flags .= "s";
 		$retType =~ s/static//g;
 	}
 
-	if( $const ) {
+	if( $const && !$isGlobalSpace ) {
 		$flags .= "c";
 	}
 
@@ -1399,18 +1441,29 @@ sub newMethod
 		exists $parent->{Forward} ? "(forward)\n" :"\n";
 	}
 
+        # NB, these are =~, so make sure they are listed in correct order
 	if ( $parent->{KidAccess} =~ /slot/ ) {
 		$flags .= "l";
+	}
+	elsif ( $parent->{KidAccess} =~ /k_dcop_signals/ ) {
+		$flags .= "z";
+	}
+	elsif ( $parent->{KidAccess} =~ /k_dcop_hidden/ ) {
+		$flags .= "y";
+	}
+	elsif ( $parent->{KidAccess} =~ /k_dcop/ ) {
+		$flags .= "d";
 	}
 	elsif ( $parent->{KidAccess} =~ /signal/ ) {
 		$flags .= "n";
 	}
 
-	$retType =~ s/Q_EXPORT\s*//;
+	$retType =~ s/QM?_EXPORT[_A-Z]*\s*//;
 	$retType =~ s/inline\s+//;
+	$retType =~ s/extern\s+//;
 	$retType =~ s/^\s*//g;
 	$retType =~ s/\s*$//g;
-	
+
 	# node
 	
 	my $node = Ast::New( $name );
@@ -1421,9 +1474,11 @@ sub newMethod
 	makeParamList( $node, $params, 0 ); # Adds the ParamList property containing the list of param nodes
 
 	$parent->AddProp( "Pure", 1 ) if $pure;
-	kdocAstUtil::attachChild( $parent, $node );
 
+	kdocAstUtil::attachChild( $parent, $node );
 	return $node;
+}
+
 }
 
 =head2 makeParamList
@@ -1468,7 +1523,7 @@ sub makeParamList($$$)
 
 		# The RE below reads as: = ( string constant or char
 		# or some word/number, with optional bitwise shifts, OR'ed or +'ed flags, and/or function call ).
-		if ( $arg =~ s/\s*=\s*(("[^\"]*")|(\'.\')|(([-\w:~]*)\s*([<>\|\+-]*\s*\w*\s*)*(\(\w*\))?))// ) {
+		if ( $arg =~ s/\s*=\s*(("[^\"]*")|(\'.\')|(([-\w:~]*)\s*([<>\|\+-]*\s*\w*\s*)*(\([^(]*\))?))// ) {
 			$defaultparam = $1;
 		}
 
@@ -1511,7 +1566,7 @@ sub newAccess
 {
 	my ( $access ) = @_;
 
-	return undef unless ($access =~ /^\s*(\w+)\s*(slots)?/);
+	return undef unless ($access =~ /^\s*(\w+)\s*(slots|$allowed_k_dcop_accesors_re)?/);
 
 	print "Access: [$1] [$2]\n" if $debug;
 

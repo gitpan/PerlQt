@@ -1,4 +1,5 @@
 package Qt::base;
+use strict;
 
 sub this () {}
 
@@ -12,6 +13,7 @@ sub new {
 }
 
 package Qt::base::_overload;
+use strict;
 
 no strict 'refs';
 use overload
@@ -33,155 +35,378 @@ use overload
     "+"  => "Qt::base::_overload::op_plus",
     "-"  => "Qt::base::_overload::op_minus",
     "*"  => "Qt::base::_overload::op_mul",
+    "/"  => "Qt::base::_overload::op_div",
     "^"  => "Qt::base::_overload::op_xor",
     "|"  => "Qt::base::_overload::op_or",
     "--" => "Qt::base::_overload::op_decrement",
-    "++" => "Qt::base::_overload::op_increment";
+    "++" => "Qt::base::_overload::op_increment",
+    "neg"=> "Qt::base::_overload::op_negate";
 
 sub op_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator==';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1]));
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator==';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret
 }
 
 sub op_not_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator!=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator!=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret
 }
 
 sub op_plus_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator+=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator+=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret
 }
 
 sub op_minus_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator-=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator-=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_mul_equal {
-    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator°=';
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator*=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator*=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_div_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator/=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator/=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_shift_right {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator>>';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator>>';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_shift_left {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator<<';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator<<';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret
 }
 
 sub op_lesser_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator<=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    $Qt::_internal::strictArgMatch = 0;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator<=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_greater_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator>=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator>=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_xor_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator^=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator^=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_or_equal {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator|=';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
-    $_[2] ? $_[1] : $_[0]
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return ($_[2] ? $_[1] : $_[0]) unless $err = $@;
+    my $ret;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator|=';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@; 
+    $ret
 }
 
 sub op_greater {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator>';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator>';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_lesser {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator<';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator<';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_plus {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator+';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator+';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_minus {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator-';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator-';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_mul {
-    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator *';
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator*';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator*';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret     
+}
+
+sub op_div {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator/';
+    my $autoload = ref($_[0])."::_UTOLOAD";
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator/';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret     
+}
+
+sub op_negate {
+    $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator-';
+    my $autoload = ref($_[0])."::AUTOLOAD";
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->($_[0]) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator-';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload($_[0]) };
+    die $err.$@ if $@;
+    $ret
 }
 
 sub op_xor {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator^';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator^';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_or {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator|';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[2] ? (@_)[1,0] : (@_)[0,1]);
+    my ($ret, $err);
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $ret = $autoload->(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $ret unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator|';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; $ret = &$autoload(($_[2] ? (@_)[1,0] : (@_)[0,1])) };
+    die $err.$@ if $@;
+    $ret    
 }
 
 sub op_increment {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator++';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[0]);
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->($_[0]) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $_[0] unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator++';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; &$autoload($_[0]) };
+    die $err.$@ if $@; 
     $_[0]
 }
 
 sub op_decrement {
     $Qt::AutoLoad::AUTOLOAD = ref($_[0]).'::operator--';
     my $autoload = ref($_[0])."::_UTOLOAD";
-    $autoload->($_[0]);
+    my $err;
+    $Qt::_internal::strictArgMatch = 1;
+    eval { local $SIG{'__DIE__'}; $autoload->($_[0]) };
+    $Qt::_internal::strictArgMatch = 0;
+    return $_[0] unless $err = $@;
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::GlobalSpace::operator--';
+    $autoload = "Qt::GlobalSpace::_UTOLOAD";
+    eval { local $SIG{'__DIE__'}; &$autoload($_[0]) };
+    die $err.$@ if $@;
     $_[0]
 }
 
 package Qt::_internal;
+
 use strict;
+use Qt::debug();
 
 our $Classes;
 our %CppName;
 our @IdClass;
 
 our @PersistentObjects;   # objects which need a "permanent" reference in Perl
+our @sigslots;
+our $strictArgMatch = 0;
 
 sub this () {}
 
@@ -196,15 +421,11 @@ sub init_class {
 
     $IdClass[$classId] = $class;
     $CppName{$class} = $c;
+    Qt::_internal::installautoload("$class");
     {
-	package Qt::_internal::autoload;   # this package holds $AUTOLOAD
-	my $closure = sub {	# closure on $classId
-	    our $AUTOLOAD;
-	#    warn "Legacy AUTOLOAD for $AUTOLOAD\n";
-	    Qt::_internal::autoloaded($AUTOLOAD, $classId, \@_) ||
-		goto &Qt::_internal::methodcall;
-	};
-	*{ $class . "::AUTOLOAD" } = $closure;
+	package Qt::AutoLoad;   # this package holds $AUTOLOAD
+	my $closure = \&{ "$class\::_UTOLOAD" };
+	*{ $class . "::AUTOLOAD" } =  sub{ &$closure };
     }
 
     my @isa = Qt::_internal::getIsa($classId);
@@ -235,19 +456,7 @@ sub init_class {
             # the next line triggers a warning on SuSE's Perl 5.6.1 (?)
 	    setThis(bless &$autoload, " $class");
         }
-
-	if(!$class->isa("Qt::Object") and
-	    $class->isa("Qt::LayoutItem") ||
-	    $class->isa("Qt::ListViewItem") ||
-	    $class->isa("Qt::IconViewItem") ||
-	    $class->isa("Qt::ListBoxItem") ||
-	    $class->isa("Qt::StyleSheetItem") ||
-	    $class->isa("Qt::TableItem") ||
-            $class->isa("Qt::SqlCursor") ) {
-	    push @PersistentObjects, this;
-	} else {
-	    setAllocated(this, 1);
-	}
+        setAllocated(this, 1);
 	mapObject(this);
     } unless defined &{"$class\::NEW"};
 
@@ -262,19 +471,25 @@ sub argmatch {
     my $i = shift;
     my %match;
     my $argtype = getSVt($args->[$i]);
-    for my $method (@$methods) {
+    for my $methix(0..$#$methods) {
+	my $method = $$methods[$methix];
 	my $typename = getTypeNameOfArg($method, $i);
 	if($argtype eq 'i') {
-	    if($typename =~ /^(?:short|ushort|int|uint|long|ulong|signed|unsigned)$/) {
-		$match{$method} = 0;
+	    if($typename =~ /^(?:bool|(?:(?:un)?signed )?(?:int|long)|uint)[*&]?$/) {
+		$match{$method} = [0,$methix];
 	    }
 	} elsif($argtype eq 'n') {
 	    if($typename =~ /^(?:float|double)$/) {
-		$match{$method} = 0;
+		$match{$method} = [0,$methix];
 	    }
 	} elsif($argtype eq 's') {
-	    if($typename =~ /^(?:char\*|const char\*|(?:const )?(Q(C?)String)[*&]?)$/) {
-		$match{$method} = defined $2 ? 1 : ( defined $1 ? 2 : 0 );
+	    if($typename =~ /^(?:(?:const )?u?char\*|(?:const )?(?:(Q(C?)String)|QByteArray)[*&]?)$/) {
+		# the below read as: is it a (Q(C)String) ? ->priority 1
+		# is it a (QString)  ? -> priority 2
+		# neither: normal priority
+		# Watch the capturing parens vs. non-capturing (?:)
+		$match{$method}[0] = defined $2 && $2 ? 1 : ( defined $1 ? 2 : 0 );
+		$match{$method}[1] = $methix
 	    }
 	} elsif($argtype eq 'a') {
             # FIXME: shouldn't be hardcoded. Installed handlers should tell what perl type they expect.
@@ -282,54 +497,42 @@ sub argmatch {
                                 const\ QCOORD\*|
                                 (?:const\ )?
                                 (?:
-                                  QStringList[\*&]?|
+                                  Q(?:String|Widget|Object|FileInfo|CanvasItem)List[\*&]?|
                                   QValueList<int>[\*&]?|
+                                  QPtrList<Q(?:Tab|ToolBar|DockWindow|NetworkOperation)>|
                                   QRgb\*|
                                   char\*\*
                                 )
                               )$/x) {
-                $match{$method} = 0;
+                $match{$method} = [0,$methix];
             }
 	} elsif($argtype eq 'r' or $argtype eq 'U') {
-	    $match{$method} = 0;
+	    $match{$method} = [0,$methix];
 	} else {
 	    my $t = $typename;
 	    $t =~ s/^const\s+//;
 	    $t =~ s/(?<=\w)[&*]$//;
 	    my $isa = classIsa($argtype, $t);
-	    if($isa) {
-		$match{$method} = 0;
+	    if($isa != -1) {
+		$match{$method} = [-$isa,$methix];
 	    }
 	}
     }
-
-    return sort { $match{$b} <=> $match{$a} } keys %match;
+    return sort { $match{$b}[0] <=> $match{$a}[0] or $match{$a}[1] <=> $match{$b}[1] } keys %match;
 }
 
-sub destroy {
-    my $self = shift;
-    return 1 if $self->{"has been hidden"};
-    return 1 unless isValidAllocatedPointer($self) and isQObject($self);
-
-    my $parent;
-    eval { $parent = $self->parent() };
-    return 1 if $@ || !$parent;
-    warn "Increasing refcount in DESTROY for $self (still has a parent)"
-        if debug() && (debug() & $Qt::debug::channel{'gc'});
-    if(!isValidAllocatedPointer($parent))
-    {
-       my $a = findAllocatedObjectFor($parent);
-       if($a) {
-           push @{ $a->{"hidden children"} }, $self
-       } else {
-           push @PersistentObjects, $self
-       }
-       $self->{"has been hidden"} = 1;
-       return 1;
+sub objmatch {
+    my $method = shift;
+    my $args = shift;
+    for my $i(0..$#$args) {
+	my $argtype = getSVt($$args[$i]);
+	my $t = getTypeNameOfArg($method, $i);
+	next if length $argtype == 1;
+	$t =~ s/^const\s+//;
+	$t =~ s/(?<=\w)[&*]$//;
+	return 0 unless classIsa($argtype, $t) != -1;
     }
-    push @{ $parent->{"hidden children"} }, $self;
-    $self->{"has been hidden"} = 1;
-    return 1;
+    1;
 }
 
 sub do_autoload {
@@ -351,16 +554,18 @@ sub do_autoload {
 	}
     }
     my @methodids = map { findMethod($class, $_) } @methods;
+#   @methodids = map { findMethod('QGlobalSpace', $_) } @methods 
+#			if (!@methodids and $withObject || $class eq 'Qt');
 
     if(@methodids > 1) {
 	# ghetto method resolution
 	my $count = scalar @_;
 	for my $i (0..$count-1) {
 	    my @matching = argmatch(\@methodids, \@_, $i);
-	    @methodids = @matching if @matching;
+	    @methodids = @matching if @matching or $strictArgMatch;
 	}
         do {
-            my $c = caller(3)?3:1;
+            my $c = ($method eq $class)? 4:2;
             warn "Ambiguous method call for :\n".
                 "\t${class}::${method}(".catArguments(\@_).")".
              ((debug() && (debug() & $Qt::debug::channel{'verbose'})) ?
@@ -370,12 +575,15 @@ sub do_autoload {
         } if debug() && @methodids > 1 && (debug() & $Qt::debug::channel{'ambiguous'});
 
     }
+    elsif( @methodids == 1 and @_ ) {
+	@methodids = () unless objmatch($methodids[0], \@_)
+    }
     unless(@methodids) {
 	if(@_) {
 	    @methodids = findMethod($class, $method);
 	    do {
                 do {
-                    my $c = caller(3)?3:1;
+                    my $c = ($method eq $class)? 4:2;
                     warn "Lookup for ${class}::${method}(".catArguments(\@_).
                          ")\ndid not yeld any result.\n".
                          ((debug() && (debug() & $Qt::debug::channel{'verbose'})) ?
@@ -406,7 +614,8 @@ sub do_autoload {
                 $verbose = @near ? ("\nCloser candidates are :\n".dumpCandidates(\@near)) :
                                     "\nNo close candidate found.\n";
             }
-            my $c = caller(3)?3:1;
+            my $c = ($method eq $class)? 4:2;
+
             die "--- No method to call for :\n\t${class}::${method}(".
             catArguments(\@_).")".$verbose."\nat ".(caller($c))[1].
             " line ".(caller($c))[2].".\n";
@@ -414,112 +623,6 @@ sub do_autoload {
     }
     setCurrentMethod($methodids[0]);
     return 1;
-}
-
-sub autoloaded {
-    my($method, $classId, $args) = @_;
-
-    $method =~ s/.*:://;
-
-    my $class = $CppName{$IdClass[$classId]};
-    my $db = debug();
-
-    warn "In Autoload for $class\::$method()"
-      if $db && ($db & $Qt::debug::channel{'autoload'});
-
-    my $id = join(";",$class,$method,map{ getSVt($_) } @$args);
-    if( my $meth = find_mcid($id)) {
-        setCurrentMethod($meth);
-        warn "Calling method ".dumpCandidates([$meth]).
-            (($db && ($db & $Qt::debug::channel{'verbose'})) ?
-            "with arguments (".catArguments($args).")\n":"")
-          if $db && ($db & $Qt::debug::channel{'calls'});
-        return 0;
-    }
-    my $c = caller(3)?3:1;
-
-    my @methods = ($method);
-    for my $arg (@$args) {
-	unless(defined $arg) {
-	    @methods = map { $_ . '?', $_ . '#', $_ . '$' } @methods;
-	} elsif(isObject($arg)) {
-	    @methods = map { $_ . '#' } @methods;
-	} elsif(ref $arg) {
-	    @methods = map { $_ . '?' } @methods;
-	} else {
-	    @methods = map { $_ . '$' } @methods;
-	}
-    }
-    my @methodids = map { findMethod($class, $_) } @methods;
-
-    if(@methodids > 1) {
-	# ghetto method resolution
-	my $count = scalar @$args;
-	for my $i (0..$count-1) {
-	    my @matching = argmatch(\@methodids, $args, $i);
-	    @methodids = @matching if @matching;
-	}
-        warn "Ambiguous method call for :\n".
-             "\t${class}::${method}(".catArguments($args).")".
-             (($db && ($db & $Qt::debug::channel{'verbose'})) ?
-             "\nCandidates are:\n".dumpCandidates(\@methodids).
-             "\nTaking first one...\nat " : "").
-             (caller($c))[1]." line ".(caller($c))[2].".\n"
-             if $db && @methodids > 1 && ($db & $Qt::debug::channel{'ambiguous'});
-    }
-    unless(@methodids) {
-	if(@$args) {
-	    @methodids = findMethod($class, $method);
-	    do {
-                warn "Lookup for ${class}::${method}(".catArguments($args).
-                     ")\ndid not yeld any result.\n".
-                     (($db && ($db & $Qt::debug::channel{'verbose'})) ?
-                     "Might be a call for an enumerated value (enum).\n":"").
-                     "Trying ${class}::${method}() with no arguments\nat ".
-                     (caller($c))[1]." line ".(caller($c))[2].".\n"
-                     if $db && @$args > 1 && (debug() & $Qt::debug::channel{'ambiguous'});
-                @$args = ()
-            } if @methodids;
-	}
-	do{
-            my $verbose = "";
-            if(debug() && (debug() & $Qt::debug::channel{'verbose'})) {
-                my $alt = findAllMethods( $classId );
-                getAllParents($classId, \my @sup);
-                for my $s(@sup)
-                {
-                    my $h = findAllMethods( $s );
-                    map { $alt->{$_} = $h->{$_} } keys %$h
-                }
-                my $pat1 = my $pat2 = $method;
-                my @near = ();
-                while(!@near && length($pat1)>2) {
-                    @near = map { /$pat1|$pat2/i ? @{ $$alt{$_} }:() } sort keys %$alt;
-                    chop $pat1;
-                    substr($pat2,-1,1)= "";
-                }
-                $verbose = @near ? ("\nCloser candidates are :\n".dumpCandidates(\@near)) :
-                                    "\nNo close candidate found.\n";
-            }
-            die "--- No method to call for :\n\t${class}::${method}(".
-            catArguments($args).")".$verbose."\nat ".(caller($c))[1].
-            " line ".(caller($c))[2].".\n";
-        } unless @methodids;
-    }
-
-    insert_mcid($id, $methodids[0]);
-    setCurrentMethod($methodids[0]);
-
-    warn "Calling method ".dumpCandidates([$methodids[0]]).
-         ((debug() && (debug() & $Qt::debug::channel{'verbose'})) ?
-         "with arguments (".catArguments($args).")\n":"")
-         if $db && ($db & $Qt::debug::channel{'calls'});
-
-    return 0;
-}
-
-sub methodcall {
-    goto &callMethod;
 }
 
 sub init {
@@ -530,6 +633,45 @@ sub init {
     for my $c (@$Classes) {
 	init_class($c);
     }
+}
+
+sub splitUnnested {
+        my $string = shift;
+        my(%open) = (
+            '[' => ']',
+            '(' => ')',
+            '<' => '>',
+            '{' => '}',
+        );
+        my(%close) = reverse %open;
+        my @ret;
+        my $depth = 0;
+        my $start = 0;
+        $string =~ tr/"'//;
+        while($string =~ /([][}{)(><,])/g) {
+            my $c = $1;
+            if(!$depth and $c eq ',') {
+                my $len = pos($string) - $start - 1;
+                my $ret = substr($string, $start, $len);
+                $ret =~ s/^\s*(.*?)\s*$/$1/;
+                push @ret, $ret;
+                $start = pos($string);
+            } elsif($open{$c}) {
+                $depth++;
+            } elsif($close{$c}) {
+                $depth--;
+            }
+        }
+        my $subs = substr($string, $start);
+        $subs =~ s/^\s*(.*?)\s*$/$1/;
+        push @ret, $subs if ($subs);
+        return @ret;
+}
+
+sub getSubName
+{
+    my $glob = getGV( shift );
+    return ( $glob =~ /^.*::(.*)$/ )[0];
 }
 
 sub Qt::Application::NEW {
@@ -549,7 +691,7 @@ sub Qt::Image::NEW {
     # another ugly hack, whee
     my $class = shift;
     if(@_ == 6) {
-	my $colortable = $_[5];
+	my $colortable = $_[4];
 	my $numColors = (ref $colortable eq 'ARRAY') ? @$colortable : 0;
 	splice(@_, 5, 0, $numColors);
     }
@@ -580,8 +722,8 @@ sub makeMetaData {
 }
 
 # This is the key function for signal/slots...
-# All META hash entries have been defined by Qt::slots.pm &&|| Qt::signals.pm
-# Thereafter, Qt::isa.pm build the MetaObject by calling this function
+# All META hash entries have been defined by /lib/Qt/slots.pm and /lib/Qt/signals.pm
+# Thereafter, /lib/Qt/isa.pm build the MetaObject by calling this function
 # Here is the structure of the META hash:
 # META { 'slot' => { $slotname-1 => { name      =>  $slotname-1,
 #                                     arguments => xxx,
@@ -605,6 +747,7 @@ sub getMetaObject {
     my $class = shift;
     my $meta = \%{ $class . '::META' };
     return $meta->{object} if $meta->{object} and !$meta->{changed};
+    updateSigSlots() if( @sigslots );
     inheritSuperSigSlots($class);
     my($slot_tbl, $slot_tbl_count) = makeMetaData($meta->{slots});
     my($signal_tbl, $signal_tbl_count) = makeMetaData($meta->{signals});
@@ -613,6 +756,18 @@ sub getMetaObject {
 		$signal_tbl, $signal_tbl_count);
     $meta->{changed} = 0;
     return $meta->{object};
+}
+
+sub updateSigSlots
+{
+    require Qt::signals;
+    require Qt::slots;
+    for my $i (@sigslots) {
+        no strict 'refs';
+        my $mod = "Qt::" . lc($$i[0]) . ( substr($$i[0], 0, 1) eq 'S' ? 's' : '' ) . "::import";
+        $mod->( $$i[1], getSubName($$i[2]) => $$i[3] );
+    }
+    @sigslots = ();
 }
 
 sub inheritSuperSigSlots {
@@ -685,6 +840,33 @@ sub Qt::GridLayout::addMultiCellLayout {
     $autoload->(@_);
 }
 
+package Qt::Object;
+use strict;
+
+sub  MODIFY_CODE_ATTRIBUTES
+{
+    package Qt::_internal;
+    my ($package, $coderef, @attrs ) = @_;
+    my @reject;
+    foreach my $attr( @attrs )
+    {
+        if( $attr !~ /^ (SIGNAL|SLOT|DCOP) \(( .* )\) $/x )
+        {
+             push @reject, $attr;
+             next;
+        }
+        push @sigslots,
+             [ $1, $package, $coderef, [ splitUnnested( $2 ) ] ];
+    }
+    if( @sigslots )
+    {
+        no strict 'refs';
+        my $meta = \%{ $package . '::META' };
+        $meta->{ 'changed' } = 1;
+    }
+    return @reject;
+}
+
 package Qt;
 
 use 5.006;
@@ -694,7 +876,7 @@ use XSLoader;
 
 require Exporter;
 
-our $VERSION = '3.006';
+our $VERSION = '3.008';
 
 our @EXPORT = qw(&SIGNAL &SLOT &CAST &emit &min &max);
 
@@ -718,4 +900,211 @@ sub min ($$) { $_[0] < $_[1] ? $_[0] : $_[1] }
 sub max ($$) { $_[0] > $_[1] ? $_[0] : $_[1] }
 
 sub import { goto &Exporter::import }
+
+sub Qt::base::ON_DESTROY { 0 };
+
+sub Qt::Object::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->parent;
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+        this()->{"has been hidden"} = 1;
+        return 1
+    }
+    return 0
+}
+
+sub Qt::Application::ON_DESTROY { 0 }
+
+# we need to solve an ambiguity for Q*Items: they aren't QObjects,
+# and are meant to be created on the heap / destroyed manually.
+# On the one hand, we don't want to delete them if they are still owned by a QObject hierarchy
+# but on the other hand, what can we do if the user DOES need to destroy them?
+#
+# So the solution adopted here is to use the takeItem() method when it exists
+# to lower the refcount and allow explicit destruction/removal.
+
+sub Qt::ListViewItem::ON_DESTROY {
+    package Qt::_internal;
+    my $parent = this()->listView();
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this) } = this();
+        this()->{"has been hidden"} = 1;
+        setAllocated( this(), 0 );
+        return 1
+    }
+    setAllocated( this(), 1 );
+    return 0
+}
+
+sub Qt::ListViewItem::takeItem
+{
+    package Qt::_internal;
+    delete ${ this()->{"hidden children"} } { sv_to_ptr($_[0]) };
+    delete $_[0]->{"has been hidden"};
+    setAllocated( $_[0], 1 );
+    no strict 'refs';
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::ListViewItem::takeItem';
+    my $autoload = " Qt::ListViewItem::_UTOLOAD";
+    dontRecurse();
+    $autoload->( $_[0] );
+}
+
+sub Qt::ListView::takeItem
+{
+    package Qt::_internal;
+    delete ${ this()->{"hidden children"} } { sv_to_ptr($_[0]) };
+    delete $_[0]->{"has been hidden"};
+    setAllocated( $_[0], 1 );
+    no strict 'refs';
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::ListView::takeItem';
+    my $autoload = " Qt::ListView::_UTOLOAD";
+    dontRecurse();
+    $autoload->( $_[0] );
+}
+
+sub Qt::IconViewItem::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->iconView;
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+        this()->{"has been hidden"} = 1;
+        setAllocated( this(), 0 );
+        return 1
+    }
+    setAllocated( this(), 1 );
+    return 0
+}
+
+sub Qt::IconView::takeItem
+{
+    package Qt::_internal;
+    delete ${ this()->{"hidden children"} } { sv_to_ptr($_[0]) };
+    delete $_[0]->{"has been hidden"};
+    setAllocated( $_[0], 1 );
+    no strict 'refs';
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::IconView::takeItem';
+    my $autoload = " Qt::IconView::_UTOLOAD";
+    Qt::_internal::dontRecurse();
+    $autoload->( $_[0] );
+}
+
+
+sub Qt::ListBoxItem::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->listBox();
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+        this()->{"has been hidden"} = 1;
+        setAllocated( this(), 0 );
+        return 1
+    }
+    setAllocated( this(), 1 );
+    return 0
+}
+
+sub Qt::ListBox::takeItem
+{
+    # Unfortunately, takeItem() won't reset the Item's listBox() pointer to 0.
+    # That's a Qt bug (I reported it and it got fixed as of Qt 3.2b2)
+    package Qt::_internal;
+    delete ${ this()->{"hidden children"} } { sv_to_ptr($_[0]) };
+    delete $_[0]->{"has been hidden"};
+    setAllocated( $_[0], 1 );
+    no strict 'refs';
+    $Qt::Autoload::AUTOLOAD = 'Qt::ListBox::takeItem';
+    my $autoload = " Qt::ListBox::_UTOLOAD";
+    dontRecurse();
+    $autoload->( $_[0] );
+}
+
+sub Qt::TableItem::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->table;
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+        this()->{"has been hidden"} = 1;
+        setAllocated( this(), 0 );
+        return 1
+    }
+    setAllocated( this(), 1 );
+    return 0
+}
+
+sub Qt::Table::takeItem
+{
+    package Qt::_internal;
+    delete ${ this()->{"hidden children"} } { sv_to_ptr($_[0]) };
+    delete $_[0]->{"has been hidden"};
+    setAllocated( $_[0], 1 );
+    no strict 'refs';
+    $Qt::AutoLoad::AUTOLOAD = 'Qt::Table::takeItem';
+    my $autoload = " Qt::Table::_UTOLOAD";
+    dontRecurse();
+    $autoload->( $_[0] );
+}
+
+sub Qt::LayoutItem::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->widget() || this()->layout();
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+    }
+    else # a SpacerItem...
+    {
+        push @PersistentObjects, this();
+    }
+    this()->{"has been hidden"} = 1;
+    setAllocated( this(), 0 );
+    return 1
+}
+
+sub Qt::Layout::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->mainWidget() || this()->parent();
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+        this()->{"has been hidden"} = 1;
+        return 1
+    }
+    return 0
+}
+
+sub Qt::StyleSheetItem::ON_DESTROY
+{
+    package Qt::_internal;
+    my $parent = this()->styleSheet();
+    if( $parent )
+    {
+        ${ $parent->{"hidden children"} } { sv_to_ptr(this()) } = this();
+        this()->{"has been hidden"} = 1;
+        setAllocated( this(), 0 );
+        return 1
+    }
+    setAllocated( this(), 1 );
+    return 0
+}
+
+sub Qt::SqlCursor::ON_DESTROY
+{
+    package Qt::_internal;
+    push @PersistentObjects, this();
+    this()->{"has been hidden"} = 1;
+    setAllocated( this(), 0 );
+    return 1
+}
+
 1;

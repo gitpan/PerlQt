@@ -14,8 +14,19 @@ our %channel = (
 sub import {
     shift;
     my $db = (@_)? 0x0000 : (0x01|0x20);
-    map { $db |= $channel{$_} } @_;
+    my $usage = 0;
+    for my $ch(@_) {
+        if( exists $channel{$ch}) {
+             $db |= $channel{$ch};
+        } else {
+             warn "Unknown debugging channel: $ch\n";
+             $usage++;
+        }
+    }
     Qt::_internal::setDebug($db);    
+    print "Available channels: \n\t".
+          join("\n\t", sort keys %channel).
+          "\n" if $usage;
 }
 
 sub unimport {

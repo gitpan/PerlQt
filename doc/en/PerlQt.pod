@@ -23,8 +23,10 @@ It assumes you have some basic Perl Object Oriented programming knowledge.
 
 Some C++ knowledge is recommended but not required.
 It would mostly help you to find your way through L<Qt's
-excellent online documentation|"http://doc.trolltech.com"> which is our
+excellent documentation|"http://doc.trolltech.com"> which is our
 ultimate and only reference.
+If Qt is installed on your system, then you most probably
+also have its documentation. Try the C<$QTDIR/bin/assistant> program.
 
 
 =head1 Installation
@@ -54,7 +56,7 @@ v3.0|"http://www.trolltech.com/developer/download/qt-x11.html">
 
 =item *
 
-L<SmokeQt 1.0|"http://webcvs.kde.org/cgi-bin/cvsweb.cgi/kdebindings/smoke">
+L<SmokeQt 1.2.1|"http://webcvs.kde.org/cgi-bin/cvsweb.cgi/kdebindings/smoke">
 The SMOKE library (Scripting Meta Object Kompiler) is part of L<KDE|"http://www.kde.org">'s B<kdebindings> module.
 You may want to check if a precompiled version of this module exists for your
 system.
@@ -72,16 +74,14 @@ by the Makefile.PL wrapper. All options are forwarded to ./configure :
 
  perl Makefile.PL
 
-If SMOKE is missing, C<configure> will generate its sources (4 minutes on an average system).
+If SMOKE is missing, C<configure> will generate its sources.
 Then :
 
  make
 
-(40 minutes average if Smoke needs to be built)
-
  make install
 
-This will install PerlQt, Puic and Smoke (if needed).
+This will install PerlQt, Puic and Smoke (if needed), as well as the pqtsh and pqtapi utilities.
 
 The preferred install location for SMOKE and Puic is in the KDE3 file system.
 If you don't have KDE3 installed, specify a location with C<configure>'s
@@ -238,7 +238,8 @@ If you don't need to pass any argument to the constructor, simply say :
 =item 3
 
 Whenever you need to pass a Null pointer as an argument, use Perl's B<undef> 
-keyword.
+keyword. Do not pass zero.
+ Beware: this is by far the most common error in PerlQt programs.
 
 Pointers are arguments preceded by an B<*> 
 character in Qt's documentation (e.g: "C<QWidget * widget>").
@@ -455,6 +456,12 @@ and then use it as a convenient accessor :
 To reimplement a B<virtual function>, simply create a B<sub> with the 
 same name in your object.
 
+Existing virtual functions are marked as such in Qt's documentation
+(they are prefixed with the "virtual" keyword).
+
+You can inspect what virtual function names are being called by Qt at runtime by
+putting a C<use Qt::debug qw( virtual )> statement at the top of your program.
+
 =back
 
 =head2 Signals and Slots
@@ -491,7 +498,8 @@ myObject->connect( sender, SIGNAL 'mysignal(arg_type)', SLOT
 'myslot(arg_type)');
 
 This mechanism can be extended at will by the declaration of custom Signals and 
-Slots, through the C<use Qt::signals> and C<use Qt::slots> pragma.
+Slots, through the C<use Qt::signals> and C<use Qt::slots> pragma
+(see also the other syntax, later on).
 
 Each declared slot will call the corresponding subroutine in your object, 
 each declared signal can be raised through the B<emit> keyword.
@@ -548,10 +556,44 @@ triggers the C<wasClicked()> slot. C<wasClicked> then proceeds to emit
 the C<changeIt(int,int)> signal [l.27], hence triggering the C<change(int,int)> 
 slot with two arguments.
 
+Finally, since PerlQt-3.008, an alternative syntax can be used to declare Signals and Slots:
+
+ sub a_slot : SLOT(int, QString)
+ { 
+	$int = shift;
+	$string = shift;
+	# do something
+ }
+
+and
+
+ sub a_signal : SIGNAL(QString);
+
+This syntax is perfectly compatible with the traditional
+C<use Qt::signals> and C<use Qt::slots> declarations.
+
+Eventually, it can prove good programming practice to mix both syntaxes, by first declaring  
+Signals/Slots with C<use Qt::slots/signals>, then repeat this declaration
+in the actual implementation with the second syntax.
+
+Declarations will be checked for consistency at compile time, and any mismatch
+in arguments would trigger a warning.
 
 =head1 RAD prototyping with Qt Designer and Puic
 
 =head2 Introduction
+
+=over 4
+
+=item * Note: 
+
+As of PerlQt-3.008, a separate PerlQt plugin for Qt Designer is available,
+bringing full integration, syntax highlighting, code completion and allowing to run/debug your PerlQt project
+entirely from the Designer GUI. 
+Nevertheless, the below is still accurate with regard to puic command line interaction 
+and with regard to using Qt Designer I<without> the specific plugin.
+
+=back
 
 As efficient and intuitive as Qt can be, building a complete GUI from scratch 
 is often a tedious task.
@@ -747,7 +789,7 @@ Puic is (c) TrollTech AS., Phil Thompson and Germain Garand,
 The mentioned software is released under the GNU Public Licence v.2 or later.
 
 
-=head1 Appendix 1 : How to use Qt's Documentation
+=head1 Appendix 1 : C++ conventions and their Perl counterpart
 
 Whenever you want to use a class/method described in Qt's
 L<documentation|"http://doc.trolltech.com"> (see also the 'assistant' program bundled with Qt)
@@ -779,10 +821,10 @@ PerlQt as
 
  Qt::Bar::Foo( arg-1,...,arg-n);
 
-The only notable exceptions concern global functions :
+The only notable exceptions are :
 
  qApp()     will map to Qt::app()
- qVersion() will map to Qt::version()
+ qVersion() will map to Qt::version() # not really needed anymore: we have qVersion(). See Global Functions below.
 
 =item *
 
@@ -904,13 +946,42 @@ Input/Output flags on files.
 In order to avoid the namespace pollution induced by global constants, PerlQt group them in the B<Qt::constants> module.
 For instance, requesting the importation of all IO constants into the current namespace would be done with:
 
- use Qt::constants qw(:IO);
+ use Qt::constants;
 
 You may also import specific symbols:
 
  use Qt::constants qw( IO_ReadOnly IO_WriteOnly );
 
+=item Global Functions
+
+
+Qt has also some utilitarian functions such as bitBlt, qCompress, etc.
+
+Those were global scope functions and have been grouped in a common namespace:
+C<Qt::GlobalSpace>.
+
+Hence, you shall access this namespace either with a fully qualified call:
+
+ Qt::GlobalSpace::qUncompress( $buffer )
+
+Or directly, after importation in the current namespace:
+
+ use Qt::GlobalSpace;
+ qUncompress( $buffer )
+
+Of course, you may selectively import a few functions:
+
+ use Qt::GlobalSpace qw( qUncompress bitBlt )
+
+B<Note:> GlobalSpace has also operators, such has the one performing an addition on two
+Qt::Point(). Those operators are called automatically.
+
+e.g:
+
+ $p1 = Qt::Point(10, 10) + Qt::Point(20, 20)
+
 =back
+
 
 =head1 Appendix 2 : Internationalization
 
@@ -1039,26 +1110,35 @@ PerlQt will translate it to an array reference containing all the object's strin
 In the other way, instead of providing a Qt::StringList object as an argument of a method, one would simply
 provide the reference to an array of Perl strings.
 
-Here is the list of Marshallers as of PerlQt-3.006 :
+Here is the list of Marshallers as of PerlQt-3.008 :
 
  -----------------------------------------------------------------
- float, double                  <=>       Perl real (NV)
+ float, double                         <=>       Perl real (NV)
  char, uchar, int, uint, enum
- long, ulong, short, ushort     <=>       Perl integer (IV)
- QString, -&, -*                 =>       Perl string (utf8)
- QString, -&, -*                <=        Perl string (utf8 or iso-latin1 or locale)
- QCString, -&, -*               <=>       Perl string (utf8 or bytes, according to content)
- QStringList, -&, -*             =>       Reference to an array of Perl strings (utf8)
- QString, -&, -*                 =>       Perl string (utf8 or iso-latin1 or locale)
- int&, -*                       <=>       Perl integer (IV)
- bool&, -*                      <=>       Perl boolean
- char*                          <=>       Perl string (bytes)
- char**                         <=        Reference to an array of Perl strings (bytes)
- uchar*                         <=        Perl string (bytes)
- QRgb*                          <=        Reference to an array of Perl integers (IV)
- QCOORD*                        <=        Reference to an array of Perl integers (IV)
- void*                          <=>       Reference to a Perl integer (IV)
- QValueList<int>, - *, - &      <=>       Reference to an array of Perl integers (IV)
+ long, ulong, short, ushort            <=>       Perl integer (IV)
+ QString, -&, -*                        =>       Perl string (utf8)
+ QString, -&, -*                       <=        Perl string (utf8 or iso-latin1 or locale)
+ QCString, -&, -*                      <=>       Perl string (utf8 or bytes, according to content or "bytes" pragma)
+ QByteArray, -&, -*                    <=>       Perl string (bytes)
+ QStringList, -&, -*                    =>       Reference to an array of Perl strings (utf8)
+ QString, -&, -*                        =>       Perl string (utf8 or iso-latin1 or locale)
+ int&, -*                              <=>       Perl integer (IV)
+ bool&, -*                             <=>       Perl boolean
+ char*                                 <=>       Perl string (bytes)
+ char**                                <=        Reference to an array of Perl strings (bytes)
+ uchar*                                <=        Perl string (bytes)
+ QRgb*                                 <=        Reference to an array of Perl integers (IV)
+ QCOORD*                               <=        Reference to an array of Perl integers (IV)
+ void*                                 <=>       Reference to a Perl integer (IV)
+ QValueList<int>, - *, - &             <=>       Reference to an array of Perl integers (IV)
+ QCanvasItemList, - *, - &              =>       Reference to an array of Qt::CanvasItem
+ QWidgetList, - *, - &                 <=>       Reference to an array of Qt::Widget
+ QObjectList, - *, - &                 <=>       Reference to an array of Qt::Object
+ QFileInfoList, - *, - &               <=>       Reference to an array of Qt::FileInfo
+ QPtrList<QTab>, - *, - &              <=>       Reference to an array of Qt::Tab
+ QPtrList<QToolBar>, - *, - &          <=>       Reference to an array of Qt::ToolBar
+ QPtrList<QNetworkOperation>, - *, - & <=>       Reference to an array of Qt::NetworkOperation
+ QPtrList<QDockWindow>, - *, - &       <=>       Reference to an array of Qt::DockWindow
  (QUObject*)
 
 

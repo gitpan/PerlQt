@@ -11,26 +11,27 @@ L<perlqt.sourceforge.net|"http://perlqt.sourceforge.net">
 =head1 Introduction
 
 PerlQt-3, crée par Ashley Winters, est une interface perl aux composants
-graphiques fournis par Qt3.
+graphiques (et non graphiques) fournis par Qt3.
 
-Le toolkit Qt 3.0 auquel perlQt accède à été écrit en C++ par la société
+Le toolkit Qt 3.0 auquel PerlQt accède à été écrit en C++ par la société
 Trolltech: L<Trolltech|"http://www.trolltech.com">.
 
 PerlQt3 est fondé sur la librairie
 L<SMOKE|"http://webcvs.kde.org/cgi-bin/cvsweb.cgi/kdebindings/smoke">,
 une surcouche fine indépendante du langage. Cette couche a été générée
-à partir des fichiers d'en tête de Qt par Richard Dale's
+à partir des fichiers d'en tête de Qt par le
 L<kalyptus|"http://webcvs.kde.org/cgi-bin/cvsweb.cgi/kdebindings/kalyptus">
-grâce au module de David Faure.
+de Richard Dale grâce au module de David Faure.
 
 Le présent document décrit les principes de la programmation PerlQt.
-Vous devez maîtriser la programmation orientée objet en Perl pour le
+Vous devez avoir des notions de  programmation orientée objet en Perl pour le
 lire.  Une connaissance de C++ est recommandée mais non requise.  Avec
 celle de l'anglais, elle vous facilitera la consultation des L<manuels
 en ligne de Qt|"http://doc.trolltech.com">. Ladite documentation est
-la seule référence qui fasse autorité.  La translation de la doc en son
-équivalent Perl devrait être facile car l'API objet PerlQt-3 est proche de
-l'API objet originelle en C++.
+la seule référence qui fasse autorité.
+
+Si Qt est installé sur votre système, sa documentation l'est 
+certainement aussi : voyez le programme $QTDIR/bin/assistant.
 
 =head1 Installation
 
@@ -57,7 +58,7 @@ v3.0|"http://www.trolltech.com/developer/download/qt-x11.html">
 =item *
 
 L<SmokeQt
-1.0|"http://webcvs.kde.org/cgi-bin/cvsweb.cgi/kdebindings/smoke"> La
+1.2.1|"http://webcvs.kde.org/cgi-bin/cvsweb.cgi/kdebindings/smoke"> La
 librarie SMOKE  (Scripting Meta Object Kompiler) fait partie du module
 L<KDE|"http://www.kde.org">'s B<kdebindings>.  Vous pouvez vérifier si
 une version précompilée de ce module existe pour votre système. Mais
@@ -89,17 +90,15 @@ peut-être spécifier manuellement l'emplacement de Qt à l'aide de l'option :
  --with-qtdir=/emplacement/de/Qt
 
 Si la bibliothèque SMOKE est manquante, C<configure> générera ses sources dans
-un sous-répertoire (4 minutes pour un ordinateur moyen).
+un sous-répertoire.
 
  make
 
-(30 minutes en moyenne).
-
  make install
 
-Cela installera PerlQt et Puic.
+Cela installera PerlQt, Puic et les utilitaires pqtsh et pqtapi.
 
-Le lieu d'installation préféré de SMOKE et de PUIC est le système de
+Le lieu d'installation privilégié de SMOKE et de PUIC est le système de
 fichiers de KDE3. Si KDE3 n'est pas installé (ou que la variable KDEDIR n'est pas
 définie), spécifier ce lieu avec l'option C<--prefix> de C<configure>'s. Ainsi :
 
@@ -160,9 +159,9 @@ que le clic de la souris ou l'enfoncement d'une touche).
 
 Au lieu de cela, vous créez un objet B<Qt::Application> et les composants
 du GUI qu'il utilise, puis vous  définissez les méthodes d'objet à appeler
-lors de l'occurrence d'un évènement, puis démarrez la boucle évènementielle.
+lors de l'occurrence d'un événement, puis démarrez la boucle événementielle.
 
-C'est tout. Qt gérera les évènements et les dirigera vers les
+C'est tout. Qt gérera les événements et les dirigera vers les
 routines appropriées.
 
 Voyons un programme PerlQt minimal.
@@ -248,9 +247,9 @@ PerlQt est conçu pour allier la simplicité de  Qt à la puissance et à la
 flexibilité de Perl. Pour ce faire, PerlQt étend le paradigme objet de
 Perl pour mimer Qt et son mécanisme de B<métaobjets>.
 
-=head3 Un Widget perso
+=head3 Un Widget personnalisé
 
-Réécrivons le programme "Hello World!" avec une version perso
+Réécrivons le programme "Hello World!" avec une version personnalisée
 de PushButton:
 
   1: use strict;
@@ -291,7 +290,7 @@ marquent une méthode différente du constructeur "new" usuel)>.
 Le constructeur PerlQt est appelé B<implicitement> I<comme ligne 21>.
 
 Note widget doit d'abord appeler le constructeur de sa classe de base
-(ici: Qt::PushButton) on line 9, avec tous les arguments que nous
+(ici: Qt::PushButton) à la ligne 9, avec tous les arguments que nous
 avons reçus.
 
 Nous créons ainsi un objet instance de notre classe. Cette objet est
@@ -310,7 +309,7 @@ ses différents composants à l'intérieur de variables de scope lexical
 par leur parent et non nécessairement quand leur conteneur disparaît
 du scope.
 
-En d'autres termes, PerlQt utilise le système de comptage de
+En d'autres termes, PerlQt utilise un système de comptage de
 références pour gérer la destruction des objets.
 
 Souvent cependant, vous souhaiterez accéder aux composants de votre objet depuis
@@ -464,7 +463,14 @@ l'objet B<this>, ce qui rend les tournures "unAttribut->fonction()" et
 =item *
 
 Pour réimplémenter une B<fonction virtuelle>, créez simplement une
-B<sub> de même nom que l'objet.
+B<sub> de même nom que cette fonction.
+
+Les fonctions virtuelles existantes sont marquées comme telles dans
+la documentation de Qt (ce sont les méthodes précédées du mot clef "virtual").
+
+Vous pouvez visualiser les noms de méthodes virtuelles que Qt tentera d'appeler
+dans votre classe en plaçant C<use Qt::debug qw|virtual|> en tête de 
+votre programme.
 
 =back
 
@@ -482,15 +488,15 @@ On peut se le représenter comme le cablage entre les composants d'une
 chaîne Hi-Fi. Un amplificateur, par exemple, émet des signaux de sortie
 sans chercher à savoir si des enceintes lui sont connectées ou non.
 Un magnétophone peut attendre un signal sur sa prise d'entrée
-pour commencer à enregistrer, et il ne cherchera pas non plus à savoir s'il est
-l'unique destinataire de ce signal ou s'il est aussi reçu par un graveur de CD
+pour commencer à enregistrer, et il ne cherchera pas à savoir s'il est
+l'unique destinataire de ce signal ou si ce dernier est aussi reçu par un graveur de CD
 ou écouté au casque.
 
 Un composant Qt se comporte comme notre amplificateur ou notre
 magnétophone. Il a des sorties ou B<Signaux> et des entrées ou
 B<Slots>. Chaque sortie (signal) est connectable à un nombre illimité
 d'entrées (slots). La sortie d'un composant peut être potentiellement
-branchée à tout entrée d'un composant (y compris lui-même),
+branchée à toute entrée d'un composant (y compris lui-même),
 
 
 La syntaxe de ce système de connexion est soit:
@@ -506,7 +512,8 @@ SLOT 'monslot(types_d_arguments)');
 Dans le second cas, le récepteur est omis car c'est l'objet lui-même,
 
 Ce mécanisme est extensible à volonté par la déclaration de nouveaux Signaux et
-Slots par l'usage des pragma C<use Qt::signals> et C<use Qt::slots>.
+Slots par l'usage des pragma C<use Qt::signals> et C<use Qt::slots>
+(voir aussi la deuxième syntaxe décrite plus bas).
 
 Chaque slot déclaré appellera la routine correspondante de votre
 objet. Chaque signal déclaré peut être déclenché via le mot-clé B<emit>.
@@ -564,11 +571,44 @@ C<clicked()> est émit et déclenche le slot  C<aEteClicke()>.
 C<aEteClicke()> émet à son tour le signal C<changeLe(int,int)>[l.27],
 appelant de ce fait le slot C<changement(int,int)>, avec deux arguments.
 
+Enfin, il existe une syntaxe alternative introduite dans PerlQt-3.008 :
+
+ sub un_slot : SLOT(int, QString)
+ { 
+	$int = shift;
+	$string = shift;
+	# faire quelque chose
+ }
+
+et
+
+ sub un_signal : SIGNAL(QString);
+
+Cette syntaxe est parfaitement compatible avec la déclaration par le biais de
+C<use Qt::signals> et C<use Qt::slots>. 
+Il peut d'ailleurs d'avérer très profitable pour la clarté du programme de déclarer tout d'abord 
+les signaux/slots au moyen de C<use Qt::slots/signals>, puis de rappeler cette déclaration au niveau de 
+l'implémentation à l'aide de la seconde syntaxe.
+Les déclarations seront alors vérifiées à la compilation, et le moindre conflit
+générera un avertissement.
 
 =head1 Développement rapide (RAD) avec Qt Designer et Puic
 
 
 =head2 Introduction
+
+=over 4
+
+=item * N.B:
+
+Depuis la version 3.008, il existe un plugin spécifique à PerlQt pour Qt Designer.
+Ce plugin (disponible sur les pages internet du projet) apporte le confort d'une intégration poussée,
+la coloration  syntaxique Perl, la complétion automatique, et permet de lancer et déboguer un projet
+sans quitter l'interface du Designer. 
+Ce qui suit reste néanmoins parfaitement valable pour ce qui est de l'utilisation de puic en ligne de commande, 
+et pour l'utilisation de Qt Designer I<sans> le plugin spécifique.
+
+=back
 
 Aussi puissant et intuitif que soit Qt, écrire une GUI complète reste un exercice 
 fastidieux.
@@ -648,7 +688,7 @@ Voici une meilleure méthode :
 
 =over 4
 
-=item * Écrire l'implantaton de slots dans le Designer
+=item * Écrire l'implémentation de slots dans le Designer
 
 Dans Qt Designer, selectionnez l'onglet I<Source> dans l'explorateur
 d'objets (B<Object Explorer>).  Vous pouvez ainsi voir représentées
@@ -780,11 +820,11 @@ Puic is (c) TrollTech AS., Phil Thompson et Germain Garand,
 Ledit logiciel est délivré sous la GNU Public Licence v.2 or later.
 
 
-=head1 Appendice: Comment utiliser la Documentation Qt
+=head1 Appendice: Les conventions de C++ et leur traduction en Perl
 
 Lorsque vous voulez utiliser depuis PerlQt une classe ou méthode décrite
-dans la L<documentation|"http://doc.trolltech.com"> Qt (voyez aussi le programme 'assistant'
-livré avec Qt), vous devez suivre des règles de translation simples
+dans la L<documentation|"http://doc.trolltech.com"> Qt (voyez aussi le programme 
+$QTDIR/bin/assistant livré avec Qt), vous devez suivre des règles de translation simples.
 
 =over 4
 
@@ -942,11 +982,39 @@ B<Qt::constants>, d'où elles seront chargées à la demande.
 
 Ainsi, pour importer l'ensemble des constantes d'E/S, on écrira :
 
- use Qt::constants qw(:IO);
+ use Qt::constants;
 
 Et pour importer quelques symboles seulement :
 
  use Qt::constants qw( IO_ReadOnly IO_WriteOnly );
+
+=item Fonctions globales
+
+Qt dispose de fonctions utilitaires, telles bitBlt, qCompress, etc.
+
+Ces fonctions ont été rassemblées dans un espace de nom commun:
+C<Qt::GlobalSpace>.
+
+Vous pourrez donc y accéder soit par un appel pleinement qualifié :
+
+ Qt::GlobalSpace::qUncompress( $buffer )
+
+Soit en important préalablement ces fonctions dans l'espace de nom courant :
+
+ use Qt::GlobalSpace;
+ qUncompress( $buffer )
+
+Bien entendu, vous pouvez aussi n'importer que les fonctions souhaitées :
+
+ use Qt::GlobalSpace qw( qUncompress bitBlt )
+
+B<N.B:> GlobalSpace renferme également des opérateurs de portée globale, tels
+celui permettant d'aditionner deux Qt::Point(). Ces opérateurs seront appelés 
+automatiquement.
+
+ex:
+
+ $p1 = Qt::Point(10, 10) + Qt::Point(20, 20)
 
 =back
 
@@ -1090,24 +1158,32 @@ on gagne en densité, en cohérence et en simplicité.
 Cette transformation s'appliquera aussi en sens inverse, et n'importe quelle liste de chaînes Perl
 pourra être donnée en argument à une méthode attendant une Qt::StringList.
 
- Liste des marshalleurs (PerlQt-3.006)
+ Liste des marshalleurs (PerlQt-3.008)
  -----------------------------------------------------------------
- float, double                  <=>       réel Perl (NV)
+ float, double                         <=>       réel Perl (NV)
  char, uchar, int, uint, enum
- long, ulong, short, ushort     <=>       entier Perl (IV)
- QString, -&, -*                 =>       chaîne Perl (utf8)
- QString, -&, -*                <=        chaîne Perl (utf8 ou iso-latin1 ou locale)
- QCString, -&, -*               <=>       chaîne Perl (utf8 ou octets, suivant contenu)
- QStringList, -&, -*             =>       référence à une liste de chaînes Perl (utf8)
- QString, -&, -*                 =>       chaîne Perl string (utf8 ou iso-latin1 ou locale)
- int&, -*                       <=>       entier Perl (IV)
- bool&, -*                      <=>       booléen Perl
- char*                          <=>       chaîne Perl (octets)
- char**                         <=        référence à une liste de chaînes Perl (octets)
- uchar*                         <=        chaîne Perl(octets)
- QRgb*                          <=        référence à une liste d'entiers Perl (IV)
- QCOORD*                        <=        référence à une liste d'entiers Perl (IV)
- void*                          <=>       référence à un entier Perl (IV)
- QValueList<int>, - *, - &      <=>       référence à une liste d'entiers Perl (IV)
+ long, ulong, short, ushort            <=>       entier Perl (IV)
+ QString, -&, -*                        =>       chaîne Perl (utf8)
+ QString, -&, -*                       <=        chaîne Perl (utf8 ou iso-latin1 ou locale)
+ QCString, -&, -*                      <=>       chaîne Perl (utf8 ou octets, suivant contenu ou pragma "bytes")
+ QStringList, -&, -*                    =>       référence à une liste de chaînes Perl (utf8)
+ QByteArray, -&, -*                    <=>       chaîne Perl (octets)
+ int&, -*                              <=>       entier Perl (IV)
+ bool&, -*                             <=>       booléen Perl
+ char*                                 <=>       chaîne Perl (octets)
+ char**                                <=        référence à une liste de chaînes Perl (octets)
+ uchar*                                <=        chaîne Perl(octets)
+ QRgb*                                 <=        référence à une liste d'entiers Perl (IV)
+ QCOORD*                               <=        référence à une liste d'entiers Perl (IV)
+ void*                                 <=>       référence à un entier Perl (IV)
+ QValueList<int>, - *, - &             <=>       référence à une liste d'entiers Perl (IV)
+ QCanvasItemList, - *, - &              =>       réference à une liste de Qt::CanvasItem
+ QWidgetList, - *, - &                 <=>       réference à une liste de Qt::Widget
+ QObjectList, - *, - &                 <=>       réference à une liste de Qt::Object
+ QFileInfoList, - *, - &               <=>       réference à une liste de Qt::FileInfo
+ QPtrList<QTab>, - *, - &              <=>       réference à une liste de Qt::Tab
+ QPtrList<QToolBar>, - *, - &          <=>       réference à une liste de Qt::ToolBar
+ QPtrList<QNetworkOperation>, - *, - & <=>       réference à une liste de Qt::NetworkOperation
+ QPtrList<QDockWindow>, - *, - &       <=>       réference à une liste de Qt::DockWindow
  (QUObject*)
 

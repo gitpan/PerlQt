@@ -1,6 +1,6 @@
-# aclocal.m4 generated automatically by aclocal 1.5
+# generated automatically by aclocal 1.7.2 -*- Autoconf -*-
 
-# Copyright 1996, 1997, 1998, 1999, 2000, 2001
+# Copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002
 # Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
@@ -421,8 +421,10 @@ AC_DEFUN(KDE_SET_PATHS,
 	kde_servicesdir=\"$kde_servicesdir\" \
 	kde_servicetypesdir=\"$kde_servicetypesdir\" \
 	kde_moduledir=\"$kde_moduledir\" \
-   kde_styledir=\"$kde_styledir\" \
+	kde_styledir=\"$kde_styledir\" \
 	kde_widgetdir=\"$kde_widgetdir\" \
+	xdg_appsdir=\"$xdg_appsdir\" \
+	xdg_directorydir=\"$xdg_directorydir\" \
 	kde_result=$1"
 ])
 
@@ -488,6 +490,12 @@ if test "$1" = "default"; then
   if test -z "$kde_widgetdir"; then
     kde_widgetdir='\${libdir}/kde3/plugins/designer'
   fi
+  if test -z "$xdg_appsdir"; then
+    xdg_appsdir='\${datadir}/applications'
+  fi
+  if test -z "$xdg_directorydir"; then
+    xdg_directorydir='\${datadir}/desktop-directories'
+  fi
 
   KDE_SET_PATHS(defaults)
 
@@ -512,7 +520,8 @@ AC_DEFUN(KDE_CHECK_PATHS_FOR_COMPLETENESS,
    test -z "$kde_wallpaperdir" || test -z "$kde_templatesdir" ||
    test -z "$kde_bindir" || test -z "$kde_servicesdir" ||
    test -z "$kde_servicetypesdir" || test -z "$kde_moduledir" ||
-   test -z "$kde_styledir" || test -z "kde_widgetdir" 
+   test -z "$kde_styledir" || test -z "kde_widgetdir" ||
+   test -z "$xdg_appsdir" || test -z "xdg_directorydir" 
    test "x$kde_have_all_paths" != "xyes"; then
      kde_have_all_paths=no
   fi
@@ -534,6 +543,12 @@ Please check whether you installed aRts correctly.
 
 AC_DEFUN(KDE_SUBST_PROGRAMS,
 [
+    AC_ARG_WITH(arts,
+        [  --without-arts        build without aRts [default=detect] ],
+        [build_arts=$withval],
+        [build_arts=yes]
+    )
+    AM_CONDITIONAL(include_ARTS, test "$build_arts" != "no")
 
         kde_default_bindirs="/usr/bin /usr/local/bin /opt/local/bin /usr/X11R6/bin /opt/kde/bin /opt/kde3/bin /usr/kde/bin /usr/local/kde/bin"
         test -n "$KDEDIR" && kde_default_bindirs="$KDEDIR/bin $kde_default_bindirs"
@@ -548,8 +563,10 @@ AC_DEFUN(KDE_SUBST_PROGRAMS,
         kde_default_bindirs="$exec_prefix/bin $prefix/bin $kde_default_bindirs"
         KDE_FIND_PATH(dcopidl, DCOPIDL, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(dcopidl)])
         KDE_FIND_PATH(dcopidl2cpp, DCOPIDL2CPP, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(dcopidl2cpp)])
-        KDE_FIND_PATH(mcopidl, MCOPIDL, [$kde_default_bindirs], [KDE_MISSING_ARTS_ERROR(mcopidl)])
-        KDE_FIND_PATH(artsc-config, ARTSCCONFIG, [$kde_default_bindirs], [KDE_MISSING_ARTS_ERROR(artsc-config)])
+        if test "$build_arts" != "no"; then
+          KDE_FIND_PATH(mcopidl, MCOPIDL, [$kde_default_bindirs], [KDE_MISSING_ARTS_ERROR(mcopidl)])
+          KDE_FIND_PATH(artsc-config, ARTSCCONFIG, [$kde_default_bindirs], [KDE_MISSING_ARTS_ERROR(artsc-config)])
+        fi
         KDE_FIND_PATH(kde-config, KDECONFIG, [$kde_default_bindirs])
         KDE_FIND_PATH(meinproc, MEINPROC, [$kde_default_bindirs])
       
@@ -615,6 +632,7 @@ if test "$kde_have_all_paths" = "no" && test "$kde_cached_paths" = "yes"; then
   kde_have_all_paths=
   kde_styledir=
   kde_widgetdir=
+  xdg_appsdir = xdg_directorydir=
   KDE_SET_DEFAULT_PATHS($1)
   eval "$kde_cv_all_paths"
   KDE_CHECK_PATHS_FOR_COMPLETENESS
@@ -650,6 +668,9 @@ AC_SUBST(kde_confdir)
 AC_SUBST(kde_mimedir)
 AC_SUBST(kde_wallpaperdir)
 AC_SUBST(kde_bindir)
+dnl X Desktop Group standards
+AC_SUBST(xdg_appsdir)
+AC_SUBST(xdg_directorydir)
 dnl for KDE 2
 AC_SUBST(kde_templatesdir)
 AC_SUBST(kde_servicesdir)
@@ -736,7 +757,6 @@ support])
    AC_SUBST(FRAMEWORK_COREAUDIO)
    LIBSOCKET="$X_EXTRA_LIBS"
    AC_SUBST(LIBSOCKET)
-   AC_SUBST(LIBRESOLV)
    AC_SUBST(X_EXTRA_LIBS)
    AC_CHECK_LIB(ucb, killpg, [LIBUCB="-lucb"]) dnl for Solaris2.4
    AC_SUBST(LIBUCB)
@@ -752,7 +772,8 @@ support])
 
    KDE_CHECK_TYPES
    KDE_CHECK_LIBDL
-
+   KDE_CHECK_STRLCPY
+   
 AH_VERBATIM(_AIX_STRINGS_H_BZERO,
 [
 /*
@@ -972,53 +993,6 @@ can't find it itself, we stop here assuming that make wouldn't find
 them either.])
 fi
 
-AC_MSG_CHECKING(for Xinerama)
-
- AC_ARG_WITH(xinerama,
-  [  --with-xinerama         enable support for Xinerama ],
-  [
-    no_xinerama=no
-  ], [
-    no_xinerama=yes
-  ]
-)
-
-kde_save_LDFLAGS="$LDFLAGS"
-kde_save_CFLAGS="$CFLAGS"
-kde_save_LIBS="$LIBS"
-LDFLAGS="$LDFLAGS $X_LDFLAGS $USER_LDFLAGS"
-CFLAGS="$CFLAGS -I$x_includes"
-LIBS="-lXinerama -lXext"
-
-if test "x$no_xinerama" = "xno"; then
-
-  AC_CACHE_VAL(ac_cv_have_xinerama,
-  [
-	  AC_TRY_LINK([#include <X11/Xlib.h>
-  			#include <X11/extensions/Xinerama.h>],
-	  	  [XineramaIsActive(NULL);],
-		  [ac_cv_have_xinerama="yes"],
-		  [ac_cv_have_xinerama="no"])
-  ])
-else
-  ac_cv_have_xinerama=no;
-fi
-
-AC_MSG_RESULT($ac_cv_have_xinerama)
-
-LIBXINERAMA=""
-
-if test "$ac_cv_have_xinerama" = "yes"; then
-  AC_DEFINE(HAVE_XINERAMA, 1, [Define if you want Xinerama support])
-  LIBXINERAMA="-lXinerama"
-fi
-
-AC_SUBST(LIBXINERAMA)
-
-LDFLAGS="$kde_save_LDFLAGS"
-CFLAGS="$kde_save_CFLAGS"
-LIBS="$kde_save_LIBS"
-
 LIB_XEXT="-lXext"
 QTE_NORTTI=""
 
@@ -1068,7 +1042,9 @@ EOF
 
 if test $kde_qtsubver -gt 0; then
 cat >> conftest.$ac_ext <<EOF
-#include <qiconview.h>
+#if QT_VERSION < 210
+#error 1
+#endif
 EOF
 fi
 fi
@@ -1095,8 +1071,6 @@ cat >> conftest.$ac_ext <<EOF
 EOF
 if test $kde_qtsubver -gt 0; then
 cat >> conftest.$ac_ext <<EOF
-    QIconView iv(0);
-    iv.setWordWrapIconText(false);
     QString s;
     s.setLatin1("Elvis is alive", 14);
 EOF
@@ -1177,7 +1151,7 @@ else
 fi
 
 if test $kde_qtver = 3; then
-  kde_qt_dirs="$QTDIR /usr/lib/qt3 /usr/lib/qt"
+  kde_qt_dirs="$QTDIR /usr/lib/qt3 /usr/lib/qt /usr/share/qt3"
 fi
 if test $kde_qtver = 2; then
    kde_qt_dirs="$QTDIR /usr/lib/qt2 /usr/lib/qt"
@@ -1366,12 +1340,13 @@ fi
 if test $kde_qtver = 3; then
   AC_REQUIRE([KDE_CHECK_LIBDL])
   LIBQT="$LIBQT $LIBDL"
+  kde_int_qt="$kde_int_qt $LIBDL"
 fi
 
 AC_MSG_CHECKING([for Qt])
 
 if test "x$kde_use_qt_emb" != "xyes"; then
-LIBQT="$LIBQT $X_PRE_LIBS $LIBXINERAMA -lXext -lX11 $LIBSM $LIBSOCKET"
+LIBQT="$LIBQT $X_PRE_LIBS -lXext -lX11 $LIBSM $LIBSOCKET"
 fi
 ac_qt_includes=NO ac_qt_libraries=NO ac_qt_bindir=NO
 qt_libraries=""
@@ -1532,7 +1507,7 @@ AC_PATH_QT_MOC_UIC
 KDE_CHECK_QT_JPEG
 
 if test "x$kde_use_qt_emb" != "xyes"; then
-LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG) -lXext $(LIB_X11) $(LIBSM)'
+LIB_QT="$kde_int_qt $LIBJPEG_QT "' $(LIBRESOLV) $(LIBPNG) $(X_PRE_LIBS) -lXext $(LIB_X11) $(LIBSM)'
 else
 LIB_QT="$kde_int_qt $LIBJPEG_QT "'$(LIBPNG)'
 fi
@@ -1549,12 +1524,57 @@ AC_DEFUN(AC_PATH_QT,
 AC_PATH_QT_1_3
 ])
 
+AC_DEFUN(KDE_CHECK_UIC_PLUGINS,
+[
+AC_REQUIRE([AC_PATH_QT_MOC_UIC])
+
+if test x$ac_uic_supports_libpath = xyes; then
+
+AC_MSG_CHECKING([if UIC has KDE plugins available])
+AC_CACHE_VAL(kde_cv_uic_plugins,
+[
+cat > actest.ui << EOF
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>NewConnectionDialog</class>
+<widget class="QDialog">
+   <widget class="KLineEdit">
+        <property name="name">
+           <cstring>testInput</cstring>
+        </property>
+   </widget>
+</widget>
+</UI>
+EOF
+       
+
+
+kde_cv_uic_plugins=no
+kde_line="$UIC_PATH -L $kde_widgetdir"
+if test x$ac_uic_supports_nounload = xyes; then
+   kde_line="$kde_line -nounload"
+fi
+kde_line="$kde_line -impl actest.h actest.ui > actest.cpp"
+if AC_TRY_EVAL(kde_line); then
+	if test -f actest.cpp && grep klineedit actest.cpp > /dev/null; then
+		kde_cv_uic_plugins=yes
+	fi
+fi
+rm -f actest.ui actest.cpp
+])
+
+if test "$kde_cv_uic_plugins" = yes; then
+	AC_MSG_RESULT([yes])
+else
+	AC_MSG_ERROR([not found - you need to install kdelibs first.])
+fi
+fi
+])
+
 AC_DEFUN(KDE_CHECK_FINAL,
 [
   AC_ARG_ENABLE(final, [  --enable-final          build size optimized apps (experimental - needs lots of memory)],
 	kde_use_final=$enableval, kde_use_final=no)
 
-  KDE_COMPILER_REPO
   if test "x$kde_use_final" = "xyes"; then
       KDE_USE_FINAL_TRUE=""
       KDE_USE_FINAL_FALSE="#"
@@ -1564,10 +1584,14 @@ AC_DEFUN(KDE_CHECK_FINAL,
   fi
   AC_SUBST(KDE_USE_FINAL_TRUE)
   AC_SUBST(KDE_USE_FINAL_FALSE)
+])
 
+AC_DEFUN(KDE_CHECK_CLOSURE,
+[
   AC_ARG_ENABLE(closure, [  --disable-closure       don't delay template instantiation],
   	kde_use_closure=$enableval, kde_use_closure=yes)
 
+  KDE_NO_UNDEFINED=""
   if test "x$kde_use_closure" = "xyes"; then
        KDE_USE_CLOSURE_TRUE=""
        KDE_USE_CLOSURE_FALSE="#"
@@ -1575,10 +1599,33 @@ AC_DEFUN(KDE_CHECK_FINAL,
   else
        KDE_USE_CLOSURE_TRUE="#"
        KDE_USE_CLOSURE_FALSE=""
+       KDE_CHECK_COMPILER_FLAG([Wl,--no-undefined],
+            [KDE_CHECK_COMPILER_FLAG([Wl,--allow-shlib-undefined],
+		[KDE_NO_UNDEFINED="-Wl,--no-undefined -Wl,--allow-shlib-undefined"],
+		[KDE_NO_UNDEFINED=""])],
+	    [KDE_NO_UNDEFINED=""])
   fi
   AC_SUBST(KDE_USE_CLOSURE_TRUE)
   AC_SUBST(KDE_USE_CLOSURE_FALSE)
+  AC_SUBST(KDE_NO_UNDEFINED)
 ])
+
+AC_DEFUN(KDE_CHECK_NMCHECK,
+[
+  AC_ARG_ENABLE(nmcheck, [  --enable-nmcheck        enable automatic namespace cleanness check],
+	kde_use_nmcheck=$enableval, kde_use_nmcheck=no)
+
+  if test "$kde_use_nmcheck" = "yes"; then
+      KDE_USE_NMCHECK_TRUE=""
+      KDE_USE_NMCHECK_FALSE="#"
+   else
+      KDE_USE_NMCHECK_TRUE="#"
+      KDE_USE_NMCHECK_FALSE=""
+  fi
+  AC_SUBST(KDE_USE_NMCHECK_TRUE)
+  AC_SUBST(KDE_USE_NMCHECK_FALSE)
+])
+
 
 dnl ------------------------------------------------------------------------
 dnl Now, the same with KDE
@@ -1667,7 +1714,6 @@ if test -n "$kde_widgetdir"; then
     kde_widgetdir="$kde_widgetdir/kde3/plugins/designer"
 fi
 
-ac_kde_libraries="$kde_libdir"
 
 if test "$ac_kde_includes" = NO || test "$ac_kde_libraries" = NO || test "$kde_widgetdir" = NO; then
   ac_cv_have_kde="have_kde=no"
@@ -1675,9 +1721,6 @@ else
   ac_cv_have_kde="have_kde=yes \
     ac_kde_includes=$ac_kde_includes ac_kde_libraries=$ac_kde_libraries"
 fi
-
-
-
 
 else dnl test -z $1
 
@@ -1738,7 +1781,14 @@ all_includes="$all_includes $USER_INCLUDES"
 AC_SUBST(all_includes)
 AC_SUBST(all_libraries)
 
+if test -z "$1"; then
+KDE_CHECK_UIC_PLUGINS
+fi
+
+ac_kde_libraries="$kde_libdir"
+
 AC_SUBST(AUTODIRS)
+
 
 ])
 
@@ -1830,6 +1880,8 @@ int main() {
     printf("kde_moduledir=\\"/tmp/dummy\\"\n");
     printf("kde_styledir=\\"/tmp/dummy\\"\n");
     printf("kde_widgetdir=\\"/tmp/dummy\\"\n");
+    printf("xdg_appsdir=\\"/tmp/dummy\\"\n");
+    printf("xdg_directorydir=\\"/tmp/dummy\\"\n");
     return 0;
     }
 EOF
@@ -1889,6 +1941,7 @@ AC_DEFUN(KDE_CHECK_KIMGIO,
    AC_REQUIRE([AC_FIND_TIFF])
    AC_REQUIRE([AC_FIND_JPEG])
    AC_REQUIRE([AC_FIND_PNG])
+   AC_REQUIRE([AC_FIND_JASPER])
    AC_REQUIRE([KDE_CREATE_LIBS_ALIASES])
 
    if test "$1" = "existance"; then
@@ -1988,7 +2041,7 @@ AC_LANG_CPLUSPLUS
 save_CXXFLAGS="$CXXFLAGS"
 kde_safe_LIBS="$LIBS"
 LIBS="$LIBS $X_EXTRA_LIBS"
-if test "$GCC" = "yes"; then
+if test "$GXX" = "yes"; then
 CXXFLAGS="$CXXFLAGS -pedantic-errors"
 fi
 AC_TRY_COMPILE([
@@ -2000,7 +2053,7 @@ $3
 kde_cv_func_$1=yes,
 kde_cv_func_$1=no)
 CXXFLAGS="$save_CXXFLAGS"
-LIBS=$kde_safe_LIBS
+LIBS="$kde_safe_LIBS"
 AC_LANG_RESTORE
 ])
 
@@ -2013,7 +2066,7 @@ if test "x$kde_cv_func_$1" = xyes; then
   kde_cv_proto_$1=no
 else
   case "$1" in
-	setenv|unsetenv|usleep|getdomainname|random|srandom|seteuid|mkstemps|mkstemp|revoke)
+	setenv|unsetenv|usleep|random|srandom|seteuid|mkstemps|mkstemp|revoke|vsnprintf|strlcpy|strlcat)
 		kde_cv_proto_$1="yes - in libkdefakes"
 		;;
 	*)
@@ -2096,7 +2149,7 @@ AC_DEFUN(AC_CHECK_GETDOMAINNAME,
 char buffer[200];
 getdomainname(buffer, 200);
 ], 	
-	        [int getdomainname (char *, unsigned int)],
+	        [int getdomainname (char *, int)],
 		[GETDOMAINNAME])
 ])
 
@@ -2164,22 +2217,11 @@ initgroups(buffer, 27);
 	[INITGROUPS])
 ])
 
-AC_DEFUN(AC_CHECK_MKSTEMP,
-[
-	KDE_CHECK_FUNC_EXT(mkstemp, [
-#include <stdlib.h>
-],
-	[
-mkstemp("/tmp/aaaXXXXXX");
-],
-	[int mkstemp(char *)],
-	[MKSTEMP])
-])
-
 AC_DEFUN(AC_CHECK_MKSTEMPS,
 [
 	KDE_CHECK_FUNC_EXT(mkstemps, [
 #include <stdlib.h>
+#include <unistd.h>
 ],
 	[
 mkstemps("/tmp/aaaXXXXXX", 6);
@@ -2188,16 +2230,87 @@ mkstemps("/tmp/aaaXXXXXX", 6);
 	[MKSTEMPS])
 ])
 
+AC_DEFUN(AC_CHECK_MKDTEMP,
+[
+	KDE_CHECK_FUNC_EXT(mkdtemp, [
+#include <stdlib.h>
+#include <unistd.h>
+],
+	[
+mkdtemp("/tmp/aaaXXXXXX");
+],
+	[char *mkdtemp(char *)],
+	[MKDTEMP])
+])
+
+
 AC_DEFUN(AC_CHECK_RES_INIT,
 [
-	KDE_CHECK_FUNC_EXT(res_init, [
+  AC_MSG_CHECKING([if res_init needs -lresolv])
+  kde_libs_safe="$LIBS"
+  LIBS="$LIBS $X_EXTRA_LIBS -lresolv"
+  AC_TRY_LINK(
+    [
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
 #include <resolv.h>
+    ],
+    [
+      res_init(); 
+    ],
+    [
+      LIBRESOLV="-lresolv"
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE_RES_INIT, 1, [Define if you have the res_init function])
+    ],
+    [ AC_MSG_RESULT(no) ]
+  )
+  LIBS=$kde_libs_safe
+  AC_SUBST(LIBRESOLV)
+
+  AC_MSG_CHECKING([if res_init is available])
+  AC_TRY_COMPILE(
+    [
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <resolv.h>
+    ],
+    [
+      res_init();
+    ],
+    [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(HAVE_RES_INIT, 1, [Define if you have the res_init function])
+    ],
+    [ AC_MSG_RESULT(no) ]
+  )
+])
+
+AC_DEFUN(AC_CHECK_STRLCPY,
+[
+	KDE_CHECK_FUNC_EXT(strlcpy, [
+#include <string.h>
 ],
-[ 
-res_init(); 
+[ char buf[20];
+  strlcpy(buf, "KDE function test", sizeof(buf));
 ],
- 	[int res_init (void)],
-	[RES_INIT])
+ 	[unsigned long strlcpy(char*, const char*, unsigned long)],
+	[STRLCPY])
+])
+
+AC_DEFUN(AC_CHECK_STRLCAT,
+[
+	KDE_CHECK_FUNC_EXT(strlcat, [
+#include <string.h>
+],
+[ char buf[20];
+  buf[0]='\0';
+  strlcat(buf, "KDE function test", sizeof(buf));
+],
+ 	[unsigned long strlcat(char*, const char*, unsigned long)],
+	[STRLCAT])
 ])
 
 AC_DEFUN(AC_FIND_GIF,
@@ -2331,6 +2444,7 @@ AH_VERBATIM(_AC_CHECK_JPEG,
 
 AC_DEFUN(KDE_CHECK_QT_JPEG,
 [
+if test -n "$LIBJPEG"; then
 AC_MSG_CHECKING([if Qt needs $LIBJPEG])
 AC_CACHE_VAL(kde_cv_qt_jpeg,
 [
@@ -2352,6 +2466,7 @@ AC_TRY_LINK(
 LIBS="$ac_save_LIBS"
 CXXFLAGS="$ac_save_CXXFLAGS"
 AC_LANG_RESTORE
+fi
 ])
 
 if eval "test ! \"`echo $kde_cv_qt_jpeg`\" = no"; then
@@ -2500,6 +2615,43 @@ else
 fi
 ])
 
+
+AC_DEFUN(AC_FIND_JASPER,
+[
+AC_REQUIRE([KDE_CHECK_EXTRA_LIBS])
+AC_REQUIRE([AC_FIND_JPEG])
+AC_MSG_CHECKING([for jasper 1.600])
+AC_CACHE_VAL(ac_cv_jasper,
+[
+kde_save_LIBS="$LIBS"
+LIBS="$LIBS $all_libraries $USER_LDFLAGS -ljasper $LIBJPEG -lm"
+kde_save_CFLAGS="$CFLAGS"
+CFLAGS="$CFLAGS $all_includes $USER_INCLUDES"
+AC_LANG_C
+AC_TRY_LINK(dnl
+    [
+    #include<jasper/jasper.h>
+    ],
+    [
+    return( jas_init() && JAS_IMAGE_CS_RGB );
+    ],
+    eval "ac_cv_jasper='-ljasper $LIBJPEG -lm'",
+    eval "ac_cv_jasper=no"
+)
+LIBS="$kde_save_LIBS"
+CFLAGS="$kde_save_CFLAGS"
+])dnl
+if eval "test ! \"`echo $ac_cv_jasper`\" = no"; then
+  AC_DEFINE_UNQUOTED(HAVE_JASPER, 1, [Define if you have jasper])
+  LIB_JASPER="$ac_cv_jasper"
+  AC_MSG_RESULT($ac_cv_jasper)
+else
+  AC_MSG_RESULT(no)
+  LIB_JASPER=""
+fi
+AC_SUBST(LIB_JASPER)
+])
+
 AC_DEFUN(AC_CHECK_BOOL,
 [
   AC_DEFINE_UNQUOTED(HAVE_BOOL, 1, [You _must_ have bool])
@@ -2535,8 +2687,8 @@ fi
 
 AC_DEFUN(KDE_CHECK_COMPILER_FLAG,
 [
-AC_MSG_CHECKING(whether $CXX supports -$1)
-kde_cache=`echo $1 | sed 'y% .=/+-%____p_%'`
+AC_MSG_CHECKING([whether $CXX supports -$1])
+kde_cache=`echo $1 | sed 'y% .=/+-,%____p__%'`
 AC_CACHE_VAL(kde_cv_prog_cxx_$kde_cache,
 [
   AC_LANG_SAVE
@@ -2725,8 +2877,9 @@ AC_DEFUN(AC_CHECK_COMPILERS,
       if test "$GCC" = "yes"; then
         case $host in
           *-*-linux-gnu)	
-            CFLAGS="-ansi -W -Wall -pedantic -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
-            CXXFLAGS="-ansi -D_XOPEN_SOURCE=500 -D_BSD_SOURCE -Wcast-align -Wconversion $CXXFLAGS"
+            CFLAGS="-ansi -W -Wall -pedantic -Wchar-subscripts -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
+            CXXFLAGS="-ansi -D_XOPEN_SOURCE=500 -D_BSD_SOURCE -Wcast-align -Wconversion -Wchar-subscripts $CXXFLAGS"
+            KDE_CHECK_COMPILER_FLAG(Wmissing-format-attribute, [CXXFLAGS="$CXXFLAGS -Wformat-security -Wmissing-format-attribute"; CFLAGS="$CFLAGS -Wformat-security -Wmissing-format-attribute"])
           ;;
         esac
         CXXFLAGS="-Wall -pedantic -W -Wpointer-arith -Wmissing-prototypes -Wwrite-strings $CXXFLAGS"
@@ -2736,13 +2889,14 @@ AC_DEFUN(AC_CHECK_COMPILERS,
      fi
   fi
 
-  if test "$GCC" = "yes" && test "$kde_use_strict_options" = "yes"; then
+  if test "$GXX" = "yes" && test "$kde_use_strict_options" = "yes"; then
     CXXFLAGS="-Wcast-qual -Wshadow -Wcast-align $CXXFLAGS"
   fi
     
   if test "$GXX" = "yes"; then
     KDE_CHECK_COMPILER_FLAG(fno-exceptions,[CXXFLAGS="$CXXFLAGS -fno-exceptions"])
     KDE_CHECK_COMPILER_FLAG(fno-check-new, [CXXFLAGS="$CXXFLAGS -fno-check-new"])
+    KDE_CHECK_COMPILER_FLAG(fno-common, [CXXFLAGS="$CXXFLAGS -fno-common"])
     KDE_CHECK_COMPILER_FLAG(fexceptions, [USE_EXCEPTIONS="-fexceptions"], USE_EXCEPTIONS=	)
   fi
   if test "$CXX" = "KCC"; then
@@ -2814,6 +2968,8 @@ AC_DEFUN(AC_CHECK_COMPILERS,
   AC_SUBST(NOOPT_CFLAGS)
 
   KDE_CHECK_FINAL
+  KDE_CHECK_CLOSURE
+  KDE_CHECK_NMCHECK
 
   ifdef([AM_DEPENDENCIES], AC_REQUIRE([KDE_ADD_DEPENDENCIES]), [])
 ])
@@ -2845,7 +3001,7 @@ AC_LIBTOOL_CXX
 
 LIBTOOL_SHELL="/bin/sh ./libtool"
 #  LIBTOOL="$LIBTOOL --silent"
-KDE_PLUGIN="-avoid-version -module -no-undefined \$(KDE_RPATH) \$(KDE_MT_LDFLAGS)"
+KDE_PLUGIN="-avoid-version -module -no-undefined \$(KDE_NO_UNDEFINED) \$(KDE_RPATH) \$(KDE_MT_LDFLAGS)"
 AC_SUBST(KDE_PLUGIN)
 
 AC_ARG_ENABLE(objprelink, [  --enable-objprelink     prelink apps using objprelink (obsolete)],
@@ -2867,14 +3023,12 @@ AC_DEFUN(KDE_CHECK_LIB64,
     kdelibsuff=none
     AC_ARG_ENABLE(libsuffix,
         AC_HELP_STRING([--enable-libsuffix],
-            [/lib directory suffix (64,32,none)]),
+            [/lib directory suffix (64,32,none[=default])]),
             kdelibsuff=$enableval)
+    # TODO: add an auto case that compiles a little C app to check
+    # where the glibc is
     if test "$kdelibsuff" = "none"; then
-        if test -d /lib64 ; then
-            kdelibsuff=64
-        else
-            kdelibsuff=
-        fi
+       kdelibsuff=
     fi
     if test -z "$kdelibsuff"; then
         AC_MSG_RESULT([not using lib directory suffix])
@@ -2893,7 +3047,6 @@ AC_DEFUN(KDE_CHECK_TYPES,
 [  AC_CHECK_SIZEOF(int, 4)dnl
   AC_CHECK_SIZEOF(long, 4)dnl
   AC_CHECK_SIZEOF(char *, 4)dnl
-  AC_CHECK_SIZEOF(char, 1)dnl
 ])dnl
 
 AC_DEFUN(KDE_DO_IT_ALL,
@@ -3129,7 +3282,7 @@ AC_DEFUN(AM_KDE_GNU_GETTEXT,
    AC_REQUIRE([AC_FUNC_ALLOCA])dnl
    AC_REQUIRE([AC_FUNC_MMAP])dnl
    AC_REQUIRE([AM_KDE_WITH_NLS])dnl
-   AC_CHECK_HEADERS([argz.h limits.h locale.h nl_types.h string.h values.h alloca.h])
+   AC_CHECK_HEADERS([limits.h locale.h nl_types.h string.h values.h alloca.h])
    AC_CHECK_FUNCS([getcwd munmap putenv setlocale strchr strcasecmp \
 __argz_count __argz_stringify __argz_next])
 
@@ -4406,45 +4559,13 @@ AC_MSG_RESULT($ac_cv_maxpathlen)
 AC_DEFINE_UNQUOTED(KDEMAXPATHLEN,$ac_cv_maxpathlen, [Define a safe value for MAXPATHLEN] )
 ])
 
-dnl -------------------------------------------------------------------------
-dnl See if the compiler supports a template repository         bero@redhat.de
-dnl -------------------------------------------------------------------------
-AC_DEFUN(KDE_COMPILER_REPO,
-[
-  REPO=""
-  NOREPO=""
-
-  KDE_CHECK_COMPILER_FLAG(frepo,
-   [
-     REPO="-frepo"
-     NOREPO="-fno-repo"
-   ])
-
-  if test -z "$REPO"; then
-  KDE_CHECK_COMPILER_FLAG(instances=explicit,
-  [
-     REPO="-instances=explicit"
-     NOREPO="-instances=extern"
-  ])
-  fi
-
-  if test -n "$REPO"; then
-     AC_DEFINE_UNQUOTED(HAVE_TEMPLATE_REPOSITORY, 1,
-		[C++ compiler supports template repository])
-     $1
-  fi
-
-  AC_SUBST(REPO)
-  AC_SUBST(NOREPO)
-])
-
 AC_DEFUN(KDE_CHECK_HEADER,
 [
    AC_LANG_SAVE
    kde_safe_cppflags=$CPPFLAGS
    CPPFLAGS="$CPPFLAGS $all_includes"
    AC_LANG_CPLUSPLUS
-   AC_CHECK_HEADER($1, $2, $3)
+   AC_CHECK_HEADER($1, $2, $3, $4)
    CPPFLAGS=$kde_safe_cppflags
    AC_LANG_RESTORE
 ])
@@ -4456,10 +4577,7 @@ AC_DEFUN(KDE_CHECK_HEADERS,
    kde_safe_cppflags=$CPPFLAGS
    CPPFLAGS="$CPPFLAGS $all_includes"
    AC_LANG_CPLUSPLUS
-   for k_header in $1
-   do
-      AC_CHECK_HEADER($k_header, [AC_DEFINE_UNQUOTED(AS_TR_CPP(HAVE_$k_header)) $2], [$3])
-   done
+   AC_CHECK_HEADERS([$1], [$2], [$3], [$4])
    CPPFLAGS=$kde_safe_cppflags
    AC_LANG_RESTORE
 ])
@@ -4667,6 +4785,8 @@ else
       KDE_JAVA_PREFIX(/opt/j*sdk*)
       KDE_JAVA_PREFIX(/usr/lib/java*)
       KDE_JAVA_PREFIX(/usr/java*)
+      KDE_JAVA_PREFIX(/usr/java/j*dk*)
+      KDE_JAVA_PREFIX(/usr/java/j*re*)
       KDE_JAVA_PREFIX(/usr/lib/SunJava2*)
       KDE_JAVA_PREFIX(/usr/lib/SunJava*)
       KDE_JAVA_PREFIX(/usr/lib/IBMJava2*)
@@ -4966,7 +5086,7 @@ if test "${with_qt_dir+set}" = set; then
   kde_qtdir="$with_qt_dir"
 fi
 
-AC_FIND_FILE(qsql.html, [ $kde_qtdir/doc/html $QTDIR/doc/html /usr/share/doc/packages/qt3/html /usr/lib/qt/doc /usr/lib/qt3/doc /usr/lib/qt3/doc/html /usr/doc/qt3/html /usr/doc/qt3 /usr/share/doc/qt3-doc], QTDOCDIR)
+AC_FIND_FILE(qsql.html, [ $kde_qtdir/doc/html $QTDIR/doc/html /usr/share/doc/packages/qt3/html /usr/lib/qt/doc /usr/lib/qt3/doc /usr/lib/qt3/doc/html /usr/doc/qt3/html /usr/doc/qt3 /usr/share/doc/qt3-doc /usr/share/qt3/doc/html ], QTDOCDIR)
 AC_MSG_RESULT($QTDOCDIR)
 
 AC_SUBST(QTDOCDIR)
@@ -5026,19 +5146,23 @@ if test ! "$ac_cv_lib_bzip2" = no; then
 
 else
 
-   cxx_shared_flags=
+   cxx_shared_flag=
+   ld_shared_flag=
    KDE_CHECK_COMPILER_FLAG(shared, [
-	cxx_shared_flag="-shared"
+	ld_shared_flag="-shared"
+   ])
+   KDE_CHECK_COMPILER_FLAG(fPIC, [
+        cxx_shared_flag="-fPIC"
    ])
 
    AC_MSG_CHECKING([for BZ2_bzDecompress in (shared) libbz2])
    AC_CACHE_VAL(ac_cv_lib_bzip2_prefix,
    [
-   AC_LANG_C
+   AC_LANG_CPLUSPLUS
    kde_save_LIBS="$LIBS"
-   LIBS="$all_libraries $USER_LDFLAGS $cxx_shared_flag -lbz2 $LIBSOCKET"
-   kde_save_CFLAGS="$CFLAGS"
-   CFLAGS="$CFLAGS $all_includes $USER_INCLUDES"
+   LIBS="$all_libraries $USER_LDFLAGS $ld_shared_flag -lbz2 $LIBSOCKET"
+   kde_save_CXXFLAGS="$CXXFLAGS"
+   CXXFLAGS="$CFLAGS $cxx_shared_flag $all_includes $USER_INCLUDES"
 
    AC_TRY_LINK(dnl
    [
@@ -5049,7 +5173,7 @@ else
                eval "ac_cv_lib_bzip2_prefix='-lbz2'",
                eval "ac_cv_lib_bzip2_prefix=no")
    LIBS="$kde_save_LIBS"
-   CFLAGS="$kde_save_CFLAGS"
+   CXXFLAGS="$kde_save_CXXFLAGS"
    ])dnl
 
    AC_MSG_RESULT($ac_cv_lib_bzip2_prefix)
@@ -5079,6 +5203,7 @@ dnl
 AC_DEFUN(KDE_CHECK_SSL,
 [
 LIBSSL="-lssl -lcrypto"
+AC_REQUIRE([KDE_CHECK_LIB64])
 
 ac_ssl_includes=NO ac_ssl_libraries=NO
 ssl_libraries=""
@@ -5086,7 +5211,7 @@ ssl_includes=""
 AC_ARG_WITH(ssl-dir,
     [  --with-ssl-dir=DIR      where the root of OpenSSL is installed],
     [  ac_ssl_includes="$withval"/include
-       ac_ssl_libraries="$withval"/lib
+       ac_ssl_libraries="$withval"/lib$kdelibsuff
     ])
 
 want_ssl=yes
@@ -5106,7 +5231,7 @@ AC_CACHE_VAL(ac_cv_have_ssl,
   AC_FIND_FILE(openssl/ssl.h, $ssl_incdirs, ssl_incdir)
   ac_ssl_includes="$ssl_incdir"
 
-  ssl_libdirs="/usr/lib /usr/local/lib /usr/ssl/lib /usr/local/ssl/lib $prefix/lib $exec_prefix/lib $kde_extra_libs"
+  ssl_libdirs="/usr/lib$kdelibsuff /usr/local/lib$kdelibsuff /usr/ssl/lib$kdelibsuff /usr/local/ssl/lib$kdelibsuff $libdir $prefix/lib$kdelibsuff $exec_prefix/lib$kdelibsuff $kde_extra_libs"
   if test ! "$ac_ssl_libraries" = "NO"; then
     ssl_libdirs="$ac_ssl_libraries $ssl_libdirs"
   fi
@@ -5258,6 +5383,56 @@ fi
 AC_SUBST(SSL_INCLUDES)
 AC_SUBST(SSL_LDFLAGS)
 AC_SUBST(LIBSSL)
+])
+
+AC_DEFUN(KDE_CHECK_STRLCPY,
+[
+  AC_REQUIRE([AC_CHECK_STRLCAT])
+  AC_REQUIRE([AC_CHECK_STRLCPY])
+  AC_CHECK_SIZEOF(size_t)
+  AC_CHECK_SIZEOF(unsigned long)
+
+  AC_MSG_CHECKING([sizeof size_t == sizeof unsigned long])
+  AC_TRY_COMPILE(,[
+    #if SIZEOF_SIZE_T != SIZEOF_UNSIGNED_LONG
+       choke me
+    #endif
+    ],AC_MSG_RESULT([yes]),[
+      AC_MSG_RESULT(no)
+      AC_MSG_ERROR([
+       Apparently on your system our assumption sizeof size_t == sizeof unsigned long 
+       does not apply. Please mail kde-devel@kde.org with a description of your system!
+      ])
+  ])
+])
+
+AC_DEFUN(KDE_CHECK_BINUTILS,
+[
+  AC_MSG_CHECKING([if ld supports unversioned version maps])
+
+  kde_save_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS -Wl,--version-script=conftest.map"
+  echo "{ local: extern \"C++\" { foo }; };" > conftest.map
+  AC_TRY_LINK([int foo;],
+[
+  foo = 42;
+], kde_supports_versionmaps=yes, kde_supports_versionmaps=no)
+  LDFLAGS="$kde_save_LDFLAGS"
+  rm -f conftest.map
+  AM_CONDITIONAL(include_VERSION_SCRIPT, 
+    [test "$kde_supports_versionmaps" = "yes" && test "$kde_use_debug_code" = "no"])
+
+  AC_MSG_RESULT($kde_supports_versionmaps)
+])
+
+AC_DEFUN([AM_PROG_OBJC],[
+AC_CHECK_PROGS(OBJC, gcc, gcc)
+test -z "$OBJC" && AC_MSG_ERROR([no acceptable objective-c gcc found in \$PATH])
+if test "x${OBJCFLAGS-unset}" = xunset; then
+   OBJCFLAGS="-g -O2"
+fi
+AC_SUBST(OBJCFLAGS)
+_AM_IF_OPTION([no-dependencies],, [_AM_DEPENDENCIES(OBJC)])
 ])
 # libtool.m4 - Configure libtool for the host system. -*-Autoconf-*-
 
@@ -6259,6 +6434,7 @@ aix3*)
 
 aix4* | aix5*)
   version_type=linux
+  hardcode_into_libs=yes
   if test "$host_cpu" = ia64; then
     # AIX 5 supports IA64
     library_names_spec='${libname}${release}.so$major ${libname}${release}.so$versuffix $libname.so'
@@ -10623,11 +10799,74 @@ $debug ||
 AC_MSG_RESULT([$SED])
 ])
 
-# Do all the work for Automake.  This macro actually does too much --
-# some checks are only needed if your package does certain things.
-# But this isn't really a big deal.
+# AM_CONDITIONAL                                              -*- Autoconf -*-
+
+# Copyright 1997, 2000, 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
 
 # serial 5
+
+AC_PREREQ(2.52)
+
+# AM_CONDITIONAL(NAME, SHELL-CONDITION)
+# -------------------------------------
+# Define a conditional.
+AC_DEFUN([AM_CONDITIONAL],
+[ifelse([$1], [TRUE],  [AC_FATAL([$0: invalid condition: $1])],
+        [$1], [FALSE], [AC_FATAL([$0: invalid condition: $1])])dnl
+AC_SUBST([$1_TRUE])
+AC_SUBST([$1_FALSE])
+if $2; then
+  $1_TRUE=
+  $1_FALSE='#'
+else
+  $1_TRUE='#'
+  $1_FALSE=
+fi
+AC_CONFIG_COMMANDS_PRE(
+[if test -z "${$1_TRUE}" && test -z "${$1_FALSE}"; then
+  AC_MSG_ERROR([conditional "$1" was never defined.
+Usually this means the macro was only invoked conditionally.])
+fi])])
+
+# Do all the work for Automake.                            -*- Autoconf -*-
+
+# This macro actually does too much some checks are only needed if
+# your package does certain things.  But this isn't really a big deal.
+
+# Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002
+# Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# serial 8
 
 # There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
 # written in clear, in which case automake, when reading aclocal.m4,
@@ -10636,62 +10875,62 @@ AC_MSG_RESULT([$SED])
 # CC etc. in the Makefile, will ask for an AC_PROG_CC use...
 
 
-# We require 2.13 because we rely on SHELL being computed by configure.
-AC_PREREQ([2.13])
-
-# AC_PROVIDE_IFELSE(MACRO-NAME, IF-PROVIDED, IF-NOT-PROVIDED)
-# -----------------------------------------------------------
-# If MACRO-NAME is provided do IF-PROVIDED, else IF-NOT-PROVIDED.
-# The purpose of this macro is to provide the user with a means to
-# check macros which are provided without letting her know how the
-# information is coded.
-# If this macro is not defined by Autoconf, define it here.
-ifdef([AC_PROVIDE_IFELSE],
-      [],
-      [define([AC_PROVIDE_IFELSE],
-              [ifdef([AC_PROVIDE_$1],
-                     [$2], [$3])])])
-
-
-# AM_INIT_AUTOMAKE(PACKAGE,VERSION, [NO-DEFINE])
-# ----------------------------------------------
-AC_DEFUN([AM_INIT_AUTOMAKE],
-[AC_REQUIRE([AC_PROG_INSTALL])dnl
-# test to see if srcdir already configured
-if test "`CDPATH=:; cd $srcdir && pwd`" != "`pwd`" &&
-   test -f $srcdir/config.status; then
-  AC_MSG_ERROR([source directory already configured; run \"make distclean\" there first])
-fi
-
-# Define the identity of the package.
-PACKAGE=$1
-AC_SUBST(PACKAGE)dnl
-VERSION=$2
-AC_SUBST(VERSION)dnl
-ifelse([$3],,
-[AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
-AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package])])
+AC_PREREQ([2.54])
 
 # Autoconf 2.50 wants to disallow AM_ names.  We explicitly allow
 # the ones we care about.
-ifdef([m4_pattern_allow],
-      [m4_pattern_allow([^AM_[A-Z]+FLAGS])])dnl
+m4_pattern_allow([^AM_[A-Z]+FLAGS$])dnl
 
-# Autoconf 2.50 always computes EXEEXT.  However we need to be
-# compatible with 2.13, for now.  So we always define EXEEXT, but we
-# don't compute it.
-AC_SUBST(EXEEXT)
-# Similar for OBJEXT -- only we only use OBJEXT if the user actually
-# requests that it be used.  This is a bit dumb.
-: ${OBJEXT=o}
-AC_SUBST(OBJEXT)
+# AM_INIT_AUTOMAKE(PACKAGE, VERSION, [NO-DEFINE])
+# AM_INIT_AUTOMAKE([OPTIONS])
+# -----------------------------------------------
+# The call with PACKAGE and VERSION arguments is the old style
+# call (pre autoconf-2.50), which is being phased out.  PACKAGE
+# and VERSION should now be passed to AC_INIT and removed from
+# the call to AM_INIT_AUTOMAKE.
+# We support both call styles for the transition.  After
+# the next Automake release, Autoconf can make the AC_INIT
+# arguments mandatory, and then we can depend on a new Autoconf
+# release and drop the old call support.
+AC_DEFUN([AM_INIT_AUTOMAKE],
+[AC_REQUIRE([AM_SET_CURRENT_AUTOMAKE_VERSION])dnl
+ AC_REQUIRE([AC_PROG_INSTALL])dnl
+# test to see if srcdir already configured
+if test "`cd $srcdir && pwd`" != "`pwd`" &&
+   test -f $srcdir/config.status; then
+  AC_MSG_ERROR([source directory already configured; run "make distclean" there first])
+fi
+
+# test whether we have cygpath
+if test -z "$CYGPATH_W"; then
+  if (cygpath --version) >/dev/null 2>/dev/null; then
+    CYGPATH_W='cygpath -w'
+  else
+    CYGPATH_W=echo
+  fi
+fi
+AC_SUBST([CYGPATH_W])
+
+# Define the identity of the package.
+dnl Distinguish between old-style and new-style calls.
+m4_ifval([$2],
+[m4_ifval([$3], [_AM_SET_OPTION([no-define])])dnl
+ AC_SUBST([PACKAGE], [$1])dnl
+ AC_SUBST([VERSION], [$2])],
+[_AM_SET_OPTIONS([$1])dnl
+ AC_SUBST([PACKAGE], [AC_PACKAGE_TARNAME])dnl
+ AC_SUBST([VERSION], [AC_PACKAGE_VERSION])])dnl
+
+_AM_IF_OPTION([no-define],,
+[AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of package])
+ AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version number of package])])dnl
 
 # Some tools Automake needs.
 AC_REQUIRE([AM_SANITY_CHECK])dnl
 AC_REQUIRE([AC_ARG_PROGRAM])dnl
-AM_MISSING_PROG(ACLOCAL, aclocal)
+AM_MISSING_PROG(ACLOCAL, aclocal-${am__api_version})
 AM_MISSING_PROG(AUTOCONF, autoconf)
-AM_MISSING_PROG(AUTOMAKE, automake)
+AM_MISSING_PROG(AUTOMAKE, automake-${am__api_version})
 AM_MISSING_PROG(AUTOHEADER, autoheader)
 AM_MISSING_PROG(MAKEINFO, makeinfo)
 AM_MISSING_PROG(AMTAR, tar)
@@ -10701,21 +10940,124 @@ AM_PROG_INSTALL_STRIP
 # some platforms.
 AC_REQUIRE([AC_PROG_AWK])dnl
 AC_REQUIRE([AC_PROG_MAKE_SET])dnl
-AC_REQUIRE([AM_DEP_TRACK])dnl
-AC_REQUIRE([AM_SET_DEPDIR])dnl
-AC_PROVIDE_IFELSE([AC_PROG_][CC],
+
+_AM_IF_OPTION([no-dependencies],,
+[AC_PROVIDE_IFELSE([AC_PROG_CC],
                   [_AM_DEPENDENCIES(CC)],
-                  [define([AC_PROG_][CC],
-                          defn([AC_PROG_][CC])[_AM_DEPENDENCIES(CC)])])dnl
-AC_PROVIDE_IFELSE([AC_PROG_][CXX],
+                  [define([AC_PROG_CC],
+                          defn([AC_PROG_CC])[_AM_DEPENDENCIES(CC)])])dnl
+AC_PROVIDE_IFELSE([AC_PROG_CXX],
                   [_AM_DEPENDENCIES(CXX)],
-                  [define([AC_PROG_][CXX],
-                          defn([AC_PROG_][CXX])[_AM_DEPENDENCIES(CXX)])])dnl
+                  [define([AC_PROG_CXX],
+                          defn([AC_PROG_CXX])[_AM_DEPENDENCIES(CXX)])])dnl
 ])
+])
+
+
+# When config.status generates a header, we must update the stamp-h file.
+# This file resides in the same directory as the config header
+# that is generated.  The stamp files are numbered to have different names.
+
+# Autoconf calls _AC_AM_CONFIG_HEADER_HOOK (when defined) in the
+# loop where config.status creates the headers, so we can generate
+# our stamp files there.
+AC_DEFUN([_AC_AM_CONFIG_HEADER_HOOK],
+[_am_stamp_count=`expr ${_am_stamp_count-0} + 1`
+echo "timestamp for $1" >`AS_DIRNAME([$1])`/stamp-h[]$_am_stamp_count])
+
+# Copyright 2002  Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+
+# AM_AUTOMAKE_VERSION(VERSION)
+# ----------------------------
+# Automake X.Y traces this macro to ensure aclocal.m4 has been
+# generated from the m4 files accompanying Automake X.Y.
+AC_DEFUN([AM_AUTOMAKE_VERSION],[am__api_version="1.7"])
+
+# AM_SET_CURRENT_AUTOMAKE_VERSION
+# -------------------------------
+# Call AM_AUTOMAKE_VERSION so it can be traced.
+# This function is AC_REQUIREd by AC_INIT_AUTOMAKE.
+AC_DEFUN([AM_SET_CURRENT_AUTOMAKE_VERSION],
+	 [AM_AUTOMAKE_VERSION([1.7.2])])
+
+# Helper functions for option handling.                    -*- Autoconf -*-
+
+# Copyright 2001, 2002  Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# serial 2
+
+# _AM_MANGLE_OPTION(NAME)
+# -----------------------
+AC_DEFUN([_AM_MANGLE_OPTION],
+[[_AM_OPTION_]m4_bpatsubst($1, [[^a-zA-Z0-9_]], [_])])
+
+# _AM_SET_OPTION(NAME)
+# ------------------------------
+# Set option NAME.  Presently that only means defining a flag for this option.
+AC_DEFUN([_AM_SET_OPTION],
+[m4_define(_AM_MANGLE_OPTION([$1]), 1)])
+
+# _AM_SET_OPTIONS(OPTIONS)
+# ----------------------------------
+# OPTIONS is a space-separated list of Automake options.
+AC_DEFUN([_AM_SET_OPTIONS],
+[AC_FOREACH([_AM_Option], [$1], [_AM_SET_OPTION(_AM_Option)])])
+
+# _AM_IF_OPTION(OPTION, IF-SET, [IF-NOT-SET])
+# -------------------------------------------
+# Execute IF-SET if OPTION is set, IF-NOT-SET otherwise.
+AC_DEFUN([_AM_IF_OPTION],
+[m4_ifset(_AM_MANGLE_OPTION([$1]), [$2], [$3])])
 
 #
 # Check to make sure that the build environment is sane.
 #
+
+# Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
 
 # serial 3
 
@@ -10760,8 +11102,27 @@ Check your system clock])
 fi
 AC_MSG_RESULT(yes)])
 
+#  -*- Autoconf -*-
 
-# serial 2
+
+# Copyright 1997, 1999, 2000, 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# serial 3
 
 # AM_MISSING_PROG(NAME, PROGRAM)
 # ------------------------------
@@ -10783,12 +11144,28 @@ if eval "$MISSING --run true"; then
   am_missing_run="$MISSING --run "
 else
   am_missing_run=
-  am_backtick='`'
-  AC_MSG_WARN([${am_backtick}missing' script is too old or missing])
+  AC_MSG_WARN([`missing' script is too old or missing])
 fi
 ])
 
 # AM_AUX_DIR_EXPAND
+
+# Copyright 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
 
 # For projects using AC_CONFIG_AUX_DIR([foo]), Autoconf sets
 # $ac_aux_dir to `$srcdir/foo'.  In other projects, it is set to
@@ -10828,18 +11205,58 @@ fi
 # absolute PATH.  The drawback is that using absolute paths prevent a
 # configured tree to be moved without reconfiguration.
 
+# Rely on autoconf to set up CDPATH properly.
+AC_PREREQ([2.50])
+
 AC_DEFUN([AM_AUX_DIR_EXPAND], [
 # expand $ac_aux_dir to an absolute path
-am_aux_dir=`CDPATH=:; cd $ac_aux_dir && pwd`
+am_aux_dir=`cd $ac_aux_dir && pwd`
 ])
 
 # AM_PROG_INSTALL_SH
 # ------------------
 # Define $install_sh.
+
+# Copyright 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
 AC_DEFUN([AM_PROG_INSTALL_SH],
 [AC_REQUIRE([AM_AUX_DIR_EXPAND])dnl
 install_sh=${install_sh-"$am_aux_dir/install-sh"}
 AC_SUBST(install_sh)])
+
+# AM_PROG_INSTALL_STRIP
+
+# Copyright 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
 
 # One issue with vendor `install' (even GNU) is that you can't
 # specify the program used to strip binaries.  This is especially
@@ -10850,11 +11267,35 @@ AC_SUBST(install_sh)])
 # STRIPPROG with the value of the STRIP variable (set by the user).
 AC_DEFUN([AM_PROG_INSTALL_STRIP],
 [AC_REQUIRE([AM_PROG_INSTALL_SH])dnl
+# Installed binaries are usually stripped using `strip' when the user
+# run `make install-strip'.  However `strip' might not be the right
+# tool to use in cross-compilation environments, therefore Automake
+# will honor the `STRIP' environment variable to overrule this program.
+dnl Don't test for $cross_compiling = yes, because it might be `maybe'.
+if test "$cross_compiling" != no; then
+  AC_CHECK_TOOL([STRIP], [strip], :)
+fi
 INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
 AC_SUBST([INSTALL_STRIP_PROGRAM])])
 
 # serial 4						-*- Autoconf -*-
 
+# Copyright 1999, 2000, 2001 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
 
 
 # There are a few dirty hacks below to avoid letting `AC_PROG_CC' be
@@ -10866,9 +11307,9 @@ AC_SUBST([INSTALL_STRIP_PROGRAM])])
 
 
 # _AM_DEPENDENCIES(NAME)
-# ---------------------
+# ----------------------
 # See how the compiler implements dependency checking.
-# NAME is "CC", "CXX" or "OBJC".
+# NAME is "CC", "CXX", "GCJ", or "OBJC".
 # We try a few techniques and use that to set a single cache variable.
 #
 # We don't AC_REQUIRE the corresponding AC_PROG_CC since the latter was
@@ -10883,7 +11324,7 @@ AC_REQUIRE([AM_DEP_TRACK])dnl
 
 ifelse([$1], CC,   [depcc="$CC"   am_compiler_list=],
        [$1], CXX,  [depcc="$CXX"  am_compiler_list=],
-       [$1], OBJC, [depcc="$OBJC" am_compiler_list='gcc3 gcc']
+       [$1], OBJC, [depcc="$OBJC" am_compiler_list='gcc3 gcc'],
        [$1], GCJ,  [depcc="$GCJ"  am_compiler_list='gcc3 gcc'],
                    [depcc="$$1"   am_compiler_list=])
 
@@ -10931,7 +11372,7 @@ AC_CACHE_CHECK([dependency style of $depcc],
     if depmode=$depmode \
        source=conftest.c object=conftest.o \
        depfile=conftest.Po tmpdepfile=conftest.TPo \
-       $SHELL ./depcomp $depcc -c conftest.c -o conftest.o >/dev/null 2>&1 &&
+       $SHELL ./depcomp $depcc -c -o conftest.o conftest.c >/dev/null 2>&1 &&
        grep conftest.h conftest.Po > /dev/null 2>&1 &&
        ${MAKE-make} -s -f confmf > /dev/null 2>&1; then
       am_cv_$1_dependencies_compiler_type=$depmode
@@ -10945,8 +11386,10 @@ else
   am_cv_$1_dependencies_compiler_type=none
 fi
 ])
-$1DEPMODE="depmode=$am_cv_$1_dependencies_compiler_type"
-AC_SUBST([$1DEPMODE])
+AC_SUBST([$1DEPMODE], [depmode=$am_cv_$1_dependencies_compiler_type])
+AM_CONDITIONAL([am__fastdep$1], [
+  test "x$enable_dependency_tracking" != xno \
+  && test "$am_cv_$1_dependencies_compiler_type" = gcc3])
 ])
 
 
@@ -10964,7 +11407,7 @@ else
   DEPDIR=_deps
 fi
 rmdir .deps 2>/dev/null
-AC_SUBST(DEPDIR)
+AC_SUBST([DEPDIR])
 ])
 
 
@@ -10979,30 +11422,48 @@ if test "x$enable_dependency_tracking" != xno; then
   AMDEPBACKSLASH='\'
 fi
 AM_CONDITIONAL([AMDEP], [test "x$enable_dependency_tracking" != xno])
-pushdef([subst], defn([AC_SUBST]))
-subst(AMDEPBACKSLASH)
-popdef([subst])
+AC_SUBST([AMDEPBACKSLASH])
 ])
 
-# Generate code to set up dependency tracking.
-# This macro should only be invoked once -- use via AC_REQUIRE.
-# Usage:
-# AM_OUTPUT_DEPENDENCY_COMMANDS
+# Generate code to set up dependency tracking.   -*- Autoconf -*-
 
-#
-# This code is only required when automatic dependency tracking
-# is enabled.  FIXME.  This creates each `.P' file that we will
-# need in order to bootstrap the dependency handling code.
-AC_DEFUN([AM_OUTPUT_DEPENDENCY_COMMANDS],[
-AC_OUTPUT_COMMANDS([
-test x"$AMDEP_TRUE" != x"" ||
-for mf in $CONFIG_FILES; do
-  case "$mf" in
-  Makefile) dirpart=.;;
-  */Makefile) dirpart=`echo "$mf" | sed -e 's|/[^/]*$||'`;;
-  *) continue;;
-  esac
-  grep '^DEP_FILES *= *[^ #]' < "$mf" > /dev/null || continue
+# Copyright 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+#serial 2
+
+# _AM_OUTPUT_DEPENDENCY_COMMANDS
+# ------------------------------
+AC_DEFUN([_AM_OUTPUT_DEPENDENCY_COMMANDS],
+[for mf in $CONFIG_FILES; do
+  # Strip MF so we end up with the name of the file.
+  mf=`echo "$mf" | sed -e 's/:.*$//'`
+  # Check whether this is an Automake generated Makefile or not.
+  # We used to match only the files named `Makefile.in', but
+  # some people rename them; so instead we look at the file content.
+  # Grep'ing the first line is not enough: some people post-process
+  # each Makefile.in and add a new line on top of each file to say so.
+  # So let's grep whole file.
+  if grep '^#.*generated by automake' $mf > /dev/null 2>&1; then
+    dirpart=`AS_DIRNAME("$mf")`
+  else
+    continue
+  fi
+  grep '^DEP_FILES *= *[[^ @%:@]]' < "$mf" > /dev/null || continue
   # Extract the definition of DEP_FILES from the Makefile without
   # running `make'.
   DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
@@ -11026,14 +11487,48 @@ for mf in $CONFIG_FILES; do
        sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
     # Make sure the directory exists.
     test -f "$dirpart/$file" && continue
-    fdir=`echo "$file" | sed -e 's|/[^/]*$||'`
-    $ac_aux_dir/mkinstalldirs "$dirpart/$fdir" > /dev/null 2>&1
+    fdir=`AS_DIRNAME(["$file"])`
+    AS_MKDIR_P([$dirpart/$fdir])
     # echo "creating $dirpart/$file"
     echo '# dummy' > "$dirpart/$file"
   done
 done
-], [AMDEP_TRUE="$AMDEP_TRUE"
-ac_aux_dir="$ac_aux_dir"])])
+])# _AM_OUTPUT_DEPENDENCY_COMMANDS
+
+
+# AM_OUTPUT_DEPENDENCY_COMMANDS
+# -----------------------------
+# This macro should only be invoked once -- use via AC_REQUIRE.
+#
+# This code is only required when automatic dependency tracking
+# is enabled.  FIXME.  This creates each `.P' file that we will
+# need in order to bootstrap the dependency handling code.
+AC_DEFUN([AM_OUTPUT_DEPENDENCY_COMMANDS],
+[AC_CONFIG_COMMANDS([depfiles],
+     [test x"$AMDEP_TRUE" != x"" || _AM_OUTPUT_DEPENDENCY_COMMANDS],
+     [AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"])
+])
+
+# Check to see how 'make' treats includes.	-*- Autoconf -*-
+
+# Copyright (C) 2001, 2002 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+# serial 2
 
 # AM_MAKE_INCLUDE()
 # -----------------
@@ -11046,7 +11541,7 @@ doit:
 END
 # If we don't find an include directive, just comment out the code.
 AC_MSG_CHECKING([for style of include used by $am_make])
-am__include='#'
+am__include="#"
 am__quote=
 _am_result=none
 # First try GNU make style include.
@@ -11056,7 +11551,7 @@ echo "include confinc" > confmf
 # In particular we don't look at `^make:' because GNU make might
 # be invoked under some other name (usually "gmake"), in which
 # case it prints its new name instead of `make'.
-if test "`$am_make -s -f confmf 2> /dev/null | fgrep -v 'ing directory'`" = "done"; then
+if test "`$am_make -s -f confmf 2> /dev/null | grep -v 'ing directory'`" = "done"; then
    am__include=include
    am__quote=
    _am_result=GNU
@@ -11066,7 +11561,7 @@ if test "$am__include" = "#"; then
    echo '.include "confinc"' > confmf
    if test "`$am_make -s -f confmf 2> /dev/null`" = "done"; then
       am__include=.include
-      am__quote='"'
+      am__quote="\""
       _am_result=BSD
    fi
 fi
@@ -11076,106 +11571,62 @@ AC_MSG_RESULT($_am_result)
 rm -f confinc confmf
 ])
 
+
+# Copyright 1998, 1999, 2000, 2001, 2002 Free Software Foundation, Inc.
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
 # serial 3
 
-# AM_CONDITIONAL(NAME, SHELL-CONDITION)
-# -------------------------------------
-# Define a conditional.
-#
-# FIXME: Once using 2.50, use this:
-# m4_match([$1], [^TRUE\|FALSE$], [AC_FATAL([$0: invalid condition: $1])])dnl
-AC_DEFUN([AM_CONDITIONAL],
-[ifelse([$1], [TRUE],
-        [errprint(__file__:__line__: [$0: invalid condition: $1
-])dnl
-m4exit(1)])dnl
-ifelse([$1], [FALSE],
-       [errprint(__file__:__line__: [$0: invalid condition: $1
-])dnl
-m4exit(1)])dnl
-AC_SUBST([$1_TRUE])
-AC_SUBST([$1_FALSE])
-if $2; then
-  $1_TRUE=
-  $1_FALSE='#'
-else
-  $1_TRUE='#'
-  $1_FALSE=
-fi])
-
+AC_PREREQ(2.50)
 
 # AM_PROG_LEX
-# Look for flex, lex or missing, then run AC_PROG_LEX and AC_DECL_YYTEXT
+# -----------
+# Autoconf leaves LEX=: if lex or flex can't be found.  Change that to a
+# "missing" invocation, for better error output.
 AC_DEFUN([AM_PROG_LEX],
-[AC_REQUIRE([AM_MISSING_HAS_RUN])
-AC_CHECK_PROGS(LEX, flex lex, [${am_missing_run}flex])
-AC_PROG_LEX
-AC_DECL_YYTEXT])
+[AC_REQUIRE([AM_MISSING_HAS_RUN])dnl
+AC_REQUIRE([AC_PROG_LEX])dnl
+if test "$LEX" = :; then
+  LEX=${am_missing_run}flex
+fi])
 
-# Like AC_CONFIG_HEADER, but automatically create stamp file.
+# Like AC_CONFIG_HEADER, but automatically create stamp file. -*- Autoconf -*-
 
-# serial 3
+# Copyright 1996, 1997, 2000, 2001 Free Software Foundation, Inc.
 
-# When config.status generates a header, we must update the stamp-h file.
-# This file resides in the same directory as the config header
-# that is generated.  We must strip everything past the first ":",
-# and everything past the last "/".
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
 
-AC_PREREQ([2.12])
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 
-AC_DEFUN([AM_CONFIG_HEADER],
-[ifdef([AC_FOREACH],dnl
-	 [dnl init our file count if it isn't already
-	 m4_ifndef([_AM_Config_Header_Index], m4_define([_AM_Config_Header_Index], [0]))
-	 dnl prepare to store our destination file list for use in config.status
-	 AC_FOREACH([_AM_File], [$1],
-		    [m4_pushdef([_AM_Dest], m4_patsubst(_AM_File, [:.*]))
-		    m4_define([_AM_Config_Header_Index], m4_incr(_AM_Config_Header_Index))
-		    dnl and add it to the list of files AC keeps track of, along
-		    dnl with our hook
-		    AC_CONFIG_HEADERS(_AM_File,
-dnl COMMANDS, [, INIT-CMDS]
-[# update the timestamp
-echo timestamp >"AS_ESCAPE(_AM_DIRNAME(]_AM_Dest[))/stamp-h]_AM_Config_Header_Index["
-][$2]m4_ifval([$3], [, [$3]]))dnl AC_CONFIG_HEADERS
-		    m4_popdef([_AM_Dest])])],dnl
-[AC_CONFIG_HEADER([$1])
-  AC_OUTPUT_COMMANDS(
-   ifelse(patsubst([$1], [[^ ]], []),
-	  [],
-	  [test -z "$CONFIG_HEADERS" || echo timestamp >dnl
-	   patsubst([$1], [^\([^:]*/\)?.*], [\1])stamp-h]),dnl
-[am_indx=1
-for am_file in $1; do
-  case " \$CONFIG_HEADERS " in
-  *" \$am_file "*)
-    am_dir=\`echo \$am_file |sed 's%:.*%%;s%[^/]*\$%%'\`
-    if test -n "\$am_dir"; then
-      am_tmpdir=\`echo \$am_dir |sed 's%^\(/*\).*\$%\1%'\`
-      for am_subdir in \`echo \$am_dir |sed 's%/% %'\`; do
-        am_tmpdir=\$am_tmpdir\$am_subdir/
-        if test ! -d \$am_tmpdir; then
-          mkdir \$am_tmpdir
-        fi
-      done
-    fi
-    echo timestamp > "\$am_dir"stamp-h\$am_indx
-    ;;
-  esac
-  am_indx=\`expr \$am_indx + 1\`
-done])
-])]) # AM_CONFIG_HEADER
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
 
-# _AM_DIRNAME(PATH)
-# -----------------
-# Like AS_DIRNAME, only do it during macro expansion
-AC_DEFUN([_AM_DIRNAME],
-       [m4_if(m4_regexp([$1], [^.*[^/]//*[^/][^/]*/*$]), -1,
-	      m4_if(m4_regexp([$1], [^//\([^/]\|$\)]), -1,
-		    m4_if(m4_regexp([$1], [^/.*]), -1,
-			  [.],
-			  m4_patsubst([$1], [^\(/\).*], [\1])),
-		    m4_patsubst([$1], [^\(//\)\([^/].*\|$\)], [\1])),
-	      m4_patsubst([$1], [^\(.*[^/]\)//*[^/][^/]*/*$], [\1]))[]dnl
-]) # _AM_DIRNAME
+AC_PREREQ([2.52])
+
+# serial 6
+
+# AM_CONFIG_HEADER is obsolete.  It has been replaced by AC_CONFIG_HEADERS.
+AU_DEFUN([AM_CONFIG_HEADER], [AC_CONFIG_HEADERS($@)])
 

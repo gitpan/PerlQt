@@ -42,6 +42,7 @@ sub import {
     my $caller = (caller)[0];
 
     for my $attribute (@_) {
+	exists ${ ${$caller . '::META'}{'attributes'} }{$attribute} and next;
 	Qt::_internal::installattribute($caller, $attribute);
         ${ ${$caller . '::META'}{'attributes'} }{$attribute} = 1;
     }

@@ -27,4 +27,7 @@ dist-hook:
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
 
 test:
-	cd $(top_distdir) && LD_LIBRARY_PATH="../../smoke/qt/.libs:@qt_libraries@" perl test.pl
+	cd $(top_distdir) && LD_LIBRARY_PATH="../../smoke/qt/.libs:@qt_libraries@" PERL_DL_NONLAZY=1 perl test.pl
+
+ChangeLog:
+	perl cvs2cl.pl  -P -S --no-wrap -f ChangeLog.CVS

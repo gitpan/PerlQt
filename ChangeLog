@@ -1,3 +1,32 @@
+
+2003-09-09 GG (v.3.008)
+	- improved garbage collection. No more leaks of Q*Items.
+	  GC is now believed to be entirely sound.
+	- faster/cleaner build system (no more automake dependancy)
+	- speed optimizations (+50% gain)
+	- 9 new marshallers (Q*List are marshalled as a reference to a Perl array of Q*)
+	- tied marshallers for non-const QString/QByteArray
+		$ts = Qt::TextStream( $x, IO_WriteOnly );
+		$ts << "foo"; # will write to $x
+	- alternative Sig/Slot declaration syntax
+		sub a_signal : SIGNAL(int,QString);
+		sub a_slot : SLOT(int,QString) {
+		    #do something
+		}
+	- perleditor plugin for Qt Designer (released separately as pqt-designer package)
+		- Perl syntax highlighting
+		- thorough code completion (static and instance methods, &Qt::enums...)
+		- Perl aware Object Browser ("Class Declarations" tab)
+		- run your PerlQt project straight from the designer
+		- STDIN/STDOUT output and Perl messages are redirected to the Output Window view, 
+		  with corrected line numbers pointing to syntax errors.
+	- global scope Qt functions (bitBlt, qCompress...) are now available. 
+		- gathered in the Qt::GlobalSpace namespace
+		- import them to current namespace with "use Qt::GlobalSpace"
+	- global scope operators are available as well (e.g Qt::Point + Qt::point)
+	- bug fixes and other improvements.
+		=> see ChangeLog.CVS.delta and ChangeLog.CVS for details
+
 2002-02-13 GG (v.3.006)
          - "use bytes" pragma now changes the way QStrings are marshalled 
            back to Perl : within the scope,  instead of all utf-8, QStrings are

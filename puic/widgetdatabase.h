@@ -36,6 +36,8 @@ struct WidgetDatabaseRecord
     QString iconSet, name, group, toolTip, whatsThis, includeFile;
     uint isContainer : 1;
     uint isForm : 1;
+    uint isCommon : 1;
+    uint isPlugin : 1;
     QIconSet *icon;
     int nameCounter;
 };
@@ -58,6 +60,7 @@ public:
     static QString includeFile( int id );
     static bool isForm( int id );
     static bool isContainer( int id );
+    static bool isCommon( int id );
 
     static int idFromClassName( const QString &name );
     static QString createWidgetName( int id );
@@ -74,11 +77,13 @@ public:
 
     static int addCustomWidget( WidgetDatabaseRecord *r );
     static bool isCustomWidget( int id );
+    static bool isCustomPluginWidget( int id );
 
     static bool isWhatsThisLoaded();
     static void loadWhatsThis( const QString &docPath );
 
     static bool hasWidget( const QString &name );
+    static void customWidgetClassNameChanged( const QString &oldName, const QString &newName );
 
 };
 

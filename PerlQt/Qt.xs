@@ -34,6 +34,14 @@
 #include "perlqt.h"
 #include "smokeperl.h"
 
+#ifndef IN_BYTES
+#define IN_BYTES IN_BYTE
+#endif
+
+#ifndef IN_LOCALE
+#define IN_LOCALE (PL_curcop->op_private & HINT_LOCALE)
+#endif
+
 extern Smoke *qt_Smoke;
 extern void init_qt_Smoke();
 
@@ -46,8 +54,8 @@ void *_current_object = 0;    // TODO: ask myself if this is stupid
 
 bool temporary_virtual_function_success = false;
 
-QAsciiDict<Smoke::Index> methcache(2179);
-QAsciiDict<Smoke::Index> classcache(2179);
+static QAsciiDict<Smoke::Index> *methcache = 0;
+static QAsciiDict<Smoke::Index> *classcache = 0;
 
 SV *sv_this = 0;
 
@@ -91,28 +99,10 @@ struct MocArgument {
 extern TypeHandler Qt_handlers[];
 void install_handlers(TypeHandler *);
 
-void unmapPointer(smokeperl_object *o, Smoke::Index classId, void *lastptr);
-extern struct mgvtbl vtbl_smoke;
-
-smokeperl_object *sv_obj_info(SV *sv) {  // ptr on success, null on fail
-    if(!sv || !SvROK(sv) || SvTYPE(SvRV(sv)) != SVt_PVHV)
-	return 0;
-    SV *obj = SvRV(sv);
-    MAGIC *mg = mg_find(obj, '~');
-    if(!mg || mg->mg_virtual != &vtbl_smoke) {
-	// FIXME: die or something?
-	return 0;
-    }
-    smokeperl_object *o = (smokeperl_object*)mg->mg_ptr;
-    return o;
-}
-
 void *sv_to_ptr(SV *sv) {  // ptr on success, null on fail
     smokeperl_object *o = sv_obj_info(sv);
     return o ? o->ptr : 0;
 }
-
-SV *getPointerObject(void *ptr);
 
 bool isQObject(Smoke *smoke, Smoke::Index classId) {
     if(!strcmp(smoke->classes[classId].className, "QObject"))
@@ -126,36 +116,42 @@ bool isQObject(Smoke *smoke, Smoke::Index classId) {
     return false;
 }
 
-bool isDerivedFrom(Smoke *smoke, Smoke::Index classId, Smoke::Index baseId) {
+int isDerivedFrom(Smoke *smoke, Smoke::Index classId, Smoke::Index baseId, int cnt) {
     if(classId == baseId)
-	return true;
+	return cnt;
+    cnt++;
     for(Smoke::Index *p = smoke->inheritanceList + smoke->classes[classId].parents;
 	*p;
 	p++) {
-	if(isDerivedFrom(smoke, *p, baseId))
-	    return true;
+	if(isDerivedFrom(smoke, *p, baseId, cnt) != -1)
+	    return cnt;
     }
-    return false;
+    return -1;
 }
 
-bool isDerivedFrom(Smoke *smoke, const char *className, const char *baseClassName) {
+int isDerivedFrom(Smoke *smoke, const char *className, const char *baseClassName, int cnt) {
     if(!smoke || !className || !baseClassName)
-	return false;
+	return -1;
     Smoke::Index idClass = smoke->idClass(className);
     Smoke::Index idBase = smoke->idClass(baseClassName);
-    return isDerivedFrom(smoke, idClass, idBase);
+    return isDerivedFrom(smoke, idClass, idBase, cnt);
 }
 
-void unmapPointer(smokeperl_object *, Smoke::Index, void*);
-
 SV *getPointerObject(void *ptr) {
-    HV *hv = pointer_map; 
+    HV *hv = pointer_map;
     SV *keysv = newSViv((IV)ptr);
     STRLEN len;
     char *key = SvPV(keysv, len);
     SV **svp = hv_fetch(hv, key, len, 0);
-    SvREFCNT_dec(keysv);
-    if(!svp) return 0;
+    if(!svp){
+	 SvREFCNT_dec(keysv);
+	 return 0;
+    }
+    if(!SvOK(*svp)){
+	hv_delete(hv, key, len, G_DISCARD);
+	SvREFCNT_dec(keysv);
+	return 0;
+    }
     return *svp;
 }
 
@@ -273,7 +269,6 @@ public:
 	_cur++;
 	while(!_called && _cur < method().numArgs) {
 	    Marshall::HandlerFn fn = getMarshallFn(type());
-	    _sp[_cur] = sv_newmortal();
 	    (*fn)(this);
 	    _cur++;
 	}
@@ -692,11 +687,8 @@ public:
     void deleted(Smoke::Index classId, void *ptr) {
 	SV *obj = getPointerObject(ptr);
 	smokeperl_object *o = sv_obj_info(obj);
-	if(do_debug & qtdb_gc) {
-            printf("%p->~%s()\n", ptr, smoke->className(classId));
-            if(o && o->ptr)
-                object_count --;
-	    //printf("Remaining objects: %d\n", object_count);
+	if(do_debug && (do_debug & qtdb_gc)) {
+            fprintf(stderr, "%p->~%s()\n", ptr, smoke->className(classId));
         }
 	if(!o || !o->ptr) {
 	    return;
@@ -707,13 +699,13 @@ public:
     bool callMethod(Smoke::Index method, void *ptr, Smoke::Stack args, bool isAbstract) {
 	SV *obj = getPointerObject(ptr);
 	smokeperl_object *o = sv_obj_info(obj);
-	if(do_debug & qtdb_virtual) fprintf(stderr, "virtual %p->%s::%s() called\n", ptr,
+	if(do_debug && (do_debug & qtdb_virtual)) fprintf(stderr, "virtual %p->%s::%s() called\n", ptr,
 	    smoke->classes[smoke->methods[method].classId].className,
 	    smoke->methodNames[smoke->methods[method].name]
         );
 
 	if(!o) {
-	    if(!PL_dirty && (do_debug & qtdb_virtual) )   // if not in global destruction
+	    if(!PL_dirty && (do_debug && (do_debug & qtdb_virtual)) )   // if not in global destruction
 		fprintf(stderr, "Cannot find object for virtual method\n");
 	    return false;
 	}
@@ -771,7 +763,7 @@ SV *catArguments(SV** sp, int n)
 
 Smoke::Index package_classid(const char *p)
 {
-     Smoke::Index *item = classcache.find(p);
+     Smoke::Index *item = classcache->find(p);
      if(item)
          return *item;
      char *nisa = new char[strlen(p)+6];
@@ -784,7 +776,7 @@ Smoke::Index package_classid(const char *p)
          if(np) {
              Smoke::Index ix = package_classid(SvPV_nolen(*np));
              if(ix) {
-                 classcache.insert(p, new Smoke::Index(ix));
+                 classcache->insert(p, new Smoke::Index(ix));
                  return ix;
              }
          }
@@ -810,6 +802,9 @@ char *get_SVt(SV *sv)
                 case SVt_PVAV:
                   r = "a";
                   break;
+//                case SVt_PV:
+//                case SVt_PVMG:
+//                  r = "p";
                 default:
                   r = "r";
             }
@@ -890,6 +885,9 @@ XS(XS_super) {
 
 //---------- XS Autoload (for all functions except fully qualified statics & enums) ---------
 
+static inline bool isQt(char *p) {
+	return (p[0] == 'Q' && p[1] && p[1] == 't' && ((p[2] && p[2] == ':') || !p[2]));
+}
 
 bool avoid_fetchmethod = false;
 XS(XS_AUTOLOAD) {
@@ -898,7 +896,7 @@ XS(XS_AUTOLOAD) {
     SV *sv = get_sv("Qt::AutoLoad::AUTOLOAD", TRUE);
     char *package = SvPV_nolen(sv);
     char *method = 0;
-    for(char *s = package; *s; s++)
+    for(char *s = package; *s ; s++)
 	if(*s == ':') method = s;
     if(!method) XSRETURN_NO;
     *(method++ - 1) = 0;	// sorry for showing off. :)
@@ -914,11 +912,12 @@ XS(XS_AUTOLOAD) {
              strcat(super, "::SUPER");
              package = super;
         }
-    }
+    } else if( isQt(package) )
+	avoid_fetchmethod = true;
 
     HV *stash = gv_stashpv(package, TRUE);
 
-    if(do_debug & qtdb_autoload)
+    if(do_debug && (do_debug & qtdb_autoload))
         warn("In XS Autoload for %s::%s()\n", package, method);
 
     // check for user-defined methods in the REAL stash; skip prefix
@@ -930,7 +929,7 @@ XS(XS_AUTOLOAD) {
 
     // If we've made it here, we need to set sv_this
     if(gv) {
-        if(do_debug & qtdb_autoload)
+        if(do_debug && (do_debug & qtdb_autoload))
             warn("\tfound in %s's Perl stash\n", package);
 
 	// call the defined Perl method with new 'this'
@@ -970,20 +969,50 @@ XS(XS_AUTOLOAD) {
 	    old_this = sv_this;
 	    sv_this = newSVsv(ST(0));
  	}
-	ENTER;
-	SAVETMPS;
+        smokeperl_object *o = sv_obj_info(sv_this);
+
+	if(!(o && o->ptr && (o->allocated || getPointerObject(o->ptr)))) {
+	    if(isSuper)
+                delete[] package;
+	    if(withObject && !isSuper) {
+	        SvREFCNT_dec(sv_this);
+	        sv_this = old_this;
+	    }
+            XSRETURN_YES;
+        }
+        const char *key = "has been hidden";
+        U32 klen = 15;
+        SV **svp = 0;
+        if(SvROK(sv_this) && SvTYPE(SvRV(sv_this)) == SVt_PVHV) {
+	    HV *hv = (HV*)SvRV(sv_this);
+	    svp = hv_fetch(hv, key, klen, 0);
+        }
+        if(svp) {
+	    if(isSuper)
+                delete[] package;
+            if(withObject && !isSuper) {
+	        SvREFCNT_dec(sv_this);
+	        sv_this = old_this;
+	    }
+	    XSRETURN_YES;
+	}
+        gv = gv_fetchmethod_autoload(stash, "ON_DESTROY", 0);
+	if( !gv )
+	    croak( "Couldn't find ON_DESTROY method for %s=%p\n", package, o->ptr);
 	PUSHMARK(SP);
-	PUSHs(sv_2mortal(newSVsv(sv_this)));
+	call_sv((SV*)GvCV(gv), G_SCALAR|G_NOARGS);
+	SPAGAIN;
+	int ret = POPi;
 	PUTBACK;
-	call_pv("Qt::_internal::destroy", G_DISCARD);
 	if(withObject && !isSuper) {
 	    SvREFCNT_dec(sv_this);
 	    sv_this = old_this;
 	}
-	FREETMPS;
-	LEAVE;
-
+	if( do_debug && ret && (do_debug & qtdb_gc) )
+	    fprintf(stderr, "Increasing refcount in DESTROY for %s=%p (still has a parent)\n", package, o->ptr);
     } else {
+
+        if( items > 18 )  XSRETURN_NO; // current max number of args in Qt is 13.
 
         // save the stack -- we'll need it
         SV **savestack = new SV*[items+1];
@@ -996,15 +1025,24 @@ XS(XS_AUTOLOAD) {
         Smoke::Index cid = package_classid(package);
         // Look in the cache
         char *cname = (char*)qt_Smoke->className(cid);
-        QCString mcid(cname);
-        mcid += ';';
-        mcid += method;
+        int lcname = strlen(cname);
+        int lmethod = strlen(method);
+        char mcid[256];
+        strncpy(mcid, cname, lcname);
+        char *ptr = mcid + lcname;
+	*(ptr++) = ';';
+        strncpy(ptr, method, lmethod);
+	ptr += lmethod;
         for(int i=withObject ; i<items ; i++)
         {
-            mcid += ';';
-            mcid += get_SVt(ST(i));
+            *(ptr++) = ';';
+	    char *t = get_SVt(ST(i));
+	    int tlen = strlen(t);
+	    strncpy(ptr, t, tlen );
+	    ptr += tlen;
         }
-        Smoke::Index *rcid = methcache.find((const char *)mcid);
+	*ptr = 0;
+	Smoke::Index *rcid = methcache->find(mcid);
 
         if(rcid) {
             // Got a hit
@@ -1047,9 +1085,8 @@ XS(XS_AUTOLOAD) {
             }
 
             // Success. Cache result.
-            methcache.insert((const char *)mcid, new Smoke::Index(_current_method));
+            methcache->insert(mcid, new Smoke::Index(_current_method));
         }
-
         // FIXME: I shouldn't have to set the current object
         {
                 smokeperl_object *o = sv_obj_info(sv_this);
@@ -1061,7 +1098,7 @@ XS(XS_AUTOLOAD) {
                 }
         }
         // honor debugging channels
-        if(do_debug & qtdb_calls) {
+        if(do_debug && (do_debug & qtdb_calls)) {
             warn("Calling method\t%s\n", SvPV_nolen(sv_2mortal(prettyPrintMethod(_current_method))));
             if(do_debug & qtdb_verbose)
                 warn("with arguments (%s)\n", SvPV_nolen(sv_2mortal(catArguments(savestack, items-withObject))));
@@ -1251,8 +1288,179 @@ XS(XS_qt_invoke) {
     XSRETURN_UNDEF;
 }
 
+// -------------------       Tied types        ------------------------
 
-// --------------- XSUBS for Qt::_internal::* helpers  ----------------
+MODULE = Qt   PACKAGE = Qt::_internal::QString
+PROTOTYPES: DISABLE
+
+SV*
+FETCH(obj)
+    SV* obj
+    CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QString *s = (QString*) tmp;
+    RETVAL = newSV(0);
+    if( s )
+    {
+        if(!(IN_BYTES))
+        {
+	    sv_setpv_mg(RETVAL, (const char *)s->utf8());
+            SvUTF8_on(RETVAL);
+        }
+        else if(IN_LOCALE)
+            sv_setpv_mg(RETVAL, (const char *)s->local8Bit());
+        else
+            sv_setpv_mg(RETVAL, (const char *)s->latin1());
+    }
+    else
+        sv_setsv_mg(RETVAL, &PL_sv_undef);
+    OUTPUT: 
+    RETVAL
+
+void
+STORE(obj,what)
+   SV* obj
+   SV* what
+   CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QString *s = (QString*) tmp;
+    s->truncate(0);
+    if(SvOK(what)) {
+        if(SvUTF8(what)) 
+	    s->append(QString::fromUtf8(SvPV_nolen(what)));
+        else if(IN_LOCALE)
+            s->append(QString::fromLocal8Bit(SvPV_nolen(what)));
+        else
+            s->append(QString::fromLatin1(SvPV_nolen(what)));
+    }  
+
+void
+DESTROY(obj)
+    SV* obj
+    CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QString *s = (QString*) tmp;
+    delete s;
+
+MODULE = Qt   PACKAGE = Qt::_internal::QByteArray
+PROTOTYPES: DISABLE
+
+SV*
+FETCH(obj)
+    SV* obj
+    CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QByteArray *s = (QByteArray*) tmp;
+    RETVAL = newSV(0);
+    if( s )
+    {
+	sv_setpvn_mg(RETVAL, s->data(), s->size());
+    }
+    else
+        sv_setsv_mg(RETVAL, &PL_sv_undef);
+    OUTPUT: 
+    RETVAL
+
+void
+STORE(obj,what)
+   SV* obj
+   SV* what
+   CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QByteArray *s = (QByteArray*) tmp;
+
+    if(SvOK(what)) {
+        STRLEN len;
+	char* tmp2 = SvPV(what, len); 
+        s->resize(len);
+	Copy((void*)tmp2, (void*)s->data(), len, char);
+    }  else
+        s->truncate(0);
+
+void
+DESTROY(obj)
+    SV* obj
+    CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QByteArray *s = (QByteArray*) tmp;
+    delete s;
+
+MODULE = Qt   PACKAGE = Qt::_internal::QRgbStar
+PROTOTYPES: DISABLE
+
+SV*
+FETCH(obj)
+    SV* obj
+    CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QRgb *s = (QRgb*) tmp;
+    AV* ar = newAV();
+    RETVAL = newRV_noinc((SV*)ar);
+    for(int i=0; s[i] ; i++)
+    {
+	SV *item = newSViv((IV)s[i]);
+	if(!av_store(ar, (I32)i, item))
+	    SvREFCNT_dec( item );
+    }
+    OUTPUT: 
+    RETVAL
+
+void
+STORE(obj,sv)
+   SV* obj
+   SV* sv
+   CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QRgb *s = (QRgb*) tmp;
+    if(!SvROK(sv) || SvTYPE(SvRV(sv)) != SVt_PVAV ||
+	av_len((AV*)SvRV(sv)) < 0) {
+	 s = new QRgb[1];
+	 s[0] = 0; 
+	 sv_setref_pv(obj, "Qt::_internal::QRgbStar", (void*)s);
+	 return;
+    }
+    AV *list = (AV*)SvRV(sv);
+    int count = av_len(list);
+    s = new QRgb[count + 2];
+    int i;
+    for(i = 0; i <= count; i++) {
+	SV **item = av_fetch(list, i, 0);
+	if(!item || !SvOK(*item)) {
+	    s[i] = 0;
+	    continue;
+	}
+	s[i] = SvIV(*item);
+    }
+    s[i] = 0;
+    sv_setref_pv(obj, "Qt::_internal::QRgbStar", (void*)s); 
+
+void
+DESTROY(obj)
+    SV* obj
+    CODE:
+    if (!SvROK(obj))
+        croak("?");
+    IV tmp = SvIV((SV*)SvRV(obj));
+    QRgb *s = (QRgb*) tmp;
+    delete[] s;
+
+# --------------- XSUBS for Qt::_internal::* helpers  ----------------
 
 
 MODULE = Qt   PACKAGE = Qt::_internal
@@ -1261,14 +1469,14 @@ PROTOTYPES: DISABLE
 void
 getMethStat()
     PPCODE:
-    XPUSHs(sv_2mortal(newSViv((int)methcache.size())));
-    XPUSHs(sv_2mortal(newSViv((int)methcache.count())));
+    XPUSHs(sv_2mortal(newSViv((int)methcache->size())));
+    XPUSHs(sv_2mortal(newSViv((int)methcache->count())));
 
 void
 getClassStat()
     PPCODE:
-    XPUSHs(sv_2mortal(newSViv((int)classcache.size())));
-    XPUSHs(sv_2mortal(newSViv((int)classcache.count())));
+    XPUSHs(sv_2mortal(newSViv((int)classcache->size())));
+    XPUSHs(sv_2mortal(newSViv((int)classcache->count())));
 
 void
 getIsa(classId)
@@ -1280,11 +1488,14 @@ getIsa(classId)
     while(*parents)
 	XPUSHs(sv_2mortal(newSVpv(qt_Smoke->classes[*parents++].className, 0)));
 
-
 void
 dontRecurse()
     CODE:
     avoid_fetchmethod = true;
+
+void *
+sv_to_ptr(sv)
+    SV* sv
 
 void *
 allocateMocArguments(count)
@@ -1357,12 +1568,12 @@ getTypeNameOfArg(method, idx)
     OUTPUT:
     RETVAL
 
-bool
+int
 classIsa(className, base)
     char *className
     char *base
     CODE:
-    RETVAL = isDerivedFrom(qt_Smoke, className, base);
+    RETVAL = isDerivedFrom(qt_Smoke, className, base, 0);
     OUTPUT:
     RETVAL
 
@@ -1371,13 +1582,13 @@ insert_pclassid(p, ix)
     char *p
     int ix
     CODE:
-    classcache.insert(p, new Smoke::Index((Smoke::Index)ix));
+    classcache->insert(p, new Smoke::Index((Smoke::Index)ix));
 
 int
 find_pclassid(p)
     char *p
     CODE:
-    Smoke::Index *r = classcache.find(p);
+    Smoke::Index *r = classcache->find(p);
     if(r)
         RETVAL = (int)*r;
     else
@@ -1390,13 +1601,13 @@ insert_mcid(mcid, ix)
     char *mcid
     int ix
     CODE:
-    methcache.insert(mcid, new Smoke::Index((Smoke::Index)ix));
+    methcache->insert(mcid, new Smoke::Index((Smoke::Index)ix));
 
 int
 find_mcid(mcid)
     char *mcid
     CODE:
-    Smoke::Index *r = methcache.find(mcid);
+    Smoke::Index *r = methcache->find(mcid);
     if(r)
         RETVAL = (int)*r;
     else
@@ -1538,7 +1749,7 @@ make_metaObject(className, parent, slot_tbl, slot_count, signal_tbl, signal_coun
     o.classId = qt_Smoke->idClass("QMetaObject");
     o.ptr = meta;
     o.allocated = true;
-    sv_magic((SV*)hv, 0, '~', (char*)&o, sizeof(o));
+    sv_magic((SV*)hv, sv_qapp, '~', (char*)&o, sizeof(o));
     MAGIC *mg = mg_find((SV*)hv, '~');
     mg->mg_virtual = &vtbl_smoke;
     char *buf = qt_Smoke->binding->className(o.classId);
@@ -1611,10 +1822,9 @@ mapObject(obj)
     if(!o)
         XSRETURN_EMPTY;
     SmokeClass c( o->smoke, o->classId );
-    object_count ++;
     if(!c.hasVirtual() ) {
 	XSRETURN_EMPTY;
-    }
+   }
     mapPointer(obj, o, pointer_map, o->classId, 0);
 
 bool
@@ -1648,6 +1858,15 @@ findAllocatedObjectFor(obj)
     SV *ret;
     if(o && o->ptr && (ret = getPointerObject(o->ptr)))
         RETVAL = ret;
+    OUTPUT:
+    RETVAL
+
+SV *
+getGV(cv)
+    SV *cv
+    CODE:
+    RETVAL = (SvROK(cv) && (SvTYPE(SvRV(cv))==SVt_PVCV) ?
+              SvREFCNT_inc(CvGV((CV*)SvRV(cv))) : &PL_sv_undef);
     OUTPUT:
     RETVAL
 
@@ -1740,7 +1959,7 @@ findAllMethods(classid, ...)
         if(items > 1 && SvPOK(ST(1)))
             pat = SvPV_nolen(ST(1));
         Smoke::Index imax = qt_Smoke->numMethodMaps;
-        Smoke::Index imin = 0, icur = -1, methmin, methmax;
+        Smoke::Index imin = 0, icur = -1, methmin = 0, methmax = 0;
         int icmp = -1;
         while(imax >= imin) {
             icur = (imin + imax) / 2;
@@ -1973,5 +2192,7 @@ BOOT:
     install_handlers(Qt_handlers);
     pointer_map = newHV();
     sv_this = newSV(0);
-    methcache.setAutoDelete(1);
-    classcache.setAutoDelete(1);
+    methcache = new QAsciiDict<Smoke::Index>(1187);
+    classcache = new QAsciiDict<Smoke::Index>(827);
+    methcache->setAutoDelete(1);
+    classcache->setAutoDelete(1);

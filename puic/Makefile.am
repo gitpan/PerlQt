@@ -6,8 +6,9 @@ bin_PROGRAMS = puic
 puic_SOURCES = widgetdatabase.cpp uic.cpp subclassing.cpp parser.cpp object.cpp main.cpp form.cpp embed.cpp domtool.cpp 
 puic_LDADD   =  $(LIB_QT) $(LIBZ)
 
+man_MANS = puic.1
 
-EXTRA_DIST = domtool.cpp domtool.h embed.cpp form.cpp globaldefs.h main.cpp object.cpp parser.cpp parser.h subclassing.cpp uic.cpp uic.h widgetdatabase.cpp widgetdatabase.h widgetinterface.h 
+EXTRA_DIST = domtool.cpp domtool.h embed.cpp form.cpp globaldefs.h main.cpp object.cpp parser.cpp parser.h subclassing.cpp uic.cpp uic.h widgetdatabase.cpp widgetdatabase.h widgetinterface.h puic.1
 
 # These paths are KDE specific :
 # kde_bindir          Where executables should go to. Use bin_PROGRAMS or bin_SCRIPTS.

@@ -30,7 +30,6 @@
 #include <qregexp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <zlib.h>
 
 
 /*!
@@ -44,7 +43,6 @@ void Uic::createSubImpl( const QDomElement &e, const QString& subClass )
     QDomElement n;
     QDomNodeList nl;
     int i;
-    QStringList::Iterator it, it2, it3;
 
     QString objClass = getClassName( e );
     if ( objClass.isEmpty() )
@@ -75,119 +73,119 @@ void Uic::createSubImpl( const QDomElement &e, const QString& subClass )
     out << indent << "}" << endl;
     out << endl;
 
-    // find additional slots
+    // find additional functions
     QStringList publicSlots, protectedSlots, privateSlots;
     QStringList publicSlotTypes, protectedSlotTypes, privateSlotTypes;
     QStringList publicSlotSpecifier, protectedSlotSpecifier, privateSlotSpecifier;
-    QMap<QString, QString> functionImpls;
+    QStringList publicFuncts, protectedFuncts, privateFuncts;
+    QStringList publicFunctRetTyp, protectedFunctRetTyp, privateFunctRetTyp;
+    QStringList publicFunctSpec, protectedFunctSpec, privateFunctSpec;
+
+
     nl = e.parentNode().toElement().elementsByTagName( "slot" );
     for ( i = 0; i < (int) nl.length(); i++ ) {
 	n = nl.item(i).toElement();
 	if ( n.parentNode().toElement().tagName() != "slots"
 	     && n.parentNode().toElement().tagName() != "connections" )
 	    continue;
-	if ( n.attribute( "language", "C++" ) != "C++" )
+        QString l = n.attribute( "language", "C++" );
+	if ( l != "C++" && l != "Perl" ) //- mmh
 	    continue;
 	QString returnType = n.attribute( "returnType", "void" );
-	QString slotName = n.firstChild().toText().data().stripWhiteSpace();
-	if ( slotName.endsWith( ";" ) )
-	    slotName = slotName.left( slotName.length() - 1 );
+	QString functionName = n.firstChild().toText().data().stripWhiteSpace();
+	if ( functionName.endsWith( ";" ) )
+	    functionName = functionName.left( functionName.length() - 1 );
 	QString specifier = n.attribute( "specifier" );
 	QString access = n.attribute( "access" );
 	if ( access == "protected" ) {
-	    protectedSlots += slotName;
+	    protectedSlots += functionName;
 	    protectedSlotTypes += returnType;
 	    protectedSlotSpecifier += specifier;
 	} else if ( access == "private" ) {
-	    privateSlots += slotName;
+	    privateSlots += functionName;
 	    privateSlotTypes += returnType;
 	    privateSlotSpecifier += specifier;
 	} else {
-	    publicSlots += slotName;
+	    publicSlots += functionName;
 	    publicSlotTypes += returnType;
 	    publicSlotSpecifier += specifier;
 	}
     }
 
-
-    // compatibility with early 3.0 betas
     nl = e.parentNode().toElement().elementsByTagName( "function" );
     for ( i = 0; i < (int) nl.length(); i++ ) {
+	n = nl.item(i).toElement();
 	QString fname = n.attribute( "name" );
 	fname = Parser::cleanArgs( fname );
-	functionImpls.insert( fname, n.firstChild().toText().data() );
+	if ( n.parentNode().toElement().tagName() != "functions" )
+	    continue;
+        QString l = n.attribute( "language", "C++" );
+	if ( l != "C++" && l != "Perl" ) //- mmh
+	    continue;
+	QString returnType = n.attribute( "returnType", "void" );
+	QString functionName = n.firstChild().toText().data().stripWhiteSpace();
+	if ( functionName.endsWith( ";" ) )
+	    functionName = functionName.left( functionName.length() - 1 );
+	QString specifier = n.attribute( "specifier" );
+	QString access = n.attribute( "access" );
+	if ( access == "protected" ) {
+	    protectedFuncts += functionName;
+	    protectedFunctRetTyp += returnType;
+	    protectedFunctSpec += specifier;
+	} else if ( access == "private" ) {
+	    privateFuncts += functionName;
+	    privateFunctRetTyp += returnType;
+	    privateFunctSpec += specifier;
+	} else {
+	    publicFuncts += functionName;
+	    publicFunctRetTyp += returnType;
+	    publicFunctSpec += specifier;
+	}
     }
+
     // FIXME PerlQt: distinguishing public/protected/private slots does not make any sense in the forseable future
     //        but nevermind, never forget somewhere far beyond the sky, Ashley Winters is furbishing *Plan 42* ! :)
 
-    // create stubs for public additional slots
-    if ( !publicSlots.isEmpty() ) {
-	for ( it = publicSlots.begin(), it2 = publicSlotTypes.begin(), it3 = publicSlotSpecifier.begin();
-	      it != publicSlots.end(); ++it, ++it2, ++it3 ) {
-	    QString pure;
-	    QString type = *it2;
-	    if ( type.isEmpty() )
-		type = "void";
-	    if ( *it3 == "non virtual" )
-		continue;
-	    if ( isEmptyFunction( *it ) ) {
-	        out << endl;
-	        int astart = (*it).find('(');
-	        out << indent << "sub " << (*it).left(astart)<< endl;
-	        out << indent << "{" << endl;
-		++indent;
-		out << indent << "print \"" << subClass << "->" << (*it) << ": Not implemented yet.\\n\";" << endl;
-		--indent;
-                out << indent << "}" << endl;
-	    }
-	}
-    }
+    if ( !publicFuncts.isEmpty() )
+	writeFunctionsSubImpl( publicFuncts, publicFunctRetTyp, publicFunctSpec, subClass, "public function" );
 
-    // create stubs for protected additional slots
-    if ( !protectedSlots.isEmpty() ) {
-	for ( it = protectedSlots.begin(), it2 = protectedSlotTypes.begin(), it3 = protectedSlotSpecifier.begin();
-	      it != protectedSlots.end(); ++it, ++it2, ++it3 ) {
-	    QString pure;
-	    QString type = *it2;
-	    if ( type.isEmpty() )
-		type = "void";
-	    if ( *it3 == "non virtual" )
-		continue;
-	    if ( isEmptyFunction( *it ) ) {
-	        out << endl;
-	        int astart = (*it).find('(');
-	        out << indent << "sub " << (*it).left(astart)<< endl;
-	        out << indent << "{" << endl;
-		++indent;
-		out << indent << "print \"" << subClass << "->" << (*it) << ": (Protected) Not implemented yet.\\n\";" << endl;
-		--indent;
-                out << indent << "}" << endl;
-	    }
-	}
-    }
+    if ( !publicSlots.isEmpty() )
+	writeFunctionsSubImpl( publicSlots, publicSlotTypes, publicSlotSpecifier, subClass, "public slot" );
 
+    if ( !protectedFuncts.isEmpty() )
+	writeFunctionsSubImpl( protectedFuncts, protectedFunctRetTyp, protectedFunctSpec, subClass, "protected function" );
 
-    // create stubs for private additional slots
-    if ( !privateSlots.isEmpty() ) {
-	for ( it = privateSlots.begin(), it2 = privateSlotTypes.begin(), it3 = privateSlotSpecifier.begin();
-	      it != privateSlots.end(); ++it, ++it2, ++it3 ) {
-	    QString pure;
-	    QString type = *it2;
-	    if ( type.isEmpty() )
-		type = "void";
-	    if ( *it3 == "non virtual" )
-		continue;
-	    if ( isEmptyFunction( *it ) ) {
-	        out << endl;
-	        int astart = (*it).find('(');
-	        out << indent << "sub " << (*it).left(astart)<< endl;
-	        out << indent << "{" << endl;
-		++indent;
-		out << indent << "print \"" << subClass << "->" << (*it) << ": (Private) Not implemented yet.\\n\";" << endl;
-		--indent;
-                out << indent << "}" << endl;
-	    }
-	}
-    }
+    if ( !protectedSlots.isEmpty() )
+	writeFunctionsSubImpl( protectedSlots, protectedSlotTypes, protectedSlotSpecifier, subClass, "protected slot" );
+
+    if ( !privateFuncts.isEmpty() )
+	writeFunctionsSubImpl( privateFuncts, privateFunctRetTyp, privateFunctSpec, subClass, "private function" );
+
+    if ( !privateSlots.isEmpty() )
+	writeFunctionsSubImpl( privateSlots, privateSlotTypes, privateSlotSpecifier, subClass, "private slot" );
+
     out << "1;" << endl;
+}
+
+void Uic::writeFunctionsSubImpl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst,
+				 const QString &subClass, const QString &descr )
+{
+    QValueListConstIterator<QString> it, it2, it3;
+    for ( it = fuLst.begin(), it2 = typLst.begin(), it3 = specLst.begin();
+	  it != fuLst.end(); ++it, ++it2, ++it3 ) {
+	QString type = *it2;
+	if ( type.isEmpty() )
+	    type = "void";
+	if ( *it3 == "non virtual" )
+	    continue;
+        out << endl;
+	int astart = (*it).find('(');
+	out << indent << "sub " << (*it).left(astart)<< endl;
+	out << indent << "{" << endl;
+	++indent;
+	out << indent << "print \"" << subClass << "->" << (*it) << ": (Private) Not implemented yet.\\n\";" << endl;
+	--indent;
+        out << indent << "}" << endl;
+    }
+    out << endl;
 }

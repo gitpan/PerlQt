@@ -27,25 +27,84 @@
 **
 **********************************************************************/
 
-#include <iostream.h>
+#include <iostream>
 #include "uic.h"
 #include "parser.h"
 #include "widgetdatabase.h"
 #include "domtool.h"
 #include <qstringlist.h>
-#include <qregexp.h>
+#include <qvaluelist.h>
 #include <qfile.h>
 #include <qfileinfo.h>
+#include <qdir.h>
+#include <qregexp.h>
 #define NO_STATIC_COLORS
 #include <globaldefs.h>
-#include <zlib.h>
+#if( QT_VERSION < 0x030101 )
+#  include <zlib.h>
+
+static QByteArray qUncompress( const uchar* data, int nbytes )
+{
+    if ( !data ) {
+#if defined(QT_CHECK_RANGE)
+        qWarning( "qUncompress: data is NULL." );
+#endif
+        return QByteArray();
+    }
+    if ( nbytes <= 4 ) {
+#if defined(QT_CHECK_RANGE)
+        if ( nbytes < 4 || ( data[0]!=0 || data[1]!=0 || data[2]!=0 || data[3]!=0 ) )
+            qWarning( "qUncompress: Input data is corrupted." );
+#endif
+        return QByteArray();
+    }
+    ulong expectedSize = ( data[0] << 24 ) | ( data[1] << 16 ) | ( data[2] << 8 ) | data[3];
+    ulong len = QMAX( expectedSize,  1 );
+    QByteArray baunzip;
+    int res;
+    do {
+        baunzip.resize( len );
+        res = ::uncompress( (uchar*)baunzip.data(), &len,
+                                (uchar*)data+4, nbytes-4 );
+
+        switch ( res ) {
+        case Z_OK:
+            if ( len != baunzip.size() )
+                baunzip.resize( len );
+            break;
+        case Z_MEM_ERROR:
+#if defined(QT_CHECK_RANGE)
+            qWarning( "qUncompress: Z_MEM_ERROR: Not enough memory." );
+#endif
+            break;
+        case Z_BUF_ERROR:
+            len *= 2;
+            break;
+        case Z_DATA_ERROR:
+#if defined(QT_CHECK_RANGE)
+            qWarning( "qUncompress: Z_DATA_ERROR: Input data is corrupted." );
+#endif
+            break;
+        }
+    } while ( res == Z_BUF_ERROR );
+
+    if ( res != Z_OK )
+        baunzip = QByteArray();
+
+    return baunzip;
+}
+#endif // QT_VERSION < 0x030101
+
+using namespace std;
 
 static QByteArray unzipXPM( QString data, ulong& length )
 {
-    uchar *ba = new uchar[ data.length() / 2 ];
-    for ( int i = 0; i < (int)data.length() / 2; ++i ) {
-	char h = data[ 2 * i ].latin1();
-	char l = data[ 2 * i  + 1 ].latin1();
+    const int lengthOffset = 4;
+    int baSize = data.length() / 2 + lengthOffset;
+    uchar *ba = new uchar[ baSize ];
+    for ( int i = lengthOffset; i < baSize; ++i ) {
+	char h = data[ 2 * (i-lengthOffset) ].latin1();
+	char l = data[ 2 * (i-lengthOffset) + 1 ].latin1();
 	uchar r = 0;
 	if ( h <= '9' )
 	    r += h - '0';
@@ -58,26 +117,61 @@ static QByteArray unzipXPM( QString data, ulong& length )
 	    r += l - 'a' + 10;
 	ba[ i ] = r;
     }
-    // I'm not sure this makes sense. Why couldn't the compressed data be
-    // less than 20% of the original data? Maybe it's enough to trust the
-    // `length' passed as an argument. Quoting the zlib header:
-    // 		Upon entry, destLen is the total size of the destination
-    // 		buffer, which must be large enough to hold the entire
-    // 		uncompressed data. (The size of the uncompressed data must
-    // 		have been saved previously by the compressor and transmitted
-    // 		to the decompressor by some mechanism outside the scope of
-    // 		this compression library.)
-    // Which is the role of `length'. On the other hand this could prevent
-    // crashes in some cases of slightly corrupt UIC files.
-    if ( length <  data.length() * 5 )
-	length = data.length() * 5;
-    QByteArray baunzip( length );
-    ::uncompress( (uchar*) baunzip.data(), &length, ba, data.length()/2 );
+    // qUncompress() expects the first 4 bytes to be the expected length of the
+    // uncompressed data
+    ba[0] = ( length & 0xff000000 ) >> 24;
+    ba[1] = ( length & 0x00ff0000 ) >> 16;
+    ba[2] = ( length & 0x0000ff00 ) >> 8;
+    ba[3] = ( length & 0x000000ff );
+    QByteArray baunzip = qUncompress( ba, baSize );
     delete[] ba;
     return baunzip;
 }
+#if 0
+//- kept for diffs
+#if QT_VERSION >= 0x030900
+#error Add this functionality to QDir (relativePathTo() maybe?) and \
+remove it from here and from moc
+#endif
 
+QCString combinePath( const char *infile, const char *outfile )
+{
+    QFileInfo inFileInfo( QDir::current(), QFile::decodeName(infile) );
+    QFileInfo outFileInfo( QDir::current(), QFile::decodeName(outfile) );
+    int numCommonComponents = 0;
 
+    QStringList inSplitted =
+	QStringList::split( '/', inFileInfo.dir().canonicalPath(), TRUE );
+    QStringList outSplitted =
+	QStringList::split( '/', outFileInfo.dir().canonicalPath(), TRUE );
+
+    while ( !inSplitted.isEmpty() && !outSplitted.isEmpty() &&
+	    inSplitted.first() == outSplitted.first() ) {
+	inSplitted.remove( inSplitted.begin() );
+	outSplitted.remove( outSplitted.begin() );
+	numCommonComponents++;
+    }
+
+    if ( numCommonComponents < 2 ) {
+	/*
+	  The paths don't have the same drive, or they don't have the
+	  same root directory. Use an absolute path.
+	*/
+	return QFile::encodeName( inFileInfo.absFilePath() );
+    } else {
+	/*
+	  The paths have something in common. Use a path relative to
+	  the output file.
+	*/
+	while ( !outSplitted.isEmpty() ) {
+	    outSplitted.remove( outSplitted.begin() );
+	    inSplitted.prepend( ".." );
+	}
+	inSplitted.append( inFileInfo.fileName() );
+	return QFile::encodeName( inSplitted.join("/") );
+    }
+}
+#endif
 
 /*!
   Creates an implementation ( cpp-file ) for the form given in \a e
@@ -97,30 +191,52 @@ void Uic::createFormImpl( const QDomElement &e )
     out << indent << "use Qt;" << endl;
 
     // generate local and local includes required
-    QStringList globalIncludes, localIncludes;
+    QStringList globalIncludes, localIncludes, useIncludes;
     QStringList::Iterator it;
     QStringList sqlClasses;
 
     QMap<QString, CustomInclude> customWidgetIncludes;
     QMap<QString, QString> functionImpls;
+    QString uiPmInclude;
 
     // find additional slots
     QStringList extraSlots;
-    QStringList extraSlotTypes;
+    QStringList extraSlotTyp;
+
     nl = e.parentNode().toElement().elementsByTagName( "slot" );
     for ( i = 0; i < (int) nl.length(); i++ ) {
 	n = nl.item(i).toElement();
 	if ( n.parentNode().toElement().tagName() != "slots"
 	     && n.parentNode().toElement().tagName() != "connections" )
 	    continue;
-	if ( n.attribute( "language", "C++" ) != "C++" )
+	QString l = n.attribute( "language", "C++" );
+	if ( l != "C++" && l != "Perl" ) //- mmh
 	    continue;
 	QString slotName = n.firstChild().toText().data().stripWhiteSpace();
 	if ( slotName.endsWith( ";" ) )
 	    slotName = slotName.left( slotName.length() - 1 );
 
 	extraSlots += Parser::cleanArgs(slotName);
-	extraSlotTypes += n.attribute( "returnType", "void" );
+	extraSlotTyp += n.attribute( "returnType", "void" );
+    }
+
+    // find additional functions
+    QStringList extraFuncts;
+    QStringList extraFunctTyp;
+
+    nl = e.parentNode().toElement().elementsByTagName( "function" );
+    for ( i = 0; i < (int) nl.length(); i++ ) {
+	n = nl.item(i).toElement();
+	if ( n.parentNode().toElement().tagName() != "functions" )
+	    continue;
+	QString l = n.attribute( "language", "C++" );
+	if ( l != "C++" && l != "Perl" ) //- mmh
+	    continue;
+	QString functionName = n.firstChild().toText().data().stripWhiteSpace();
+	if ( functionName.endsWith( ";" ) )
+	    functionName = functionName.left( functionName.length() - 1 );
+	extraFuncts += Parser::cleanArgs(functionName);
+	extraFunctTyp += n.attribute( "returnType", "void" );
     }
 
     // find signals
@@ -131,7 +247,8 @@ void Uic::createFormImpl( const QDomElement &e )
 	if ( n.parentNode().toElement().tagName() != "signals"
 	     && n.parentNode().toElement().tagName() != "connections" )
 	    continue;
-	if ( n.attribute( "language", "C++" ) != "C++" )
+        QString l = n.attribute( "language", "C++" );
+	if ( l != "C++" && l != "Perl" ) //- mmh
 	    continue;
 	QString sigName = n.firstChild().toText().data().stripWhiteSpace();
 	if ( sigName.endsWith( ";" ) )
@@ -139,28 +256,19 @@ void Uic::createFormImpl( const QDomElement &e )
 	extraSignals += sigName;
     }
 
-    //find additional functions
-    QStringList extraFunctions;
+#if 0
+    //- kept for diffs
+    QStringList customImages;
     for ( n = e; !n.isNull(); n = n.nextSibling().toElement() ) {
-        if ( n.tagName() == "functions" ) { // compatibility
-            for ( QDomElement n2 = n.firstChild().toElement(); !n2.isNull(); n2 = n2.nextSibling().toElement() ) {
-                if ( n2.tagName() == "function" ) {
-                    QString fname;
-                    if(n2.attribute("name") != QString::null )
-                    {
-                        fname = n2.attribute( "name" );
-                        fname = Parser::cleanArgs( fname );
-                        functionImpls.insert( fname, n2.firstChild().toText().data() );
-                    }
-                    else
-                    {
-                        fname = n2.text();
-                        fname = Parser::cleanArgs( fname );
-                    }
-                    extraFunctions += fname;
-                }
-            }
-        } else if ( n.tagName() == "customwidgets" ) {
+	if ( n.tagName() == "customwidgets" ) {
+	    nl = n.elementsByTagName( "pixmap" );
+	    for ( i = 0; i < (int) nl.length(); i++ )
+		customImages += nl.item( i ).firstChild().toText().data();
+	}
+    }
+#endif
+    for ( n = e; !n.isNull(); n = n.nextSibling().toElement() ) {
+	if ( n.tagName() == "customwidgets" ) {
 	    QDomElement n2 = n.firstChild().toElement();
 	    while ( !n2.isNull() ) {
 		if ( n2.tagName() == "customwidget" ) {
@@ -329,9 +437,9 @@ void Uic::createFormImpl( const QDomElement &e )
 	QDomElement n2 = nl.item(i).toElement();
 	QString s = n2.firstChild().toText().data();
 	if ( n2.attribute( "location" ) != "local" ) {
-	    if ( s.right( 5 ) == ".ui.h" && !QFile::exists( s ) )
+	    if ( (s.right( 5 ) == ".ui.h" || s.right( 6 ) == ".ui.pm") && !QFile::exists( s ) )
 		continue;
-	    if ( n2.attribute( "impldecl", "in implementation" ) != "in implementation" )
+            if ( n2.attribute( "impldecl", "in implementation" ) != "in implementation" )
 		continue;
 	    globalIncludes += s;
 	}
@@ -342,11 +450,16 @@ void Uic::createFormImpl( const QDomElement &e )
 	QDomElement n2 = nl.item(i).toElement();
 	QString s = n2.firstChild().toText().data();
 	if ( n2.attribute( "location" ) == "local" &&!globalIncludes.contains( s ) ) {
-	    if ( s.right( 5 ) == ".ui.h" && !QFile::exists( s ) )
+	    if ( (s.right( 5 ) == ".ui.h" || s.right( 6 ) == ".ui.pm") && !QFile::exists( s ) )
 		continue;
-	    if ( n2.attribute( "impldecl", "in implementation" ) != "in implementation" )
-		continue;
-	    localIncludes += s;
+            if ( n2.attribute( "impldecl", "in declaration" ) == "in declaration" )
+            {
+                useIncludes += s;
+            }
+            else if ( n2.attribute( "impldecl", "in implementation" ) == "in implementation" )
+            {
+                localIncludes += s;
+            }
 	}
     }
 
@@ -361,8 +474,12 @@ void Uic::createFormImpl( const QDomElement &e )
 	    localIncludes += s;
     }
 
+    // Output the "use" clauses for extra stuff in "Includes (In Declaration)"
+    // => in the perleditor plugin, this is content of the "Use clauses" list
+    for(QStringList::Iterator it = useIncludes.begin(); it != useIncludes.end(); ++it)
+	out << indent <<  (*it) << endl;
 
-    // grab slots/funcs defined in ui.h files
+    // grab slots/funcs defined in ui.h files / ui.pm files
     for(QStringList::Iterator it = localIncludes.begin(); it != localIncludes.end(); ++it)
     {
         if((*it).right( 5 ) == ".ui.h")
@@ -396,6 +513,40 @@ void Uic::createFormImpl( const QDomElement &e )
                 f.close();
              }
         }
+	else if((*it).right( 6 ) == ".ui.pm")
+	{
+	    //QFileInfo fname( fileName ); //- FIXME: .ui files seem to require being in CWD?
+	    //QString path = fname.absFilePath();
+	    //path = path.left( path.length()  - fname.fileName().length() );
+            QFile f(*it);
+            if( f.open( IO_ReadOnly ) )
+            {
+                QTextStream t( &f );
+                QString s;
+		bool skip = true;
+		int count = 0;
+                while ( !t.eof() )
+                {
+                    s = t.readLine();
+		    if( skip )
+		    {
+			if( s[0] == '#' )
+			{
+			    count++;
+			    continue;
+			}
+			else
+			{
+			    skip = false;
+			    uiPmInclude += "# line " + QString::number( count+1 ) + " \"" + *it + "\"\n";
+			}
+		    }
+                    uiPmInclude += s + "\n";
+                }
+                f.close();
+            }
+	}
+
     }
 
     // includes for child widgets
@@ -457,8 +608,13 @@ void Uic::createFormImpl( const QDomElement &e )
     static const char *imgTags[] = { "pixmap", "iconset", 0 };
     for ( i = 0; imgTags[i] != 0; i++ ) {
        nl = e.parentNode().toElement().elementsByTagName( imgTags[i] );
-       for ( int j = 0; j < (int) nl.length(); j++ )
-           requiredImages += nl.item(j).firstChild().toText().data();
+       for ( int j = 0; j < (int) nl.length(); j++ ) {
+           QDomNode nn = nl.item(j);
+           while ( nn.parentNode() != e.parentNode() )
+               nn = nn.parentNode();
+           if ( nn.nodeName() != "customwidgets" )
+               requiredImages += nl.item(j).firstChild().toText().data();
+       }
     }
 
     // register the object and unify its name
@@ -484,11 +640,13 @@ void Uic::createFormImpl( const QDomElement &e )
 			continue;
 		    QString format = tmp.attribute("format", "PNG" );
 		    QString data = tmp.firstChild().toText().data();
+		    out << indent << "our $" << img << ";" << endl;
 		    if ( format == "XPM.GZ" )
                     {
 			xpmImages += img;
 			ulong length = tmp.attribute("length").toULong();
 			QByteArray baunzip = unzipXPM( data, length );
+			length = baunzip.size();
 			// shouldn't we test the initial `length' against the
 			// resulting `length' to catch corrupt UIC files?
 			int a = 0;
@@ -499,14 +657,12 @@ void Uic::createFormImpl( const QDomElement &e )
 			for ( ; a < (int) length; a++ )
 			{
 			    char ch;
-
 			    if ((ch = baunzip[a]) == '}')
 			    {
 				out << "];\n" << endl;
 
 				break;
 			    }
-
 			    out << ch;
 			}
 		    }
@@ -534,25 +690,7 @@ void Uic::createFormImpl( const QDomElement &e )
     }
     else if ( externPixmaps )
     {
-	out << indent << "sub uic_load_pixmap_" << objName<< endl;
-	out << indent << "{" << endl;
-	++indent;
-	out << indent << "my $pix = Qt::Pixmap();" << endl;
-	out << indent << "my $m = Qt::MimeSourceFactory::defaultFactory()->data(shift);" << endl;
-	out << endl;
-	out << indent << "if($m)" << endl;
-	out << indent << "{" << endl;
-	++indent;
-	out << indent << "Qt::ImageDrag::decode($m, $pix);" << endl;
-	--indent;
-	out << indent << "}" << endl;
-	out << endl;
-	out << indent << "return $pix;" << endl;
-	--indent;
-	out << indent << "}" << endl;
-	out << endl;
-	out << endl;
-	pixmapLoaderFunction = "uic_load_pixmap_" + objName;
+	pixmapLoaderFunction = "Qt::Pixmap::fromMimeSource";
     }
 
 
@@ -578,7 +716,7 @@ void Uic::createFormImpl( const QDomElement &e )
     if ( !images.isEmpty() ) {
 	QStringList::Iterator it;
 	for ( it = images.begin(); it != images.end(); ++it ) {
-	    out << indent << "my $" << (*it) << " = Qt::Pixmap();" << endl;
+	    out << indent << "$" << (*it) << " = Qt::Pixmap();" << endl;
 	    out << indent << "$" << (*it) << "->loadFromData($" << (*it) << "_data, length ($" << (*it) << "_data), \"PNG\");" << endl;
 	}
         out << endl;
@@ -586,13 +724,15 @@ void Uic::createFormImpl( const QDomElement &e )
     // create pixmaps for all images
     if ( !xpmImages.isEmpty() ) {
 	for ( it = xpmImages.begin(); it != xpmImages.end(); ++it ) {
-	    out << indent << "my $" << (*it) << " = Qt::Pixmap($" << (*it) << "_data);" << endl;
+	    out << indent << "$" << (*it) << " = Qt::Pixmap($" << (*it) << "_data);" << endl;
 	}
 	out << endl;
     }
 
 
     // set the properties
+    QSize geometry( 0, 0 );
+
     for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
 	if ( n.tagName() == "property" ) {
 	    bool stdset = stdsetdef;
@@ -603,36 +743,35 @@ void Uic::createFormImpl( const QDomElement &e )
 	    QString value = setObjectProperty( objClass, QString::null, prop, n2, stdset );
 	    if ( value.isEmpty() )
 		continue;
-	    if ( prop == "name" ) {
-		out << indent << "if( name() eq \"unnamed\" )" << endl;
-                out << indent << "{" << endl;
-		++indent;
-	    }
 
-	    out << indent;
-
-	    if ( prop == "geometry" && n2.tagName() == "rect") {
+	    if ( prop == "geometry" && n2.tagName() == "rect" ) {
 		QDomElement n3 = n2.firstChild().toElement();
-		int w = 0, h = 0;
 		while ( !n3.isNull() ) {
 		    if ( n3.tagName() == "width" )
-			w = n3.firstChild().toText().data().toInt();
+			geometry.setWidth( n3.firstChild().toText().data().toInt() );
 		    else if ( n3.tagName() == "height" )
-			h = n3.firstChild().toText().data().toInt();
+			geometry.setHeight( n3.firstChild().toText().data().toInt() );
 		    n3 = n3.nextSibling().toElement();
 		}
-		out << "resize(" << w << "," << h << ");" << endl;
 	    } else {
+		QString call;
 		if ( stdset )
-		    out << mkStdSet( prop ) << "(" << value << ");" << endl;
+		    call = mkStdSet( prop ) + "(" + value;
 		else
-		    out << "setProperty(\"" << prop << "\", Qt::Variant(" << value << "));" << endl;
-	    }
-
-	    if ( prop == "name" )
-	    {
-		--indent;
-		out << indent << "}" << endl;
+		    call = "setProperty(\"" + prop + "\", Qt::Variant(" + value + ")";
+		call += " );";
+		if ( n2.tagName() == "string" ) {
+		    trout << indent << call << endl;
+		} else if ( prop == "name" ) {
+		    out << indent << "if ( name() eq \"unnamed\" )" << endl;
+		    out << indent << "{" << endl;
+		    ++indent;
+		    out << indent << call << endl;
+		    --indent;
+		    out << indent << "}" << endl;
+		} else {
+		    out << indent << call << endl;
+		}
 	    }
 	}
     }
@@ -648,8 +787,10 @@ void Uic::createFormImpl( const QDomElement &e )
 	    if ( tags.contains( n.tagName()  ) )
             {
 		QString page = createObjectImpl( n, objClass, "this" );
-		QString label = DomTool::readAttribute( n, "title", "" ).toString();
-		out << indent << "addPage(" << page << ", "<< trcall( label ) << ");" << endl;
+		QString comment;
+		QString label = DomTool::readAttribute( n, "title", "", comment ).toString();
+		out << indent << "addPage( " << page << ", \"\" );" << endl;
+		trout << indent << "setTitle( " << page << ", " << trcall( label, comment ) << " );" << endl;
 		QVariant def( FALSE, 0 );
 		if ( DomTool::hasAttribute( n, "backEnabled" ) )
 		    out << indent << "setBackEnabled(" << page << "," << mkBool( DomTool::readAttribute( n, "backEnabled", def).toBool() ) << ");" << endl;
@@ -687,7 +828,7 @@ void Uic::createFormImpl( const QDomElement &e )
     for ( i = 1; i < (int) nl.length(); i++ ) { // start at 1, 0 is the toplevel widget
 	n = nl.item(i).toElement();
 	QString s = getClassName( n );
-	if ( s == "Qt::DataBrowser" || s == "Qt::DataView" ) {
+	if ( (dbForm || subDbForms) && ( s == "Qt::DataBrowser" || s == "Qt::DataView" ) ) {
 	    QString objName = getObjectName( n );
 	    QString tab = getDatabaseInfo( n, "table" );
 	    QString con = getDatabaseInfo( n, "connection" );
@@ -734,6 +875,17 @@ void Uic::createFormImpl( const QDomElement &e )
     if ( needEndl )
 	out << endl;
 
+    out << indent << "languageChange();" << endl;
+
+    // take minimumSizeHint() into account, for height-for-width widgets
+    if ( !geometry.isNull() ) {
+        out << indent << "my $resize = Qt::Size(" << geometry.width() << ", "
+	    << geometry.height() << ");" << endl;
+	out << indent << "$resize = $resize->expandedTo(minimumSizeHint());" << endl;
+	out << indent << "resize( $resize );" << endl;
+	out << indent << "clearWState( &Qt::WState_Polished );" << endl;
+    }
+
     for ( n = e; !n.isNull(); n = n.nextSibling().toElement() ) {
 	if ( n.tagName()  == "connections" ) {
 	    // setup signals and slots connections
@@ -751,12 +903,15 @@ void Uic::createFormImpl( const QDomElement &e )
 		    else if ( n2.tagName() == "slot" )
 			slot = n2.firstChild().toText().data();
 		}
-		if ( sender.isEmpty() || receiver.isEmpty() || signal.isEmpty() || slot.isEmpty() )
+		if ( sender.isEmpty() ||
+		     receiver.isEmpty() ||
+		     signal.isEmpty() ||
+		     slot.isEmpty() )
 		    continue;
-                else if ( sender[0] == '<' ||
-                    receiver[0] == '<' ||
-                    signal[0] == '<' ||
-                    slot[0] == '<' )
+		else if ( sender[0] == '<' ||
+			   receiver[0] == '<' ||
+			   signal[0] == '<' ||
+			   slot[0] == '<' )
                     continue;
 		sender = registeredName( sender );
 		receiver = registeredName( receiver );
@@ -787,7 +942,6 @@ void Uic::createFormImpl( const QDomElement &e )
 	}
     }
 
-// PerlQt - FIXME: what the heck is this ?
     // buddies
     bool firstBuddy = TRUE;
     for ( QValueList<Buddy>::Iterator buddy = buddies.begin(); buddy != buddies.end(); ++buddy ) {
@@ -800,8 +954,8 @@ void Uic::createFormImpl( const QDomElement &e )
 	}
 
     }
-    if ( extraSlots.find( "init()" ) != extraSlots.end() ||
-         extraFunctions.find( "init()" ) != extraFunctions.end())
+    if ( extraFuncts.find( "init()" ) != extraFuncts.end() ||
+	 extraSlots.find( "init()" ) != extraSlots.end() )
         out << endl << indent << "init();" << endl;
 
     // end of constructor
@@ -809,15 +963,14 @@ void Uic::createFormImpl( const QDomElement &e )
     out << indent << "}" << endl;
     out << endl;
 
-
-    // FIXME PerlQt: is it safe to implement a destructor ?
-    if ( extraSlots.find( "destroy()" ) != extraSlots.end() ||
-         extraFunctions.find( "destroy()" ) != extraFunctions.end()) {
+    if ( extraFuncts.find( "destroy()" ) != extraFuncts.end() ||
+	 extraSlots.find( "destroy()" ) != extraSlots.end() ) {
         out << endl;
         out << indent << "sub DESTROY" << endl;
         out << indent << "{" << endl;
         ++indent;
         out << indent << "destroy();" << endl;
+	out << indent << "SUPER->DESTROY()" << endl;
         --indent;
         out << indent << "}" << endl;
     }
@@ -847,7 +1000,7 @@ void Uic::createFormImpl( const QDomElement &e )
 // PerlQt - TODO: is this needed ?
 // Seems not.. let's ifzero for now...
 
-    if ( 0 && needFontEventHandler) {
+    if ( 0 && needFontEventHandler ) {
 	//	indent = "\t"; // increase indentation for if-clause below
 	out << endl;
 	out << "#  Main event handler. Reimplemented to handle" << endl;
@@ -856,7 +1009,7 @@ void Uic::createFormImpl( const QDomElement &e )
 	out << "sub event" << endl;
 	out << "{" << endl;
         out << "    my $ev = shift;" << endl;
-	out << "    my $ret = this->SUPER::event( $ev ); " << endl;
+	out << "    my $ret = SUPER->event( $ev ); " << endl;
 	if ( needFontEventHandler ) {
 	    ++indent;
 	    out << "    if ( $ev->type() == &Qt::Event::ApplicationFontChange ) {" << endl;
@@ -891,7 +1044,7 @@ void Uic::createFormImpl( const QDomElement &e )
 		    QString c = getObjectName( n );
 		    QString conn = getDatabaseInfo( n, "connection" );
 		    QString tab = getDatabaseInfo( n, "table" );
-		    if ( !( conn.isEmpty() || tab.isEmpty() ) ) {
+		    if ( !( conn.isEmpty() || tab.isEmpty() || !isFrameworkCodeGenerated( nl.item(i).toElement() ) ) ) {
 			out << indent << "if(" << c << ")" << endl;
 			out << indent << "{" << endl;
 			++indent;
@@ -904,6 +1057,12 @@ void Uic::createFormImpl( const QDomElement &e )
 			    out << indent << "$cursor = Qt::SqlCursor(\"" << tab << "\");" << endl;
 			else
 			    out << indent << "$cursor = Qt::SqlCursor(\"" << tab << "\", 1, " << conn << "Connection);" << endl;
+			out << indent << "if ( " << c << "->isReadOnly() ) " << endl;
+			out << indent << "{" << endl;
+			++indent;
+			out << indent << "$cursor->setMode( &Qt::SqlCursor::ReadOnly )" << endl;
+			--indent;
+			out << indent << "}" << endl;
 			out << indent << c << "->setSqlCursor($cursor, 0, 1);" << endl;
 			--indent;
 			out << endl;
@@ -911,7 +1070,7 @@ void Uic::createFormImpl( const QDomElement &e )
 			out << indent << "if(!$cursor->isActive())" << endl;
 			out << indent << "{" << endl;
 			++indent;
-			out << indent << c << "->refresh(&Qt::DataTable::RefreshAll);" << endl;
+			out << indent << c << "->refresh( &Qt::DataTable::RefreshAll );" << endl;
 			--indent;
 			out << indent << "}" << endl;
 			--indent;
@@ -930,7 +1089,7 @@ void Uic::createFormImpl( const QDomElement &e )
 						   "table" );
 		    QString conn = getDatabaseInfo( nl.item(i).toElement(),
 						    "connection" );
-		    if ( !(tab).isEmpty() ) {
+		    if ( !(tab).isEmpty() || !isFrameworkCodeGenerated( nl.item(i).toElement() ) ) {
 			out << indent << "if(" << obj << ")" << endl;
 			out << indent << "{" << endl;
 			++indent;
@@ -956,8 +1115,26 @@ void Uic::createFormImpl( const QDomElement &e )
 	--indent;
 	out << indent << "}" << endl;
     }
-    if ( !extraSlots.isEmpty() && writeSlotImpl ) {
-	for ( it = extraSlots.begin(); it != extraSlots.end(); ++it ) {
+
+    out << endl;
+    out << indent << "#  Sets the strings of the subwidgets using the current" << endl;
+    out << indent << "#  language." << endl;
+    out << endl;
+    out << indent << "sub languageChange" << endl;
+    out << indent << "{" << endl;
+    ++indent;
+    out << languageChangeBody;
+    --indent;
+    out << indent << "}" << endl;
+    out << endl;
+
+    // create stubs for additional functs/slots if necessary
+
+    for ( it = extraSlots.begin(); it != extraSlots.end(); ++it )
+    	extraFuncts << *it;
+
+    if ( !extraFuncts.isEmpty() && writeFunctImpl && uiPmInclude.isNull() ) {
+	for ( it = extraFuncts.begin(); it != extraFuncts.end(); ++it ) {
 	    out << endl;
 	    int astart = (*it).find('(');
 	    out << indent << "sub " << (*it).left(astart)<< endl;
@@ -982,26 +1159,25 @@ void Uic::createFormImpl( const QDomElement &e )
 
 	}
     }
+    else if( !extraFuncts.isEmpty() && writeFunctImpl )
+    {
+	++indent;
+        for ( it = extraFuncts.begin(); it != extraFuncts.end(); ++it ) {
+	    if ( *it == "init()" || *it == "destroy()" )
+		continue;
+            int astart = (*it).find('(');
+            QRegExp r( "(\\nsub\\s+" + (*it).left(astart) + "(?:\\s*#\\s*SLOT:[^\\n]+|[ \t]+)?\\n\\{)(\\s*)(\\}\\n)" );
+	    r.setMinimal( true );
+	    uiPmInclude.replace( r, "\\1\n" +
+			indent + "print \"" + nameOfClass + "->" + (*it) +
+			": Not implemented yet.\\n\";" + "\n\\3" );
+        }
+	--indent;
 
-    if ( !extraFunctions.isEmpty() ) {
-	for ( it = extraFunctions.begin(); it != extraFunctions.end(); ++it ) {
-	    out << endl;
-	    int astart = (*it).find('(');
-	    out << indent << "sub " << (*it).left(astart)<< endl;
-	    out << indent << "{" << endl;
-	    QString fname = Parser::cleanArgs( *it );
-	    QMap<QString, QString>::Iterator fit = functionImpls.find( fname );
-	    if ( fit != functionImpls.end() ) {
-		int begin = (*fit).find( "{" );
-		QString body = (*fit).mid( begin + 1, (*fit).findRev( "}" ) - begin - 1 );
-		body.simplifyWhiteSpace().isEmpty();
-		out << body << endl;
-	    }
-	    out << indent << "}" << endl;
-
-	}
     }
 
+    if( !uiPmInclude.isNull() )
+	out << uiPmInclude;
 
     out << endl;
     out << "1;" << endl; // Perl modules must return true

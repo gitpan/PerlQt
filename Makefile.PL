@@ -12,7 +12,6 @@
 use strict;
 
 my $libname = "libqt-mt.so";
-my $current_automake="1.5";
 my @prefix = ('/usr', '/usr/local');
 
 my $res="";
@@ -104,44 +103,6 @@ unless ($ENV{'KDEDIR'} or grep /--prefix/, @ARGV)
         "it can't find it) a KDE library named smokeqt.\n";
   print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
   sleep(5);
-}
-
-my @auto=`automake --version 2>/dev/null`;
-if(!check_exit_status($?))
-{
-  for(@prefix)
-  {
-    my $path = $_."/bin/automake";
-    if(-e $path and -x $path)
-    {
-      @auto=`$path --version`;
-      last;
-    }
-  }
-}
-if(!check_exit_status($?))
-{
-  print "\n!!!!!!!!!! WARNING !!!!!!!!!!!\n".
-        "I couldn't find *automake* anywhere in PATH or standard directories.\n".
-        "Unless the Smoke library is already installed on your system,\n".
-        "you won't be able to build PerlQt.\n".
-        "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n";
-  die if grep /--enable-smoke/, @ARGV;
-  sleep(5);
-}
-else
-{
-  if($auto[0] =~/([\d.]{3})/ and $& >= ($current_automake + 0.1))
-  {
-    print "Automake looks recent... we'd better try to rebuild the framework...\n";
-    sleep(2);
-    `make -f Makefile.cvs`;
-    if(!check_exit_status($?))
-    { 
-      print "Ah, there was a problem...  better let configure sort it out then.\n";
-      sleep(3);
-    }
-  }
 }
 
 print "\nNow starting ./configure ...\n\n";

@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-use strict;
+use strict; 
 
 package AnimatedThingy;
 
@@ -37,7 +37,7 @@ sub NEW
 
 sub show
 {
-    startTimer(150) if(!isVisible());
+    startTimer(150) unless isVisible();
     SUPER->show;
 }
 
@@ -73,13 +73,33 @@ sub timerEvent
     ox->[1][step] = x1;
     oy->[1][step] = y1;
 
-    my $c= Qt::Color;
+    my $c = Qt::Color;
     $c->setHsv( (step*255)/nqix, 255, 255 ); # rainbow effect
     $pn->setColor($c);
+    $pn->setWidth(2);
     $p->setPen($pn);
     $p->drawLine(ox->[0][step], oy->[0][step], ox->[1][step], oy->[1][step]);
     $p->setPen(&white);
     $p->drawText(rect(), &AlignCenter, label);
+}
+
+sub paintEvent
+{
+    my $ev = shift;
+    my $p = Qt::Painter(this);
+    my $pn= $p->pen;
+    $pn->setWidth(2);
+    $p->setPen($pn);
+    $p->setClipRect($ev->rect);
+        for (my $i=0; $i<nqix; $i++) {
+            my $c = Qt::Color;
+            $c->setHsv( ($i*255)/nqix, 255, 255 ); # rainbow effect
+            $pn->setColor($c);
+            $p->setPen($pn);
+            $p->drawLine(ox->[0][$i], oy->[0][$i], ox->[1][$i], oy->[1][$i]);
+        }
+        $p->setPen(&white);
+        $p->drawText(rect(), &AlignCenter, label);
 }
 
 sub inc

@@ -20,6 +20,7 @@
 
 #include "uic.h"
 #include "parser.h"
+#include "widgetinterface.h"
 #include "widgetdatabase.h"
 #include "domtool.h"
 #include <qregexp.h>
@@ -27,7 +28,6 @@
 #include <qstringlist.h>
 #define NO_STATIC_COLORS
 #include <globaldefs.h>
-#include <zlib.h>
 
 /*!
   Creates a declaration for the object given in \a e.
@@ -109,7 +109,10 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
 	parent = "centralWidget()";
     }
     QDomElement n;
-    QString objClass, objName, fullObjName;
+    QString objClass, objName;
+    int numItems = 0;
+    int numColumns = 0;
+    int numRows = 0;
 
     if ( layouts.contains( e.tagName() ) )
 	return createLayoutImpl( e, parentClass, parent, layout );
@@ -148,20 +151,24 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
 	    return result;
 	}
 
-	// Layouts don't go into the class instance dictionary.
-        // FIXME PerlQt: fullObjName isn't used anymore => remove
-	fullObjName = objName;
     } else if ( objClass != "Qt::ToolBar" && objClass != "Qt::MenuBar" ) {
 	// register the object and unify its name
 	objName = registerObject( objName );
 
 	// Temporary objects don't go into the class instance dictionary.
-	fullObjName = objName;
 
-	out << indent << (isTmpObject ? QString("my ") : QString::null) << fullObjName << " = " << createObjectInstance( objClass, parent, objName ) << ";" << endl;
+	out << indent << (isTmpObject ? QString("my ") : QString::null) << objName << " = " << createObjectInstance( objClass, parent, objName ) << ";" << endl;
     }
-    else
-	fullObjName = objName;
+
+    if ( objClass == "Qt::AxWidget" ) {
+	QString controlId;
+	for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
+	    if ( n.tagName() == "property" && n.attribute( "name" ) == "control" ) {
+		controlId = n.firstChild().toElement().text();
+	    }
+	}
+	out << indent << objName << "->setControl(\"" << controlId << "\");" << endl;
+    }
 
     lastItem = "undef";
     // set the properties and insert items
@@ -171,7 +178,9 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
 	    bool stdset = stdsetdef;
 	    if ( n.hasAttribute( "stdset" ) )
 		stdset = toBool( n.attribute( "stdset" ) );
-	    QString prop = n.attribute("name");
+	    QString prop = n.attribute( "name" );
+            if ( prop == "database" )
+                continue;
 	    QString value = setObjectProperty( objClass, objName, prop, n.firstChild().toElement(), stdset );
 	    if ( value.isEmpty() )
 		continue;
@@ -179,7 +188,7 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
 		continue;
 	    if ( isLine && prop == "frameShadow" )
 		hadFrameShadow = TRUE;
-	    if ( prop == "buddy" && value[0] == '\"' && value[(int)value.length()-1] == '\"' ) {
+	    if ( prop == "buddy" && value.startsWith("\"") && value.endsWith("\"") ) {
 		buddies << Buddy( objName, value.mid(1, value.length() - 2 ) );
 		continue;
 	    }
@@ -196,7 +205,7 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
 	    }
 	    if ( prop == "buttonGroupId" ) {
 		if ( parentClass == "Qt::ButtonGroup" )
-		    out << indent << parent << "->insert( " << fullObjName << "," << value << ");" << endl;
+		    out << indent << parent << "->insert( " << objName << "," << value << ");" << endl;
 		continue;
 	    }
 	    if ( prop == "frameworkCode" )
@@ -204,41 +213,83 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
 	    if ( objClass == "Qt::MultiLineEdit" &&
 		 QRegExp("echoMode|hMargin|maxLength|maxLines|undoEnabled").exactMatch(prop) )
 		continue;
-	    if ( prop == "geometry" ) {
-		out << indent << fullObjName << "->setGeometry(" << value << ");" << endl;
+
+	    QString call = objName + "->";
+	    bool needClose = false;
+	    if ( stdset ) {
+		call += mkStdSet( prop ) + "( ";
 	    } else {
-		if ( stdset )
-		    out << indent << fullObjName << "->" << mkStdSet( prop ) << "(" << value << ");" << endl;
-		else
-		    out << indent << fullObjName << "->setProperty(\"" << prop << "\", Qt::Variant(" << value << "));" << endl;
+		call += "setProperty( \"" + prop + "\", Qt::Variant(" ;
+		needClose = true;
+	    }
+	    if ( prop == "accel" )
+		call += "Qt::KeySequence( " + value + " )"+ (needClose ? " )": "") + " );";
+	    else
+		call += value + (needClose ? " )": "") + " );";
+
+	    if ( n.firstChild().toElement().tagName() == "string" ||
+		 prop == "currentItem" ) {
+		trout << indent << call << endl;
+	    } else {
+		out << indent << call << endl;
 	    }
 	} else if ( n.tagName() == "item" ) {
+	    QString call;
+	    QString value;
+
 	    if ( objClass.mid( 4 ) == "ListBox" ) {
-		QString s = createListBoxItemImpl( n, fullObjName );
-		if ( !s.isEmpty() )
-		    out << indent << s << ";" << endl;
+		call = createListBoxItemImpl( n, objName );
+		if ( !call.isEmpty() ) {
+		    if ( numItems == 0 )
+			trout << indent << objName << "->clear();" << endl;
+		    trout << indent << call << endl;
+		}
 	    } else if ( objClass.mid( 4 ) == "ComboBox" ) {
-		QString s = createListBoxItemImpl( n, fullObjName );
-		if ( !s.isEmpty() )
-		    out << indent << s << ";" << endl;
+		call = createListBoxItemImpl( n, objName, &value );
+		if ( !call.isEmpty() ) {
+		    if ( numItems == 0 )
+			trout << indent << objName << "->clear();" << endl;
+		    trout << indent << call << endl;
+		}
 	    } else if ( objClass.mid( 4 ) == "IconView" ) {
-		QString s = createIconViewItemImpl( n, fullObjName );
-		if ( !s.isEmpty() )
-		    out << indent << s << ";" << endl;
+		call = createIconViewItemImpl( n, objName );
+		if ( !call.isEmpty() ) {
+		    if ( numItems == 0 )
+			trout << indent << objName << "->clear();" << endl;
+		    trout << indent << call << endl;
+		}
 	    } else if ( objClass.mid( 4 ) == "ListView" ) {
-		QString s = createListViewItemImpl( n, fullObjName, QString::null );
-		if ( !s.isEmpty() )
-		    out << s << endl;
+		call = createListViewItemImpl( n, objName, QString::null );
+		if ( !call.isEmpty() ) {
+		    if ( numItems == 0 )
+			trout << indent << objName << "->clear();" << endl;
+		    trout << call << endl;
+		}
 	    }
+	    if ( !call.isEmpty() )
+		numItems++;
 	} else if ( n.tagName() == "column" || n.tagName() == "row" ) {
+	    QString call;
+	    QString value;
+
 	    if ( objClass.mid( 4 ) == "ListView" ) {
-		QString s = createListViewColumnImpl( n, fullObjName );
-		if ( !s.isEmpty() )
-		    out << s;
+		call = createListViewColumnImpl( n, objName, &value );
+		if ( !call.isEmpty() ) {
+		    out << call;
+		    trout << indent << objName << "->header()->setLabel( "
+			  << numColumns++ << ", " << value << " );\n";
+		}
 	    } else if ( objClass ==  "Qt::Table" || objClass == "Qt::DataTable" ) {
-		QString s = createTableRowColumnImpl( n, fullObjName );
-		if ( !s.isEmpty() )
-		    out << s;
+		bool isCols = ( n.tagName() == "column" );
+		call = createTableRowColumnImpl( n, objName, &value );
+		if ( !call.isEmpty() ) {
+		    out << call;
+		    trout << indent << objName << "->"
+			  << ( isCols ? "horizontalHeader" : "verticalHeader" )
+			  << "()->setLabel( "
+			  << ( isCols ? numColumns++ : numRows++ )
+			  << ", " << value << " );\n";
+		}
 	    }
 	}
     }
@@ -248,19 +299,70 @@ QString Uic::createObjectImpl( const QDomElement &e, const QString& parentClass,
     if ( objClass == "Qt::TabWidget" ) {
 	for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
 	    if ( tags.contains( n.tagName()  ) ) {
-		QString page = createObjectImpl( n, objClass, fullObjName );
-		QString label = DomTool::readAttribute( n, "title", "" ).toString();
-		out << indent << fullObjName << "->insertTab(" << page << ", " << trcall( label ) << ");" << endl;
+		QString page = createObjectImpl( n, objClass, objName );
+		QString comment;
+		QString label = DomTool::readAttribute( n, "title", "", comment ).toString();
+		out << indent << objName << "->insertTab( " << page << ", \"\" );" << endl;
+		trout << indent << objName << "->changeTab( " << page << ", "
+		      << trcall( label, comment ) << " );" << endl;
 	    }
 	}
-     } else if ( objClass != "Qt::ToolBar" && objClass != "Qt::MenuBar" ) { // standard widgets
+    } else if ( objClass == "Qt::WidgetStack" ) {
 	for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
-	    if ( tags.contains( n.tagName() ) )
-		createObjectImpl( n, objClass, fullObjName );
+	    if ( tags.contains( n.tagName()  ) ) {
+		QString page = createObjectImpl( n, objClass, objName );
+		int id = DomTool::readAttribute( n, "id", "" ).toInt();
+		out << indent << objName << "->addWidget( " << page << ", " << id << " );" << endl;
+	    }
 	}
+    } else if ( objClass == "Qt::ToolBox" ) {
+ 	for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
+	    if ( tags.contains( n.tagName()  ) ) {
+		QString page = createObjectImpl( n, objClass, objName );
+		QString label = DomTool::readAttribute( n, "label", "" ).toString();
+		out << indent << objName << "->addItem( " << page << ", \"" << label << "\" );" << endl;
+	    }
+ 	}
+     } else if ( objClass != "Qt::ToolBar" && objClass != "Qt::MenuBar" ) { // standard widgets
+	 WidgetInterface *iface = 0;
+	 QString QtObjClass = objClass;
+	 QtObjClass.replace( QRegExp("^Qt::"), "Q" );
+	 QtObjClass.replace( QRegExp("^KDE::"), "K" );
+	 widgetManager()->queryInterface( QtObjClass, &iface );
+#ifdef QT_CONTAINER_CUSTOM_WIDGETS
+	 int id = WidgetDatabase::idFromClassName( QtObjClass );
+	 if ( WidgetDatabase::isContainer( id ) && WidgetDatabase::isCustomPluginWidget( id ) && iface ) {
+	     QWidgetContainerInterfacePrivate *iface2 = 0;
+	     iface->queryInterface( IID_QWidgetContainer, (QUnknownInterface**)&iface2 );
+	     if ( iface2 ) {
+		 bool supportsPages = iface2->supportsPages( QtObjClass );
+		 for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
+		     if ( tags.contains( n.tagName()  ) ) {
+			 if ( supportsPages ) {
+			     QString page = createObjectImpl( n, objClass, objName );
+			     QString comment;
+			     QString label = DomTool::readAttribute( n, "label", "", comment ).toString();
+			     out << indent << iface2->createCode( objClass, objName, page, label ) << endl;
+			 } else {
+			     createObjectImpl( n, objClass, objName );
+			 }
+		     }
+		 }
+		 iface2->release();
+	     }
+	     iface->release();
+	 } else {
+#endif
+	     for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
+		 if ( tags.contains( n.tagName() ) )
+		     createObjectImpl( n, objClass, objName );
+	     }
+#ifdef QT_CONTAINER_CUSTOM_WIDGETS
+	 }
+#endif
     }
 
-    return fullObjName;
+    return objName;
 }
 
 
@@ -282,20 +384,25 @@ void Uic::createExclusiveProperty( const QDomElement & e, const QString& exclusi
     if ( objClass.isEmpty() )
 	return;
     QString objName = getObjectName( e );
-    if ( objClass.isEmpty() )
-	return;
+#if 0 // it's not clear whether this check should be here or not
+    if ( objName.isEmpty() )
+ 	return;
+#endif
     for ( n = e.firstChild().toElement(); !n.isNull(); n = n.nextSibling().toElement() ) {
 	if ( n.tagName() == "property" ) {
 	    bool stdset = stdsetdef;
 	    if ( n.hasAttribute( "stdset" ) )
 		stdset = toBool( n.attribute( "stdset" ) );
-	    QString prop = n.attribute("name");
+	    QString prop = n.attribute( "name" );
 	    if ( prop != exclusiveProp )
 		continue;
 	    QString value = setObjectProperty( objClass, objName, prop, n.firstChild().toElement(), stdset );
 	    if ( value.isEmpty() )
 		continue;
-	    out << indent << indent << objName << "->setProperty(\"" << prop << "\", Qt::Variant(" << value << "));" << endl;
+	    // we assume the property isn't of type 'string'
+	    ++indent;
+	    out << indent << objName << "->setProperty(\"" << prop << "\", Qt::Variant(" << value << "));" << endl;
+	    --indent;
 	}
     }
 }
@@ -351,7 +458,7 @@ QString Uic::setObjectProperty( const QString& objClass, const QString& obj, con
 	v = v.arg(w).arg(h);
     } else if ( e.tagName() == "color" ) {
 	QDomElement n3 = e.firstChild().toElement();
-	int r= 0, g = 0, b = 0;
+	int r = 0, g = 0, b = 0;
 	while ( !n3.isNull() ) {
 	    if ( n3.tagName() == "red" )
 		r = n3.firstChild().toText().data().toInt();
@@ -365,13 +472,14 @@ QString Uic::setObjectProperty( const QString& objClass, const QString& obj, con
 	v = v.arg(r).arg(g).arg(b);
     } else if ( e.tagName() == "font" ) {
 	QDomElement n3 = e.firstChild().toElement();
+	QString attrname = e.parentNode().toElement().attribute( "name", "font" );
 	QString fontname;
 	if ( !obj.isEmpty() ) {
-	    fontname = obj + "_font";
-	    out << indent << fontname << " = Qt::Font(" << obj << "->font);" << endl;
+	    fontname = registerObject( "$" + obj + "_" + attrname );
+	    out << indent << "my " << fontname << " = Qt::Font(" << obj << "->font);" << endl;
 	} else {
-	    fontname = registerObject( "f" );
-	    out << indent << fontname << " = Qt::Font(this->font);" << endl;
+	    fontname = "$" + registerObject( "font" );
+	    out << indent << "my " << fontname << " = Qt::Font(this->font);" << endl;
 	}
 	while ( !n3.isNull() ) {
 	    if ( n3.tagName() == "family" )
@@ -403,16 +511,18 @@ QString Uic::setObjectProperty( const QString& objClass, const QString& obj, con
 
 	if ( prop == "toolTip" && objClass != "Qt::Action" && objClass != "Qt::ActionGroup" ) {
 	    if ( !obj.isEmpty() )
-		out << indent << "Qt::ToolTip::add(" << obj << ", " + trcall( txt, com ) << ");" << endl;
+		trout << indent << "Qt::ToolTip::add(" << obj << ", "
+		    << trcall( txt, com ) << ");" << endl;
 	    else
-		out << indent << "Qt::ToolTip::add(this, " << trcall( txt, com ) << ");" << endl;
+		out << indent << "Qt::ToolTip::add( this, "
+		    << trcall( txt, com ) << ");" << endl;
 	} else if ( prop == "whatsThis" && objClass != "Qt::Action" && objClass != "Qt::ActionGroup" ) {
 	    if ( !obj.isEmpty() )
-		out << indent << "Qt::WhatsThis::add(" << obj << ", " << trcall( txt, com ) << ");" << endl;
+		trout << indent << "Qt::WhatsThis::add(" << obj << ", "
+		    << trcall( txt, com ) << ");" << endl;
 	    else
-		out << indent << "Qt::WhatsThis::add(this," << trcall( txt, com ) << ");" << endl;
-	} else if (e.parentNode().toElement().attribute("name") == "accel") {
-            v = "Qt::KeySequence(" + trcall( txt, com ) + ")";
+		trout << indent << "Qt::WhatsThis::add( this,"
+		      << trcall( txt, com ) << ");" << endl;
         } else {
 	    v = trcall( txt, com );
 	}
@@ -420,11 +530,7 @@ QString Uic::setObjectProperty( const QString& objClass, const QString& obj, con
 	    v = "\"%1\"";
 	    v = v.arg( e.firstChild().toText().data() );
     } else if ( e.tagName() == "number" ) {
-        // FIXME: hack. PerlQt needs a QKeySequence to build an accel
-	if( e.parentNode().toElement().attribute("name") == "accel" )
-            v = "Qt::KeySequence(int(%1))";
-	else
-	    v = "int(%1)";
+	v = "int(%1)";
 	v = v.arg( e.firstChild().toText().data() );
     } else if ( e.tagName() == "bool" ) {
 	if ( stdset )
@@ -453,27 +559,28 @@ QString Uic::setObjectProperty( const QString& objClass, const QString& obj, con
     } else if ( e.tagName() == "image" ) {
 	v = e.firstChild().toText().data() + "->convertToImage()";
     } else if ( e.tagName() == "enum" ) {
-	v = "&%1::%2";
+	if ( stdset )
+	    v = "&%1::%2()";
+	else
+	    v = "\"%1\"";
 	QString oc = objClass;
 	QString ev = e.firstChild().toText().data();
-	if ( oc == "Qt::ListView" && ev == "Manual" ) // #### workaround, rename QListView::Manual of WithMode enum in 3.0
+	if ( oc == "Qt::ListView" && ev == "Manual" ) // #### workaround, rename QListView::Manual in 4.0
 	    oc = "Qt::ScrollView";
-	v = v.arg( oc ).arg( ev );
+	if ( stdset )
+	    v = v.arg( oc ).arg( ev );
+	else
+	    v = v.arg( ev );
     } else if ( e.tagName() == "set" ) {
 	QString keys( e.firstChild().toText().data() );
 	QStringList lst = QStringList::split( '|', keys );
 	v = "int(&";
-#if defined(Q_CC_EDG)
-	// workaround for EDG bug reproduced with MIPSpro C++ 7.3.?
-	// and KAI C++ 4.0e that will be fixed in KAI C++ 4.0f
 	QStringList::Iterator it = lst.begin();
-	for ( ; it != lst.end(); ++it ) {
-#else
-	for ( QStringList::Iterator it = lst.begin(); it != lst.end(); ++it ) {
-#endif
+	while ( it != lst.end() ) {
 	    v += objClass + "::" + *it;
 	    if ( it != lst.fromLast() )
 		v += " | &";
+	    ++it;
 	}
         v += ")";
     } else if ( e.tagName() == "sizepolicy" ) {
@@ -612,29 +719,29 @@ QString Uic::setObjectProperty( const QString& objClass, const QString& obj, con
             listname += "}";
 	    out << indent << listname << " = [";
 	} else {
-            listname = "$strlist";
+            listname = registerObject( "$" + listname );
 	    out << indent << "my " << listname << " = [";
 	}
         int i = 0;
-	while ( true ) {
+	while ( !n3.isNull() ) {
 	    if ( n3.tagName() == "string" )
             {
 		out << "'" << n3.firstChild().toText().data().simplifyWhiteSpace() << "'";
-	        n3 = n3.nextSibling().toElement();
-                i++;
+		n3 = n3.nextSibling().toElement();
 		if( n3.isNull() )
-                    break;
-                else if( (i%3) == 0 )
+		    break;
+                i++;
+                if( (i%3) == 0 )
                 {
                     ++indent;
                     out << "," << endl << indent;
                     --indent;
                 }
-                else if( n3.isNull() )
-                    break;
                 else
                     out << ", ";
 	    }
+	    else
+	    	n3 = n3.nextSibling().toElement();
 	}
         out << "];" << endl;
 	v = listname;

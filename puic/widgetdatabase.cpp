@@ -1,5 +1,5 @@
 /**********************************************************************
-** Copyright (C) 2000 Trolltech AS.  All rights reserved.
+** Copyright (C) 2000-2002 Trolltech AS.  All rights reserved.
 **
 ** This file is part of Qt Designer.
 **
@@ -8,21 +8,24 @@
 ** Foundation and appearing in the file LICENSE.GPL included in the
 ** packaging of this file.
 **
+** Licensees holding valid Qt Enterprise Edition or Qt Professional Edition
+** licenses may use this file in accordance with the Qt Commercial License
+** Agreement provided with the Software.
+**
 ** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ** See http://www.trolltech.com/gpl/ for GPL licensing information.
+** See http://www.trolltech.com/pricing.html or email sales@trolltech.com for
+**   information about Qt Commercial License Agreements.
 **
 ** Contact info@trolltech.com if any conditions of this licensing are
 ** not clear to you.
 **
 **********************************************************************/
 
-#if !defined(UIC)
-#include "../designer/pixmapchooser.h"
-#endif
-#include "widgetinterface.h"
 #include "widgetdatabase.h"
+#include "widgetinterface.h"
 
 #include <qapplication.h>
 #define NO_STATIC_COLORS
@@ -32,7 +35,6 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qcleanuphandler.h>
-
 #include <qfeatures.h>
 
 #include <stdlib.h>
@@ -59,6 +61,8 @@ WidgetDatabaseRecord::WidgetDatabaseRecord()
     isContainer = FALSE;
     icon = 0;
     nameCounter = 0;
+    isCommon = FALSE;
+    isPlugin = FALSE;
 }
 
 WidgetDatabaseRecord::~WidgetDatabaseRecord()
@@ -123,15 +127,16 @@ void WidgetDatabase::setupDataBase( int id )
     WidgetDatabaseRecord *r = 0;
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "pushbutton.xpm";
+    r->iconSet = "designer_pushbutton.png";
     r->name = "QPushButton";
     r->group = widgetGroup( "Buttons" );
     r->toolTip = "Push Button";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "toolbutton.xpm";
+    r->iconSet = "designer_toolbutton.png";
     r->name = "QToolButton";
     r->group = widgetGroup( "Buttons" );
     r->toolTip = "Tool Button";
@@ -139,23 +144,25 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "radiobutton.xpm";
+    r->iconSet = "designer_radiobutton.png";
     r->name = "QRadioButton";
     r->group = widgetGroup( "Buttons" );
     r->toolTip = "Radio Button";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "checkbox.xpm";
+    r->iconSet = "designer_checkbox.png";
     r->name = "QCheckBox";
     r->group = widgetGroup( "Buttons" );
     r->toolTip = "Check Box";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "groupbox.xpm";
+    r->iconSet = "designer_groupbox.png";
     r->name = "QGroupBox";
     r->group = widgetGroup( "Containers" );
     r->toolTip = "Group Box";
@@ -164,16 +171,17 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "buttongroup.xpm";
+    r->iconSet = "designer_buttongroup.png";
     r->name = "QButtonGroup";
     r->group = widgetGroup( "Containers" );
     r->toolTip = "Button Group";
     r->isContainer = TRUE;
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "frame.xpm";
+    r->iconSet = "designer_frame.png";
     r->name = "QFrame";
     r->group = widgetGroup( "Containers" );
     r->toolTip = "Frame";
@@ -182,7 +190,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "tabwidget.xpm";
+    r->iconSet = "designer_tabwidget.png";
     r->name = "QTabWidget";
     r->group = widgetGroup( "Containers" );
     r->toolTip = "Tabwidget";
@@ -190,17 +198,35 @@ void WidgetDatabase::setupDataBase( int id )
 
     append( r );
 
-
     r = new WidgetDatabaseRecord;
-    r->iconSet = "listbox.xpm";
-    r->name = "QListBox";
-    r->group = widgetGroup( "Views" );
-    r->toolTip = "List Box";
+    r->iconSet = "designer_widgetstack.png";
+    r->name = "QWidgetStack";
+    r->group = widgetGroup( "Containers" );
+    r->toolTip = "Widget Stack";
+    r->isContainer = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "listview.xpm";
+    r->iconSet = "designer_toolbox.png";
+    r->name = "QToolBox";
+    r->group = widgetGroup( "Containers" );
+    r->toolTip = "Tool Box";
+    r->isContainer = TRUE;
+
+    append( r );
+
+    r = new WidgetDatabaseRecord;
+    r->iconSet = "designer_listbox.png";
+    r->name = "QListBox";
+    r->group = widgetGroup( "Views" );
+    r->toolTip = "List Box";
+    r->isCommon = TRUE;
+
+    append( r );
+
+    r = new WidgetDatabaseRecord;
+    r->iconSet = "designer_listview.png";
     r->name = "QListView";
     r->group = widgetGroup( "Views" );
     r->toolTip = "List View";
@@ -209,7 +235,7 @@ void WidgetDatabase::setupDataBase( int id )
 
 #if !defined(QT_NO_ICONVIEW) || defined(UIC)
     r = new WidgetDatabaseRecord;
-    r->iconSet = "iconview.xpm";
+    r->iconSet = "designer_iconview.png";
     r->name = "QIconView";
     r->group = widgetGroup( "Views" );
     r->toolTip = "Icon View";
@@ -219,7 +245,7 @@ void WidgetDatabase::setupDataBase( int id )
 
 #if !defined(QT_NO_TABLE)
     r = new WidgetDatabaseRecord;
-    r->iconSet = "table.xpm";
+    r->iconSet = "designer_table.png";
     r->name = "QTable";
     r->group = widgetGroup( "Views" );
     r->toolTip = "Table";
@@ -229,7 +255,7 @@ void WidgetDatabase::setupDataBase( int id )
 
 #if !defined(QT_NO_SQL)
     r = new WidgetDatabaseRecord;
-    r->iconSet = "datatable.xpm";
+    r->iconSet = "designer_datatable.png";
     r->includeFile = "qdatatable.h";
     r->name = "QDataTable";
     r->group = widgetGroup( "Database" );
@@ -239,23 +265,25 @@ void WidgetDatabase::setupDataBase( int id )
 #endif
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "lineedit.xpm";
+    r->iconSet = "designer_lineedit.png";
     r->name = "QLineEdit";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Line Edit";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "spinbox.xpm";
+    r->iconSet = "designer_spinbox.png";
     r->name = "QSpinBox";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Spin Box";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "dateedit.xpm";
+    r->iconSet = "designer_dateedit.png";
     r->name = "QDateEdit";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Date Edit";
@@ -264,7 +292,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "timeedit.xpm";
+    r->iconSet = "designer_timeedit.png";
     r->name = "QTimeEdit";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Time Edit";
@@ -273,7 +301,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "datetimeedit.xpm";
+    r->iconSet = "designer_datetimeedit.png";
     r->name = "QDateTimeEdit";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Date-Time Edit";
@@ -282,7 +310,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "multilineedit.xpm";
+    r->iconSet = "designer_multilineedit.png";
     r->name = "QMultiLineEdit";
     r->group = widgetGroup( "Temp" );
     r->toolTip = "Multi Line Edit";
@@ -290,23 +318,25 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "richtextedit.xpm";
+    r->iconSet = "designer_richtextedit.png";
     r->name = "QTextEdit";
     r->group = widgetGroup( "Input" );
-    r->toolTip = "Richtext Editor";
+    r->toolTip = "Rich Text Edit";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "combobox.xpm";
+    r->iconSet = "designer_combobox.png";
     r->name = "QComboBox";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Combo Box";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "slider.xpm";
+    r->iconSet = "designer_slider.png";
     r->name = "QSlider";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Slider";
@@ -314,7 +344,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "scrollbar.xpm";
+    r->iconSet = "designer_scrollbar.png";
     r->name = "QScrollBar";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Scrollbar";
@@ -322,7 +352,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "dial.xpm";
+    r->iconSet = "designer_dial.png";
     r->name = "QDial";
     r->group = widgetGroup( "Input" );
     r->toolTip = "Dial";
@@ -330,7 +360,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "label.xpm";
+    r->iconSet = "designer_label.png";
     r->name = "QLabel";
     r->group = widgetGroup( "Temp" );
     r->toolTip = "Label";
@@ -338,16 +368,17 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "label.xpm";
+    r->iconSet = "designer_label.png";
     r->name = "TextLabel";
     r->group = widgetGroup( "Display" );
     r->toolTip = "Text Label";
     r->whatsThis = "The Text Label provides a widget to display static text.";
+    r->isCommon = TRUE;
 
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "pixlabel.xpm";
+    r->iconSet = "designer_pixlabel.png";
     r->name = "PixmapLabel";
     r->group = widgetGroup( "Display" );
     r->toolTip = "Pixmap Label";
@@ -356,7 +387,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "lcdnumber.xpm";
+    r->iconSet = "designer_lcdnumber.png";
     r->name = "QLCDNumber";
     r->group = widgetGroup( "Display" );
     r->toolTip = "LCD Number";
@@ -364,7 +395,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "line.xpm";
+    r->iconSet = "designer_line.png";
     r->name = "Line";
     r->group = widgetGroup( "Display" );
     r->toolTip = "Line";
@@ -374,7 +405,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "progress.xpm";
+    r->iconSet = "designer_progress.png";
     r->name = "QProgressBar";
     r->group = widgetGroup( "Display" );
     r->toolTip = "Progress Bar";
@@ -382,7 +413,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "textview.xpm";
+    r->iconSet = "designer_textview.png";
     r->name = "QTextView";
     r->group = widgetGroup( "Temp" );
     r->toolTip = "Text View";
@@ -390,7 +421,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "textbrowser.xpm";
+    r->iconSet = "designer_textbrowser.png";
     r->name = "QTextBrowser";
     r->group = widgetGroup( "Display" );
     r->toolTip = "Text Browser";
@@ -398,7 +429,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "spacer.xpm";
+    r->iconSet = "designer_spacer.png";
     r->name = "Spacer";
     r->group = widgetGroup( "Temp" );
     r->toolTip = "Spacer";
@@ -451,7 +482,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "tabwidget.xpm";
+    r->iconSet = "designer_tabwidget.png";
     r->name = "QDesignerTabWidget";
     r->group = widgetGroup( "Temp" );
     r->isContainer = TRUE;
@@ -459,7 +490,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "tabwidget.xpm";
+    r->iconSet = "designer_tabwidget.png";
     r->name = "QDesignerWidget";
     r->group = widgetGroup( "Temp" );
     r->isContainer = TRUE;
@@ -467,7 +498,7 @@ void WidgetDatabase::setupDataBase( int id )
     append( r );
 
     r = new WidgetDatabaseRecord;
-    r->iconSet = "tabwidget.xpm";
+    r->iconSet = "designer_tabwidget.png";
     r->name = "QDesignerDialog";
     r->group = widgetGroup( "Temp" );
     r->isContainer = TRUE;
@@ -483,6 +514,33 @@ void WidgetDatabase::setupDataBase( int id )
 
     append( r );
 
+    r = new WidgetDatabaseRecord;
+    r->iconSet = "";
+    r->name = "QDesignerAction";
+    r->includeFile = "qaction.h";
+    r->group = widgetGroup( "Temp" );
+    r->isContainer = FALSE;
+
+    append( r );
+
+    r = new WidgetDatabaseRecord;
+    r->iconSet = "";
+    r->name = "QDesignerActionGroup";
+    r->includeFile = "qaction.h";
+    r->group = widgetGroup( "Temp" );
+    r->isContainer = FALSE;
+
+    append( r );
+
+    r = new WidgetDatabaseRecord;
+    r->iconSet = "";
+    r->name = "QScrollView";
+    r->includeFile = "qscrollview.h";
+    r->group = widgetGroup( "Temp" );
+    r->isContainer = TRUE;
+
+    append( r );
+
 #ifndef QT_NO_SQL
     r = new WidgetDatabaseRecord;
     r->iconSet = "";
@@ -490,7 +548,7 @@ void WidgetDatabase::setupDataBase( int id )
     r->includeFile = "qdatabrowser.h";
     r->group = widgetGroup( "Database" );
     r->toolTip = "Data Browser";
-    r->iconSet = "databrowser.xpm";
+    r->iconSet = "designer_databrowser.png";
     r->isContainer = TRUE;
 
     append( r );
@@ -501,7 +559,7 @@ void WidgetDatabase::setupDataBase( int id )
     r->includeFile = "qdataview.h";
     r->group = widgetGroup( "Database" );
     r->toolTip = "Data View";
-    r->iconSet = "dataview.xpm";
+    r->iconSet = "designer_dataview.png";
     r->isContainer = TRUE;
 
     append( r );
@@ -541,6 +599,7 @@ void WidgetDatabase::setupPlugins()
 	r->includeFile = iface->includeFile( *it );
 	r->isContainer = iface->isContainer( *it );
 	r->name = *it;
+	r->isPlugin = TRUE;
 	append( r );
 	iface->release();
     }
@@ -577,9 +636,14 @@ QIconSet WidgetDatabase::iconSet( int id )
     if ( !r )
 	return QIconSet();
 #if !defined(UIC) && !defined(RESOURCE)
-    if ( !r->icon )
-	r->icon = new QIconSet( PixmapChooser::loadPixmap( r->iconSet, PixmapChooser::Small ),
-				PixmapChooser::loadPixmap( r->iconSet, PixmapChooser::Large ) );
+    if ( !r->icon ) {
+	if ( r->iconSet.isEmpty() )
+	    return QIconSet();
+	QPixmap pix = QPixmap::fromMimeSource( r->iconSet );
+	if ( pix.isNull() )
+	    pix = QPixmap( r->iconSet );
+	r->icon = new QIconSet( pix );
+    }
     return *r->icon;
 #else
     return QIconSet();
@@ -600,7 +664,7 @@ QString WidgetDatabase::className( int id )
 }
 
 /*!
-  Returns the group to which the widget registered as \a id belongs.
+  Returns the group the widget registered as \a id belongs to.
 */
 
 QString WidgetDatabase::group( int id )
@@ -612,8 +676,8 @@ QString WidgetDatabase::group( int id )
     return r->group;
 }
 
-/*!  Returns the tooltip text of the widget which is registered as \a
-  id.
+/*!
+  Returns the tooltip text of the widget which is registered as \a id.
 */
 
 QString WidgetDatabase::toolTip( int id )
@@ -625,8 +689,8 @@ QString WidgetDatabase::toolTip( int id )
     return r->toolTip;
 }
 
-/*!  Returns the what's this? test of the widget which is registered
-  as \a id.
+/*!
+  Returns the what's this? text of the widget which is registered as \a id.
 */
 
 QString WidgetDatabase::whatsThis( int id )
@@ -653,7 +717,7 @@ QString WidgetDatabase::includeFile( int id )
     return r->includeFile;
 }
 
-/*!  Returns wheather the widget registered as \a id is a form
+/*!  Returns whether the widget registered as \a id is a form.
 */
 bool WidgetDatabase::isForm( int id )
 {
@@ -664,8 +728,7 @@ bool WidgetDatabase::isForm( int id )
     return r->isForm;
 }
 
-/*!  Returns wheather the widget registered as \a id is a container
-  (can have children) or not.
+/*!  Returns whether the widget registered as \a id can have children.
 */
 
 bool WidgetDatabase::isContainer( int id )
@@ -677,18 +740,32 @@ bool WidgetDatabase::isContainer( int id )
     return r->isContainer || r->isForm;
 }
 
+bool WidgetDatabase::isCommon( int id )
+{
+    setupDataBase( id );
+    WidgetDatabaseRecord *r = at( id );
+    if ( !r )
+	return FALSE;
+    return r->isCommon;
+}
+
 QString WidgetDatabase::createWidgetName( int id )
 {
     setupDataBase( id );
     QString n = className( id );
     if ( n == "QLayoutWidget" )
 	n = "Layout";
-    if ( n[ 0 ] == 'Q' )
+    if ( n[ 0 ] == 'Q' && n[ 1 ].lower() != n[ 1 ] )
 	n = n.mid( 1 );
+    int colonColon = n.findRev( "::" );
+    if ( colonColon != -1 )
+	n = n.mid( colonColon + 2 );
+
     WidgetDatabaseRecord *r = at( id );
     if ( !r )
 	return n;
     n += QString::number( ++r->nameCounter );
+    n[0] = n[0].lower();
     return n;
 }
 
@@ -705,12 +782,10 @@ int WidgetDatabase::idFromClassName( const QString &name )
     if ( name == "FormWindow" )
 	return idFromClassName( "QLayoutWidget" );
 #ifdef UIC
-#ifndef NO_UI_PLUGINS
     setupDataBase( -2 );
     i = className2Id->find( name );
     if ( i )
 	return *i;
-#endif
 #endif
     return -1;
 }
@@ -793,11 +868,32 @@ int WidgetDatabase::addCustomWidget( WidgetDatabaseRecord *r )
     return dbcustomcount - 1;
 }
 
+void WidgetDatabase::customWidgetClassNameChanged( const QString &oldName,
+						   const QString &newName )
+{
+    int id = idFromClassName( oldName );
+    if ( id == -1 )
+	return;
+    WidgetDatabaseRecord *r = db[ id ];
+    r->name = newName;
+    className2Id->remove( oldName );
+    className2Id->insert( newName, new int( id ) );
+}
+
 bool WidgetDatabase::isCustomWidget( int id )
 {
     if ( id >= dbcustom && id < dbcustomcount )
 	return TRUE;
     return FALSE;
+}
+
+bool WidgetDatabase::isCustomPluginWidget( int id )
+{
+    setupDataBase( id );
+    WidgetDatabaseRecord *r = at( id );
+    if ( !r )
+	return FALSE;
+    return r->isPlugin;
 }
 
 bool WidgetDatabase::isWhatsThisLoaded()
@@ -823,11 +919,35 @@ void WidgetDatabase::loadWhatsThis( const QString &docPath )
     whatsThisLoaded = TRUE;
 }
 
+
+// ### Qt 3.1: make these publically accessible via QWidgetDatabase API
+#if defined(UIC)
+bool dbnounload = FALSE;
+QStringList *dbpaths = 0;
+#else
+extern QString *qwf_plugin_dir;
+#endif
+
+
 QPluginManager<WidgetInterface> *widgetManager()
 {
     if ( !widgetPluginManager ) {
-	widgetPluginManager = new QPluginManager<WidgetInterface>( IID_Widget, QApplication::libraryPaths(), "/designer" );
+	QString pluginDir = "/designer";
+#if !defined(UIC)
+	if ( qwf_plugin_dir )
+	    pluginDir = *qwf_plugin_dir;
+#endif
+	widgetPluginManager = new QPluginManager<WidgetInterface>( IID_Widget, QApplication::libraryPaths(), pluginDir );
 	cleanup_manager.add( &widgetPluginManager );
+#if defined(UIC)
+	if ( dbnounload )
+	    widgetPluginManager->setAutoUnload( FALSE );
+	if ( dbpaths ) {
+	    QStringList::ConstIterator it = dbpaths->begin();
+	    for ( ; it != dbpaths->end(); ++it )
+		widgetPluginManager->addLibraryPath( *it );
+	}
+#endif
     }
     return widgetPluginManager;
 }

@@ -3,7 +3,7 @@ package Qt::constants;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT_OK = qw(
+our @EXPORT = qw(
     IO_Direct
     IO_Sequential
     IO_Combined 
@@ -31,36 +31,7 @@ our @EXPORT_OK = qw(
     IO_UnspecifiedError
 );
 
-our %EXPORT_TAGS = (
-     'IO' => [qw|
-         IO_Direct
-         IO_Sequential
-         IO_Combined 
-         IO_TypeMask 
-         IO_Raw 
-         IO_Async
-         IO_ReadOnly 
-         IO_WriteOnly
-         IO_ReadWrite 
-         IO_Append
-         IO_Truncate
-         IO_Translate 
-         IO_ModeMask  
-         IO_Open      
-         IO_StateMask 
-         IO_Ok        
-         IO_ReadError 
-         IO_WriteError
-         IO_FatalError
-         IO_ResourceError
-         IO_OpenError    
-         IO_ConnectError 
-         IO_AbortError   
-         IO_TimeOutError 
-         IO_UnspecifiedError
-     |],
-);
-
+our %EXPORT_TAGS = ( 'IO' => [ @EXPORT ] );
 
 sub IO_Direct     () { 0x0100 }
 sub IO_Sequential () { 0x0200 }

@@ -343,6 +343,9 @@ sub MembersByType
 		my @types = ();
 		my @data = ();
 		my @signals = ();
+		my @k_dcops = ();
+		my @k_dcop_signals = ();
+		my @k_dcop_hiddens = ();
 		my @slots =();
 		my @methods = ();
 		my @static = ();
@@ -351,10 +354,12 @@ sub MembersByType
 
 		# Build lists
 		foreach my $kid ( @{$node->{Kids}} ) {
-			next if !(($kid->{Access} =~ /$access/
-					&& !$kid->{ExtSource})
-				|| ( $access eq "public" 
-					&& $kid->{Access} eq "signals" ));
+			next unless ( $kid->{Access} =~ /$access/
+			          && !$kid->{ExtSource})
+			         || ( $access eq "public" 
+				    && ( $kid->{Access} eq "signals" 
+				      || $kid->{Access} =~ "k_dcop" # note the =~ 
+                  || $kid->{Access} eq "K_DCOP"));
 
 			my $type = $kid->{NodeType};
 
@@ -368,9 +373,17 @@ sub MembersByType
 				elsif ( $kid->{Flags} =~ "n" ) {
 					push @signals, $kid;
 				}
-				else {
-					push @methods, $kid;
+				elsif ( $kid->{Flags} =~ "d" ) {
+					push @k_dcops, $kid;
 				}
+				elsif ( $kid->{Flags} =~ "z" ) {
+					push @k_dcop_signals, $kid;
+				}
+				elsif ( $kid->{Flags} =~ "y" ) {
+					push @k_dcop_hiddens, $kid;
+				}
+				else {
+					push @methods, $kid; }
 			}
 			elsif ( $kid->{Compound} ) {
 				if ( $type eq "module" ) {
@@ -405,6 +418,12 @@ sub MembersByType
 		doGroup( "$uc_access Slots", $node, \@slots, $startgrpsub,
 			$methodsub, $endgrpsub);
 		doGroup( "Signals", $node, \@signals, $startgrpsub,
+			$methodsub, $endgrpsub);
+		doGroup( "k_dcop", $node, \@k_dcops, $startgrpsub,
+			$methodsub, $endgrpsub);
+		doGroup( "k_dcop_signals", $node, \@k_dcop_signals, $startgrpsub,
+			$methodsub, $endgrpsub);
+		doGroup( "k_dcop_hiddens", $node, \@k_dcop_hiddens, $startgrpsub,
 			$methodsub, $endgrpsub);
 		doGroup( "$uc_access Static Methods", $node, \@static, 
 			$startgrpsub, $methodsub, $endgrpsub);

@@ -38,10 +38,6 @@ qcommonstyle.h
 qcompactstyle.h
 qconfig-dist.h
 qconfig.h
-qconfig-large.h
-qconfig-medium.h
-qconfig-minimal.h
-qconfig-small.h
 qconnect.h
 qconnection.h
 qcstring.h
@@ -128,7 +124,6 @@ qinterlacestyle.h
 qiodev.h
 qiodevice.h
 qjiscodec.h
-qjpegio.h
 qjpunicode.h
 qkeycode.h
 qkeysequence.h
@@ -154,7 +149,6 @@ qmetaobject.h
 qmetaobj.h
 qmime.h
 qmlined.h
-qmngio.h
 qmodules.h
 qmotifdialog.h
 qmotif.h
@@ -191,7 +185,6 @@ qpixmapcache.h
 qpixmap.h
 qplatinumstyle.h
 qpmcache.h
-qpngio.h
 qpntarry.h
 qpointarray.h
 qpoint.h
@@ -254,6 +247,7 @@ qsocknot.h
 qsortedlist.h
 qsound.h
 qspinbox.h
+qsplashscreen.h
 qsplitter.h
 qsqlcursor.h
 qsqldatabase.h
@@ -269,6 +263,7 @@ qsqlpropertymap.h
 qsqlquery.h
 qsqlrecord.h
 qsqlresult.h
+qsqlselectcursor.h
 qstack.h
 qstatusbar.h
 qstring.h
@@ -299,12 +294,12 @@ qtl.h
 qtmultilineedit.h
 qtoolbar.h
 qtoolbutton.h
+qtoolbox.h
 qtooltip.h
 qtranslator.h
 qtsciicodec.h
 qtstream.h
 qttableview.h
-qt_x11.h
 qurl.h
 qurlinfo.h
 qurloperator.h
@@ -318,7 +313,6 @@ qvariant.h
 qvbox.h
 qvbuttongroup.h
 qvector.h
-qvfbhdr.h
 qvgroupbox.h
 qwaitcondition.h
 qwhatsthis.h
@@ -336,4 +330,21 @@ qwindowsstyle.h
 qwizard.h
 qwmatrix.h
 qworkspace.h
+qwsbeosdecoration_qws.h
+qwscommand_qws.h
+qwscursor_qws.h
+qwsdecoration_qws.h
+qwsdefaultdecoration_qws.h
+qwsdisplay_qws.h
+qwsevent_qws.h
+qwshydrodecoration_qws.h
+qwskde2decoration_qws.h
+qwskdedecoration_qws.h
+qwsmanager_qws.h
+qwsmouse_qws.h
+qwsproperty_qws.h
+qwsregionmanager_qws.h
+qwssocket_qws.h
+qwsutils_qws.h
+qwswindowsdecoration_qws.h
 qxml.h

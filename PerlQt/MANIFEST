@@ -3,6 +3,7 @@ MANIFEST
 Makefile.PL.in
 Qt.pm
 Qt.xs
+Qt.pod
 bin/pqtapi
 bin/pqtsh
 examples/aclock/AnalogClock.pm
@@ -31,6 +32,7 @@ lib/Qt/constants.pm
 lib/Qt/properties.pm
 lib/Qt/signals.pm
 lib/Qt/slots.pm
+lib/Qt/GlobalSpace.pm
 marshall.h
 perlqt.h
 smokeperl.cpp
@@ -41,6 +43,7 @@ t/Foo/SubCodec.pm
 t/a_loading.t
 t/b_nogui.t
 t/c_qapp.t
+t/ca_i18n.t
 t/d_sigslot.t
 t/e_sigslot_inherit.t
 t/f_import.t

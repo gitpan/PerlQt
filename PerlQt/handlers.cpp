@@ -3,6 +3,15 @@
 #include <qapplication.h>
 #include <qmetaobject.h>
 #include <qvaluelist.h>
+#include <qwidgetlist.h>
+#include <qcanvas.h>
+#include <qobjectlist.h>
+#include <qintdict.h>
+#include <qtoolbar.h>
+#include <qtabbar.h>
+#include <qdir.h>
+#include <qdockwindow.h>
+#include <qnetworkprotocol.h>
 #include <private/qucomextra_p.h>
 #include "smoke.h"
 
@@ -32,28 +41,44 @@
 #define HINT_BYTES HINT_BYTE
 #endif
 
+#ifndef PERL_MAGIC_tiedscalar
+#define PERL_MAGIC_tiedscalar 'q'
+#endif
+
+extern HV* pointer_map;
+static QIntDict<Smoke::Index> *dtorcache= 0;
+static QIntDict<Smoke::Index> *cctorcache= 0;
+
 int smokeperl_free(pTHX_ SV *sv, MAGIC *mg) {
     smokeperl_object *o = (smokeperl_object*)mg->mg_ptr;
 
     const char *className = o->smoke->classes[o->classId].className;
     if(o->allocated && o->ptr) {
-        if(do_debug & qtdb_gc) printf("Deleting (%s*)%p\n", className, o->ptr);
+        if(do_debug && (do_debug & qtdb_gc)) fprintf(stderr, "Deleting (%s*)%p\n", className, o->ptr);
         SmokeClass sc(o->smoke, o->classId);
-        if(sc.hasVirtual())
+	if(sc.hasVirtual()) 
             unmapPointer(o, o->classId, 0);
-        object_count --;
-        char *methodName = new char[strlen(className) + 2];
-        methodName[0] = '~';
-        strcpy(methodName + 1, className);
-        Smoke::Index nameId = o->smoke->idMethodName(methodName);
-        Smoke::Index meth = o->smoke->findMethod(o->classId, nameId);
-        if(meth > 0) {
-            Smoke::Method &m = o->smoke->methods[o->smoke->methodMaps[meth].method];
-            Smoke::ClassFn fn = o->smoke->classes[m.classId].classFn;
-            Smoke::StackItem i[1];
-            (*fn)(m.method, o->ptr, i);
-        }
-        delete[] methodName;
+	Smoke::Index *pmeth = dtorcache->find( o->classId );
+	if(pmeth) {
+		Smoke::Method &m = o->smoke->methods[o->smoke->methodMaps[*pmeth].method];
+		Smoke::ClassFn fn = o->smoke->classes[m.classId].classFn;
+		Smoke::StackItem i[1];
+		(*fn)(m.method, o->ptr, i);
+	} else {
+		char *methodName = new char[strlen(className) + 2];
+        	methodName[0] = '~';
+        	strcpy(methodName + 1, className);
+            	Smoke::Index nameId = o->smoke->idMethodName(methodName);
+            	Smoke::Index meth = o->smoke->findMethod(o->classId, nameId);
+            	if(meth > 0) {
+			dtorcache->insert(o->classId, new Smoke::Index(meth));
+                	Smoke::Method &m = o->smoke->methods[o->smoke->methodMaps[meth].method];
+                	Smoke::ClassFn fn = o->smoke->classes[m.classId].classFn;
+                	Smoke::StackItem i[1];
+                	(*fn)(m.method, o->ptr, i);
+            	}
+        	delete[] methodName;
+	}
     }
     return 0;
 }
@@ -69,41 +94,57 @@ bool matches_arg(Smoke *smoke, Smoke::Index meth, Smoke::Index argidx, const cha
 }
 
 void *construct_copy(smokeperl_object *o) {
-    const char *className = o->smoke->className(o->classId);
-    int classNameLen = strlen(className);
-    char *ccSig = new char[classNameLen + 2];       // copy constructor signature
-    strcpy(ccSig, className);
-    strcat(ccSig, "#");
-    Smoke::Index ccId = o->smoke->idMethodName(ccSig);
-    delete[] ccSig;
+    Smoke::Index *pccMeth = cctorcache->find(o->classId);
+    Smoke::Index ccMeth = 0;
+    if(!pccMeth) {
+	const char *className = o->smoke->className(o->classId);
+	int classNameLen = strlen(className);
+	char *ccSig = new char[classNameLen + 2];       // copy constructor signature
+	strcpy(ccSig, className);
+	strcat(ccSig, "#");
+	Smoke::Index ccId = o->smoke->idMethodName(ccSig);
+	delete[] ccSig;
 
-    char *ccArg = new char[classNameLen + 8];
-    sprintf(ccArg, "const %s&", className);
+	char *ccArg = new char[classNameLen + 8];
+	sprintf(ccArg, "const %s&", className);
 
-    Smoke::Index ccMeth = o->smoke->findMethod(o->classId, ccId);
-    if(!ccMeth)
-	return 0;
-    if(ccMeth > 0) {
-	Smoke::Index method = o->smoke->methodMaps[ccMeth].method;
-	// Make sure it's a copy constructor
-	if(!matches_arg(o->smoke, method, 0, ccArg)) {
-            delete[] ccArg;
+	ccMeth = o->smoke->findMethod(o->classId, ccId);
+
+	if(!ccMeth) {
+	    cctorcache->insert(o->classId, new Smoke::Index(0));
 	    return 0;
         }
-        ccMeth = method;
-    } else {
-        // ambiguous method, pick the copy constructor
-	Smoke::Index i = -ccMeth;
-	while(o->smoke->ambiguousMethodList[i]) {
-	    if(matches_arg(o->smoke, o->smoke->ambiguousMethodList[i], 0, ccArg))
-		break;
+	Smoke::Index method =  o->smoke->methodMaps[ccMeth].method;
+	if(method > 0) {
+	    // Make sure it's a copy constructor
+	    if(!matches_arg(o->smoke, method, 0, ccArg)) {
+		delete[] ccArg;
+		cctorcache->insert(o->classId, new Smoke::Index(0));
+		return 0;
+	    }
+	    delete[] ccArg;
+	    ccMeth = method;
+	} else {
+	    // ambiguous method, pick the copy constructor
+	    Smoke::Index i = -method;
+	    while(o->smoke->ambiguousMethodList[i]) {
+	        if(matches_arg(o->smoke, o->smoke->ambiguousMethodList[i], 0, ccArg))
+		    break;
+                i++;
+	    }
+            delete[] ccArg;
+	    ccMeth = o->smoke->ambiguousMethodList[i];
+	    if(!ccMeth) {
+		cctorcache->insert(o->classId, new Smoke::Index(0));
+		return 0;
+	    }
 	}
-        delete[] ccArg;
-	ccMeth = o->smoke->ambiguousMethodList[i];
+	cctorcache->insert(o->classId, new Smoke::Index(ccMeth));
+    } else {
+	ccMeth = *pccMeth;
 	if(!ccMeth)
 	    return 0;
     }
-
     // Okay, ccMeth is the copy constructor. Time to call it.
     Smoke::StackItem args[2];
     args[0].s_voidp = 0;
@@ -286,7 +327,9 @@ static void marshall_basetype(Marshall *m) {
 		}
 		void *ptr = o->ptr;
 		if(!m->cleanup() && m->type().isStack()) {
-		    ptr = construct_copy(o);
+		    void *p = construct_copy(o);
+		    if(p)
+		        ptr = p;
 		}
 		const Smoke::Class &c = m->smoke()->classes[m->type().classId()];
 		ptr = o->smoke->cast(
@@ -323,15 +366,23 @@ static void marshall_basetype(Marshall *m) {
 		if(m->type().isStack())
 		    o.allocated = true;
 
+		char *buf = m->smoke()->binding->className(m->type().classId());
+		sv_bless(obj, gv_stashpv(buf, TRUE));
+                delete[] buf;
+		if(m->type().isConst() && m->type().isRef()) {
+		    p = construct_copy( &o );
+		    if(p) {
+			o.ptr = p;
+			o.allocated = true;
+		    }
+		}
 		sv_magic((SV*)hv, sv_qapp, '~', (char*)&o, sizeof(o));
 		MAGIC *mg = mg_find((SV*)hv, '~');
 		mg->mg_virtual = &vtbl_smoke;
-
-		char *buf = m->smoke()->binding->className(m->type().classId());
-		sv_bless(obj, gv_stashpv(buf, TRUE));
-		delete[] buf;
-
 		sv_setsv_mg(m->var(), obj);
+		SmokeClass sc( m->type() );
+		if( sc.hasVirtual() )
+		    mapPointer(obj, &o, pointer_map, o.classId, 0);
 		SvREFCNT_dec(obj);
 	    }
 	    break;
@@ -346,7 +397,7 @@ static void marshall_basetype(Marshall *m) {
     }
 }
 
-static void marshall_void(Marshall *m) {}
+static void marshall_void(Marshall *) {}
 static void marshall_unknown(Marshall *m) {
     m->unsupported();
 }
@@ -393,25 +444,50 @@ void marshall_ucharP(Marshall *m) {
     switch(m->action()) {
       case Marshall::FromSV:
 	{
-	    SV *sv = m->var();
-	    if(!SvOK(sv)) {
-		m->item().s_voidp = 0;
-		break;
+	    SV* sv = m->var();
+	    QByteArray *s = 0;
+	    MAGIC* mg = 0;
+	    bool hasMagic = false;
+	    if(SvOK(sv)) {
+	        if( SvTYPE(sv) == SVt_PVMG  && (mg = mg_find(sv, PERL_MAGIC_tiedscalar))
+                             && sv_derived_from(mg->mg_obj, "Qt::_internal::QByteArray") ) {
+                     s = (QByteArray*)SvIV((SV*)SvRV(mg->mg_obj));
+                     hasMagic = true;
+                } else {
+                    STRLEN len;
+		    char* tmp = SvPV(sv, len);
+                    s = new QByteArray(len);
+		    Copy((void*)tmp, (void*)s->data(), len, char);
+		    if( !m->type().isConst() && !SvREADONLY(sv) ) {
+                        SV* rv = newSV(0);
+                        sv_setref_pv(rv, "Qt::_internal::QByteArray", (void*)s);
+                        sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);
+                        hasMagic = true;
+		    }
+		}
+            } else {
+		if( !m->type().isConst() ) {
+		    if(SvREADONLY(sv) && m->type().isPtr()) {
+			m->item().s_voidp = 0;
+			break;
+		    }
+		    s = new QByteArray(0);
+		    if( !SvREADONLY(sv) ) {
+			SV* rv = newSV(0);
+			sv_setpv_mg(sv, "");
+			sv_setref_pv(rv, "Qt::_internal::QByteArray", s);
+			sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);
+			hasMagic = true;
+		    }
+		} else
+                    s = new QByteArray(0);
 	    }
-	    if(m->cleanup())
-		m->item().s_voidp = SvPV_nolen(sv);
-	    else {
-		STRLEN len;
-		char *svstr = SvPV(sv, len);
-		char *str = new char [len + 1];
-		strncpy(str, svstr, len);
-		str[len] = 0;
-		m->item().s_voidp = str;
-	    }
+	    m->item().s_voidp = s->data();
+	    m->next();
+	    if(s && !hasMagic && m->cleanup())
+ 		delete s;
 	}
 	break;
-      case Marshall::ToSV:
-	// This will need to be implemented with some sort of tied array
       default:
 	m->unsupported();
 	break;
@@ -422,20 +498,50 @@ static void marshall_QString(Marshall *m) {
     switch(m->action()) {
       case Marshall::FromSV:
 	{
+	    SV* sv = m->var();
 	    QString *s = 0;
-	    if(SvOK(m->var()) || m->type().isStack()) {
-                if(SvUTF8(m->var()))
-		    s = new QString(QString::fromUtf8(SvPV_nolen(m->var())));
-                else if(PL_hints & HINT_LOCALE)
-                    s = new QString(QString::fromLocal8Bit(SvPV_nolen(m->var()))); 
-                else
-                    s = new QString(QString::fromLatin1(SvPV_nolen(m->var())));
-            }
-            else if(m->type().isRef())
-                s = new QString;
+	    MAGIC* mg = 0;
+	    bool hasMagic = false;
+	    if(SvOK(sv) || m->type().isStack()) {
+	        if( SvTYPE(sv) == SVt_PVMG  && (mg = mg_find(sv, PERL_MAGIC_tiedscalar))
+                             && sv_derived_from(mg->mg_obj, "Qt::_internal::QString") ) {
+                     s = (QString*)SvIV((SV*)SvRV(mg->mg_obj));
+                     hasMagic = true;
+                } else {
+                    COP *cop = cxstack[cxstack_ix].blk_oldcop;
+                    if(SvUTF8(sv))
+                        s = new QString(QString::fromUtf8(SvPV_nolen(sv)));
+                    else if(cop->op_private & HINT_LOCALE)
+                        s = new QString(QString::fromLocal8Bit(SvPV_nolen(sv)));
+                    else
+                        s = new QString(QString::fromLatin1(SvPV_nolen(sv)));
+		    if( !m->type().isConst() && !m->type().isStack() && !SvREADONLY(sv)) {
+                        SV* rv = newSV(0);
+                        sv_setref_pv(rv, "Qt::_internal::QString", (void*)s);
+                        sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);
+                        hasMagic = true;
+		    }
+		}
+            } else {
+		if(!m->type().isConst()) {
+		    if(SvREADONLY(sv) && m->type().isPtr()) {
+		        m->item().s_voidp = 0;
+		        break;    
+		    }
+		    s = new QString;
+		    if( !SvREADONLY(sv) ) {
+			SV* rv = newSV(0);
+			sv_setpv_mg(sv, "");
+                        sv_setref_pv(rv, "Qt::_internal::QString", s);
+                        sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);
+		        hasMagic = true;
+		    }
+		} else
+		    s = new QString;
+	    }
 	    m->item().s_voidp = s;
 	    m->next();
-	    if(s && m->cleanup())
+	    if(s && !hasMagic && m->cleanup())
 		delete s;
 	}
 	break;
@@ -443,12 +549,13 @@ static void marshall_QString(Marshall *m) {
 	{
 	    QString *s = (QString*)m->item().s_voidp;
 	    if(s) {
-                if(!(PL_hints & HINT_BYTES))
+		COP *cop = cxstack[cxstack_ix].blk_oldcop;
+                if(!(cop->op_private & HINT_BYTES))
                 {
 		    sv_setpv_mg(m->var(), (const char *)s->utf8());
                     SvUTF8_on(m->var());
                 }
-                else if(PL_hints & HINT_LOCALE)
+                else if(cop->op_private & HINT_LOCALE)
                     sv_setpv_mg(m->var(), (const char *)s->local8Bit());
                 else
                     sv_setpv_mg(m->var(), (const char *)s->latin1());
@@ -465,16 +572,92 @@ static void marshall_QString(Marshall *m) {
     }
 }
 
+static void marshall_QByteArray(Marshall *m) {
+    switch(m->action()) {
+      case Marshall::FromSV:
+	{
+	    SV* sv = m->var();
+	    QByteArray *s = 0;
+	    MAGIC* mg = 0;
+	    bool hasMagic = false;
+	    if(SvOK(sv) || m->type().isStack()) {
+	        if( SvTYPE(sv) == SVt_PVMG  && (mg = mg_find(sv, PERL_MAGIC_tiedscalar))
+                             && sv_derived_from(mg->mg_obj, "Qt::_internal::QByteArray") ) {
+                     s = (QByteArray*)SvIV((SV*)SvRV(mg->mg_obj));
+                     hasMagic = true;
+                } else {
+                    STRLEN len;
+		    char* tmp = SvPV(sv, len); 
+                    s = new QByteArray(len);
+		    Copy((void*)tmp, (void*)s->data(), len, char);
+		    if( !m->type().isConst() && !SvREADONLY(sv) ) { // we tie also stack because of the funny QDataStream behaviour
+			// fprintf(stderr, "Tying\n");
+                        SV* rv = newSV(0);
+                        sv_setref_pv(rv, "Qt::_internal::QByteArray", (void*)s);
+                        sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);
+                        hasMagic = true;
+		    }
+		}
+            } else {
+		if( !m->type().isConst() ) {
+		    if(SvREADONLY(sv) && m->type().isPtr()) {
+			m->item().s_voidp = 0;
+			break;
+		    }
+		    s = new QByteArray(0);
+		    if( !SvREADONLY(sv) ) {
+			SV* rv = newSV(0);
+			sv_setpv_mg(sv, "");
+			sv_setref_pv(rv, "Qt::_internal::QByteArray", s);
+			sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);
+			hasMagic = true;
+		    }
+		} else
+                    s = new QByteArray(0);
+	    }
+	    m->item().s_voidp = s;
+	    m->next();
+	    if(s && !hasMagic && m->cleanup())
+		delete s;
+	}
+	break;
+// ToSV is probably overkill here, but will do well as a template for other types.
+      case Marshall::ToSV:
+	{
+	    bool hasMagic = false;
+            SV *sv = m->var();
+	    QByteArray *s = (QByteArray*)m->item().s_voidp;
+	    if(s) {
+                if( !m->type().isConst() && !m->type().isStack() && !SvREADONLY(sv)) {
+                    SV* rv = newSV(0);
+                    sv_setref_pv(rv, "Qt::_internal::QByteArray", (void*)s); 
+                    sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0); // err, is a previous magic auto-untied here?
+                    hasMagic = true;
+                } else 
+		    sv_setpvn_mg(sv, (const char *)s->data(), s->size());
+            }
+	    else
+		sv_setsv_mg(sv, &PL_sv_undef);
+	    if(m->cleanup() && !hasMagic)
+		delete s;
+	}
+	break;
+      default:
+	m->unsupported();
+	break;
+    }
+}
+
 static const char *not_ascii(const char *s, uint &len)
 {
     bool r = false;
     for(; *s ; s++, len--)
       if((uint)*s > 0x7F)
-      { 
-        r = true; 
+      {
+        r = true;
         break;
       }
-    return r ? s : 0L;   
+    return r ? s : 0L;
 }
 
 static void marshall_QCString(Marshall *m) {
@@ -497,7 +680,8 @@ static void marshall_QCString(Marshall *m) {
 		sv_setpv_mg(m->var(), (const char *)*s);
                 const char * p = (const char *)*s; 
                 uint len =  s->length();
-                if(not_ascii(p,len))
+                COP *cop = cxstack[cxstack_ix].blk_oldcop;
+                if(!(cop->op_private & HINT_BYTES) && not_ascii(p,len))
                 {
                   #if PERL_VERSION == 6 && PERL_SUBVERSION == 0
                   QTextCodec* c = QTextCodec::codecForMib(106); // utf8
@@ -678,7 +862,7 @@ static void marshall_charP_array(Marshall *m) {
     }
 }
 
-void marshall_QStringList(Marshall *m) {
+static void marshall_QStringList(Marshall *m) {
     switch(m->action()) {
       case Marshall::FromSV:
 	{
@@ -692,7 +876,8 @@ void marshall_QStringList(Marshall *m) {
 	    int count = av_len(list);
 	    QStringList *stringlist = new QStringList;
 	    int i;
-            bool lc = PL_hints & HINT_LOCALE;
+	    COP *cop = cxstack[cxstack_ix].blk_oldcop;
+            bool lc = cop->op_private & HINT_LOCALE;
 	    for(i = 0; i <= count; i++) {
 		SV **item = av_fetch(list, i, 0);
 		if(!item || !SvOK(*item)) {
@@ -735,7 +920,8 @@ void marshall_QStringList(Marshall *m) {
 		sv_setsv_mg(m->var(), rv);
 		SvREFCNT_dec(rv);
 	    }
-            if(!(PL_hints & HINT_BYTES))
+            COP *cop = cxstack[cxstack_ix].blk_oldcop;
+            if(!(cop->op_private & HINT_BYTES))
                 for(QStringList::Iterator it = stringlist->begin();
                     it != stringlist->end();
                     ++it) {
@@ -743,7 +929,7 @@ void marshall_QStringList(Marshall *m) {
                     SvUTF8_on(sv);
                     av_push(av, sv);
                 }
-            else if(PL_hints & HINT_LOCALE)
+            else if(cop->op_private & HINT_LOCALE)
                 for(QStringList::Iterator it = stringlist->begin();
                     it != stringlist->end();
                     ++it) {
@@ -767,7 +953,7 @@ void marshall_QStringList(Marshall *m) {
     }
 }
 
-void marshall_QValueListInt(Marshall *m) {
+static void marshall_QValueListInt(Marshall *m) {
     switch(m->action()) {
       case Marshall::FromSV:
 	{
@@ -862,46 +1048,219 @@ void marshall_QRgb_array(Marshall *m) {
     switch(m->action()) {
       case Marshall::FromSV:
 	{
-	    SV *sv = m->var();
-	    if(!SvROK(sv) || SvTYPE(SvRV(sv)) != SVt_PVAV ||
+	    SV* sv = m->var();
+	    QRgb* s = 0;
+	    MAGIC* mg = 0;
+	    if( SvOK(sv) && SvTYPE(sv) == SVt_PVMG  && (mg = mg_find(sv, PERL_MAGIC_tiedscalar))
+                             && sv_derived_from(mg->mg_obj, "Qt::_internal::QRgbStar") ) {
+		s = (QRgb*)SvIV((SV*)SvRV(mg->mg_obj));
+            } else if(!SvROK(sv) || SvREADONLY(sv) || SvTYPE(SvRV(sv)) != SVt_PVAV ||
 		av_len((AV*)SvRV(sv)) < 0) {
 		m->item().s_voidp = 0;
 		break;
+	    } else {
+	        AV *list = (AV*)SvRV(sv);
+	        int count = av_len(list);
+	        s = new QRgb[count + 2];
+	        int i;
+	        for(i = 0; i <= count; i++) {
+		    SV **item = av_fetch(list, i, 0);
+		    if(!item || !SvOK(*item)) {
+		        s[i] = 0;
+		        continue;
+		    }
+		    s[i] = SvIV(*item);
+                }
+                s[i] = 0;
+                SV* rv = newSV(0);
+                sv_setref_pv(rv, "Qt::_internal::QRgbStar", (void*)s);
+                sv_magic(sv, rv, PERL_MAGIC_tiedscalar, Nullch, 0);	    
 	    }
-	    AV *list = (AV*)SvRV(sv);
-	    int count = av_len(list);
-	    QRgb *rgb = new QRgb[count + 2];
-	    int i;
-	    for(i = 0; i <= count; i++) {
-		SV **item = av_fetch(list, i, 0);
-		if(!item || !SvOK(*item)) {
-		    rgb[i] = 0;
-		    continue;
-		}
-
-		rgb[i] = SvIV(*item);
-	    }
-	    m->item().s_voidp = rgb;
-	    m->next();
-	    if(m->cleanup())
-		delete[] rgb;
+	    m->item().s_voidp = s;
 	}
 	break;
-      case Marshall::ToSV:
-	// Implement this with a tied array or something
       default:
 	m->unsupported();
 	break;
     }
 }
 
+// Templated classes marshallers
+
+#define GET_PERL_OBJECT( CCLASS, PCLASS, IS_STACK )                \
+      SV *sv = getPointerObject((void*)t);                         \
+      SV *ret= newSV(0);                                           \
+      if(!sv || !SvROK(sv)){                                       \
+          HV *hv = newHV();                                        \
+          SV *obj = newRV_noinc((SV*)hv);                          \
+                                                                   \
+          smokeperl_object o;                                      \
+          o.smoke = m->smoke();                                    \
+          o.classId = ix;                                          \
+          o.ptr = (void*)t;                                        \
+          o.allocated = IS_STACK;                                  \
+                                                                   \
+          sv_bless(obj, gv_stashpv( PCLASS, TRUE));                \
+                                                                   \
+          if(m->type().isConst() && m->type().isRef()) {           \
+              void* p = construct_copy( &o );                      \
+              if(p) {                                              \
+                  o.ptr = p;                                       \
+                  o.allocated = true;                              \
+              }                                                    \
+          }                                                        \
+          sv_magic((SV*)hv, sv_qapp, '~', (char*)&o, sizeof(o));   \
+          MAGIC *mg = mg_find((SV*)hv, '~');                       \
+          mg->mg_virtual = &vtbl_smoke;                            \
+                                                                   \
+          sv_setsv_mg(ret, obj);                                   \
+          SvREFCNT_dec(obj);                                       \
+      }                                                            \
+      else                                                         \
+          sv_setsv_mg(ret, sv);
+
+
+
+
+
+#define MARSHALL_QPTRLIST( FNAME, TMPLNAME, CCLASSNAME, PCLASSNAME, IS_STACK )            \
+static void marshall_ ## FNAME (Marshall *m) {                                            \
+   switch(m->action()) {                                                                  \
+      case Marshall::FromSV:                                                              \
+        {                                                                                 \
+            SV *sv = m->var();                                                            \
+            if(!SvROK(sv) || SvTYPE(SvRV(sv)) != SVt_PVAV ||                              \
+                av_len((AV*)SvRV(sv)) < 0) {                                              \
+                if(m->type().isRef()) {                                                   \
+                    warn("References can't be null or undef\n");                          \
+                    m->unsupported();                                                     \
+                }                                                                         \
+                m->item().s_voidp = 0;                                                    \
+                break;                                                                    \
+            }                                                                             \
+            AV *list = (AV*)SvRV(sv);                                                     \
+            int count = av_len(list);                                                     \
+            TMPLNAME *ptrlist = new TMPLNAME;                                             \
+            int i;                                                                        \
+            for(i = 0; i <= count; i++) {                                                 \
+                SV **item = av_fetch(list, i, 0);                                         \
+                if(!item || !SvROK(*item) || SvTYPE(SvRV(*item)) != SVt_PVHV)             \
+                    continue;                                                             \
+                smokeperl_object *o = sv_obj_info(*item);                                 \
+                if(!o || !o->ptr)                                                         \
+                    continue;                                                             \
+                void *ptr = o->ptr;                                                       \
+                ptr = o->smoke->cast(                                                     \
+                    ptr,                                                                  \
+                    o->classId,                                                           \
+                    o->smoke->idClass( #CCLASSNAME )                                      \
+                );                                                                        \
+                                                                                          \
+                ptrlist->append( ( CCLASSNAME *) ptr);                                    \
+            }                                                                             \
+                                                                                          \
+            m->item().s_voidp = ptrlist;                                                  \
+            m->next();                                                                    \
+                                                                                          \
+            if(m->cleanup()) {                                                            \
+                av_clear(list);                                                           \
+                int ix = m->smoke()->idClass( #CCLASSNAME );                              \
+                for( CCLASSNAME *t = ptrlist->first(); t ; t = ptrlist->next()){          \
+                    GET_PERL_OBJECT( CCLASSNAME, PCLASSNAME, IS_STACK )                   \
+                    av_push(list, ret);                                                   \
+                }                                                                         \
+                delete ptrlist;                                                           \
+            }                                                                             \
+        }                                                                                 \
+        break;                                                                            \
+      case Marshall::ToSV:                                                                \
+        {                                                                                 \
+          TMPLNAME *list = ( TMPLNAME *)m->item().s_voidp;                                \
+          if(!list) {                                                                     \
+              sv_setsv_mg(m->var(), &PL_sv_undef);                                        \
+              break;                                                                      \
+          }                                                                               \
+                                                                                          \
+          AV *av = newAV();                                                               \
+          {                                                                               \
+              SV *rv = newRV_noinc((SV*)av);                                              \
+              sv_setsv_mg(m->var(), rv);                                                  \
+              SvREFCNT_dec(rv);                                                           \
+          }                                                                               \
+          int ix = m->smoke()->idClass( #CCLASSNAME );                                    \
+          for( CCLASSNAME *t = list->first(); t ; t = list->next()){                      \
+              GET_PERL_OBJECT( CCLASSNAME, PCLASSNAME, IS_STACK )                         \
+              av_push(av, ret);                                                           \
+          }                                                                               \
+          if(m->cleanup())                                                                \
+              delete list;                                                                \
+        }                                                                                 \
+        break;                                                                            \
+      default:                                                                            \
+        m->unsupported();                                                                 \
+        break;                                                                            \
+    }                                                                                     \
+}
+
+MARSHALL_QPTRLIST( QPtrListQNetworkOperation, QPtrList<QNetworkOperation>, QNetworkOperation, " Qt::NetworkOperation", FALSE )
+MARSHALL_QPTRLIST( QPtrListQToolBar, QPtrList<QToolBar>, QToolBar, " Qt::ToolBar", FALSE )
+MARSHALL_QPTRLIST( QPtrListQTab, QPtrList<QTab>, QTab, " Qt::Tab", FALSE )
+MARSHALL_QPTRLIST( QPtrListQDockWindow, QPtrList<QDockWindow>, QDockWindow, " Qt::DockWindow", FALSE )
+MARSHALL_QPTRLIST( QWidgetList, QWidgetList, QWidget, " Qt::Widget", FALSE )
+MARSHALL_QPTRLIST( QObjectList, QObjectList, QObject, " Qt::Object", FALSE )
+MARSHALL_QPTRLIST( QFileInfoList, QFileInfoList, QFileInfo, " Qt::FileInfo", FALSE )
+
+void marshall_QCanvasItemList(Marshall *m) {
+   switch(m->action()) {
+
+      case Marshall::ToSV:
+        {
+            QCanvasItemList *cilist = (QCanvasItemList*)m->item().s_voidp;
+            if(!cilist) {
+                sv_setsv_mg(m->var(), &PL_sv_undef);
+                break;
+            }
+
+            AV *av = newAV();
+            {
+                SV *rv = newRV_noinc((SV*)av);
+                sv_setsv_mg(m->var(), rv);
+                SvREFCNT_dec(rv);
+            }
+
+            int ix = m->smoke()->idClass( "QCanvasItem" );
+            for(QValueListIterator<QCanvasItem*> it = cilist->begin();
+                it != cilist->end();
+                ++it){
+                QCanvasItem* t= *it;
+                GET_PERL_OBJECT( QCanvasItem, " Qt::CanvasItem", FALSE )
+                av_push(av, ret);
+            }
+            if(m->cleanup())
+                delete cilist;
+        }
+        break;
+      default:
+        m->unsupported();
+        break;
+    }
+}
+
+
+
 TypeHandler Qt_handlers[] = {
     { "QString", marshall_QString },
     { "QString&", marshall_QString },
     { "QString*", marshall_QString },
+    { "const QString", marshall_QString },
+    { "const QString&", marshall_QString },
+    { "const QString*", marshall_QString },
     { "QCString", marshall_QCString },
     { "QCString&", marshall_QCString },
     { "QCString*", marshall_QCString },
+    { "const QCString", marshall_QCString },
+    { "const QCString&", marshall_QCString },
+    { "const QCString*", marshall_QCString },
     { "QStringList", marshall_QStringList },
     { "QStringList&", marshall_QStringList },
     { "QStringList*", marshall_QStringList },
@@ -910,15 +1269,43 @@ TypeHandler Qt_handlers[] = {
     { "bool&", marshall_boolR },
     { "bool*", marshall_boolR },
     { "char*", marshall_charP },
+    { "const char*", marshall_charP },
     { "char**", marshall_charP_array },
     { "uchar*", marshall_ucharP },
     { "QRgb*", marshall_QRgb_array },
     { "QUObject*", marshall_voidP },
     { "const QCOORD*", marshall_QCOORD_array },
     { "void", marshall_void },
+    { "QByteArray", marshall_QByteArray },
+    { "QByteArray&", marshall_QByteArray },
+    { "QByteArray*", marshall_QByteArray },
     { "QValueList<int>", marshall_QValueListInt },
     { "QValueList<int>*", marshall_QValueListInt },
     { "QValueList<int>&", marshall_QValueListInt },
+    { "QCanvasItemList", marshall_QCanvasItemList },
+    { "QCanvasItemList*", marshall_QCanvasItemList },
+    { "QCanvasItemList&", marshall_QCanvasItemList },
+    { "QWidgetList", marshall_QWidgetList },
+    { "QWidgetList*", marshall_QWidgetList },
+    { "QWidgetList&", marshall_QWidgetList },
+    { "QObjectList", marshall_QObjectList },
+    { "QObjectList*", marshall_QObjectList },
+    { "QObjectList&", marshall_QObjectList },
+    { "QFileInfoList", marshall_QFileInfoList },
+    { "QFileInfoList*", marshall_QFileInfoList },
+    { "QFileInfoList&", marshall_QFileInfoList },
+    { "QPtrList<QToolBar>", marshall_QPtrListQToolBar },
+    { "QPtrList<QToolBar>*", marshall_QPtrListQToolBar },
+    { "QPtrList<QToolBar>&", marshall_QPtrListQToolBar },
+    { "QPtrList<QTab>", marshall_QPtrListQTab },
+    { "QPtrList<QTab>*", marshall_QPtrListQTab },
+    { "QPtrList<QTab>&", marshall_QPtrListQTab },
+    { "QPtrList<QDockWindow>", marshall_QPtrListQDockWindow },
+    { "QPtrList<QDockWindow>*", marshall_QPtrListQDockWindow },
+    { "QPtrList<QDockWindow>&", marshall_QPtrListQDockWindow },
+    { "QPtrList<QNetworkOperation>", marshall_QPtrListQNetworkOperation },
+    { "QPtrList<QNetworkOperation>*", marshall_QPtrListQNetworkOperation },
+    { "QPtrList<QNetworkOperation>&", marshall_QPtrListQNetworkOperation },
     { 0, 0 }
 };
 
@@ -929,6 +1316,14 @@ void install_handlers(TypeHandler *h) {
     while(h->name) {
 	hv_store(type_handlers, h->name, strlen(h->name), newSViv((IV)h), 0);
 	h++;
+    }
+    if(!dtorcache){
+	 dtorcache = new QIntDict<Smoke::Index>(113);
+	 dtorcache->setAutoDelete(1);
+    }
+    if(!cctorcache) {
+	cctorcache = new QIntDict<Smoke::Index>(113);
+	cctorcache->setAutoDelete(1);
     }
 }
 

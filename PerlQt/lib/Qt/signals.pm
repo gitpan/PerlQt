@@ -1,4 +1,5 @@
 package Qt::signals;
+use Carp;
 #
 # Proposed usage:
 #
@@ -15,7 +16,7 @@ package Qt::signals;
 sub import {
     no strict 'refs';
     my $self = shift;
-    my $caller = (caller)[0];
+    my $caller = $self eq "Qt::signals" ? (caller)[0] : $self;
     my $parent = ${ $caller . '::ISA' }[0];
     my $parent_qt_emit = $parent . '::qt_emit';
 
@@ -34,6 +35,7 @@ sub import {
 #    } unless defined &{ $caller . '::qt_emit' };
 
     my $meta = \%{ $caller . '::META' };
+    croak "Odd number of arguments in signal declaration" if @_%2;
     my(%signals) = @_;
     for my $signalname (keys %signals) {
 	my $signal = { name => $signalname };

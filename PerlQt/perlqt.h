@@ -32,7 +32,23 @@ enum QtDebugChannel {
 };
 
 void unmapPointer(smokeperl_object *, Smoke::Index, void*);
-smokeperl_object *sv_obj_info(SV *sv);
 SV *getPointerObject(void *ptr);
+void mapPointer(SV *, smokeperl_object *, HV *, Smoke::Index, void *);
+
+
+extern struct mgvtbl vtbl_smoke;
+
+inline smokeperl_object *sv_obj_info(SV *sv) {  // ptr on success, null on fail
+    if(!sv || !SvROK(sv) || SvTYPE(SvRV(sv)) != SVt_PVHV)
+	return 0;
+    SV *obj = SvRV(sv);
+    MAGIC *mg = mg_find(obj, '~');
+    if(!mg || mg->mg_virtual != &vtbl_smoke) {
+	// FIXME: die or something?
+	return 0;
+    }
+    smokeperl_object *o = (smokeperl_object*)mg->mg_ptr;
+    return o;
+}
 
 #endif // PERLQT_H

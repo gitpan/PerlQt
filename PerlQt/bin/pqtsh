@@ -6,6 +6,7 @@
 # license: GNU Public License v2
 #
 
+use utf8;
 use strict 'vars';
 
 package QtShellControl;
@@ -382,6 +383,8 @@ sub save
     };
     for (@{ &executedLines })
     {
+        next if /^\s*$/;
+        chomp;
         $_ .= ";" unless /;\s*$/;
         print OUT $_, "\n"
     }
@@ -542,8 +545,13 @@ sub NEW
     this->connect(shellWindow->comboBox->lineEdit, SIGNAL 'returnPressed()', SLOT 'evalInput()');
     this->{'prompt'} = '<b><font color="blue">$&gt;</font></b>';
     setCaption("MainWindow - this");
-    shellWindow->sessionLog->setText("Ready.<br><br>");
+    shellWindow->sessionLog->setText("Ready.<br>");
     Qt::Object::connect(shellWindow, SIGNAL 'fileNeedsEval(QString)', this, SLOT 'evalFile(QString)');
+}
+
+sub logAppend
+{
+    shellWindow->sessionLog->setText( shellWindow->sessionLog->text . shift )
 }
 
 sub evalInput
@@ -553,22 +561,27 @@ sub evalInput
 
 sub evalOneLine
 {
-    my $ln = shift;
-    eval $ln;
-    my $prot = $@ || $ln;
+    my $prot = my $ln = shift;
     $prot =~ s/</&lt;/gs;
     $prot =~ s/>/&gt;/gs;    
+    logAppend( this->{'prompt'}. "$prot<br>" );
+    {
+      no strict;
+      eval $ln;
+    }
     if($@)
     {
+        my $prot = $@ ;
+        $prot =~ s/</&lt;/gs;
+        $prot =~ s/>/&gt;/gs;    
         my $c = shellWindow->sessionLog->color;
         $prot =~ s/\n/<br>/gs;
-        shellWindow->sessionLog->append('<font color="red">'.$prot.'</font><br><br>');
+        logAppend('<font color="red">'.$prot.'</font><br>');
         shellWindow->sessionLog->setColor( $c );
     }
     else
     {        
         push @{ shellWindow()->{'executedLines'} }, $ln;
-        shellWindow->sessionLog->append(this->{'prompt'}."$prot<br><br>");
         shellWindow->comboBox->clearEdit;
         shellWindow->comboBox->setFocus;
     }   
@@ -581,11 +594,10 @@ sub evalFile
     my $fh;
     if($fn eq "__DATA__")
     {
-        $fh = \*DATA;
+        $fh = \*::DATA
     }
     else
     {
-        $fh = \*IN;
         open($fh, $fn) or do {
             Qt::MessageBox::warning ( 
                 this, 
@@ -605,13 +617,44 @@ sub evalFile
 
 1;
 
+package Qt::TextHandle;
+
+sub TIEHANDLE { my ( $classnm, $widg, $color) = @_;
+  my $h = { widg => $widg, color => $color};
+  bless  $h, $classnm;
+
+}
+
+sub PRINT {
+  my $me = shift;
+  my $color = $me->{color};
+  my $printed = join $/,  @_;
+  $printed =~ s/</&lt;/gs;
+  $printed =~ s/>/&gt;/gs;
+  $printed =~ s/\n/<br>/gs;
+  $me->{widg}->setText( $me->{widg}->text . "<font color=\"$color\">$printed</font>" );
+
+}
+
+sub PRINTF { shift->PRINT(sprintf shift, @_); }
+sub CLOSE  { shift->UNTIE; }
+sub UNTIE  { }
+
+
+1;
+
+package main;
+use strict;
 use Qt;
 use QtShell;
 use Qt::debug;
 
 my $app = Qt::Application(\@ARGV);
 my $w = QtShell(undef, "mainWindow");
-$app->setMainWidget($w->shellWindow);
+my $shw = $w->shellWindow;
+$app->setMainWidget($shw);
+tie *STDOUT, 'Qt::TextHandle', $shw->sessionLog, 'black';
+tie *STDERR, 'Qt::TextHandle', $shw->sessionLog, 'red';
 
 exit $app->exec;
 

@@ -27,7 +27,20 @@
 #include <qmap.h>
 #include <qtextstream.h>
 #include <qpalette.h>
+#include <qvariant.h>
 
+#ifndef Q_DUMMY_COMPARISON_OPERATOR
+# warning "Defining Q_DUMMY_COMPARISON_OPERATOR"
+# ifdef Q_FULL_TEMPLATE_INSTANTIATION
+#  define Q_DUMMY_COMPARISON_OPERATOR(C) \
+    bool operator==( const C& ) const { \
+        qWarning( #C"::operator==( const "#C"& ) got called." ); \
+        return FALSE; \
+    }
+# else
+#  define Q_DUMMY_COMPARISON_OPERATOR(C)
+# endif
+#endif
 
 class PyIndent
 {
@@ -51,9 +64,9 @@ private:
 class Uic : public Qt
 {
 public:
-    Uic( const QString &fn, QTextStream& out, QDomDocument doc, bool subcl,
-	 const QString &trm, const QString& subclname, bool omitForwardDecls,
-	 QString &uicClass );
+    Uic( const QString &fn, const char *outputFn, QTextStream& outStream,
+	QDomDocument doc, bool subcl, const QString &trm,
+	const QString& subClass, bool omitForwardDecls, QString &uicClass );
 
     static void setIndent(const PyIndent &pyind) {indent = pyind;}
 
@@ -67,15 +80,16 @@ public:
     void createActionImpl( const QDomElement& e, const QString &parent );
     void createToolbarImpl( const QDomElement &e, const QString &parentClass, const QString &parent );
     void createMenuBarImpl( const QDomElement &e, const QString &parentClass, const QString &parent );
+    void createPopupMenuImpl( const QDomElement &e, const QString &parentClass, const QString &parent );
     QString createObjectImpl( const QDomElement &e, const QString& parentClass, const QString& parent, const QString& layout = QString::null );
     QString createLayoutImpl( const QDomElement &e, const QString& parentClass, const QString& parent, const QString& layout = QString::null );
     QString createObjectInstance( const QString& objClass, const QString& parent, const QString& objName );
     QString createSpacerImpl( const QDomElement &e, const QString& parentClass, const QString& parent, const QString& layout = QString::null );
     void createExclusiveProperty( const QDomElement & e, const QString& exclusiveProp );
-    QString createListBoxItemImpl( const QDomElement &e, const QString &parent );
+    QString createListBoxItemImpl( const QDomElement &e, const QString &parent, QString *value = 0 );
     QString createIconViewItemImpl( const QDomElement &e, const QString &parent );
-    QString createListViewColumnImpl( const QDomElement &e, const QString &parent );
-    QString createTableRowColumnImpl( const QDomElement &e, const QString &parent );
+    QString createListViewColumnImpl( const QDomElement &e, const QString &parent, QString *value = 0 );
+    QString createTableRowColumnImpl( const QDomElement &e, const QString &parent, QString *value = 0 );
     QString createListViewItemImpl( const QDomElement &e, const QString &parent,
 				    const QString &parentItem );
     void createColorGroupImpl( const QString& cg, const QDomElement& e );
@@ -106,6 +120,9 @@ private:
     void registerLayouts ( const QDomElement& e );
 
     QTextStream& out;
+    QTextOStream trout;
+    QString languageChangeBody;
+    QCString outputFileName;
     QStringList objectNames;
     QMap<QString,QString> objectMapper;
     QStringList tags;
@@ -131,6 +148,7 @@ private:
     {
 	QString header;
 	QString location;
+	Q_DUMMY_COMPARISON_OPERATOR(CustomInclude)
     };
     QValueList<Buddy> buddies;
 
@@ -144,6 +162,8 @@ private:
     uint externPixmaps : 1;
 
     QString nameOfClass;
+    QStringList namespaces;
+    QString bareNameOfClass;
     QString pixmapLoaderFunction;
 
     void registerDatabases( const QDomElement& e );
@@ -151,6 +171,8 @@ private:
     bool isFrameworkCodeGenerated( const QDomElement& e );
     QString getDatabaseInfo( const QDomElement& e, const QString& tag );
     void createFormImpl( const QDomElement& e, const QString& form, const QString& connection, const QString& table );
+    void writeFunctionsSubImpl( const QStringList &fuLst, const QStringList &typLst, const QStringList &specLst,
+                                const QString &subClass, const QString &descr );
     QStringList dbConnections;
     QMap< QString, QStringList > dbCursors;
     QMap< QString, QStringList > dbForms;
@@ -159,16 +181,13 @@ private:
     static QString mkBool( bool b );
     static QString mkBool( const QString& s );
     bool toBool( const QString& s );
-    static QString fixString( const QString &str );
+    static QString fixString( const QString &str, bool encode = FALSE );
     static bool onlyAscii;
     static QString mkStdSet( const QString& prop );
     static QString getComment( const QDomNode& n );
-    int defSpacing, defMargin;
+    QVariant defSpacing, defMargin;
     QString fileName;
-    bool writeSlotImpl;
-
-    bool isEmptyFunction( const QString& fname );
-    QMap<QString, QString> functionImpls;
+    bool writeFunctImpl;
 
     void perlSlot(QStringList::Iterator &it);
 };

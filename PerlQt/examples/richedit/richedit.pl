@@ -7,6 +7,12 @@
 
 use strict;
 
+# the below is a manual addition... 
+# maybe puic should do that.
+# Allows to run a modular application from anywhere
+use FindBin;
+use lib "$FindBin::Bin";                                 
+
 package EditorForm;
 use Qt;
 use Qt::isa qw(Qt::MainWindow);
@@ -366,3 +372,5 @@ my $w = EditorForm;
 $a->setMainWidget($w);
 $w->show;
 exit $a->exec;
+
+

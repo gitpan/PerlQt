@@ -633,13 +633,14 @@ sub dumpAst
 			unless $kid =~ /^(astNodeName|NodeType|$deep)$/;
 	}
 	if ( exists  $node->{InList} ) {
-		print "\t" x $depth, "Ancestors:\t";
+		print "\t" x $depth, "  -\tAncestors -> ";
 		foreach my $innode ( @{$node->{InList}} ) {
 			print $innode->{astNodeName} . ",";
 		}
 		print "\n";
 	}
 
+	print "\t" x $depth, "  -\n" if (defined $node->{ $deep } && scalar(@{$node->{ $deep }}) != 0);
 
 	$depth++;
 	foreach $kid ( @{$node->{ $deep }} ) {

@@ -47,6 +47,9 @@ JAVA
 
 Here are some of the shell commands that were used in the conversion process:
 
+Remove any Q_OVERRIDE macros from the Qt headers, and remove EXPORT_DOCKCLASS from the
+KDE headers
+
 # Generate Java and C++ sources. Copy all the target headers to directory 'test/tmp'
 kalyptus -fjava test/tmp/*.h test/tmp/dom/*.h test/tmp/kio/*.h test/tmp/kdeprint/*.h \
    test/tmp/kjs/*.h test/tmp/kparts/*.h test/tmp/kdesu/*.h test/ktextedit/*.h test/tmp/libkmid/*.h
@@ -69,6 +72,10 @@ cd kdejava/koala/org/kde/koala
 make
 
 # Build C++ JNI .h header files
+cd qtjava/javalib/org/kde/qt
+for FILE in *.class ; do NAME=`echo $FILE | sed 's/.class//'`; echo $NAME; javah  -classpath '../../..' org.kde.qt.$NAME ; done
+for FILE in org_kde* ; do NAME=`echo $FILE | sed -e 's/org_kde_qt_//'`; echo $NAME; mv $FILE $NAME; done
+
 cd kdejava/koala/org/kde/koala
 for FILE in *.class ; do NAME=`echo $FILE | sed 's/.class//'`; echo $NAME; javah  -classpath '../../..:../../../../../qtjava/javalib/qtjava.jar' org.kde.koala.$NAME ; done
 for FILE in org_kde* ; do NAME=`echo $FILE | sed -e 's/org_kde_koala_//'`; echo $NAME; mv $FILE $NAME; done
@@ -76,9 +83,9 @@ for FILE in org_kde* ; do NAME=`echo $FILE | sed -e 's/org_kde_koala_//'`; echo 
 
 # Check that  the JNI .h function names match the .cpp ones
 cd kdejava/koala/org/kde/koala
-grep Java_ *.cpp | sed -e 's/^[^:]*:\([^(]*\).*/\1/'  | grep -v '[/]' | sort | uniq > cpp.fns
+grep ^Java_ *.cpp | sed -e 's/^[^:]*:\([^(]*\).*/\1/'  | grep -v '[/]' | sort | uniq > cpp.fns
 grep Java_ *.h | awk '{ print $4 }' |  grep -v '[/]' | sort | uniq > h.fns
-kdiff h.fns cpp.fns
+kompare h.fns cpp.fns
 # Reconcile and fix any differences
 
 # Edit and compile the generated .cpp and .h files with KDevelop

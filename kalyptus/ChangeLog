@@ -1,3 +1,32 @@
+2003-08-30  Richard Dale  <Richard_Dale@tipitina.demon.co.uk>
+
+	* Applied Germain Garand's patch to no longer rename operator methods 
+	  in the QGlobalSpace pseudo class
+
+2003-08-21  Alexander Kellett  <lypanov@kde.org>
+
+	* Added .kidl generation option (dcopidl replacement)
+	* Handled of several new constructs in the parsing:
+	*    k_dcop: / k_dcop_signals: / K_DCOP:
+	* Use STDERR not STDOUT thus removing need for temporary file
+
+2003-08-21  Richard Dale  <Richard_Dale@tipitina.demon.co.uk>
+
+	* Added missing getClassLoader() call to Proxy constructor
+
+2003-08-21  Richard Dale  <Richard_Dale@tipitina.demon.co.uk>
+
+	* Rewritten java code generation for a Dynamic Proxy based SMOKE adaptor version of QtJava.
+	* Based on David Faure's SMOKE generation code in the '-fsmoke' option.
+
+2003-08-11  Richard Dale  <Richard_Dale@tipitina.demon.co.uk>
+
+	* Removed old SWIG style ruby generation option
+
+2003-08-09  Alexander Kellett  <lypanov@kde.org>
+
+	* Parse static friend operator methods and place into a pseudo class (for smoke)
+
 2002-06-03  David Faure  <faure@kde.org>
 
 	* The Smoke generation is in good shape. Removed old PerlPig and PerlQK

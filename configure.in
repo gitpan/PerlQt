@@ -38,7 +38,7 @@ dnl Perform program name transformation
 AC_ARG_PROGRAM
 
 dnl Automake doc recommends to do this only here. (Janos)
-AM_INIT_AUTOMAKE(PerlQt, 3.006) dnl searches for some needed programs
+AM_INIT_AUTOMAKE(PerlQt, 3.008) dnl searches for some needed programs
 
 KDE_SET_PREFIX
 
@@ -147,8 +147,6 @@ dnl /PQT
 if test -n "$kde_widgetdir"; then
     kde_widgetdir="$kde_widgetdir/kde3/plugins/designer"
 fi
-
-ac_kde_libraries="$kde_libdir"
 
 if test "$ac_kde_includes" = NO || test "$ac_kde_libraries" = NO || test "$kde_widgetdir" = NO; then
   ac_cv_have_kde="have_kde=no"
@@ -315,7 +313,7 @@ dnl Please note that as the ac_opengl macro and the toy example evolves,
 dnl the version number increases, so you may have to adjust the above
 dnl URL accordingly.
 dnl
-dnl @version 0.01 $Id: configure.in,v 1.16 2003/02/13 12:23:56 germaingarand Exp $
+dnl @version 0.01 $Id: configure.in,v 1.18 2003/09/07 14:18:50 germaingarand Exp $
 dnl @author Matthew D. Langston <langston@SLAC.Stanford.EDU>
 
 AC_DEFUN(MDL_HAVE_OPENGL,
@@ -426,7 +424,7 @@ dnl The variable LIBM (which is not an output variable by default) is
 dnl set to a value which is suitable for use in a Makefile (for example,
 dnl in make's LOADLIBES macro) provided you AC_SUBST it first.
 dnl
-dnl @version 0.01 $Id: configure.in,v 1.16 2003/02/13 12:23:56 germaingarand Exp $
+dnl @version 0.01 $Id: configure.in,v 1.18 2003/09/07 14:18:50 germaingarand Exp $
 dnl @author Matthew D. Langston <langston@SLAC.Stanford.EDU>
 
 # AC_CHECK_LIBM - check for math library

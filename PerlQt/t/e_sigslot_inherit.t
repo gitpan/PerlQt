@@ -1,8 +1,8 @@
-BEGIN { print "1..3\n" }
+BEGIN { print "1..6\n" }
 
 package MyApp;
 use Qt;
-use Qt::isa qw(Qt::Application);
+use Qt::isa('Qt::Application');
 use Qt::slots
         foo => ['int'],
         baz => [];
@@ -27,12 +27,17 @@ sub baz
     print "ok 3\n";
 }     
 
+sub coincoin
+{
+    print +(@_ == 2) ? "ok 5\n":"not ok\n";
+    print +(ref(this) eq " MySubApp") ? "ok 6\n":"not ok\n";
+}
+
 1;
 
 package MySubApp;
 use Qt;
-use MyApp;
-use Qt::isa qw( MyApp );
+use Qt::isa('MyApp');
 
 
 sub NEW 
@@ -46,7 +51,10 @@ sub baz
    # 2) testing further inheritance of sig/slots
    print "ok 2\n";
    # 3) testing Perl to Perl SUPER
-   SUPER->baz()
+   SUPER->baz();
+   # 4) 5) 6) testing non-qualified enum calls vs. Perl method/static calls
+   eval { &blue }; print !$@ ? "ok 4\n":"not ok\n";
+   coincoin("a","b");
 }
 
 1;
