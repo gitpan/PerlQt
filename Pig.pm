@@ -1826,6 +1826,7 @@ sub branched_filter {
 
     $ninfo->{'undef'} = [ map { $$list{$_} ? ($_) : () } @{$info->{'undef'}} ];
     $ninfo->{'string'} = [ map { $$list{$_} ? ($_) : () } @{$info->{'string'}} ];
+    $ninfo->{'mystery'} = [ map { $$list{$_} ? ($_) : () } @{$info->{'mystery'}} ];
 
     for my $key (keys %{$info->{'number'}}) {
 	$ninfo->{'number'}{$key} = [ map { $$list{$_} ? ($_) : () }
@@ -1860,6 +1861,19 @@ sub branch_condition {
     source i."}\n";
 
     return 1;
+}
+
+sub byinheritance {
+    my(@asuper, @bsuper);
+    supernames($a, \@asuper);
+    supernames($b, \@bsuper);
+    if(grep($a, @bsuper)) {
+	return 1;
+    } elsif(grep($b, @asuper)) {
+	return 0;
+    } else {
+	return $a cmp $b;
+    }
 }
 
 sub branching_conditional {
@@ -2007,11 +2021,8 @@ sub branching_conditional {
 		source "pigs = 0;     // AMBIGUOUS\n";
 	    }
 	} elsif(scalar(keys %{$info->{'class'}}) > 1) {
-
-# BUG!!! The classes need to be sorted by sub-class inheritance order
-# QWidget before QObject, QFrame before QWidget, QTableView before QFrame
-
-	    for my $key (keys %{$info->{'class'}}) {
+	    my(@classes) = sort byinheritance keys %{$info->{'class'}};
+	    for my $key (@classes) {
 		source i;
 		source "else " if $else++;
 		source "if(pig_is_class($idx, \"$key\")) ";
@@ -2021,6 +2032,16 @@ sub branching_conditional {
 		    source "pigs = 0;     // AMBIGUOUS\n";
 		}
 	    }
+	}
+    }
+    if(scalar @{$info->{'mystery'}}) {
+	source i;
+	source "else " if $else++;
+	source "if(pig_is_mystery($idx)) ";
+	if(scalar @{$info->{'mystery'}} == 1) {
+	    source "pigs = $info->{'mystery'}[0];\n";
+	} elsif(!branch_condition($pm, $idx, $info->{'mystery'})) {
+	    source "pigs = 0;    // AMBIGUOUS\n";
 	}
     }
     if(!$else && $idx < $#$pm) {
@@ -2097,7 +2118,8 @@ sub write_whichproto {
 		    'undef' => [],
 		    'string' => [],
 		    'number' => {},
-		    'class' => {}
+		    'class' => {},
+		    'mystery' => []
 		};
 	    }
 
@@ -2130,9 +2152,12 @@ sub write_whichproto {
 			my $class = $arg;
 			$class =~ s/^\s*(?:const\s+)?(\w+).*$/$1/;
 			push @{$info->{'class'}{$class}}, $idx+1;
-		    } else {
-			$x{$idx+1}--;
+		    } elsif($type eq 'unknown') {
+			push @{$info->{'mystery'}}, $idx+1;
 		    }
+#		    } else {
+#			$x{$idx+1}--;
+#		    }
 		}
 	    }
 
@@ -2157,7 +2182,9 @@ sub write_whichproto {
 		    source ", " if $x++ > 0;
 		    source "'$class' => [@{$pm->{'class'}{$class}}]";
 		}
-		source "}\n";
+		source "},\n";
+		source i."//     'mystery' => [@{$pm->{'mystery'}}]\n";
+
 		source i."// };\n";
 
 	    }
@@ -2563,6 +2590,10 @@ sub GenerateSource {
 	for my $class (@classes) {
 	    $Class = $class;
 	    readmodule $class;
+	}
+
+	for my $class (@classes) {
+	    $Class = $class;
 	    writemodule $class;
 	}
 	say "\n";

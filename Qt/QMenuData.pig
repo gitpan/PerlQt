@@ -42,8 +42,8 @@ virtual class QMenuData {
     virtual void updateItem(int);
 protected:
     QMenuItem *findPopup(QPopupMenu *, int * = 0);
-    virtual void menuContentsChanged();
-    virtual void menuDelPopup(QPopupMenu *);
-    virtual void menuInsPopup(QPopupMenu *);
-    virtual void menuStateChanged();
+;    virtual void menuContentsChanged();
+;    virtual void menuDelPopup(QPopupMenu *);
+;    virtual void menuInsPopup(QPopupMenu *);
+;    virtual void menuStateChanged();
 } Qt::MenuData;

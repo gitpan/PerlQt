@@ -141,4 +141,6 @@ struct pig_classinfo {
 #define pig_is_object(idx) (pigi##idx & PIGTYPE_OBJECT)
 #define pig_is_class(idx, class) (pig_is_object(idx) && pig_object_isa(idx, class))
 
+#define pig_is_mystery(idx) (!pig_is_object(idx) && !pig_is_number(idx))
+
 #endif  // PIG_H

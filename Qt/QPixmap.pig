@@ -40,7 +40,7 @@ struct QPixmap : QPaintDevice {
     bool isOptimized() const;
     bool isQBitmap() const;
     bool load(const char *, const char *, int);
-    bool loadFromData(QByteArray, const char *, int);
+    bool loadFromData(QByteArray, const char * = 0, int = 0);
     const QBitmap *mask() const;
     QPixmap::Optimization optimization() const;
     void optimize(bool);

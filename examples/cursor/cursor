@@ -71,16 +71,16 @@ sub new {
 	}
     }
 
-#    my $cb = new QBitmap($cb_width, $cb_height, $cb_bits, 1);
-#    my $cm = new QBitmap($cm_width, $cm_height, $cm_bits, 1);
-#    my $custom = new QCursor($cb, $cm);
+    my $cb = Qt::Bitmap->new($cb_width, $cb_height, $cb_bits, 1);
+    my $cm = Qt::Bitmap->new($cm_width, $cm_height, $cm_bits, 1);
+    my $custom = Qt::Cursor->new($cb, $cm);
 
-#    $label = new QLabel($self)->immortal;
-#    $label->setCursor($custom);
-#    $label->setText('Custom bitmap cursor');
-#    $label->setAlignment($Align{Center});
-#    $label->setFrameStyle($Frame{Box} | $Frame{Raised});
-#    $label->setGeometry(10, 110, 540, 40);
+    $label = Qt::Label->new($self);
+    $label->setCursor($custom);
+    $label->setText('Custom bitmap cursor');
+    $label->setAlignment(Qt::AlignCenter);
+    $label->setFrameStyle(Qt::Frame::Box | Qt::Frame::Raised);
+    $label->setGeometry(10, 110, 540, 40);
 
     $self->resize(20+5*110, 20+3*50);
 

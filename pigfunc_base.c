@@ -48,6 +48,7 @@ PIG_DEFINE_VOID_FUNC_2(pig_begin_virtual, const class pig_virtual *, const char 
     SAVETMPS;
     PUSHMARK(sp);
     XPUSHs(sv_2mortal(newSVsv((SV *)pig0->pig_rv)));
+    //printf("Calling %s::%s\n", HvNAME(SvSTASH(SvRV((SV *)pig0->pig_rv))), pig1);
     PUTBACK;
 }
 
@@ -69,12 +70,13 @@ PIG_DEFINE_FUNC_0(int, pig_argumentcount) {
 PIG_DEFINE_FUNC_1(unsigned int, pig_argument_info, int) {
     PIGARGS;
     SV *pigsv = ST(pig0);
-    unsigned int pigr;
+    unsigned int pigr = 0;
     if(!SvOK(pigsv)) {
         pigr = PIGTYPE_UNDEF;
     }
     else if(SvROK(pigsv)) {
-        pigr = PIGTYPE_OBJECT;    // BUGGY ASSUMPTION
+	if(mg_find(SvRV(pigsv), '~'))
+            pigr = PIGTYPE_OBJECT;    // BUGGY ASSUMPTION
     }
     else if(SvIOK(pigsv)) {
         IV pigi = SvIV(pigsv);

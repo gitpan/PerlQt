@@ -1,3 +1,7 @@
-biff example from Qt-1.44
+biff example from Qt-1.3x
 
-Unimplemented -- loadFromData not implemented yet.
+biff.cpp => Biff.pm
+bmp.cpp => bmp.pl
+main.cpp => biff
+
+Works for me.

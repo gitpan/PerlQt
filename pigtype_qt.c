@@ -16,7 +16,6 @@
 #include <qwidgetlist.h>
 
 PIG_DEFINE_STUB_TYPE(pig_type_qt_serial, const char *)
-PIG_DEFINE_STUB_TYPE(pig_type_qt_xpm, void *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_bits, char *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_bitslen, char *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_ubits, uchar *)
@@ -24,7 +23,6 @@ PIG_DEFINE_STUB_TYPE(pig_type_qt_ubitsarray, uchar **)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_uintarray, uint **)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_VHorientation, int)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QString_ref, class QString &)
-PIG_DEFINE_STUB_TYPE(pig_type_qt_QByteArray_ptr, class QByteArray *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QArray_QRect_ptr, void *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfo_ptr, class QFileInfo *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfoList_ptr, class QFileInfoList *)
@@ -184,6 +182,51 @@ PIG_DEFINE_STUB_PUSH(pig_type_qt_pointarrayitems, int)
 PIG_DEFINE_STUB_POP(pig_type_qt_pointarrayitems, int)
 
 
+struct _pig_type_qt_xpm_info {
+    char **pigptr;
+    I32 pigcnt;
+};
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_xpm) {
+  // put something here
+}
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_xpm, const char **) {
+    PIGARGS;
+    if(!SvOK(PIG_ARG) || !SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV)
+        return 0;
+    AV *pigav = (AV *)SvRV(PIG_ARG);
+    I32 pigcnt = av_len(pigav) + 1;
+    char **pigr;
+    I32 pigi;
+    STRLEN n_a;
+
+    pigr = new char *[pigcnt + 1];
+    for(pigi = 0; pigi < pigcnt; pigi++) {
+        SV **pigsvp = av_fetch(pigav, pigi, 0);
+	if(!pigsvp) {
+	    pigr[pigi] = 0;
+	    continue;
+	}
+	pigr[pigi] = new char[SvCUR(*pigsvp) + 1];
+	strcpy(pigr[pigi], SvPV(*pigsvp, n_a));
+    }
+
+    _pig_type_qt_xpm_info *piginfo = new _pig_type_qt_xpm_info;
+    piginfo->pigptr = pigr;
+    piginfo->pigcnt = pigcnt;
+
+    PIGSCOPE_ARGUMENT(pig_type_qt_xpm, piginfo);
+    PIGARGUMENT((const char **)pigr);
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_xpm, const char **)
+PIG_DEFINE_STUB_RETURN(pig_type_qt_xpm, const char **)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_xpm, const char **)
+PIG_DEFINE_STUB_POP(pig_type_qt_xpm, const char **)
+
+
+
 PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_QString_ptr) {
     delete (QString *)pig0;
 }
@@ -217,7 +260,7 @@ PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_qt_QString_ptr, QString *) {
 
 PIG_DEFINE_TYPE_RETURN(pig_type_qt_QString_ptr, QString *) {
     PIGRET;
-    PIGRETURN(sv_2mortal(pig0 ?
+    PIGRETURN(sv_2mortal(pig0 && !pig0->isNull() ?
 			 newSVpv(pig0->data(), 0) :
 			 newSVsv(&PIGsv_undef)));
 }
@@ -235,6 +278,26 @@ PIG_DEFINE_TYPE_POP(pig_type_qt_QString_ptr, QString *) {
     else pigr = 0;
     PIGPOP(pigr);
 }
+
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_QByteArray_ptr) {
+
+}
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_qt_QByteArray_ptr, QByteArray *) {
+    PIGARGS;
+    if(!PIG_ARGOK) return 0;
+    STRLEN n_a;
+    QByteArray *pigba = new QByteArray();
+    pigba->duplicate(SvPV(PIG_ARG, n_a), SvCUR(PIG_ARG));
+    PIGSCOPE_ARGUMENT(pig_type_qt_QByteArray_ptr, pigba);
+    PIGARGUMENT(pigba);
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_QByteArray_ptr, QByteArray *)
+PIG_DEFINE_STUB_RETURN(pig_type_qt_QByteArray_ptr, QByteArray *)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_QByteArray_ptr, QByteArray *)
+PIG_DEFINE_STUB_POP(pig_type_qt_QByteArray_ptr, QByteArray *)
 
 
 PIG_DEFINE_STUB_ARGUMENT(pig_type_qt_QObjectList_ptr, QObjectList *)

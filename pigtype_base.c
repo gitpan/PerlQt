@@ -81,7 +81,7 @@ PIG_DEFINE_TYPE_POP(pig_type_char, char) {
 PIG_DEFINE_TYPE_ARGUMENT(pig_type_cstring, const char *) {
     STRLEN n_a;
     PIGARGS;
-    const char *pigr = SvPV(PIG_ARG, n_a);
+    const char *pigr = PIG_ARGOK ? SvPV(PIG_ARG, n_a) : 0;
     PIGARGUMENT(pigr);
 }
 

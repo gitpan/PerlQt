@@ -1,3 +1,4 @@
-desktop example from Qt-1.44
+desktop example from Qt-1.3x
 
-Unimplemented
+This example stumbles upon several of the more tedious graphical painting 
+bugs in PerlQt.

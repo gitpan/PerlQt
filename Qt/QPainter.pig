@@ -1,6 +1,13 @@
 #include <qdrawutl.h>
 #include <qpainter.h>
 
+enum ArrowType {
+    UpArrow,
+    DownArrow,
+    LeftArrow,
+    RightArrow
+};
+
 class QPainter {
     QPainter();
     QPainter(const QPaintDevice *);
@@ -18,6 +25,7 @@ class QPainter {
     QPaintDevice *device() const;
     void drawArc(const QRect &, int, int);
     void drawArc(int, int, int, int, int, int);
+    void drawArrow(ArrowType, GUIStyle, bool, int, int, int, int, const QColorGroup &, bool) : qDrawArrow($this, $1, $2, $3, $4, $5, $6, $7, $8, $9);
     void drawChord(const QRect &, int, int);
     void drawChord(int, int, int, int, int, int);
     void drawEllipse(const QRect &);
@@ -25,6 +33,7 @@ class QPainter {
     void drawImage(const QPoint &, const QImage &);
     void drawImage(const QPoint &, const QImage &, const QRect &);
     void drawImage(int, int, const QImage &, int = 0, int = 0, int = -1, int = -1);
+    void drawItem(GUIStyle, int, int, int, int, int, const QColorGroup &, bool, const QPixmap *, const char *, int = -1) : qDrawItem($this, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
     void drawLine(const QPoint &, const QPoint &);
     void drawLine(int, int, int, int);
     void drawLineSegments(const QPointArray &, int = 0, int = -1);
@@ -34,7 +43,8 @@ class QPainter {
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
     void drawPixmap(int, int, const QPixmap &, int = 0, int = 0, int = -1, int = -1);
-    void drawPlainRect(int, int, int, int, const QColor &, int, const QBrush *) : qDrawPlainRect($this, $1, $2, $3, $4, $5, $6, $7);
+    void drawPlainRect(int, int, int, int, const QColor &, int = 1, const QBrush * = 0) : qDrawPlainRect($this, $1, $2, $3, $4, $5, $6, $7);
+    void drawPlainRect(const QRect &, const QColor &, int = 1, const QBrush * = 0) : qDrawPlainRect($this, $1, $2, $3, $4);
     void drawPoint(const QPoint &);
     void drawPoint(int, int);
     void drawPoints(const QPointArray &, int = 0, int = -1);
@@ -45,9 +55,12 @@ class QPainter {
     void drawRect(int, int, int, int);
     void drawRoundRect(const QRect &, int, int);
     void drawRoundRect(int, int, int, int, int, int);
-    void drawShadeLine(int, int, int, int, const QColorGroup &, bool, int, int) : qDrawShadeLine($this, $1, $2, $3, $4, $5, $6, $7, $8);
-    void drawShadePanel(int, int, int, int, const QColorGroup &, bool, int, const QBrush *) : qDrawShadePanel($this, $1, $2, $3, $4, $5, $6, $7, $8);
-    void drawShadeRect(int, int, int, int, const QColorGroup &, bool, int, int, const QBrush *) : qDrawShadeRect($this, $1, $2, $3, $4, $5, $6, $7, $8, $9);
+    void drawShadeLine(int, int, int, int, const QColorGroup &, bool = TRUE, int = 1, int = 0) : qDrawShadeLine($this, $1, $2, $3, $4, $5, $6, $7, $8);
+    void drawShadeLine(const QPoint &, const QPoint &, const QColorGroup &, bool = TRUE, int = 1, int = 0) : qDrawShadeLine($this, $1, $2, $3, $4, $5, $6);
+    void drawShadePanel(int, int, int, int, const QColorGroup &, bool = FALSE, int = 1, const QBrush * = 0) : qDrawShadePanel($this, $1, $2, $3, $4, $5, $6, $7, $8);
+    void drawShadePanel(const QRect &, const QColorGroup &, bool = FALSE, int = 1, const QBrush * = 0) : qDrawShadePanel($this, $1, $2, $3, $4, $5);
+    void drawShadeRect(int, int, int, int, const QColorGroup &, bool = FALSE, int = 1, int = 0, const QBrush * = 0) : qDrawShadeRect($this, $1, $2, $3, $4, $5, $6, $7, $8, $9);
+    void drawShadeRect(const QRect &, const QColorGroup &, bool = FALSE, int = 1, int = 0, const QBrush * = 0) : qDrawShadeRect($this, $1, $2, $3, $4, $5, $6);
     void drawText(const QPoint &, const char *, int = -1);
     void drawText(int, int, const char *, int = -1);
     void drawText(const QRect &, int, const char *, int = -1, QRect * = 0, char **{internal} = 0);
@@ -55,12 +68,14 @@ class QPainter {
     void drawTiledPixmap(const QRect &, const QPixmap &);
     void drawTiledPixmap(const QRect &, const QPixmap &, const QPoint &);
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int = 0, int = 0);
-    void drawWinButton(int, int, int, int, const QColorGroup &, bool, const QBrush *) : qDrawWinButton($this, $1, $2, $3, $4, $5, $6, $7);
+    void drawWinButton(int, int, int, int, const QColorGroup &, bool = FALSE, const QBrush * = 0) : qDrawWinButton($this, $1, $2, $3, $4, $5, $6, $7);
+    void drawWinButton(const QRect &, const QColorGroup &, bool = FALSE, const QBrush * = 0) : qDrawWinButton($this, $1, $2, $3, $4);
     void drawWinFocusRect(const QRect &);
     void drawWinFocusRect(const QRect &, const QColor &);
     void drawWinFocusRect(int, int, int, int);
     void drawWinFocusRect(int, int, int, int, const QColor &);
-    void drawWinPanel(int, int, int, int, const QColorGroup &, bool, const QBrush *) : qDrawWinPanel($this, $1, $2, $3, $4, $5, $6, $7);
+    void drawWinPanel(int, int, int, int, const QColorGroup &, bool = FALSE, const QBrush * = 0) : qDrawWinPanel($this, $1, $2, $3, $4, $5, $6, $7);
+    void drawWinPanel(const QRect &, const QColorGroup &, bool = FALSE, const QBrush * = 0) : qDrawWinPanel($this, $1, $2, $3, $4);
     bool end();
     void eraseRect(const QRect &);
     void eraseRect(int, int, int, int);
@@ -75,6 +90,7 @@ class QPainter {
     bool hasViewXForm() const;
     bool hasWorldXForm() const;
     bool isActive() const;
+    QRect itemRect(GUIStyle, int, int, int, int, int, bool, const QPixmap *, const char *, int = -1) : qItemRect($this, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
     void lineTo(const QPoint &);
     void lineTo(int, int);
     void moveTo(const QPoint &);

@@ -29,8 +29,9 @@ enum = int
 qt_HVorientation = int
 
 BGMode => enum
-BrushStyle => enum
 GUIStyle => enum
+ArrowType => enum
+BrushStyle => enum
 HANDLE => uint
 PenStyle => enum
 QCOORD => int

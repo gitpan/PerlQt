@@ -102,6 +102,7 @@ PIG_DEFINE_FUNC_2(const char *, pig_member_string, SV *, SV *) {
     PIGARGS;
     STRLEN n_a;
 //printf("Well... %s %s\n", SvPV(pig0, na), SvPV(pig1, na));
+    if(!SvOK(pig0) || !SvOK(pig1)) return 0;
     SV *pigprotosv = pig_parse_proto(pig1);
 //printf("It wasn't there\n");
     const char *pigproto = SvPV(pigprotosv, n_a);
@@ -208,7 +209,7 @@ PIG_DEFINE_FUNC_0(bool, pig_object_can_delete) {
 }
 
 PIG_DEFINE_VOID_FUNC_2(pig_object_destroy, void *, class pig_virtual *) {
-    die("Please, no\n");
+    warn("Please, no\n");
 }
 
 

@@ -1,0 +1,11 @@
+#!/usr/bin/perl -w
+use Qt 2.0;
+use Qt::app;
+use ApplicationWindow;
+
+$mw = ApplicationWindow->new;
+$app->setMainWidget($mw);
+$mw->setCaption("Document 1");
+$mw->show();
+$app->connect($app, 'lastWindowClosed()', 'quit()');
+exit $app->exec();

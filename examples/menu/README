@@ -1,3 +1,5 @@
 menu example from Qt-1.44
 
-Unimplemented -- Popup menus don't work with PerlQt yet.
+menu.cpp => menu
+
+Looking good.
