@@ -1,0 +1,49 @@
+2002-12-16 GG (v.3.004-final)
+         - test suite ("make test" target) 
+         - one more example (progress.pl)
+         - fixed a bug related to pointer mapping and Smoke's cf_virtual flag
+           (regeneration of Smoke isn't mandatory, but is recommended)
+         - fixed possible redefinition of a sub in isa.pm
+         - raised default test threshold to 10
+         - some code optimizations (object construction/destruction)
+         - added an undocumented but supported CAST function
+           e.g  CAST $obj, "Qt::Application"; (it proved to be useful in some
+           situations)
+2002-12-11 GG. (v.3.004-RC2)
+         - turnaround for segfaults with some KDE themes (KThemeStyles)
+           =>will work witth kdelibs compiled with --disable-fast-malloc and --enable-fast-malloc,
+           but not with --enable-fast-malloc=full
+         - Qt::version() 
+         - updated documentation (marshallers, debugging, i18n)
+         - switch to Makefile.PL for driving ./configure
+
+2002-12-07 GG. (v.3.004-RC1)
+	- better ISO C++ compliance and portability
+	  -ansi -pedantic is now almost silent except for some Perl Macros
+	- speed improvements over 40%
+	  ported memoïze-like cache to C++ ; various code optimizations
+	- Signal/Slots inheritance now works as expected
+	- proper handling of Qt modules stored in a hierarchy
+	- introduced SUPER->method() construct for accessing methods in the
+	  superclass
+	- Internationalization
+	  Perl strings are marshalled to QStrings either in utf8, iso-latin-1 or 
+	  current locale according to context (the rule is: if they are tagged as utf8, use 
+	  utf8 ; if not, use iso-latin by default or current locale if  the "locale" 
+	  pragma is active)   ; they are always marshalled back as utf8.
+	- You can now safely "eval" PerlQt code.
+	- New marshallers:
+	  QCString /*/&, bool */&, QValueList<int> /*/&
+	- Debugging channels through "use Qt::debug"
+	  You can now monitor specific parts of your application's behaviour.
+	  Available channels are : ambiguous, calls, gc, autoload, virtual, 
+	  verbose, all.
+	- Updated documentation + french translation
+	  many thanks to Stéphane Payrard for the accurate french translation !
+	- Subclassing Qt::Application is now possible
+	- Smoke can be built with Qt-3.1
+	- Various other bug fixes
+
+2002-08-24  Germain Garand  <germain@ebooksfrance.com> (v.3.001)
+
+        * initial release

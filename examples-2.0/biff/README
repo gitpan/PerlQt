@@ -1,7 +1,0 @@
-biff example from Qt-1.3x
-
-biff.cpp => Biff.pm
-bmp.cpp => bmp.pl
-main.cpp => biff
-
-Works for me.

@@ -1,12 +1,5 @@
-My TODO list in no particular order:
 
-- Add missing types.
-- Reuse slot objects.
-- Port Qt examples.
-- Prune Pig.pm and repackage as ExtUtils::Pig
-- Test suite
-- Upcast from QWidget to QSubWidget
-- Overloaded operators
-- Autoload classes
-- Publicize protected destructors for &delete
-- Inherit typemaps
+- better error reporting
+- optimize the speed (add some caching to findMethod, continue the rewrite
+    amorced by Ashley)
+- PerlKDE

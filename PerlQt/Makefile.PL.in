@@ -1,0 +1,69 @@
+
+### do not edit Makefile.PL, edit Makefile.PL.in
+
+$x{'LIBPNG'}  =   '@LIBPNG@';
+$x{'LIBJPEG'} =   '@LIBJPEG@';
+$x{'LIBSM'}   =   '@LIBSM@';
+$x{'LIBSOCKET'} = '@LIBSOCKET@';
+$x{'LIB_X11'} =   '@LIB_X11@';
+$x{'LIB_X11'} =~ s/\$\((.*?)\)/$x{$1}/g;
+
+my $objects='Qt$(OBJ_EXT) handlers$(OBJ_EXT)';
+my $qtlib ='@LIB_QT@';
+$qtlib =~s/\$\((.*?)\)/$x{$1}/g;
+my $rpath='@USE_RPATH@';
+$rpath = $rpath eq "yes" ? "-Wl,--rpath -Wl,@kde_libraries@":"";
+
+###
+
+use ExtUtils::MakeMaker;
+use Cwd;
+
+my $pwd = getcwd;
+my $localsmoke = $pwd."/../smoke/qt/.libs";
+
+
+# See lib/ExtUtils/MakeMaker.pm for details of how to influence
+# the contents of the Makefile that is written.
+
+WriteMakefile(
+    'NAME'		=> 'Qt',
+    'VERSION_FROM'	=> 'Qt.pm', # finds $VERSION
+    'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1,
+    'INC'		=> "@all_includes@ -I. -I../smoke",
+    'LIBS'		=> ["@all_libraries@ -L$localsmoke @LIBCRYPT@ $qtlib -lsmokeqt"],
+#   'XS'		=> {'Qt.xs' => 'Qt.cpp'}, # does not work ... still expects Qt.c 
+    'XSOPT'		=> "-C++",
+    'OBJECT'		=> "$objects",  # Object files
+    'CC'		=> '@CXX@',
+    'H'                 => ["marshall.h", "perlqt.h", "smokeperl.h"],
+    'ABSTRACT'		=> "An OO interface to Trolltech's Qt toolkit",
+    'dynamic_lib'       => {'OTHERLDFLAGS' => $rpath},
+    ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
+      (
+       AUTHOR     => 'Ashley Winters <qaqortog@nwlink.com>') : ()),
+);
+
+sub MY::clean {
+                   package MY;
+                   my $i = shift->SUPER::clean(@_);
+                   my $pl = '$(PERL) Makefile.PL';
+                   $i =~ s/\n+$/\n\t$pl$&/s;
+                   $i;
+}
+
+sub MY::const_loadlibs {
+                   package MY;
+                   my $i = shift->SUPER::const_loadlibs(@_);
+                   # hacks for linking against a non-yet-installed smoke
+                   $i =~ s/((?:EXTRALIBS|LDLOADLIBS).*?)\n/$1 -L$localsmoke -lsmokeqt\n/gs unless $i =~/-lsmokeqt/;
+                   $i =~ s#(LD_RUN_PATH.*?)(${localsmoke})?\n#"$1".($2?"":":")."@kde_libraries@\n"#se;
+                   $i;
+}
+
+sub MY::dist {
+		  package MY;
+                   my $i = shift->SUPER::dist(@_);
+                   $i =~ s#(DISTVNAME =).*?\n#$1 \$(distdir)\n#s;
+                   $i;
+}

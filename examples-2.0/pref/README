@@ -1,6 +1,0 @@
-pref example from Qt-1.3x
-
-pref.cpp => Preferences.pm
-main.cpp => pref
-
-Close, but not quite. The labels have scrollbars.

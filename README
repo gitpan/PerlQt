@@ -1,79 +1,23 @@
-This is the PerlQt-2 alpha README.
 
-PerlQt is a Perl interface to the C++ GUI toolkit, Qt.
-For installation instructions, see the INSTALL file.
-You must have Qt installed before installing PerlQt.
-The homepage for Qt is http://www.troll.no/.
+PerlQt is a Perl Object Oriented interface to Trolltech's Qt v3.x - a well known 
+C++ GUI toolkit.
 
-Included with this release are the class templates for Qt-2.0.2 and
-Qt-1.44. They may work with other versions, but I haven't tested it.
+See INSTALL for quick installation instructions
 
-Basic documentation for PerlQt can be found in the doc/ directory.
-Please read starting.pod. Here is Hello World for PerlQt:
+See doc/index.html for installation procedure and detailed 
+explanations.
 
-#!/usr/bin/perl -w
-use Qt 2.0;
-use Qt::app;
+See also PerlQt/tutorials and PerlQt/examples to get started.
 
-$hello = Qt::PushButton->new('Hello World');
-$hello->resize(100, 30);
 
-$app->setMainWidget($hello);
-$hello->show();
-exit $app->exec();
 
-The first line is the #! for perl. PerlQt is currently for
-the Unix version of Qt only. The next line, use Qt 2.0,
-includes the PerlQt module into your program. The next line,
-use Qt::app, creates $Qt::app, the global QApplication, and
-exports it into our namespace. $Qt::app is equivalent to the
-C++ Qt variable qApp.
+Requirements :
+------------
 
-The next line creates our primary Qt widget. All standard Qt
-widgets have been renamed with s/^Q/Qt::/. Therefore, the
-QPushButton widget in C++ Qt becomes Qt::PushButton in PerlQt.
-To create any PerlQt object, call the the ->new method on the
-object's class with the object constructor arguments.
+ - Perl >= 5.6
 
-The next line, $hello->resize(100, 30), demonstrates a method
-call. If you look at the C++ Qt documentation, you will see
-there are two different prototypes for QWidget::resize.
-QWidget::resize(int, int) and QWidget::resize(const QRect &).
-How do you know which one PerlQt supports? PerlQt supports
-both with the same method. Since Perl knows how many arguments
-are passed to a method, and what type those arguments are,
-PerlQt automatically chooses which prototype to call.
+ - Qt   >= 3.0
 
-When you call QWidget::resize in C++ Qt, it generates a resize
-event which can be received by overriding the 
-QWidget::resizeEvent virtual function. If you subclass a
-PerlQt widget and override the Qt::Widget::resizeEvent method,
-it will get called whenever there is a resize event.
+ - GNU tools : automake(>=1.5), autoconf (>=2.13), aclocal...
 
-The last three lines kick us into the event-loop, and cause
-the program to start running.
 
-The last element of C++ Qt is the callback mechanism,
-signals and slots. In C++ Qt, signals and slots are parsed
-with the moc program and compiled into the executable. In
-PerlQt, signals and slots are created on the fly, with no
-special syntax.
-
-package MyWidget;
-use Qt::slots 'gotClicked()';
-$myWidget->connect($button, 'clicked()', 'gotClicked()');
-
-Whenever a button is clicked, it emits the clicked() signal.
-To receive the clicked() signal in PerlQt, you must declare a
-slot. In this example, the slot is called gotClicked().
-Every slot must be declared using a string as an argument
-to use Qt::slots. You can then create a Perl method
-&MyWidget::gotClicked which will get called whenever clicked()
-is emitted by the button. You cannot overload PerlQt signals
-or slots.
-
-Included with PerlQt are the 14 Qt tutorials, ported to PerlQt.
-Compare them with their equivalents included with C++ Qt.
-
-If you have any questions, comments, suggestions or bug-fixes,
-please e-mail me, Ashley Winters, at jql@accessone.com.

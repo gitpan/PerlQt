@@ -1,0 +1,18 @@
+
+PerlQt-3 is (c) Ashley Winters 2002
+
+It is currently maintained by Germain Garand and Jay Lawrence, as Ashley
+Winters had to leave, hopefully not for too long.
+
+The project's homepage is at http://perlqt.sourceforge.net
+
+Puic was derived from Pyuic(Phil Thompson et alii) and Uic(Trolltech As) by
+Germain Garand.
+
+Smoke was conceived by David Faure and Ashley Winters.
+It uses the Kalyptus Parser by Richard Dale.
+
+
+All code in this tree is released under the terms of the GNU Public License
+v2 or later.
+
