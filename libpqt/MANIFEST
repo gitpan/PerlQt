@@ -1,8 +1,0 @@
-MANIFEST
-Makefile.PL
-pqt.c
-pqt_v.c
-pqtbase.c
-pqtis.c
-pqtsigslot.c
-proto.c

@@ -1,9 +1,0 @@
-#!/usr/bin/perl -w
-use Qt;
-
-$hello = QPushButton->new('Hello world!');
-$hello->resize(100, 30);
-
-$app->setMainWidget($hello);
-$hello->show();
-exit $app->exec();

@@ -1,9 +1,0 @@
-#!/usr/bin/perl -w
-use Qt;
-use GameBoard;
-
-$gb = new GameBoard;
-$gb->setGeometry(100, 100, 500, 355);
-$app->setMainWidget($gb);
-$gb->show();
-exit $app->exec();

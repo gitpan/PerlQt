@@ -1,0 +1,9 @@
+To install PerlQt-2:
+
+Look at Makefile.PL and make sure the values are reasonable.
+
+perl Makefile.PL
+make
+make install
+
+Run the programs in the tutorials/ dir to test if PerlQt works.
