@@ -8,7 +8,7 @@ struct QFontInfo {
     bool bold() const;
     QFont::CharSet charSet() const;
     bool exactMatch() const;
-    const char *family() const;
+    QString family() const;
     bool fixedPitch() const;
     bool italic() const;
     int pointSize() const;

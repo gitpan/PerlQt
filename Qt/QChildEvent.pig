@@ -1,8 +1,9 @@
 #include <qevent.h>
 
 struct QChildEvent : QEvent {
-    QChildEvent(int, QWidget *);
-    QWidget *child() const;
+    QChildEvent(const QChildEvent &);
+    QChildEvent(QEvent::Type, QObject *);
+    QObject *child() const;
     bool inserted() const;
     bool removed() const;
 } Qt::ChildEvent;

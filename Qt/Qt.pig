@@ -2,31 +2,437 @@
 #undef warning
 #undef fatal
 #include <qglobal.h>
-#include <qwindefs.h>
-#include <X11/Xlib.h>
+#include <qnamespace.h>
 
 namespace Qt {
-    static void debug(const char *) : debug($0);
-    static void warning(const char *) : warning($0);
-    static void fatal(const char *) : fatal($0);
-    static bool sysInfo(int *, bool *) : qSysInfo($0, $1);
-    static const char *version() : qVersion();
+    enum ButtonState { NoButton, LeftButton, RightButton, MidButton,
+                       MouseButtonMask, ShiftButton, ControlButton,
+                       AltButton, KeyButtonMask };
+    enum Orientation {
+        Horizontal,
+        Vertical
+    };
+    enum AlignmentFlags {
+	AlignLeft, AlignRight, AlignHCenter, AlignTop, AlignBottom,
+	AlignVCenter, AlignCenter, SingleLine, DontClip, ExpandTabs,
+	ShowPrefix, WordBreak, DontPrint
+    };
+    enum WidgetState {
+        WState_Created,
+        WState_Disabled,
+        WState_Visible,
+        WState_ForceHide,
+        WState_OwnCursor,
+        WState_MouseTracking,
+        WState_CompressKeys,
+        WState_BlockUpdates,
+        WState_InPaintEvent,
+        WState_Reparented,
+        WState_ConfigPending,
+        WState_Resized,
+        WState_AutoMask,
+        WState_Polished,
+        WState_DND,
+        WState_USPositionX,
+        WState_PaletteSet,
+        WState_PaletteFixed,
+        WState_FontSet,
+        WState_FontFixed,
+        WState_Withdrawn
+    };
+    enum WidgetFlags {
+        WType_TopLevel,
+        WType_Modal,
+        WType_Popup,
+        WType_Desktop,
+        WType_Mask,
 
-    static int xfd() : ConnectionNumber(qt_xdisplay());
+        WStyle_Customize,
+        WStyle_NormalBorder,
+        WStyle_DialogBorder,
+        WStyle_NoBorder,
+        WStyle_Title,
+        WStyle_SysMenu,
+        WStyle_Minimize,
+        WStyle_Maximize,
+        WStyle_MinMax,
+        WStyle_Tool,
+        WStyle_StaysOnTop,
+        WStyle_Dialog,
+        WStyle_Reserved2,
+        WStyle_Reserved3,
+        WStyle_Mask,
 
-;    static void addPostRoutine(....) : pig_Qt_addPostRoutine($0);
-;    static .... installMsgHandler(....) : pig_Qt_installMsgHandler($0);
-;    static ulong int lor(...) : pig_Qt_listor();
+        WDestructiveClose,
+        WPaintDesktop,
+        WPaintUnclipped,
+        WPaintClever,
+        WResizeNoErase,
+        WMouseNoMask,
+        WNorthWestGravity
+    };
+    enum ImageConversionFlags {
+        ColorMode_Mask,
+        AutoColor,
+        ColorOnly,
+        MonoOnly,
+        AlphaDither_Mask,
+        ThresholdAlphaDither,
+        OrderedAlphaDither,
+        DiffuseAlphaDither,
+        Dither_Mask,
+        DiffuseDither,
+        OrderedDither,
+        ThresholdDither,
+        DitherMode_Mask,
+        AutoDither,
+        PreferDither,
+        AvoidDither
+    };
+    enum BGMode {
+        TransparentMode,
+        OpaqueMode
+    };
+    enum PaintUnit {
+        PixelUnit,
+        LoMetricUnit,
+        HiMetricUnit,
+        LoEnglishUnit,
+        HiEnglishUnit,
+        TwipsUnit
+    };
+    enum GUIStyle {
+        MacStyle,
+        WindowsStyle,
+        Win3Style,
+        PMStyle,
+        MotifStyle
+    };
+    enum Modifier {
+        SHIFT,
+        CTRL,
+        ALT,
+        MODIFIER_MASK,
+        UNICODE_ACCEL,
+
+        ASCII_ACCEL
+    };
+    enum Key {
+        Key_Escape,
+        Key_Tab,
+        Key_Backtab,
+        Key_Backspace,
+        Key_Return,
+        Key_Enter,
+        Key_Insert,
+        Key_Delete,
+        Key_Pause,
+        Key_Print,
+        Key_SysReq,
+        Key_Home,
+        Key_End,
+        Key_Left,
+        Key_Up,
+        Key_Right,
+        Key_Down,
+        Key_Prior,
+        Key_Next,
+        Key_Shift,
+        Key_Control,
+        Key_Meta,
+        Key_Alt,
+        Key_CapsLock,
+        Key_NumLock,
+        Key_ScrollLock,
+        Key_F1,
+        Key_F2,
+        Key_F3,
+        Key_F4,
+        Key_F5,
+        Key_F6,
+        Key_F7,
+        Key_F8,
+        Key_F9,
+        Key_F10,
+        Key_F11,
+        Key_F12,
+        Key_F13,
+        Key_F14,
+        Key_F15,
+        Key_F16,
+        Key_F17,
+        Key_F18,
+        Key_F19,
+        Key_F20,
+        Key_F21,
+        Key_F22,
+        Key_F23,
+        Key_F24,
+        Key_F25,
+        Key_F26,
+        Key_F27,
+        Key_F28,
+        Key_F29,
+        Key_F30,
+        Key_F31,
+        Key_F32,
+        Key_F33,
+        Key_F34,
+        Key_F35,
+        Key_Super_L,
+        Key_Super_R,
+        Key_Menu,
+        Key_Hyper_L,
+        Key_Hyper_R,
+        Key_Space,
+        Key_Any,
+        Key_Exclam,
+        Key_QuoteDbl,
+        Key_NumberSign,
+        Key_Dollar,
+        Key_Percent,
+        Key_Ampersand,
+        Key_Apostrophe,
+        Key_ParenLeft,
+        Key_ParenRight,
+        Key_Asterisk,
+        Key_Plus,
+        Key_Comma,
+        Key_Minus,
+        Key_Period,
+        Key_Slash,
+        Key_0,
+        Key_1,
+        Key_2,
+        Key_3,
+        Key_4,
+        Key_5,
+        Key_6,
+        Key_7,
+        Key_8,
+        Key_9,
+        Key_Colon,
+        Key_Semicolon,
+        Key_Less,
+        Key_Equal,
+        Key_Greater,
+        Key_Question,
+        Key_At,
+        Key_A,
+        Key_B,
+        Key_C,
+        Key_D,
+        Key_E,
+        Key_F,
+        Key_G,
+        Key_H,
+        Key_I,
+        Key_J,
+        Key_K,
+        Key_L,
+        Key_M,
+        Key_N,
+        Key_O,
+        Key_P,
+        Key_Q,
+        Key_R,
+        Key_S,
+        Key_T,
+        Key_U,
+        Key_V,
+        Key_W,
+        Key_X,
+        Key_Y,
+        Key_Z,
+        Key_BracketLeft,
+        Key_Backslash,
+        Key_BracketRight,
+        Key_AsciiCircum,
+        Key_Underscore,
+        Key_QuoteLeft,
+        Key_BraceLeft,
+        Key_Bar,
+        Key_BraceRight,
+        Key_AsciiTilde,
+        Key_nobreakspace,
+        Key_exclamdown,
+        Key_cent,
+        Key_sterling,
+        Key_currency,
+        Key_yen,
+        Key_brokenbar,
+        Key_section,
+        Key_diaeresis,
+        Key_copyright,
+        Key_ordfeminine,
+        Key_guillemotleft,
+        Key_notsign,
+        Key_hyphen,
+        Key_registered,
+        Key_macron,
+        Key_degree,
+        Key_plusminus,
+        Key_twosuperior,
+        Key_threesuperior,
+        Key_acute,
+        Key_mu,
+        Key_paragraph,
+        Key_periodcentered,
+        Key_cedilla,
+        Key_onesuperior,
+        Key_masculine,
+        Key_guillemotright,
+        Key_onequarter,
+        Key_onehalf,
+        Key_threequarters,
+        Key_questiondown,
+        Key_Agrave,
+        Key_Aacute,
+        Key_Acircumflex,
+        Key_Atilde,
+        Key_Adiaeresis,
+        Key_Aring,
+        Key_AE,
+        Key_Ccedilla,
+        Key_Egrave,
+        Key_Eacute,
+        Key_Ecircumflex,
+        Key_Ediaeresis,
+        Key_Igrave,
+        Key_Iacute,
+        Key_Icircumflex,
+        Key_Idiaeresis,
+        Key_ETH,
+        Key_Ntilde,
+        Key_Ograve,
+        Key_Oacute,
+        Key_Ocircumflex,
+        Key_Otilde,
+        Key_Odiaeresis,
+        Key_multiply,
+        Key_Ooblique,
+        Key_Ugrave,
+        Key_Uacute,
+        Key_Ucircumflex,
+        Key_Udiaeresis,
+        Key_Yacute,
+        Key_THORN,
+        Key_ssharp,
+        Key_agrave,
+        Key_aacute,
+        Key_acircumflex,
+        Key_atilde,
+        Key_adiaeresis,
+        Key_aring,
+        Key_ae,
+        Key_ccedilla,
+        Key_egrave,
+        Key_eacute,
+        Key_ecircumflex,
+        Key_ediaeresis,
+        Key_igrave,
+        Key_iacute,
+        Key_icircumflex,
+        Key_idiaeresis,
+        Key_eth,
+        Key_ntilde,
+        Key_ograve,
+        Key_oacute,
+        Key_ocircumflex,
+        Key_otilde,
+        Key_odiaeresis,
+        Key_division,
+        Key_oslash,
+        Key_ugrave,
+        Key_uacute,
+        Key_ucircumflex,
+        Key_udiaeresis,
+        Key_yacute,
+        Key_thorn,
+        Key_ydiaeresis,
+        Key_unknown
+    };
+    enum ArrowType {
+        UpArrow,
+        DownArrow,
+        LeftArrow,
+        RightArrow
+    };
+    enum RasterOp {
+        CopyROP,
+        OrROP,
+        XorROP,
+        NotAndROP,
+        EraseROP,
+        NotCopyROP,
+        NotOrROP,
+        NotXorROP,
+        AndROP, NotEraseROP,
+        NotROP,
+        ClearROP,
+        SetROP,
+        NopROP,
+        AndNotROP,
+        OrNotROP,
+        NandROP,
+        NorROP, LastROP
+    };
+    enum PenStyle {
+        NoPen,
+        SolidLine,
+        DashLine,
+        DotLine,
+        DashDotLine,
+        DashDotDotLine
+    };
+    enum BrushStyle {
+        NoBrush,
+        SolidPattern,
+        Dense1Pattern,
+        Dense2Pattern,
+        Dense3Pattern,
+        Dense4Pattern,
+        Dense5Pattern,
+        Dense6Pattern,
+        Dense7Pattern,
+        HorPattern,
+        VerPattern,
+        CrossPattern,
+        BDiagPattern,
+        FDiagPattern,
+        DiagCrossPattern,
+        CustomPattern
+    };
+    enum WindowsVersion {
+        WV_NT,
+        WV_95,
+        WV_98,
+        WV_32s
+    };
+    enum TextFormat {
+        PlainText,
+        RichText,
+        AutoText
+    };
+extern const QColor color0;
+extern const QColor color1;
+extern const QColor black;
+extern const QColor white;
+extern const QColor darkGray;
+extern const QColor gray;
+extern const QColor lightGray;
+extern const QColor red;
+extern const QColor green;
+extern const QColor blue;
+extern const QColor cyan;
+extern const QColor magenta;
+extern const QColor yellow;
+extern const QColor darkRed;
+extern const QColor darkGreen;
+extern const QColor darkBlue;
+extern const QColor darkCyan;
+extern const QColor darkMagenta;
+extern const QColor darkYellow;
+
 } Qt;
 
-const int QT_VERSION;
-const char *QT_VERSION_STR;
-
-extern const int QCOORD_MIN;
-extern const int QCOORD_MAX;
-
-enum QtMsgType {
-    QtDebugMsg,
-    QtWarningMsg,
-    QtFatalMsg
-};

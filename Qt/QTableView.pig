@@ -8,7 +8,7 @@ suicidal virtual class QTableView : virtual QFrame {
     virtual void setPalette(const QPalette &);
     virtual void show();
 protected:
-    QTableView(QWidget * = 0, const char * = 0, WFlags = 0);
+    QTableView(QWidget * = 0, const char * = 0, Qt::WFlags = 0);
     virtual ~QTableView();
     bool autoUpdate() const;
     int cellHeight() const;
@@ -69,22 +69,3 @@ protected:
     int xOffset() const;
     int yOffset() const;
 } Qt::TableView;
-
-extern const uint Tbl_vScrollBar;
-extern const uint Tbl_hScrollBar;
-extern const uint Tbl_autoVScrollBar;
-extern const uint Tbl_autoHScrollBar;
-extern const uint Tbl_autoScrollBars;
-extern const uint Tbl_clipCellPainting;
-extern const uint Tbl_cutCellsV;
-extern const uint Tbl_cutCellsH;
-extern const uint Tbl_cutCells;
-extern const uint Tbl_scrollLastHCell;
-extern const uint Tbl_scrollLastVCell;
-extern const uint Tbl_scrollLastCell;
-extern const uint Tbl_smoothHScrolling;
-extern const uint Tbl_smoothVScrolling;
-extern const uint Tbl_smoothScrolling;
-extern const uint Tbl_snapToHGrid;
-extern const uint Tbl_snapToVGrid;
-extern const uint Tbl_snapToGrid;

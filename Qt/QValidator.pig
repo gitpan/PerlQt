@@ -5,5 +5,5 @@ suicidal virtual class QValidator : virtual QObject {
     QValidator(QWidget *, const char * = 0);
     virtual ~QValidator();
     virtual void fixup(QString &);
-    abstract QValidator::State validate(QString &, int &);
+    abstract QValidator::State validate(QString &, int &) const;
 } Qt::Validator;

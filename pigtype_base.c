@@ -466,6 +466,56 @@ PIG_DEFINE_TYPE_PUSH(pig_type_floatptr, float *) {
 PIG_DEFINE_STUB_POP(pig_type_floatptr, float *)
 
 
+struct _pig_type_doubleptr_variable {
+    SV *pigsv;
+    double pigvar;
+};
+
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_doubleptr) {
+    _pig_type_doubleptr_variable *pigr = (_pig_type_doubleptr_variable *)pig0;
+    sv_setnv(pigr->pigsv, pigr->pigvar);
+    delete pigr;
+};
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_doubleptr, double *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_doubleptr_variable *pigr = new _pig_type_doubleptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvNV(PIG_ARG);
+	PIGSCOPE_ARGUMENT(pig_type_doubleptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(0);
+    }
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_doubleptr, double *) {
+    PIGARGS;
+    if(PIG_ARGOK) {
+	_pig_type_doubleptr_variable *pigr = new _pig_type_doubleptr_variable;
+	pigr->pigsv = PIG_ARG;
+	pigr->pigvar = SvNV(PIG_ARG);
+	PIGSCOPE_ARGUMENT(pig_type_doubleptr, pigr);
+	PIGARGUMENT(&pigr->pigvar);
+    } else {
+	PIGARGUMENT(pig0);
+    }
+}
+
+PIG_DEFINE_TYPE_RETURN(pig_type_doubleptr, double *) {
+    PIGRET;
+    PIGRETURN(pig0 ? sv_2mortal(newSVnv(*pig0)) : sv_mortalcopy(&PIGsv_undef));
+}
+
+PIG_DEFINE_TYPE_PUSH(pig_type_doubleptr, double *) {
+    PIGPUSHSTACK;
+    PIGPUSH(pig0 ? sv_2mortal(newSVnv(*pig0)) : sv_mortalcopy(&PIGsv_undef));
+}
+
+PIG_DEFINE_STUB_POP(pig_type_doubleptr, double *)
+
+
 PIG_DEFINE_SCOPE_ARGUMENT(pig_type_shortarray) {
     delete[] (short *)pig0;
 }
@@ -536,6 +586,7 @@ PIG_DEFINE_TYPE(pig_type_ptr)
 PIG_DEFINE_TYPE(pig_type_boolptr)
 PIG_DEFINE_TYPE(pig_type_intptr)
 PIG_DEFINE_TYPE(pig_type_floatptr)
+PIG_DEFINE_TYPE(pig_type_doubleptr)
 PIG_DEFINE_TYPE(pig_type_shortarray)
 PIG_DEFINE_TYPE(pig_type_shortarrayitems)
 
@@ -556,6 +607,7 @@ PIG_EXPORT_TABLE(pigtype_base)
     PIG_EXPORT_TYPE(pig_type_boolptr, "bool*")
     PIG_EXPORT_TYPE(pig_type_intptr, "int*")
     PIG_EXPORT_TYPE(pig_type_floatptr, "float*")
+    PIG_EXPORT_TYPE(pig_type_doubleptr, "double*")
     PIG_EXPORT_TYPE(pig_type_shortarray, "short[]")
     PIG_EXPORT_TYPE(pig_type_shortarrayitems, "sizeof(short[])")
 PIG_EXPORT_ENDTABLE

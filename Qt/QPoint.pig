@@ -22,6 +22,7 @@ struct QPoint {
     const char *{serial} operator << () const : pig_serialize($this);
     void operator >> (const char *{serial}) : pig_deserialize($this, $1);
     bool isNull() const;
+    int manhattanLength() const;
     QCOORD rx();
     QCOORD ry();
     void setX(int);

@@ -1,6 +1,6 @@
 #include <qfiledialog.h>
 
-suicidal virtual class QFileIconProvider : virtual QObject {
+class QFileIconProvider : QObject {
     QFileIconProvider(QObject * = 0, const char * = 0);
-    virtual const QPixmap *pixmap(const QFileInfo &);
+    const QPixmap *pixmap(const QString &) : $this->pixmap(QFileInfo($1));
 } Qt::FileIconProvider;

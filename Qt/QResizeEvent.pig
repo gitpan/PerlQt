@@ -6,3 +6,4 @@ struct QResizeEvent : QEvent {
     const QSize &oldSize() const;
     const QSize &size() const;
 } Qt::ResizeEvent;
+

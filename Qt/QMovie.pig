@@ -2,18 +2,19 @@
 
 struct QMovie {
     enum Status {
-	SourceEmpty,
-	UnrecognizedFormat,
-	Paused,
-	EndOfFrame,
-	EndOfLoop,
-	EndOfMovie,
-	SpeedChanged
+        SourceEmpty,
+        UnrecognizedFormat,
+        Paused,
+        EndOfFrame,
+        EndOfLoop,
+        EndOfMovie,
+        SpeedChanged
     };
     QMovie();
     QMovie(const QMovie &);
-    QMovie(const char *, int = 1024);
+    QMovie(const QString &, int = 1024);
     QMovie(QByteArray, int = 1024);
+;    QMovie(QDataSource *, int = 1024);
     ~QMovie();
     QMovie &operator = (const QMovie &);
     const QColor &backgroundColor() const;

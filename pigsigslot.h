@@ -1,6 +1,8 @@
 #ifndef PIGSIGSLOT_H
 #define PIGSIGSLOT_H
+#include <qsignalslotimp.h>
 
+/*
 #if !defined(Q_MOC_CONNECTIONLIST_DECLARED)
 #define Q_MOC_CONNECTIONLIST_DECLARED
 #include <qlist.h>
@@ -12,7 +14,7 @@ declare(QListM,QConnection);
 declare(QListIteratorM,QConnection);
 #endif
 #endif
-
+*/
 #define pig_func (*((PIG)pig_signal_member))
 
 class pig_sigslot_argument_iterator {

@@ -6,9 +6,8 @@ struct QFontMetrics {
     ~QFontMetrics();
     QFontMetrics &operator = (const QFontMetrics &);
     int ascent() const;
-    QRect boundingRect(char) const;
-    QRect boundingRect(const char *, int = -1) const;
-    QRect boundingRect(int, int, int, int, int, const char *, int = -1, int = 0, int *{intarray} = 0, char **{internal} = 0) const;
+    QRect boundingRect(const QString &, int = -1) const;
+    QRect boundingRect(int, int, int, int, int, const QString &, int = -1, int = 0, int *{intarray} = 0, char **{internal} = 0) const;
     int descent() const;
     int height() const;
     bool inFont(char) const;
@@ -20,8 +19,8 @@ struct QFontMetrics {
     int minLeftBearing() const;
     int minRightBearing() const;
     int rightBearing(char) const;
-    QSize size(int, const char *, int = -1, int = 0, int *{intarray} = 0, char **{internal} = 0) const;
+    QSize size(int, const QString &, int = -1, int = 0, int *{intarray} = 0, char **{internal} = 0) const;
     int strikeOutPos() const;
     int underlinePos() const;
-    int width(const char *, int = -1) const;
+    int width(const QString &, int = -1) const;
 } Qt::FontMetrics;

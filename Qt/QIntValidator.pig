@@ -7,5 +7,5 @@ suicidal virtual class QIntValidator : virtual QValidator {
     int bottom() const;
     virtual void setRange(int, int);
     int top() const;
-    virtual QValidator::State validate(QString &, int &);
+    virtual QValidator::State validate(QString &, int &) const;
 } Qt::IntValidator;

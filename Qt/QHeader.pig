@@ -1,44 +1,42 @@
 #include <qheader.h>
 
-suicidal virtual class QHeader : virtual QTableView {
-    enum Orientation {
-	Horizontal,
-	Vertical
-    };
+suicidal virtual class QHeader : virtual QWidget {
     QHeader(QWidget * = 0, const char * = 0);
     QHeader(int, QWidget * = 0, const char * = 0);
     virtual ~QHeader();
-    int addLabel(const char *, int = -1);
+    int addLabel(const QString &, int = -1);
+    int addLabel(const QIconSet &, const QString &, int = -1);
     int cellAt(int) const;
     int cellPos(int) const;
     int cellSize(int) const;
     int count() const;
-    const char *label(int);
+    QIconSet *iconSet(int) const;
+    QString label(int) const;
     int mapToActual(int) const;
     int mapToLogical(int) const;
+    virtual void moveCell(int, int);
     int offset() const;
-    QHeader::Orientation orientation() const;
-    void setCellSize(int, int);
-    void setClickEnabled(bool, int = -1);
-    void setLabel(int, const char *, int = -1);
-    void setMovingEnabled(bool);
-    void setOffset(int) slot;
-    void setOrientation(QHeader::Orientation);
-    void setResizeEnabled(bool, int = -1);
-    void setTracking(bool);
+    Qt::Orientation orientation() const;
+    virtual void setCellSize(int, int);
+    virtual void setClickEnabled(bool, int = -1);
+    virtual void setLabel(int, const QString &, int = -1);
+    virtual void setLabel(int, const QIconSet &, const QString &, int = -1);
+    virtual void setMovingEnabled(bool);
+    virtual void setOffset(int) slot;
+    virtual void setOrientation(Qt::Orientation);
+    virtual void setResizeEnabled(bool, int = -1);
+    virtual void setTracking(bool);
     virtual QSize sizeHint() const;
+    virtual QSizePolicy sizePolicy() const;
     bool tracking() const;
 protected:
-    virtual int cellHeight(int);
-    virtual int cellWidth(int);
     virtual void mouseMoveEvent(QMouseEvent *);
     virtual void mousePressEvent(QMouseEvent *);
     virtual void mouseReleaseEvent(QMouseEvent *);
     void moved(int, int) signal;
-    virtual void paintCell(QPainter *, int, int);
-    virtual void resizeEvent(QResizeEvent *);
+    virtual void paintEvent(QPaintEvent *);
+    void paintSection(QPainter *, int, QRect);
     void sectionClicked(int) signal;
-    virtual void setupPainter(QPainter *);
     void sizeChange(int, int, int) signal;
     QRect sRect(int);
 } Qt::Header;

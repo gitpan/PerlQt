@@ -12,3 +12,4 @@ protected:
     void activated(int) signal;
     virtual bool event(QEvent *);
 } Qt::SocketNotifier;
+

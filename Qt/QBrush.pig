@@ -2,9 +2,9 @@
 
 struct QBrush {
     QBrush();
-    QBrush(BrushStyle);
+    QBrush(Qt::BrushStyle);
     QBrush(const QBrush &);
-    QBrush(const QColor &, BrushStyle = SolidPattern);
+    QBrush(const QColor &, Qt::BrushStyle = Qt::SolidPattern);
     QBrush(const QColor &, const QPixmap &);
     ~QBrush();
     QBrush &operator = (const QBrush &);
@@ -16,25 +16,6 @@ struct QBrush {
     QPixmap *pixmap() const;
     void setColor(const QColor &);
     void setPixmap(const QPixmap &);
-    void setStyle(BrushStyle);
-    BrushStyle style() const;
+    void setStyle(Qt::BrushStyle);
+    Qt::BrushStyle style() const;
 } Qt::Brush;
-
-enum BrushStyle {
-    NoBrush,
-    SolidPattern,
-    Dense1Pattern,
-    Dense2Pattern,
-    Dense3Pattern,
-    Dense4Pattern,
-    Dense5Pattern,
-    Dense6Pattern,
-    Dense7Pattern,
-    HorPattern,
-    VerPattern,
-    CrossPattern,
-    BDiagPattern,
-    FDiagPattern,
-    DiagCrossPattern,
-    CustomPattern
-};

@@ -16,7 +16,7 @@ sub new {
         Qt::ScrollBar->new(0, 99,                           # range
                            1, 10,                           # line/page steps
                            0,                               # initial value
-                           Qt::ScrollBar::Horizontal,       # orientation
+                           Qt::Horizontal,                  # orientation
                            $self, 'scrollbar');
     $lcd->connect($sBar, 'valueChanged(int)', 'display(int)');
     $self->connect($sBar, 'valueChanged(int)', 'valueChanged(int)');

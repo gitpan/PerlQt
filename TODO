@@ -12,3 +12,5 @@ My TODO list in no particular order:
 - Test suite
 - Upcast from QWidget to QSubWidget
 - Overloaded operators
+- When passing default reference arguments, first assign it to a temp
+- Autoload classes

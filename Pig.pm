@@ -1,7 +1,8 @@
 #!/usr/bin/perl -w
 ################################################################################
 #
-# Copyright (C) 1998, Ashley Winters <jql@accessone.com> - All rights reserved.
+# Copyright (C) 1998-2000, Ashley Winters <jql@accessone.com>
+# All rights reserved.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -1337,7 +1338,7 @@ sub fetch_varg {
 	} elsif($cast =~ /^(\w+)\s*\*$/) {
 	    $s = qq'pig_type_object_push($argname, "$1")';
 	} elsif($cast =~ /^(\w+)\s*\&$/) {
-	    $s = qq'pig_type_object_ref_push($argname, "$1")';
+	    $s = qq'pig_type_object_ref_push(&$argname, "$1")';
 	} elsif($cast =~ /^(\w+)$/) {
 	    $s = qq'pig_type_object_push(&$argname, "$1")';
 	} else {
@@ -1717,8 +1718,8 @@ sub write_proto_method {
 	my $code = $proto->{'Code'};
 	$code =~ s/^\s*//;
 	$code =~ s/\s*//;
-	$code =~ s/\$class/pigclass/;
-	$code =~ s/\$this/pig0/;
+	$code =~ s/\$class/pigclass/g;
+	$code =~ s/\$this/pig0/g;
 	$code =~ s/\$(\d+)/pig$1/g;
 	source "$code;\n\n";
     } elsif($proto->variable) {
@@ -2349,6 +2350,7 @@ sub write_constants {
 
     if(keys %$c) {
 	my @int;
+	my @object;
 	my %list;
 
 	for my $constant (keys %$c) {
@@ -2360,6 +2362,7 @@ sub write_constants {
 	    } elsif($type eq 'uint') {
 		push @int, $constant;
 	    } else {
+                push @object, $constant;
 #		print "No $constant $type\n";
 	    }
 	}
@@ -2373,6 +2376,34 @@ sub write_constants {
 	    source "};\n\n";
 
 	    $list{"PIG_${Class}_const_int"} = "PIG_CONSTANT_INT";
+	}
+	if(@object) {
+	    source "struct pig_constant_object PIG_${Class}_const_object[] = {\n";
+	    for my $constant (sort @object) {
+		my $t = $c->{$constant}{'Type'};
+		my $n;
+		my $v;
+
+		if($t =~ /(.*\w)\s*\*\s*$/) {
+		    $v = "$Class\::$constant";
+		    $n = $1;
+		} else {
+		    if($t =~ /([\w:]+)/) {
+			$n = $1;
+		    } else {
+			$n = $t;
+		    }
+		    $t = "$t*";
+		    $v = "&$Class\::$constant";
+		}
+		unless($t =~ /^const\s+/) {
+		    $t = "const $t";
+		}
+		source qq~    { "$constant", (void *)($t)$v, "$n" },\n~;
+	    }
+	    source "    { 0, 0, 0 }\n";
+	    source "};\n\n";
+	    $list{"PIG_${Class}_const_object"} = "PIG_CONSTANT_OBJECT";
 	}
 
 	source "struct pig_constant PIG_${Class}_const[] = {\n";

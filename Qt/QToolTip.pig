@@ -2,10 +2,10 @@
 
 suicidal virtual class QToolTip {
     QToolTip(QWidget *, QToolTipGroup * = 0);
-    static void add(QWidget *, const char *);
-    static void add(QWidget *, const QRect &, const char *);
-    static void add(QWidget *, const char *, QToolTipGroup *, const char *);
-    static void add(QWidget *, const QRect &, const char *, QToolTipGroup *, const char *);
+    static void add(QWidget *, const QString &);
+    static void add(QWidget *, const QRect &, const QString &);
+    static void add(QWidget *, const QString &, QToolTipGroup *, const QString &);
+    static void add(QWidget *, const QRect &, const QString &, QToolTipGroup *, const QString &);
     static QFont font();
     QToolTipGroup *group() const;
     static QPalette palette();
@@ -17,6 +17,6 @@ suicidal virtual class QToolTip {
 protected:
     void clear();
     abstract void maybeTip(const QPoint &);
-    void tip(const QRect &, const char *);
-    void tip(const QRect &, const char *, const char *);
+    void tip(const QRect &, const QString &);
+    void tip(const QRect &, const QString &, const QString &);
 } Qt::ToolTip;

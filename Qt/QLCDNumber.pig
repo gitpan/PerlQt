@@ -2,20 +2,29 @@
 #undef DEC
 #undef BIN
 #undef OCT
+#undef Hex
+#undef Dec
+#undef Bin
+#undef Oct
 #include <qlcdnumber.h>
 
 suicidal virtual class QLCDNumber : virtual QFrame {
     enum Mode {
-	HEX,
-	DEC,
-	OCT,
-	BIN
+        HEX,
+        DEC,
+        OCT,
+        BIN,
+	Hex,
+	Dec,
+	Oct,
+	Bin
     };
     enum SegmentStyle {
-	Outline,
-	Filled,
-	Flat
+        Outline,
+        Filled,
+        Flat
     };
+
     QLCDNumber(QWidget * = 0, const char * = 0);
     QLCDNumber(uint, QWidget * = 0, const char * = 0);
     virtual ~QLCDNumber();
@@ -23,24 +32,23 @@ suicidal virtual class QLCDNumber : virtual QFrame {
     bool checkOverflow(double) const;
     void display(int) slot;
     void display(double) slot;
-    void display(const char *) slot;
+    void display(const QString &) slot;
     int intValue() const;
     QLCDNumber::Mode mode() const;
     int numDigits() const;
     QLCDNumber::SegmentStyle segmentStyle() const;
-    void setBinMode() slot;
-    void setDecMode() slot;
-    void setHexMode() slot;
-    void setOctMode() slot;
-    void setMode(QLCDNumber::Mode);
-    void setNumDigits(int);
-    void setSegmentStyle(QLCDNumber::SegmentStyle);
-    void setSmallDecimalPoint(bool) slot;
+    virtual void setBinMode() slot;
+    virtual void setDecMode() slot;
+    virtual void setHexMode() slot;
+    virtual void setOctMode() slot;
+    virtual void setMode(QLCDNumber::Mode);
+    virtual void setNumDigits(int);
+    virtual void setSegmentStyle(QLCDNumber::SegmentStyle);
+    virtual void setSmallDecimalPoint(bool) slot;
     virtual QSize sizeHint() const;
-    bool smallDecimalPoint() const;
+    virtual QSizePolicy sizePolicy() const;
     double value() const;
 protected:
     virtual void drawContents(QPainter *);
     void overflow() signal;
-    virtual void resizeEvent(QResizeEvent *);
 } Qt::LCDNumber;

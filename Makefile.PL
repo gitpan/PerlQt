@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 ################################################################################
 #
-# Copyright (C) 1999, Ashley Winters <jql@accessone.com>
+# Copyright (C) 1999-2000, Ashley Winters <jql@accessone.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -16,22 +16,22 @@
 # This is a Unix-only Makefile.PL as far as I know...
 #
 
-use ExtUtils::MakeMaker;
-use Config;
-use File::Copy;
-use Pig;
-
+##########
 # Please modify these arguments as needed
 %Args = (
     CC => 'g++',
     CCFLAGS => '',
     DEFINE => '',
-    INC => '-I/usr/X11R6/include -I$(QTDIR)/include -I.',
-    LIBS => '-L$(QTDIR)/lib -lqt -L/usr/X11R6/lib -lX11',
+    INC => '-I/usr/X11R6/include -I/usr/include/qt -I.',
+    LIBS => '-lqt -L/usr/X11R6/lib -lX11',
     OPTIMIZE => '-O'
 );
 ##########
 
+use ExtUtils::MakeMaker;
+use Config;
+use File::Copy;
+use Pig;
 
 my $filelist;
 
@@ -55,7 +55,7 @@ unlink "typesizes$Config{'exe_ext'}";
 unlink "typesizes.c";
 unlink "typelist";
 
-if($Config{bincompat3} =~ /y/) {
+if($Config{bincompat3} && $Config{bincompat3} =~ /y/) {
     $pl = 3;
 } else {
     $pl = $Config{PATCHLEVEL};

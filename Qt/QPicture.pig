@@ -3,6 +3,7 @@
 class QPicture : QPaintDevice {
     QPicture();
     virtual ~QPicture();
+    QPicture &operator = (const QPicture &);
     const char * {qt_bits($this->size())} data() const;
     bool isNull() const;
     bool load(const char *);

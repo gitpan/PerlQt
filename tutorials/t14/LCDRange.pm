@@ -26,7 +26,7 @@ sub init {
 	Qt::ScrollBar->new(0, 99,			# range
 			   1, 10,			# line/page steps
 			   0,				# initial value
-			   Qt::ScrollBar::Horizontal,	# orientation
+			   Qt::Horizontal,		# orientation
 			   $self, 'scrollbar');
     my $label = Qt::Label->new($self, 'label');
     $label->setAlignment(Qt::AlignCenter);

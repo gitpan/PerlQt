@@ -5,6 +5,7 @@ suicidal class QMenuItem {
     QMenuItem();
     ~QMenuItem();
     int id() const;
+    QIconSet *iconSet() const;
     bool isChecked() const;
     bool isDirty() const;
     bool isEnabled() const;
@@ -13,7 +14,8 @@ suicidal class QMenuItem {
     QPixmap *pixmap() const;
     QPopupMenu *popup() const;
     void setDirty(bool);
-    void setText(const char *);
-    QSignal *signal() const;
-    const char *text() const;
+    void setText(const QString &);
+    void setWhatsThis(const QString &);
+    QString text() const;
+    QString whatsThis() const;
 } Qt::MenuItem;

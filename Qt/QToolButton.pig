@@ -1,23 +1,23 @@
 #include <qtoolbutton.h>
 
 suicidal virtual class QToolButton : virtual QButton {
-    QToolButton(QWidget * = 0, const char * = 0);
+    QToolButton(QWidget *, const char * = 0);
 
 ; In perl, it's receiver(5). In any other language, it should be receiver(4)
 
-    QToolButton(const QPixmap &, const char *, const char *, QObject *{receiver(5)}, const char *{member(4)}, QToolBar *, const char * = 0);
-    QToolButton(QIconSet, const char *, const char *, QObject *{receiver(5)}, const char *{member(4)}, QToolBar *, const char * = 0);
+    QToolButton(const QPixmap &, const QString &, const QString &, QObject *{receiver(5)}, const char *{member(4)}, QToolBar *, const char * = 0);
+    QToolButton(QIconSet, const QString &, const QString &, QObject *{receiver(5)}, const char *{member(4)}, QToolBar *, const char * = 0);
     virtual ~QToolButton();
     QIconSet iconSet() const;
-    void setIconSet(const QIconSet &);
-    void setOn(bool) slot;
+    virtual void setIconSet(const QIconSet &);
+    virtual void setOn(bool) slot;
     virtual void setTextLabel(const char *, bool = TRUE) slot;
-    void setToggleButton(bool) slot;
     virtual void setUsesBigPixmap(bool) slot;
     virtual void setUsesTextLabel(bool) slot;
     virtual QSize sizeHint() const;
-    const char *textLabel() const;
+    virtual QSizePolicy sizePolicy() const;
     void toggle() slot;
+    QString textLabel() const;
     bool usesBigPixmap() const;
     bool usesTextLabel() const;
 protected:

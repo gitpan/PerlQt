@@ -4,7 +4,7 @@ suicidal virtual class QObject {
     QObject(QObject * = 0, const char * = 0);
     virtual ~QObject();
     void blockSignals(bool);
-    const QObjectList *children() const;
+    QObject *child(const char *, const char * = 0);
 #   virtual const char *className() const;
     static bool connect(const QObject *{receiver(3)}, const QObject *{sender(2)}, const char *{signal(1)}, const char *{member(0)}) : QObject::connect($1, $2, $0, $3);
     static bool connect(const QObject *{sender(1)}, const char *{signal(0)}, const QObject *{receiver(3)}, const char *{member(2)});
@@ -26,12 +26,12 @@ suicidal virtual class QObject {
     QObject *parent() const;
     void removeChild(QObject *);
     void removeEventFilter(const QObject *);
-    void setName(const char *);
+    virtual void setName(const char *);
     bool signalsBlocked() const;
     int startTimer(int);
-    const char *tr(const char *) const;
 protected:
     virtual void connectNotify(const char *{signal(-1)});
+    virtual void childEvent(QChildEvent *);
     void destroyed() signal;
     virtual void disconnectNotify(const char *{signal(-1)});
     const QObject *sender();

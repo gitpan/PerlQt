@@ -5,8 +5,8 @@ suicidal virtual class QStatusBar : virtual QWidget {
     virtual ~QStatusBar();
     void addWidget(QWidget *, int, bool = FALSE);
     void clear() slot;
-    void message(const char *) slot;
-    void message(const char *, int) slot;
+    void message(const QString &) slot;
+    void message(const QString &, int) slot;
     void removeWidget(QWidget *);
 protected:
     void hideOrShow();

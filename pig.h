@@ -19,8 +19,8 @@
 #define QT_CLEAN_NAMESPACE
 #define NO_DEBUG
 #define NO_CHECK
-#include "qglobal.h"
 #undef ASSERT
+#include "qglobal.h"
 #undef CHECK_PTR
 #undef NO_CHECK
 #undef NO_DEBUG

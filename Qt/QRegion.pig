@@ -3,6 +3,7 @@
 struct QRegion {
     enum RegionType { Rectangle, Ellipse };
     QRegion();
+    QRegion(const QBitmap &);
     QRegion(const QRegion &);
     QRegion(const QRect &, QRegion::RegionType = QRegion::Rectangle);
     QRegion(const QPointArray &, bool = FALSE);
@@ -24,5 +25,4 @@ struct QRegion {
     QRegion subtract(const QRegion &) const;
     void translate(int, int);
     QRegion unite(const QRegion &) const;
-    QRegion xor(const QRegion &) const : $this->eor($1);
 } Qt::Region;

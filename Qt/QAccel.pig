@@ -8,14 +8,21 @@ suicidal virtual class QAccel : virtual QObject {
     uint count() const;
     bool disconnectItem(int, const QObject *{unreceiver(3)}, const char *{member(2)});
     int findKey(int) const;
+    bool ignoreWhatsThis() const;
     int insertItem(int, int = -1);
     bool isEnabled() const;
     bool isItemEnabled(int) const;
     void key(int);
+    static QString keyToString(int);
     void removeItem(int);
     void repairEventFilter();
     void setEnabled(bool);
+    void setIgnoreWhatsThis(bool);
     void setItemEnabled(int, bool);
+    void setWhatsThis(int, const QString &);
+    static int shortcutKey(const QString &);
+    static int stringToKey(const QString &);
+    QString whatsThis(int) const;
 protected:
     void activated(int) signal;
     virtual bool eventFilter(QObject *, QEvent *);

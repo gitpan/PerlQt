@@ -7,6 +7,10 @@ struct QRect {
     QRect(const QPoint &, const QSize &);
     QRect(int, int, int, int);
     QRect &operator = (const QRect &);
+;    QRect operator | (const QRect &) const;
+;    QRect operator & (const QRect &) const;
+;    QRect &operator |= (const QRect &);
+;    QRect &operator &= (const QRect &);
     static bool operator == (const QRect &, const QRect &) : operator == ($0, $1);
     static bool operator != (const QRect &, const QRect &) : operator != ($0, $1);
     const char *{serial} operator << () const : pig_serialize($this);

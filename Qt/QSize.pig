@@ -34,3 +34,4 @@ struct QSize {
     void transpose();
     int width() const;
 } Qt::Size;
+

@@ -1,8 +1,8 @@
-PerlQt is Copyright (C) 1997-1999, Ashley Winters <jql@accessone.com>
+PerlQt is Copyright (C) 1997-2000, Ashley Winters <jql@accessone.com>
 
-PerlQt is mostly distributed under the LGPL. Since this is a Qt-1.x
-application as defined by the Qt Free Software License, the obligitory
-notification:
+PerlQt is mostly distributed under the LGPL, and is not distributed under
+the QPL license. Since this is a Qt-1.x application as defined by the Qt
+Free Software License, the obligitory notification:
 
 PerlQt requires the Qt library, which is copyright
 Troll Tech AS.  Freely distributable programs may generally
@@ -10,9 +10,9 @@ use Qt for free, see README.QT for details
 
 The notable exceptions to the LGPL licensing include the two Perl modules,
 Pig.pm and SigSlot.pm. Those are distributed under the Artistic/GPL
-licensing scheme as layed out by Perl. Everything in the Qt/ directory is
-probably public domain, since I don't make any claims to it. Everything in
-tutorials/ and examples/ is copyright Troll Tech AS.
+licensing scheme as layed out by Perl. Everything in the Qt*/ directories 
+is probably public domain, since I don't make any claims to it. Everything
+in tutorials/ and examples/ is copyright Troll Tech AS.
 
 
 The C/C++ source license, LGPL:

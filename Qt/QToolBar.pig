@@ -1,17 +1,20 @@
 #include <qtoolbar.h>
 
 suicidal virtual class QToolBar : virtual QWidget {
-    enum Orientation { Horizontal, Vertical };
-    QToolBar(const char *, QMainWindow *, QMainWindow::ToolBarDock = QMainWindow::Top, bool = FALSE, const char * = 0);
-    QToolBar(const char *, QMainWindow *, QWidget *, bool = FALSE, const char * = 0, WFlags = 0);
+    QToolBar(const QString &, QMainWindow *, QMainWindow::ToolBarDock = QMainWindow::Top, bool = FALSE, const char * = 0);
+    QToolBar(const QString &, QMainWindow *, QWidget *, bool = FALSE, const char * = 0, Qt::WFlags = 0);
     QToolBar(QMainWindow * = 0, const char * = 0);
     virtual ~QToolBar();
     void addSeparator();
+    virtual bool event(QEvent *);
+    virtual bool eventFilter(QObject *, QEvent *);
+    QString label() const;
     QMainWindow *mainWindow();
     QToolBar::Orientation orientation() const;
+    virtual void setLabel(const QString &);
     virtual void setOrientation(QToolBar::Orientation);
-    void setStretchableWidget(QWidget *);
+    virtual void setStretchableWidget(QWidget *);
     virtual void show();
 protected:
-    virtual void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent *);
 } Qt::ToolBar;

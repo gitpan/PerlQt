@@ -13,3 +13,4 @@ struct QBitmap : QPixmap {
     QBitmap &operator =(const QPixmap &);
     QBitmap xForm(const QWMatrix &) const;
 } Qt::Bitmap;
+

@@ -1,18 +1,15 @@
 #include <qlistbox.h>
 
 suicidal virtual class QListBoxItem {
-    QListBoxItem();
+    QListBoxItem(QListBox * = 0);
     virtual ~QListBoxItem();
-    abstract int height(const QListBox *) const;
+    virtual int height(const QListBox *) const;
+    QListBox *listBox() const;
     virtual const QPixmap *pixmap() const;
-    virtual const char *text() const;
-    abstract int width(const QListBox *) const;
+    bool selected() const;
+    virtual QString text() const;
+    virtual int width(const QListBox *) const;
 protected:
     abstract void paint(QPainter *);
-    void setText(const char *);
+    void setText(const QString &);
 } Qt::ListBoxItem;
-
-const int LBI_Undefined;
-const int LBI_Text;
-const int LBI_Pixmap;
-const int LBI_UserDefined;

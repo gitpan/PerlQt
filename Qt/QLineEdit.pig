@@ -1,43 +1,61 @@
 #include <qlineedit.h>
 
 suicidal virtual class QLineEdit : virtual QWidget {
-    enum EchoMode {
-	Normal,
-	NoEcho,
-	Password
-    };
+    enum EchoMode { Normal, NoEcho, Password };
+
     QLineEdit(QWidget * = 0, const char * = 0);
+    QLineEdit(const QString &, QWidget * = 0, const char * = 0);
     virtual ~QLineEdit();
+    int alignment() const;
+    void backspace();
     void clear() slot;
     void clearValidator() slot;
+    void copy() const;
+    void cursorLeft(bool, int = 1);
+    void cursorRight(bool, int = 1);
     int cursorPosition() const;
+    void cursorWordBackward(bool);
+    void cursorWordForward(bool);
+    void cut();
+    void del();
     void deselect() slot;
+    QString displayText() const;
     QLineEdit::EchoMode echoMode() const;
+    bool edited() const;
+    void end(bool);
     bool frame() const;
-    void insert(const char *) slot;
+    bool hasMarkedText() const;
+    void home(bool);
+    void insert(const QString &) slot;
+    QString markedText() const;
     int maxLength() const;
+    void paste();
+    virtual QSize minimumSizeHint() const;
     void selectAll() slot;
-    void setCursorPosition(int);
-    void setEchoMode(QLineEdit::EchoMode);
+    void setAlignment(int);
+    virtual void setCursorPosition(int);
+    virtual void setEchoMode(QLineEdit::EchoMode);
+    void setEdited(bool);
     virtual void setEnabled(bool);
     virtual void setFont(const QFont &);
-    void setFrame(bool);
-    void setMaxLength(int);
-    void setSelection(int, int);
-    void setText(const char *) slot;
-    void setValidator(QValidator *);
+    virtual void setPalette(const QPalette &);
+    virtual void setFrame(bool);
+    virtual void setMaxLength(int);
+    virtual void setSelection(int, int);
+    void setText(const QString &) slot;
+    virtual void setValidator(const QValidator *);
     virtual QSize sizeHint() const;
-    const char *text() const;
+    virtual QSizePolicy sizePolicy() const;
+    QString text() const;
     bool validateAndSet(const char *, int, int, int);
-    QValidator *validator() const;
+    const QValidator *validator() const;
 protected:
-    virtual bool event(QEvent *);
+    virtual void dragEnterEvent(QDragEnterEvent *);
+    virtual void dropEvent(QDropEvent *);
     virtual void focusInEvent(QFocusEvent *);
     virtual void focusOutEvent(QFocusEvent *);
-    bool hasMarkedText() const;
     virtual void keyPressEvent(QKeyEvent *);
     virtual void leaveEvent(QEvent *);
-    QString markedText() const;
     virtual void mouseDoubleClickEvent(QMouseEvent *);
     virtual void mouseMoveEvent(QMouseEvent *);
     virtual void mousePressEvent(QMouseEvent *);
@@ -46,6 +64,5 @@ protected:
     void repaintArea(int, int);
     virtual void resizeEvent(QResizeEvent *);
     void returnPressed() signal;
-    void textChanged(const char *) signal;
-    virtual void timerEvent(QTimerEvent *);
+    void textChanged(const QString &) signal;
 } Qt::LineEdit;

@@ -1,21 +1,20 @@
 #include <qdragobject.h>
 
-suicidal virtual class QDragObject : virtual QObject {
-    enum DragMode {
-	DragDefault,
-	DragCopy,
-	DragMove,
-	DragCopyOrMove
-    };
+virtual class QDragObject : virtual QObject, virtual QMimeSource {
+    enum DragMode { DragDefault, DragCopy, DragMove, DragCopyOrMove };
+
     QDragObject(QWidget * = 0, const char * = 0);
     virtual ~QDragObject();
     bool drag();
     void dragCopy();
     bool dragMove();
-    abstract QByteArray encodedData(const char *) const;
-    abstract const char *format(int) const;
-    virtual bool provides(const char *) const;
+    QPixmap pixmap() const;
+    QPoint pixmapHotSpot() const;
+    virtual void setPixmap(QPixmap);
+    virtual void setPixmap(QPixmap, QPoint);
+    static void setTarget(QWidget *);
     QWidget *source();
+    static QWidget *target();
 protected:
     virtual bool drag(QDragObject::DragMode);
 } Qt::DragObject;

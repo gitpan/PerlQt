@@ -7,3 +7,4 @@ struct QCloseEvent : QEvent {
     void ignore();
     bool isAccepted() const;
 } Qt::CloseEvent;
+

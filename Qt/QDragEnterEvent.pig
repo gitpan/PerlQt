@@ -1,5 +1,6 @@
 #include <qevent.h>
 
-struct QDragEnterEvent : QEvent {
+struct QDragEnterEvent : QDragMoveEvent {
     QDragEnterEvent(const QPoint &);
+    QDragEnterEvent(const QDragEnterEvent &);
 } Qt::DragEnterEvent;

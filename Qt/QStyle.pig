@@ -1,0 +1,62 @@
+#include <qstyle.h>
+
+virtual class QStyle : virtual QObject {
+    enum ScrollControl { AddLine, SubLine, AddPage,
+                         SubPage, First  , Last   ,
+                         Slider , NoScroll };
+    virtual ~QStyle();
+    virtual QRect buttonRect(int, int, int, int);
+    abstract QRect comboButtonFocusRect(int, int, int, int);
+    abstract QRect comboButtonRect(int, int, int, int);
+    abstract int defaultFrameWidth() const;
+    abstract void drawArrow(QPainter *, Qt::ArrowType, bool, int, int, int, int, const QColorGroup &, bool, const QBrush * = 0);
+    abstract void drawBevelButton(QPainter *, int, int, int, int, const QColorGroup &, bool = FALSE, const QBrush * = 0);
+    abstract void drawButton(QPainter *, int, int, int, int, const QColorGroup &, bool = FALSE, const QBrush * = 0);
+    virtual void drawButtonMask(QPainter *, int, int, int, int);
+    abstract void drawCheckMark(QPainter *, int, int, int, int, const QColorGroup &, bool, bool);
+    abstract void drawComboButton(QPainter *, int, int, int, int, const QColorGroup &, bool = FALSE, bool = FALSE, bool = TRUE, const QBrush * = 0);
+    abstract void drawComboButtonMask(QPainter *, int, int, int, int);
+    abstract void drawExclusiveIndicator(QPainter *, int, int, int, int, const QColorGroup &, bool, bool = FALSE, bool = TRUE);
+    virtual void drawExclusiveIndicatorMask(QPainter *, int, int, int, int, bool);
+    abstract void drawFocusRect(QPainter *, const QRect &, const QColorGroup &, const QColor * = 0, bool = FALSE);
+    abstract void drawIndicator(QPainter *, int, int, int, int, const QColorGroup &, int, bool = FALSE, bool = TRUE);
+    virtual void drawIndicatorMask(QPainter *, int, int, int, int, int);
+    virtual void drawItem(QPainter *, int, int, int, int, int, const QColorGroup &, bool, const QPixmap *, const QString &, int = -1, const QColor * = 0);
+    virtual void drawPanel(QPainter *, int, int, int, int, const QColorGroup &, bool = FALSE, int = 1, const QBrush * = 0);
+    abstract void drawPopupMenuItem(QPainter *, bool, int, int, QMenuItem *, const QPalette &, bool, bool, int, int, int, int);
+    virtual void drawPopupPanel(QPainter *, int, int, int, int, const QColorGroup &, int = 2, const QBrush * = 0);
+    abstract void drawPushButton(QPushButton *, QPainter *);
+    abstract void drawPushButtonLabel(QPushButton *, QPainter *);
+    virtual void drawRect(QPainter *, int, int, int, int, const QColor &, int = 1, const QBrush * = 0);
+    virtual void drawRectStrong(QPainter *, int, int, int, int, const QColorGroup &, bool = FALSE, int = 1, int = 0, const QBrush * = 0);
+    abstract void drawScrollBarControls(QPainter *, const QScrollBar *, int, uint, uint);
+    virtual void drawSeparator(QPainter *, int, int, int, int, const QColorGroup &, bool = TRUE, int = 1, int = 0);
+    abstract void drawSlider(QPainter *, int, int, int, int, const QColorGroup &, Qt::Orientation, bool, bool);
+    abstract void drawSliderGroove(QPainter *, int, int, int, int, const QColorGroup &, QCOORD, Qt::Orientation);
+    abstract void drawSliderGrooveMask(QPainter *, int, int, int, int, QCOORD, Qt::Orientation);
+    abstract void drawSliderMask(QPainter *, int, int, int, int, Qt::Orientation, bool, bool);
+    abstract void drawSplitter(QPainter *, int, int, int, int, const QColorGroup &, Qt::Orientation);
+    abstract void drawTab(QPainter *, const QTabBar *, QTab *, bool);
+    abstract void drawTabMask(QPainter *, const QTabBar *, QTab *, bool);
+    virtual void drawToolButton(QPainter *, int, int, int, int, const QColorGroup &, bool = FALSE, const QBrush * = 0);
+    abstract QSize exclusiveIndicatorSize() const;
+    abstract int extraPopupMenuItemWidth(bool, int, QMenuItem *, const QFontMetrics &);
+    abstract void getButtonShift(int &, int &);
+    Qt::GUIStyle guiStyle() const;
+    abstract QSize indicatorSize() const;
+    virtual QRect itemRect(QPainter *, int, int, int, int, int, bool, const QPixmap *, const QString &, int = -1);
+    abstract int maximumSliderDragDistance() const;
+    virtual void polish(QApplication *);
+    virtual void polish(QWidget *);
+    virtual void polish(QPalette &);
+    abstract void polishPopupMenu(QPopupMenu *);
+    abstract int popupMenuItemHeight(bool, QMenuItem *, const QFontMetrics &);
+    abstract int popupSubmenuIndicatorWidth(const QFontMetrics &);
+    abstract void scrollBarMetrics(const QScrollBar *, int &, int &, int &, int &);
+    abstract QStyle::ScrollControl scrollBarPointOver(const QScrollBar *, int, const QPoint &);
+    abstract int sliderLength() const;
+    abstract int splitterWidth() const;
+    abstract void tabbarMetrics(const QTabBar *, int &, int &, int &);
+    virtual void unPolish(QApplication *);
+    virtual void unPolish(QWidget *);
+} Qt::Style;

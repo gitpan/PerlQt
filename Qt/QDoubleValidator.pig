@@ -8,5 +8,5 @@ suicidal virtual class QDoubleValidator : virtual QValidator {
     int decimals() const;
     virtual void setRange(double, double, int = 0);
     double top() const;
-    virtual QValidator::State validate(QString &, int &);
+    virtual QValidator::State validate(QString &, int &) const;
 } Qt::DoubleValidator;
