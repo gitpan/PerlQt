@@ -1,5 +1,14 @@
 Revision history for Perl extension QRect.
 
+1.01  Sun May  4 23:52:04 1997
+	- added copy constructor prototype
+
+1.01  Sat May  3 01:37:34 1997
+	- added the first overloaded operators in PerlQt
+
+1.01  Sat May  3 00:20:48 1997
+	- added a few new prototypes to the QRect constructor (thanks Chris)
+
 0.03  Tue Apr 22 12:57:53 1997
 	- allowed rect() and coords() to accept uninitialized arguments
 without a warning

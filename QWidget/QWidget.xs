@@ -92,7 +92,7 @@ BOOT:
 
 PWidget *
 PWidget::new(parent = 0, name = 0, f = 0)
-    QWidget *parent
+    pWidget *parent
     char *name
     WFlags f
 

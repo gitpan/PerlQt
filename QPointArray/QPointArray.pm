@@ -11,7 +11,7 @@ require QPoint;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QPointArray $VERSION;
 
 1;

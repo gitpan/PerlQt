@@ -29,6 +29,8 @@ public:
 	QBitmap(fileName, format) {}
 
     PBitmap(const QBitmap &bitmap) { *(QBitmap *)this = bitmap; }
+    PBitmap(const QPixmap &pixmap) { *(QBitmap *)this = pixmap; }
+    PBitmap(const QImage &image) { *(QBitmap *)this = image; }
 };
 
 #endif  // PBITMAP_H

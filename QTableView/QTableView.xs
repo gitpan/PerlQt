@@ -8,6 +8,7 @@
  */
 
 #include "ptablevw.h"
+#include "pwidget.h"
 #include "enum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), Tbl_ ## key)
@@ -44,7 +45,7 @@ BOOT:
 
 PTableView *
 PTableView::new(parent = 0, name = 0, f = 0)
-    QWidget *parent
+    pWidget *parent
     char *name
     WFlags f
 

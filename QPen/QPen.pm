@@ -2,6 +2,10 @@ package QPen;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require Exporter;
 require DynaLoader;
@@ -12,7 +16,7 @@ require QColor;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Pen);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QPen $VERSION;
 
 1;
@@ -37,6 +41,10 @@ setStyle,
 setWidth,
 style,
 width
+
+=head2 Overloaded operators
+
+!= ==
 
 =head1 DESCRIPTION
 

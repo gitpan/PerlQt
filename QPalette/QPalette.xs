@@ -20,6 +20,13 @@ PColorGroup::new(...)
 	RETVAL = new PColorGroup();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2
+	PREINIT:
+	QColorGroup *cg = pextract(QColorGroup, 1);
+	CODE:
+	RETVAL = new PColorGroup(*cg);
+	OUTPUT:
+	RETVAL
     CASE: items > 7
 	PREINIT:
 	QColor *foreground = pextract(QColor, 1);
@@ -84,6 +91,24 @@ QColorGroup::text()
     OUTPUT:
     RETVAL
 
+
+bool
+QColorGroup::beq(cg, misc)
+    QColorGroup *cg
+    CODE:
+    RETVAL = (*THIS == *cg);
+    OUTPUT:
+    RETVAL
+
+bool
+QColorGroup::bne(cg, misc)
+    QColorGroup *cg
+    CODE:
+    RETVAL = (*THIS != *cg);
+    OUTPUT:
+    RETVAL
+
+
 MODULE = QPalette		PACKAGE = QPalette
 
 PPalette *
@@ -91,6 +116,13 @@ PPalette::new(...)
     CASE: items == 1
 	CODE:
 	RETVAL = new PPalette();
+	OUTPUT:
+	RETVAL
+    CASE: items == 2
+	PREINIT:
+	QPalette *palette = pextract(QPalette, 1);
+	CODE:
+	RETVAL = new PPalette(*palette);
 	OUTPUT:
 	RETVAL
     CASE: items > 3
@@ -151,3 +183,20 @@ QPalette::setNormal(colorgroup)
 
 int
 QPalette::serialNumber()
+
+
+bool
+QPalette::beq(palette, misc)
+    QPalette *palette
+    CODE:
+    RETVAL = (*THIS == *palette);
+    OUTPUT:
+    RETVAL
+
+bool
+QPalette::bne(palette, misc)
+    QPalette *palette
+    CODE:
+    RETVAL = (*THIS != *palette);
+    OUTPUT:
+    RETVAL

@@ -1,5 +1,14 @@
 Revision history for Perl extension QPen.
 
+1.01  Sun May  4 23:33:43 1997
+	- added copy constructor prototype
+
+1.01  Sun May  4 19:33:04 1997
+	- eradicated extract_ptr
+
+1.01  Sat May  3 15:08:53 1997
+	- overloaded operators
+
 0.04  Mon Apr 28 12:52:52 1997
 	- remove postfix Line's from %Pen constants, and renamed $Pen{NoPen}
 to $Pen{None}

@@ -11,7 +11,7 @@ require QObject;
 @ISA = qw(Exporter DynaLoader QObject);
 @EXPORT = qw(%Key $SHIFT $CTRL $ALT $ASCII_ACCEL);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QAccel $VERSION;
 
 1;
@@ -42,6 +42,10 @@ key,
 removeItem,
 setEnabled,
 setItemEnabled
+
+=head2 Overridden functions
+
+eventFilter
 
 =head1 DESCRIPTION
 

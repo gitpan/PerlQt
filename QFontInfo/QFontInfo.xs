@@ -13,6 +13,23 @@ MODULE = QFontInfo		PACKAGE = QFontInfo
 
 PROTOTYPES: ENABLE
 
+PFontInfo *
+PFontInfo::new(copy)
+    CASE: sv_isobject(ST(1)) && sv_derived_from(ST(1), "QFont")
+	PREINIT:
+	QFont *font = pextract(QFont, 1);
+	CODE:
+	RETVAL = new PFontInfo(*font);
+	OUTPUT:
+	RETVAL
+    CASE: sv_isobject(ST(1)) && sv_derived_from(ST(1), "QFontInfo")
+	PREINIT:
+	QFontInfo *fontinf = pextract(QFontInfo, 1);
+	CODE:
+	RETVAL = new PFontInfo(*fontinf);
+	OUTPUT:
+	RETVAL
+
 bool
 QFontInfo::bold()
 

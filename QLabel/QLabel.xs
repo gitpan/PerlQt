@@ -8,6 +8,7 @@
  */
 
 #include "plabel.h"
+#include "pwidget.h"
 
 MODULE = QLabel		PACKAGE = QLabel
 
@@ -22,8 +23,8 @@ PLabel::new(...)
 	RETVAL
     CASE: sv_isobject(ST(1))
 	PREINIT:
-	QWidget *parent = (QWidget *)extract_ptr(ST(1), "QWidget");
-	char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	pWidget *parent = pextract(pWidget, 1);
+	pChar *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	WFlags f = (items > 3) ? (WFlags)SvIV(ST(3)) : 0;
 	CODE:
 	RETVAL = new PLabel(parent, name, f);
@@ -32,9 +33,8 @@ PLabel::new(...)
     CASE:
 	PREINIT:
 	char *text = SvPV(ST(1), na);
-	QWidget *parent = (items > 2) ?
-	    (QWidget *)extract_ptr(ST(2), "QWidget") : 0;
-	char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pWidget *parent = (items > 2) ? pextract(pWidget, 2) : 0;
+	pChar *name = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	WFlags f = (items > 4) ? (WFlags)SvIV(ST(4)) : 0;
 	CODE:
 	RETVAL = new PLabel(text, parent, name, f);

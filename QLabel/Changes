@@ -1,5 +1,11 @@
 Revision history for Perl extension QLabel.
 
+1.01  Mon May  5 12:53:52 1997
+	- undef checking
+
+1.01  Sun May  4 19:26:08 1997
+	- eradicated extract_ptr
+
 0.04  Wed Apr 23 11:48:08 1997
 	- added virtual functions
 

@@ -20,7 +20,7 @@ require QWidget;
 @ISA = qw(DynaLoader QObject);
 @EXPORT = qw(%ColorSpec);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QApplication $VERSION;
 
 1;
@@ -75,6 +75,10 @@ startingUp,
 style,
 syncX,
 widgetAt
+
+=head2 Overridable functions
+
+notify
 
 =head1 DESCRIPTION
 

@@ -34,6 +34,18 @@ PPixmap::new(...)
 	RETVAL = new PPixmap();   // Memory leak, fix perhaps?
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_derived_from(ST(1), "QPixmap")
+	QPixmap *pixmap = pextract(QPixmap, 1);
+	CODE:
+	RETVAL = new PPixmap(*pixmap);
+	OUTPUT:
+	RETVAL
+    CASE: items == 2 && sv_derived_from(ST(1), "QImage")
+	QImage *image = pextract(QImage, 1);
+	CODE:
+	RETVAL = new PPixmap(*image);
+	OUTPUT:
+	RETVAL
     CASE: items > 2 && (SvIOK(ST(1)) || SvNOK(ST(1)))
 	PREINIT:
 	int w = SvIV(ST(1));
@@ -45,7 +57,7 @@ PPixmap::new(...)
 	RETVAL
     CASE: sv_isobject(ST(1))
 	PREINIT:
-	QSize *size = (QSize *)extract_ptr(ST(1), "QSize");
+	QSize *size = pextract(QSize, 1);
 	int depth = (items > 2) ? SvIV(ST(2)) : -1;
 	CODE:
 	RETVAL = new PPixmap(*size, depth);
@@ -54,7 +66,7 @@ PPixmap::new(...)
     CASE:
 	PREINIT:
 	char *filename = SvPV(ST(1), na);
-	char *format = (items > 2) ? SvPV(ST(2), na) : 0;
+	pChar *format = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	QPixmap::ColorMode mode = (items > 3) ?
 	    (QPixmap::ColorMode)SvIV(ST(3)) : QPixmap::Auto;
 	CODE:
@@ -103,21 +115,20 @@ void
 QPixmap::fill(...)
     CASE: items > 3
 	PREINIT:
-	QWidget *widget = (QWidget *)extract_ptr(ST(1), "QWidget");
+	QWidget *widget = pextract(QWidget, 1);
 	int xofs = SvIV(ST(2));
 	int yofs = SvIV(ST(3));
 	CODE:
 	THIS->fill(widget, xofs, yofs);
     CASE: items == 3
 	PREINIT:
-	QWidget *widget = (QWidget *)extract_ptr(ST(1), "QWidget");
-	QPoint *ofs = (QPoint *)extract_ptr(ST(2), "QPoint");
+	QWidget *widget = pextract(QWidget, 1);
+	QPoint *ofs = pextract(QPoint, 2);
 	CODE:
 	THIS->fill(widget, *ofs);
     CASE:
 	PREINIT:
-	const QColor *color = (items > 1) ?
-	    (QColor *)extract_ptr(ST(1), "QColor") : &white;
+	const QColor *color = (items > 1) ? pextract(QColor, 1) : &white;
 	CODE:
 	THIS->fill(*color);
 
@@ -153,13 +164,13 @@ QPixmap::isQBitmap()
 bool
 QPixmap::load(fileName, format = 0, mode = QPixmap::Auto)
     char *fileName
-    char *format
+    pChar *format
     QPixmap::ColorMode mode
 
 bool
 QPixmap::loadFromData(buf, format = 0, mode = QPixmap::Auto)
     SV *buf
-    char *format
+    pChar *format
     QPixmap::ColorMode mode
     CODE:
     uint len;

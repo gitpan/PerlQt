@@ -20,6 +20,12 @@ PSize::new(...)
 	RETVAL = new PSize();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2
+	QSize *size = pextract(QSize, 1);
+	CODE:
+	RETVAL = new PSize(*size);
+	OUTPUT:
+	RETVAL
     CASE: items > 2
 	CODE:
 	RETVAL = new PSize(SvIV(ST(1)), SvIV(ST(2)));
@@ -48,3 +54,53 @@ QSize::setWidth(w)
 
 int
 QSize::width()
+
+
+PSize *
+QSize::bmul(scale, misc)
+    int scale
+    CODE:
+    RETVAL = new PSize(*THIS * scale);
+    OUTPUT:
+    RETVAL
+
+PSize *
+QSize::bdiv(scale, misc)
+    int scale
+    CODE:
+    RETVAL = new PSize(*THIS / scale);
+    OUTPUT:
+    RETVAL
+
+PSize *
+QSize::badd(size, misc)
+    QSize *size
+    CODE:
+    RETVAL = new PSize(*THIS + *size);
+    OUTPUT:
+    RETVAL
+
+PSize *
+QSize::bsub(size, misc)
+    QSize *size
+    CODE:
+    RETVAL = new PSize(*THIS - *size);
+    OUTPUT:
+    RETVAL
+
+bool
+QSize::beq(size, misc)
+    QSize *size
+    CODE:
+    RETVAL = (*THIS == *size);
+    OUTPUT:
+    RETVAL
+
+bool
+QSize::bne(size, misc)
+    QSize *size
+    CODE:
+    RETVAL = (*THIS != *size);
+    OUTPUT:
+    RETVAL
+

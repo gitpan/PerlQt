@@ -8,6 +8,7 @@
  */
 
 #include "ptabdlg.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QTabDialog		PACKAGE = QTabDialog
@@ -16,7 +17,7 @@ PROTOTYPES: ENABLE
 
 PTabDialog *
 PTabDialog::new(parent = 0, name = 0, modal = FALSE, f = 0)
-    QWidget *parent
+    pWidget *parent
     char *name
     bool modal
     WFlags f

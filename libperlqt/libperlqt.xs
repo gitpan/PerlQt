@@ -62,8 +62,8 @@ static char *parse_clname(char *clname) {
 }
 
 SV *objectify_ptr(void *ptr, char *clname, int delete_on_destroy = 0) {
-    clname = parse_clname(clname);
     if(!ptr) return &sv_undef;
+    clname = parse_clname(clname);
 
     HV *obj = newHV();
 
@@ -76,7 +76,11 @@ SV *objectify_ptr(void *ptr, char *clname, int delete_on_destroy = 0) {
 }
 
 void *extract_ptr(SV *rv, char *clname) {
-    if(!SvOK(rv)) return NULL;
+    if(!SvOK(rv)) {
+	if(toLOWER(clname[0]) != 'p')
+	    warn("Unexpected undef argument converted to NULL pointer");
+	return NULL;
+    }
     HV *obj = (HV *)obj_check(rv);
     SV *THIS = safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element");
 

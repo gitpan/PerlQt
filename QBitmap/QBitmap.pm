@@ -12,7 +12,7 @@ require QWMatrix;
 
 @ISA = qw(DynaLoader QPixmap);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QBitmap $VERSION;
 
 1;
@@ -36,7 +36,10 @@ new, xForm
 
 =head1 DESCRIPTION
 
-What you see is what you get.
+What you see is what you get. Because the = operator can't be properly
+overloaded in Perl, new constructor prototypes were added to replicate
+the effect. QBitmap::new({QBitmap|QPixmap|QImage}) is legal as a
+replacement for an overloaded = operator.
 
 =head1 SEE ALSO
 

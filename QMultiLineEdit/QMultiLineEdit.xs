@@ -8,6 +8,7 @@
  */
 
 #include "pmlined.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QMultiLineEdit		PACKAGE = QMultiLineEdit
@@ -16,8 +17,8 @@ PROTOTYPES: ENABLE
 
 PMultiLineEdit *
 PMultiLineEdit::new(parent = 0, name = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
 
 void
 QMultiLineEdit::append(text)

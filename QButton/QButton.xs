@@ -8,6 +8,7 @@
  */
 
 #include "pbutton.h"
+#include "pwidget.h"
 
 MODULE = QButton		PACKAGE = QButton
 
@@ -15,8 +16,8 @@ PROTOTYPES: ENABLE
 
 PButton *
 PButton::new(parent = 0, name = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
 
 bool
 QButton::autoRepeat()

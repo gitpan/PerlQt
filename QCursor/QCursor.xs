@@ -65,6 +65,13 @@ PCursor::new(...)
 	RETVAL = new PCursor();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1))
+	PREINIT:
+	QCursor *cursor = pextract(QCursor, 1);
+	CODE:
+	RETVAL = new PCursor(*cursor);
+	OUTPUT:
+	RETVAL
     CASE: sv_isobject(ST(1))
 	PREINIT:
 	QBitmap *bitmap = pextract(QBitmap, 1);

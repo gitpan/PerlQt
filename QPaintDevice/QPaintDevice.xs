@@ -52,7 +52,8 @@ bitBlt(arg1, arg2, arg3, arg4 = 0, ...)
 	QPoint *arg2
 	QPaintDevice *arg3
 	PREINIT:
-	QRect *sr = (items > 3) ? pextract(QRect, 3) : new QRect(0, 0, -1, -1);
+	QRect *sr = (items > 3 && SvOK(ST(3))) ?
+	    pextract(QRect, 3) : new QRect(0, 0, -1, -1);
 	RasterOp rop = (items > 4) ? (RasterOp)SvIV(ST(4)) : CopyROP;
 	bool ignoreMask = (items > 5) ? (SvTRUE(ST(5)) ? TRUE : FALSE) : FALSE;
 	CODE:

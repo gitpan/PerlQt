@@ -11,7 +11,7 @@ require QMenuData;
 
 @ISA = qw(DynaLoader QFrame QMenuData);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QMenuBar $VERSION;
 
 1;

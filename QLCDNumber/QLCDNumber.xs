@@ -8,6 +8,7 @@
  */
 
 #include "plcdnum.h"
+#include "pwidget.h"
 #include "enum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QLCDNumber::key)
@@ -42,9 +43,8 @@ PLCDNumber *
 PLCDNumber::new(...)
     CASE: items == 1 || sv_isobject(ST(1))
 	PREINIT:
-	QWidget *parent = (items > 1) ?
-	    (QWidget *)extract_ptr(ST(1), "QWidget") : 0;
-	const char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	pWidget *parent = (items > 1) ? pextract(pWidget, 1) : 0;
+	pChar *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	CODE:
 	RETVAL = new PLCDNumber(parent, name);
 	OUTPUT:
@@ -52,9 +52,8 @@ PLCDNumber::new(...)
     CASE:
 	PREINIT:
 	uint numDigits = SvIV(ST(1));
-	QWidget *parent = (items > 2) ?
-	    (QWidget *)extract_ptr(ST(2), "QWidget") : 0;
-	const char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pWidget *parent = (items > 2) ? pextract(pWidget, 2) : 0;
+	pChar *name = (items > 3 && SvOK(ST(2))) ? SvPV(ST(3), na) : 0;
 	CODE:
 	RETVAL = new PLCDNumber(numDigits, parent, name);
 	OUTPUT:

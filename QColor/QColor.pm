@@ -2,6 +2,10 @@ package QColor;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require Exporter;
 require DynaLoader;
@@ -16,7 +20,7 @@ require QGlobal;
 
 	     &qBlue &qGray &qGreen &qRgb &qRed);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QColor $VERSION;
 
 1;
@@ -68,6 +72,10 @@ qGray,
 qGreen,
 qRed,
 qRgb
+
+=head2 Overloaded operators
+
+!= ==
 
 =head1 DESCRIPTION
 

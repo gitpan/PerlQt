@@ -9,6 +9,7 @@
 
 #include "pslider.h"
 #include "prect.h"
+#include "pwidget.h"
 #include "pqt.h"
 #include "enum.h"
 
@@ -45,8 +46,8 @@ PSlider::new(...)
 	RETVAL
     CASE: items < 4 && sv_isobject(ST(1))
 	PREINIT:
-	QWidget *parent = (QWidget *)extract_ptr(ST(1), "QWidget");
-	const char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	pWidget *parent = pextract(pWidget, 1);
+	pChar *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	CODE:
 	RETVAL = new PSlider(parent, name);
 	OUTPUT:
@@ -55,9 +56,8 @@ PSlider::new(...)
 	PREINIT:
 	QSlider::Orientation orientation =
 	    (QSlider::Orientation) SvIV(ST(1));
-	QWidget *parent = (items > 2) ?
-	    (QWidget *)extract_ptr(ST(2), "QWidget") : 0;
-	const char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pWidget *parent = (items > 2) ? pextract(pWidget, 2) : 0;
+	pChar *name = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	CODE:
 	RETVAL = new PSlider(orientation, parent, name);
 	OUTPUT:
@@ -70,8 +70,8 @@ PSlider::new(...)
 	int value = SvIV(ST(4));
 	QSlider::Orientation orientation =
 	    (QSlider::Orientation) SvIV(ST(5));
-	QWidget *parent = (items > 6) ? pextract(QWidget, 6) : 0;
-	const char *name = (items > 7) ? SvPV(ST(7), na) : 0;
+	pWidget *parent = (items > 6) ? pextract(pWidget, 6) : 0;
+	pChar *name = (items > 7 && SvOK(ST(7))) ? SvPV(ST(7), na) : 0;
 	CODE:
 	RETVAL = new PSlider(minValue, maxValue, step, value, orientation,
 			     parent, name);

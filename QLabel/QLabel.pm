@@ -16,7 +16,7 @@ require QSize;
 @EXPORT = qw(%Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
 	     $GrayText $DontPrint);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QLabel $VERSION;
 
 1;

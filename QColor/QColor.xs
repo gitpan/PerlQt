@@ -109,6 +109,13 @@ PColor::new(...)
 	RETVAL = new PColor();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1))
+	PREINIT:
+	QColor *color = pextract(QColor, 1);
+	CODE:
+	RETVAL = new PColor(*color);
+	OUTPUT:
+	RETVAL
     CASE: items == 4
 	PREINIT:
 	int r = SvIV(ST(1));
@@ -296,3 +303,20 @@ QColor::setRgb(...)
 	int b = SvIV(ST(3));
 	CODE:
 	THIS->setRgb(r, g, b);
+
+
+bool
+QColor::beq(color, misc)
+    QColor *color
+    CODE:
+    RETVAL = (*THIS == *color);
+    OUTPUT:
+    RETVAL
+
+bool
+QColor::bne(color, misc)
+    QColor *color
+    CODE:
+    RETVAL = (*THIS != *color);
+    OUTPUT:
+    RETVAL

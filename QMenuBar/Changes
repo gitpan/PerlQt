@@ -1,5 +1,8 @@
 Revision history for Perl extension QMenuBar.
 
+1.01  Mon May  5 13:06:46 1997
+	- undef checking
+
 0.02  Fri Apr 25 12:30:13 1997
 	- added virtual functions
 

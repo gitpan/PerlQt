@@ -1,5 +1,8 @@
 Revision history for Perl extension QWMatrix.
 
+1.01  Sun May  4 19:39:17 1997
+	- eradicated extract_ptr
+
 0.01  Mon Mar 17 08:43:09 1997
 	- original version; created by h2xs 1.18
 

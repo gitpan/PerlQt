@@ -1,5 +1,8 @@
 Revision history for Perl extension QDialog.
 
+1.01  Mon May  5 12:38:31 1997
+	- undef checking
+
 0.02  Sun Apr 27 18:15:33 1997
 	- renamed %DialogCode to %Dialog
 

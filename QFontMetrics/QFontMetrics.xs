@@ -13,6 +13,23 @@ MODULE = QFontMetrics		PACKAGE = QFontMetrics
 
 PROTOTYPES: ENABLE
 
+PFontMetrics *
+PFontMetrics::new(copy)
+    CASE: sv_isobject(ST(1)) && sv_derived_from(ST(1), "QFont")
+	PREINIT:
+	QFont *font = pextract(QFont, 1);
+	CODE:
+	RETVAL = new PFontMetrics(*font);
+	OUTPUT:
+	RETVAL
+    CASE: sv_isobject(ST(1)) && sv_derived_from(ST(1), "QFontMetrics")
+	PREINIT:
+	QFontMetrics *fontmet = pextract(QFontMetrics, 1);
+	CODE:
+	RETVAL = new PFontMetrics(*fontmet);
+	OUTPUT:
+	RETVAL
+
 int
 QFontMetrics::ascent()
 

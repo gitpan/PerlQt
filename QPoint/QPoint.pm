@@ -2,13 +2,22 @@ package QPoint;
 
 use strict;
 use vars qw($VERSION @ISA);
+use overload
+    'neg' => \&uneg,
+    '*'   => \&bmul,
+    '/'   => \&bdiv,
+    '+'   => \&badd,
+    '-'   => \&bsub,
+    '=='  => \&beq,
+    '!='  => \&bne,
+    'fallback' => 1;
 
 require DynaLoader;
 require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QPoint $VERSION;
 
 1;
@@ -31,10 +40,13 @@ setY,
 x,
 y
 
+=head2 Overloaded operators
+
+neg (unary minus) * / + - != ==
+
 =head1 DESCRIPTION
 
-Most of QPoint is operators, and I haven't interfaced the operators yet.
-Everything else, what little there is of it, is interfaced.
+What you see is what you get. That means operators.
 
 =head1 RESTRICTIONS
 

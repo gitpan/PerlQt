@@ -12,3 +12,9 @@ path to a configuration script...
 Chris Leach
 	- pointed out Solaris' choking on modification of string constants
 in parse_clname()
+	- submitted a patch to QRect adding prototypes, and a patch for the
+forever example
+
+Franklin R. Belew
+	- noticed a lack of a warning on passing an undef argument which
+is converted to a NULL pointer to a function not expecting one

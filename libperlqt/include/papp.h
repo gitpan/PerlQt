@@ -14,10 +14,10 @@
 #include "qapp.h"
 #include "pfontmet.h"
 #include "ppalette.h"
-#include "pqt.h"
 #include "virtual.h"
 
-class PApplication : public QApplication, public virtualize {
+class PApplication : public QApplication, public PApplication_virtualize {
+    QApplication_virtual_functions
 public:
     PApplication(int &argc, char **argv) : QApplication(argc, argv) {}
 };

@@ -1,5 +1,8 @@
 Revision history for Perl extension QGroupBox.
 
+1.01  Mon May  5 12:47:09 1997
+	- undef checking
+
 0.03  Wed Apr 23 16:44:06 1997
 	- added virtual functions
 

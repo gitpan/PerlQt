@@ -1,5 +1,8 @@
 Revision history for Perl extension QPointArray.
 
+1.01  Sun May  4 23:46:30 1997
+	- added copy constructor prototype
+
 0.04  Mon Apr 28 21:33:03 1997
 	- fixed the pesky set/putPoints
 

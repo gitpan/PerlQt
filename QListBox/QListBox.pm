@@ -12,7 +12,7 @@ require QTableView;
 
 @ISA = qw(DynaLoader QTableView);
 
-$VERSION = '0.02';
+$VERSION = '1.01';
 bootstrap QListBox $VERSION;
 
 

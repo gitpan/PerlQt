@@ -1,5 +1,11 @@
 Revision history for Perl extension QPainter.
 
+1.01  Mon May  5 13:36:57 1997
+	- undef checking
+
+1.01  Sun May  4 19:31:23 1997
+	- eradicated extract_ptr
+
 0.05  Wed Apr 30 14:55:30 1997
 	- added redirect, flush, brush, a new constructor prototype
 

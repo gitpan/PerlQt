@@ -1,5 +1,8 @@
 Revision history for Perl extension QPaintDevice.
 
+1.01  Mon May  5 13:17:11 1997
+	- undef checking
+
 0.04  Sun Apr 27 16:11:59 1997
 	- updated docs
 

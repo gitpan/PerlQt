@@ -1,5 +1,6 @@
-const char *		Q_PV
-pstring			Q_PV
+const char *		T_PV
+pChar *			Q_PV
+const pChar *		Q_PV
 float			T_FLOAT
 uint			T_IV
 WFlags			T_IV
@@ -12,6 +13,7 @@ QBoxLayout::Direction	T_ENUM
 QComboBox::Policy	T_ENUM
 QFont::CharSet		T_ENUM
 QFont::StyleHint	T_ENUM
+QImage::Endian		T_ENUM
 QLCDNumber::Mode	T_ENUM
 QLCDNumber::SegmentStyle T_ENUM
 QLineEdit::EchoMode	T_ENUM
@@ -102,6 +104,7 @@ QMenuData *		Qt_QMenuData_KLUDGE
 QPaintDevice *		Qt_QPaintDevice_KLUDGE
 QRangeControl *		Qt_QRangeControl_KLUDGE
 
+PAccel *		VQt_OBJECT
 PApplication *		VQt_OBJECT
 PButton *		VQt_OBJECT
 PButtonGroup *		VQt_OBJECT
@@ -131,7 +134,6 @@ PTableView *		VQt_OBJECT
 PWidget *		VQt_OBJECT
 PWindow *		VQt_OBJECT
 
-PAccel *		PQt_OBJECT
 PBitmap *		PQt_OBJECT
 PBoxLayout *		PQt_OBJECT
 PBrush *		PQt_OBJECT
@@ -172,7 +174,7 @@ PToolTip *		PQt_OBJECT
 PToolTipGroup *		PQt_OBJECT
 PWMatrix *		PQt_OBJECT
 
-pApplication *		pQt_OBJECT
+pAccel *		pQt_OBJECT
 pButton *		pQt_OBJECT
 pButtonGroup *		pQt_OBJECT
 pCheckBox *		pQt_OBJECT
@@ -209,6 +211,7 @@ PQt_OBJECT
     $arg = objectify_ptr((void*)$var, MSTR($type), 1);
 
 VQt_OBJECT
+    if(!$var) XSRETURN_UNDEF;
     $arg = objectify_ptr((void*)$var, $var->setQtClassName(CLASS), 1);
     $var->setQtObject($arg);
 

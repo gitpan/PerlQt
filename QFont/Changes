@@ -1,5 +1,14 @@
 Revision history for Perl extension QFont.
 
+1.01  Mon May  5 12:44:27 1997
+	- undef checking
+
+1.01  Sun May  4 20:55:39 1997
+	- added copy constructor prototype
+
+1.01  Sat May  3 14:43:52 1997
+	- overloaded operators
+
 0.05  Wed Apr 30 12:38:04 1997
 	- added key()
 

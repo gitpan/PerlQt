@@ -2,6 +2,10 @@ package QFont;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require Exporter;
 require DynaLoader;
@@ -10,7 +14,7 @@ require QGlobal;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Style %Weight %CharSet);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QFont $VERSION;
 
 1;
@@ -56,6 +60,10 @@ styleHint,
 substitute,
 underline,
 weight
+
+=head2 Overloaded operators
+
+!= ==
 
 =head1 DESCRIPTION
 

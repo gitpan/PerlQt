@@ -2,6 +2,10 @@ package QBrush;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require Exporter;
 require DynaLoader;
@@ -13,7 +17,7 @@ require QPixmap;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Brush);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QBrush $VERSION;
 
 1;
@@ -38,6 +42,10 @@ setColor,
 setPixmap,
 setStyle,
 style
+
+=head2 Overloaded operators
+
+!= ==
 
 =head1 DESCRIPTION
 

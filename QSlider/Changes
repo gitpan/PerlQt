@@ -1,5 +1,11 @@
 Revision history for Perl extension QSlider.
 
+1.01  Mon May  5 14:05:32 1997
+	- undef checking
+
+1.01  Sun May  4 19:38:03 1997
+	- eradicated extract_ptr
+
 0.02  Sun Apr 27 18:12:28 1997
 	- renamed %TickSetting to %Tick
 

@@ -8,6 +8,7 @@
  */
 
 #include "ptimer.h"
+#include "pobject.h"
 #include "pqt.h"
 #include "sigslot.h"
 
@@ -17,7 +18,7 @@ PROTOTYPES: ENABLE
 
 PTimer *
 PTimer::new(parent = 0, name = 0)
-    QObject *parent
+    pObject *parent
     char *name
 
 void

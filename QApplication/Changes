@@ -1,5 +1,8 @@
 Revision history for Perl extension QApplication.
 
+1.01  Sun May  4 18:39:01 1997
+	- added virtual functions
+
 0.03  Wed Apr 30 11:09:44 1997
 	- export the %ColorSpec hash
 

@@ -1,5 +1,11 @@
 Revision history for Perl extension QPushButton.
 
+1.01  Mon May  5 13:47:35 1997
+	- undef checking
+
+1.01  Sun May  4 19:36:06 1997
+	- eradicated extract_ptr
+
 0.03  Wed Apr 23 14:04:09 1997
 	- added virtual functions, and the setToggleButton(), setOn() and
 toggle() functions

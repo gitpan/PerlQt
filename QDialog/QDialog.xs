@@ -8,6 +8,7 @@
  */
 
 #include "pdialog.h"
+#include "pwidget.h"
 #include "pqt.h"
 #include "enum.h"
 
@@ -28,8 +29,8 @@ BOOT:
 
 PDialog *
 PDialog::new(parent = 0, name = 0, modal = FALSE, f = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
     bool modal
     WFlags f
 

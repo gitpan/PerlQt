@@ -2,12 +2,14 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME'	=> 'libperlqt',
-    'VERSION'	=> '1.00',
+    'VERSION'	=> '1.01',
     'CC'	=> 'g++',
     'INC'	=> '-I$(QTDIR)/include -I../libperlqt/include',
     'OBJECT'	=> q{libperlqt$(OBJ_EXT)
 		     virtual$(OBJ_EXT)
 		     sigslot$(OBJ_EXT)
+		     QAccel$(OBJ_EXT)
+		     QApplication$(OBJ_EXT)
 		     QButton$(OBJ_EXT)
 		     QButtonGroup$(OBJ_EXT)
 		     QCheckBox$(OBJ_EXT)

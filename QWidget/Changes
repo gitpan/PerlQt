@@ -1,5 +1,8 @@
 Revision history for Perl extension QWidget.
 
+1.01  Mon May  5 14:12:23 1997
+	- undef checking
+
 0.04  Sun Apr 27 15:53:42 1997
 	- changed all extract_ptr()s from the stack to pextract()s
 

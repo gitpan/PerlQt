@@ -9,6 +9,7 @@
 
 #include "pcombo.h"
 #include "ppixmap.h"
+#include "pwidget.h"
 #include "pqt.h"
 #include "enum.h"
 
@@ -42,7 +43,7 @@ PComboBox::new(...)
     CASE: sv_isobject(ST(1))
 	PREINIT:
 	QWidget *parent = pextract(QWidget, 1);
-	char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	pChar *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	CODE:
 	RETVAL = new PComboBox(parent, name);
 	OUTPUT:
@@ -50,8 +51,8 @@ PComboBox::new(...)
     CASE:
 	PREINIT:
 	bool rw = SvTRUE(ST(1)) ? TRUE : FALSE;
-	QWidget *parent = (items > 2) ? pextract(QWidget, 2) : 0;
-	char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pWidget *parent = (items > 2) ? pextract(pWidget, 2) : 0;
+	pChar *name = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	CODE:
 	RETVAL = new PComboBox(rw, parent, name);
 	OUTPUT:

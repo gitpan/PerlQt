@@ -5,6 +5,7 @@ use QColor;
 use QPainter;
 use QPen;
 use QPixmap;
+use QRect;
 use QWidget;
 
 use signals 'angleChanged(int)', 'forceChanged(int)';

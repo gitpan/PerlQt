@@ -70,7 +70,7 @@ PBoxLayout::new(...)
 	PREINIT:
 	QBoxLayout::Direction direction = (QBoxLayout::Direction)SvIV(ST(1));
 	int autoBorder = (items > 2) ? SvIV(ST(2)) : -1;
-	char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pChar *name = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	CODE:
 	RETVAL = new PBoxLayout(direction, autoBorder, name);
 	OUTPUT:
@@ -81,7 +81,7 @@ PBoxLayout::new(...)
 	QBoxLayout::Direction direction = (QBoxLayout::Direction)SvIV(ST(2));
 	int border = (items > 3) ? SvIV(ST(3)) : 0;
 	int autoBorder = (items > 4) ? SvIV(ST(4)) : -1;
-	char *name = (items > 5) ? SvPV(ST(5), na) : 0;
+	pChar *name = (items > 5 && SvOK(ST(5))) ? SvPV(ST(5), na) : 0;
 	CODE:
 	RETVAL = new PBoxLayout(parent, direction, border, autoBorder, name);
 	OUTPUT:
@@ -125,7 +125,7 @@ PGridLayout::new(...)
 	int nRows = SvIV(ST(1));
 	int nCols = SvIV(ST(2));
 	int autoBorder = (items > 3) ? SvIV(ST(3)) : -1;
-	char *name = (items > 4) ? SvPV(ST(4), na) : 0;
+	pChar *name = (items > 4 && SvOK(ST(4))) ? SvPV(ST(4), na) : 0;
 	CODE:
 	RETVAL = new PGridLayout(nRows, nCols, autoBorder, name);
 	OUTPUT:
@@ -137,7 +137,7 @@ PGridLayout::new(...)
 	int nCols = SvIV(ST(3));
 	int border = (items > 4) ? SvIV(ST(4)) : 0;
 	int autoBorder = (items > 5) ? SvIV(ST(5)) : -1;
-	char *name = (items > 6) ? SvPV(ST(6), na) : 0;
+	pChar *name = (items > 6 && SvOK(ST(6))) ? SvPV(ST(6), na) : 0;
 	CODE:
 	RETVAL = new PGridLayout(parent, nRows, nCols, border, autoBorder,
 				 name);

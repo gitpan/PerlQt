@@ -2,6 +2,10 @@ package QRect;
 
 use strict;
 use vars qw($VERSION @ISA);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require DynaLoader;
 require QGlobal;
@@ -11,7 +15,7 @@ require QSize;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QRect $VERSION;
 
 1;
@@ -72,9 +76,13 @@ width,
 x,
 y
 
+=head2 Overloaded operators
+
+!= ==
+
 =head1 DESCRIPTION
 
-Everything but the operators is fully interfaced.
+Everything is fully interfaced, including the operators.
 
 =head1 SEE ALSO
 

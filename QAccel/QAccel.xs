@@ -17,7 +17,7 @@ PROTOTYPES: ENABLE
 PAccel *
 PAccel::new(parent, name = 0)
     QWidget *parent
-    char *name
+    pChar *name
 
 void
 QAccel::clear()
@@ -90,3 +90,11 @@ void
 QAccel::setItemEnabled(id, enable)
     int id
     bool enable
+
+
+MODULE = QAccel		PACKAGE = QAccel	PREFIX = virtual_
+
+bool
+pAccel::virtual_eventFilter(obj, event)
+    QObject *obj
+    QEvent *event

@@ -15,6 +15,34 @@ PROTOTYPES: ENABLE
 
 PRect *
 PRect::new(...)
+    CASE: items == 1
+	CODE:
+	RETVAL = new PRect();
+	OUTPUT:
+	RETVAL
+    CASE: items == 2
+	PREINIT:
+	QRect *rect = pextract(QRect, 1);
+	CODE:
+	RETVAL = new PRect(*rect);
+	OUTPUT:
+	RETVAL
+    CASE: items == 3 && sv_isobject(ST(1)) && sv_derived_from(ST(2), "QPoint")
+	PREINIT:
+	QPoint *topleft     = pextract(QPoint, 1);
+	QPoint *bottomright = pextract(QPoint, 2);
+	CODE:
+	RETVAL = new PRect(*topleft, *bottomright);
+	OUTPUT:
+	RETVAL
+    CASE: items == 3 && sv_isobject(ST(1)) && sv_derived_from(ST(2), "QSize")
+	PREINIT:
+	QPoint *topleft = pextract(QPoint, 1);
+	QSize  *size    = pextract(QSize, 2);
+	CODE:
+	RETVAL = new PRect(*topleft, *size);
+	OUTPUT:
+	RETVAL
     CASE: items > 4
 	PREINIT:
 	int left = SvIV(ST(1));
@@ -257,3 +285,20 @@ QRect::x()
 
 int
 QRect::y()
+
+
+bool
+QRect::beq(rect, misc)
+    QRect *rect
+    CODE:
+    RETVAL = (*THIS == *rect);
+    OUTPUT:
+    RETVAL
+
+bool
+QRect::bne(rect, misc)
+    QRect *rect
+    CODE:
+    RETVAL = (*THIS != *rect);
+    OUTPUT:
+    RETVAL

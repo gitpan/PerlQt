@@ -8,6 +8,7 @@
  */
 
 #include "ppopmenu.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QPopupMenu		PACKAGE = QPopupMenu
@@ -16,8 +17,8 @@ PROTOTYPES: ENABLE
 
 PPopupMenu *
 PPopupMenu::new(parent = 0, name = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
 
 bool
 QPopupMenu::isCheckable()

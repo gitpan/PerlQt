@@ -163,7 +163,7 @@ disconnect(...)
 	PREINIT:
 	QObject *sender   = pextract(QObject, 0);
 	QObject *receiver = pextract(QObject, 1);
-	char *member = (items > 2) ? SvPV(ST(2), na) : 0;
+	pChar *member = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	SV *memb;
 	CODE:
 	if(member) {
@@ -177,10 +177,10 @@ disconnect(...)
 	RETVAL
     CASE: items > 1
 	PREINIT:
-	QObject *sender   = pextract(QObject, 0);
-	char *signal	  = (items > 1) ? SvPV(ST(1), na) : 0;
-	QObject *receiver = (items > 2) ? pextract(QObject, 2) : 0;
-	char *member	  = (items > 3) ? SvPV(ST(3), na) : 0;
+	QObject *sender = pextract(QObject, 0);
+	pChar *signal = (items > 1 && SvOK(ST(3))) ? SvPV(ST(1), na) : 0;
+	pObject *receiver = (items > 2) ? pextract(pObject, 2) : 0;
+	pChar *member = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	SV *sv;
 	CODE:
 	if(signal) {

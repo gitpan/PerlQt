@@ -8,6 +8,7 @@
  */
 
 #include "pfiledlg.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QFileDialog		PACKAGE = QFileDialog
@@ -24,7 +25,7 @@ PFileDialog::new(...)
     CASE: sv_isobject(ST(1))
 	PREINIT:
 	QWidget *parent = pextract(QWidget, 1);
-	char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	char *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	bool modal = (items > 3) ? (SvTRUE(ST(3)) ? TRUE : FALSE) : FALSE;
 	CODE:
 	RETVAL = new PFileDialog(parent, name, modal);
@@ -33,9 +34,9 @@ PFileDialog::new(...)
     CASE:
 	PREINIT:
 	char *dirName = SvPV(ST(1), na);
-	char *filter = (items > 2) ? SvPV(ST(2), na) : 0;
-	QWidget *parent = (items > 3) ? pextract(QWidget, 3) : 0;
-	char *name = (items > 4) ? SvPV(ST(4), na) : 0;
+	char *filter = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
+	pWidget *parent = (items > 3) ? pextract(pWidget, 3) : 0;
+	char *name = (items > 4 && SvOK(ST(4))) ? SvPV(ST(4), na) : 0;
 	bool modal = (items > 5) ? (SvTRUE(ST(5)) ? TRUE : FALSE) : FALSE;
 	CODE:
 	RETVAL = new PFileDialog(dirName, filter, parent, name, modal);
@@ -47,10 +48,10 @@ QFileDialog::dirPath()
 
 const char *
 getOpenFileName(dir = 0, filter = 0, parent = 0, name = 0)
-    char *dir
-    char *filter
-    QWidget *parent
-    char *name
+    pChar *dir
+    pChar *filter
+    pWidget *parent
+    pChar *name
     CODE:
     RETVAL = QFileDialog::getOpenFileName(dir, filter, parent, name);
     OUTPUT:
@@ -58,10 +59,10 @@ getOpenFileName(dir = 0, filter = 0, parent = 0, name = 0)
 
 const char *
 getSaveFileName(dir = 0, filter = 0, parent = 0, name = 0)
-    char *dir
-    char *filter
-    QWidget *parent
-    char *name
+    pChar *dir
+    pChar *filter
+    pWidget *parent
+    pChar *name
     CODE:
     RETVAL = QFileDialog::getSaveFileName(dir, filter, parent, name);
     OUTPUT:

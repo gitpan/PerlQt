@@ -2,13 +2,17 @@ package QPalette;
 
 use strict;
 use vars qw($VERSION @ISA);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require DynaLoader;
 require QGlobal;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QPalette $VERSION;
 
 
@@ -16,6 +20,10 @@ package QColorGroup;
 
 use strict;
 use vars qw(@ISA);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require QGlobal;
 
@@ -62,6 +70,10 @@ setActive,
 setDisabled,
 setNormal,
 serialNumber
+
+=head2 Overloaded operators
+
+!= ==
 
 =head1 DESCRIPTION
 

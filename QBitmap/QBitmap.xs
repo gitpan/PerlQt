@@ -20,10 +20,28 @@ PBitmap::new(...)
 	RETVAL = new PBitmap();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1)) && sv_derived_from(ST(1), "QBitmap")
+	QBitmap *bitmap = pextract(QBitmap, 1);
+	CODE:
+	RETVAL = new PBitmap(*bitmap);
+	OUTPUT:
+	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1)) && sv_derived_from(ST(1), "QPixmap")
+	QPixmap *pixmap = pextract(QPixmap, 1);
+	CODE:
+	RETVAL = new PBitmap(*pixmap);
+	OUTPUT:
+	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1)) && sv_derived_from(ST(1), "QImage")
+	QImage *image = pextract(QImage, 1);
+	CODE:
+	RETVAL = new PBitmap(*image);
+	OUTPUT:
+	RETVAL
     CASE: !sv_isobject(ST(1)) && SvPOK(ST(1))
 	PREINIT:
 	char *fileName = SvPV(ST(1), na);
-	char *format = (items > 2) ? SvPV(ST(2), na) : 0;
+	pChar *format = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	CODE:
 	RETVAL = new PBitmap(fileName, format);
 	OUTPUT:

@@ -36,6 +36,13 @@ PPen::new(...)
 	RETVAL = new PPen();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1)) && sv_derived_from(ST(1), "QPen")
+	PREINIT:
+	QPen *pen = pextract(QPen, 1);
+	CODE:
+	RETVAL = new PPen(*pen);
+	OUTPUT:
+	RETVAL
     CASE: !sv_isobject(ST(1))
 	PREINIT:
 	PenStyle style = (PenStyle)SvIV(ST(1));
@@ -45,7 +52,7 @@ PPen::new(...)
 	RETVAL
     CASE:
 	PREINIT:
-	QColor *color = (QColor *)extract_ptr(ST(1), "QColor");
+	QColor *color = pextract(QColor, 1);
 	uint width = (items > 2) ? SvIV(ST(2)) : 0;
 	PenStyle style = (items > 3) ? (PenStyle)SvIV(ST(3)) : SolidLine;
 	CODE:
@@ -79,3 +86,20 @@ QPen::style()
 
 uint
 QPen::width()
+
+
+bool
+QPen::beq(pen, misc)
+    QPen *pen
+    CODE:
+    RETVAL = (*THIS == *pen);
+    OUTPUT:
+    RETVAL
+
+bool
+QPen::bne(pen, misc)
+    QPen *pen
+    CODE:
+    RETVAL = (*THIS != *pen);
+    OUTPUT:
+    RETVAL

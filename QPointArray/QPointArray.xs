@@ -20,6 +20,13 @@ PPointArray::new(...)
 	RETVAL = new PPointArray();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1)) && sv_derived_from(ST(1), "QPointArray")
+	PREINIT:
+	QPointArray *pa = pextract(QPointArray, 1);
+	CODE:
+	RETVAL = new PPointArray(*pa);
+	OUTPUT:
+	RETVAL
     CASE: sv_isobject(ST(1))
 	PREINIT:
 	QRect *r = pextract(QRect, 1);

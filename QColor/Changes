@@ -1,5 +1,11 @@
 Revision history for Perl extension QColor.
 
+1.01  Sun May  4 20:19:26 1997
+	- added copy constructor prototype
+
+1.01  Sat May  3 14:34:07 1997
+	- overloaded operators
+
 0.01  Thu Mar 13 16:37:09 1997
 	- original version; created by h2xs 1.18
 

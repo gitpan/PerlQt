@@ -1,8 +1,32 @@
 Revision history for Perl extension Qt.
 
+1.01  Mon May  5 15:35:38 1997
+	- forced the Makefile.PL to croak when libperlqt hasn't been installed
+
+1.01  Mon May  5 14:07:01 1997
+	- made undef->NULL->undef conversion smoother
+
+1.01  Mon May  5 12:25:11 1997
+	- made the VQt_OBJECT OUTPUT typemap NULL-safe
+
+1.01  Mon May  5 12:13:05 1997
+	- renamed pstring to pChar
+
+1.01  Sun May  4 22:30:16 1997
+	- added copy constructor prototypes
+
+1.01  Sat May  3 01:41:34 1997
+	- overloaded operators
+
+1.00  Thu May  1 02:10:45 1997
+	- released version 1.00 on an unsuspecting world
+
 0.05  Tue Apr 29 14:36:08 1997
 	- added a pstring typemap entry to allow &sv_undef to be converted
 to NULL in the right places.
+
+0.04  Mon Apr 28 17:30:16 1997
+	- released version 0.04
 
 0.04  Mon Apr 21 17:00:47 1997
 	- added a DISTNAME => 'PerlQt' to Makefile.PL

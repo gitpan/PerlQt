@@ -2,6 +2,14 @@ package QSize;
 
 use strict;
 use vars qw($VERSION @ISA);
+use overload
+    '*'  => \&bmul,
+    '/'  => \&bdiv,
+    '+'  => \&badd,
+    '-'  => \&bsub,
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require DynaLoader;
 require QGlobal;
@@ -10,7 +18,7 @@ require QPoint;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QSize $VERSION;
 
 1;
@@ -35,9 +43,13 @@ setHeight,
 setWidth,
 width
 
+=head2 Overloaded operators
+
+* / + - != ==
+
 =head1 DESCRIPTION
 
-Rumors about the lack of operators in PerlQt's QSize are true!
+Fully implemented, including operators.
 
 =head1 SEE ALSO
 

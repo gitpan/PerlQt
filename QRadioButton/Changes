@@ -1,5 +1,8 @@
 Revision history for Perl extension QRadioButton.
 
+1.01  Mon May  5 13:53:40 1997
+	- undef checking
+
 0.02  Wed Apr 23 14:49:41 1997
 	- added virtual functions
 

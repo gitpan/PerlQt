@@ -8,6 +8,7 @@
  */
 
 #include "pradiobt.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QRadioButton		PACKAGE = QRadioButton
@@ -23,8 +24,8 @@ PRadioButton::new(...)
 	RETVAL
     CASE: sv_isobject(ST(1))
 	PREINIT:
-	QWidget *parent = pextract(QWidget, 1);
-	char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	pWidget *parent = pextract(pWidget, 1);
+	pChar *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	CODE:
 	RETVAL = new PRadioButton(parent, name);
 	OUTPUT:
@@ -32,8 +33,8 @@ PRadioButton::new(...)
     CASE:
 	PREINIT:
 	char *text = SvPV(ST(1), na);
-	QWidget *parent = (items > 2) ? pextract(QWidget, 2) : 0;
-	char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pWidget *parent = (items > 2) ? pextract(pWidget, 2) : 0;
+	pChar *name = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	CODE:
 	RETVAL = new PRadioButton(text, parent, name);
 	OUTPUT:

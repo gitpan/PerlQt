@@ -18,6 +18,7 @@
 class PFontInfo : public QFontInfo {
 public:
     PFontInfo(const QFontInfo &fontinf) : QFontInfo(fontinf) {}
+    PFontInfo(const QFont &font) : QFontInfo(font) {}
 };
 
 #endif  // PFONTINF_H

@@ -30,7 +30,8 @@ public:
 	    QPixmap::ColorMode mode = QPixmap::Auto) :
 	QPixmap(fileName, format, mode) {}
 
-    PPixmap(const QPixmap &pixmap) { *(QPixmap *)this = pixmap; }
+    PPixmap(const QPixmap &pixmap) : QPixmap(pixmap) {}
+    PPixmap(const QImage &image) { *(QPixmap *)this = image; }
 };
 
 #endif  // PPIXMAP_H

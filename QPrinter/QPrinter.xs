@@ -8,6 +8,7 @@
  */
 
 #include "pprinter.h"
+#include "pwidget.h"
 #include "pqt.h"
 #include "enum.h"
 
@@ -88,7 +89,7 @@ QPrinter::printProgram()
 
 bool
 QPrinter::setup(parent = 0)
-    QWidget *parent
+    pWidget *parent
 
 void
 QPrinter::setCreator(creator)

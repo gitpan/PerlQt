@@ -9,6 +9,7 @@
 
 #include "plistbox.h"
 #include "ppixmap.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QListBox		PACKAGE = QListBoxItem
@@ -56,8 +57,8 @@ MODULE = QListBox		PACKAGE = QListBox
 
 PListBox *
 PListBox::new(parent = 0, name = 0, f = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
     WFlags f
 
 bool

@@ -1,5 +1,14 @@
 Revision history for Perl extension QBrush.
 
+1.01  Sun May  4 20:16:51 1997
+	- added copy constructor prototype
+
+1.01  Sun May  4 19:23:44 1997
+	- eradicated extract_ptr
+
+1.01  Sat May  3 14:26:36 1997
+	- overloaded operators
+
 0.04  Mon Apr 28 20:47:36 1997
 	- changed NoBrush to None
 

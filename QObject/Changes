@@ -1,5 +1,8 @@
 Revision history for Perl extension QObject.
 
+1.01  Mon May  5 13:15:02 1997
+	- undef checking
+
 0.05  Tue Apr 29 13:57:14 1997
 	- added name()
 

@@ -1,8 +1,13 @@
 package QRegion;
 
 use strict;
-use vars qw($VERSION @ISA);
+use vars qw($VERSION @ISA @EXPORT);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
+require Exporter;
 require DynaLoader;
 require QGlobal;
 
@@ -10,9 +15,10 @@ require QPoint;
 require QPointArray;
 require QRect;
 
-@ISA = qw(DynaLoader Qt::Base);
+@ISA = qw(Exporter DynaLoader Qt::Base);
+@EXPORT = qw(%Region);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QRegion $VERSION;
 
 1;
@@ -40,9 +46,18 @@ translate,
 unite,
 xor
 
+=head2 Overloaded operators
+
+!= ==
+
 =head1 DESCRIPTION
 
-Everything but the operators has been successfully interfaced.
+Everything has been successfully interfaced.
+
+=head2 EXPORTED
+
+The C<%Region> hash is exported into the user's namespace. It contains
+the RegionShape constants (Rectangle and Ellipse).
 
 =head1 SEE ALSO
 

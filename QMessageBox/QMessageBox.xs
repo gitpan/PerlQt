@@ -8,6 +8,7 @@
  */
 
 #include "pmsgbox.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QMessageBox		PACKAGE = QMessageBox
@@ -16,8 +17,8 @@ PROTOTYPES: ENABLE
 
 PMessageBox *
 PMessageBox::new(parent = 0, name = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
 
 const char *
 QMessageBox::buttonText()
@@ -26,9 +27,9 @@ int
 message(caption, text, buttonText = 0, parent = 0, name = 0)
     char *caption
     char *text
-    pstring buttonText
-    QWidget *parent
-    pstring name
+    pChar *buttonText
+    pWidget *parent
+    pChar *name
     CODE:
     RETVAL = QMessageBox::message(caption, text, buttonText, parent, name);
     OUTPUT:
@@ -38,10 +39,10 @@ bool
 query(caption, text, yesButtonText = 0, noButtonText = 0, parent = 0, name = 0)
     char *caption
     char *text
-    pstring yesButtonText
-    pstring noButtonText
-    QWidget *parent
-    pstring name
+    pChar *yesButtonText
+    pChar *noButtonText
+    pWidget *parent
+    pChar *name
     CODE:
     RETVAL = QMessageBox::query(caption, text, yesButtonText, noButtonText,
 				parent, name);

@@ -42,6 +42,13 @@ protected:								\
     void initMetaObject();						\
     void timerEvent(QTimerEvent *);
 
+#define QAccel_virtual_functions QObject_virtual_functions
+
+#define QApplication_virtual_functions					\
+    QObject_virtual_functions						\
+public:									\
+    bool notify(QObject *, QEvent *);
+
 #define QWidget_virtual_functions					\
     QObject_virtual_functions						\
 public:									\
@@ -253,6 +260,13 @@ public:
 protected:
     void PObject_initMetaObject();
     void PObject_timerEvent(QTimerEvent *);
+};
+
+class PAccel_virtualize : public PObject_virtualize {};
+
+class PApplication_virtualize : public PObject_virtualize {
+public:
+    bool PApplication_notify(QObject *, QEvent *);
 };
 
 class PWidget_virtualize : public PObject_virtualize {

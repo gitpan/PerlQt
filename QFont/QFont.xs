@@ -64,10 +64,18 @@ BOOT:
 
 PFont *
 PFont::new(family = 0, pointSize = 12, weight = QFont::Normal, italic = FALSE)
-    char *family
-    int pointSize
-    int weight
-    bool italic
+    CASE: items == 2 && sv_isobject(ST(1))
+	PREINIT:
+	QFont *font = pextract(QFont, 1);
+	CODE:
+	RETVAL = new PFont(*font);
+	OUTPUT:
+	RETVAL
+    CASE:
+	pChar *family
+	int pointSize
+	int weight
+	bool italic
 
 bool
 QFont::bold()
@@ -185,3 +193,20 @@ QFont::underline()
 
 int
 QFont::weight()
+
+
+bool
+QFont::beq(font, misc)
+    QFont *font
+    CODE:
+    RETVAL = (*THIS == *font);
+    OUTPUT:
+    RETVAL
+
+bool
+QFont::bne(font, misc)
+    QFont *font
+    CODE:
+    RETVAL = (*THIS != *font);
+    OUTPUT:
+    RETVAL

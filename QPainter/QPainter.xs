@@ -9,6 +9,7 @@
 
 #include "ppainter.h"
 #include "ppaintd.h"
+#include "prect.h"
 #include "enum.h"
 
 #define STORE_mode(mode) enumIV(hv, MSTR(mode), mode ## Mode)
@@ -119,7 +120,7 @@ QPainter::drawArc(...)
 	THIS->drawArc(x, y, w, h, a, alen);
     CASE: items > 3
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	int a = SvIV(ST(2));
 	int alen = SvIV(ST(3));
 	CODE:
@@ -139,7 +140,7 @@ QPainter::drawChord(...)
 	THIS->drawChord(x, y, w, h, a, alen);
     CASE: items > 3
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	int a = SvIV(ST(2));
 	int alen = SvIV(ST(3));
 	CODE:
@@ -157,7 +158,7 @@ QPainter::drawEllipse(...)
 	THIS->drawEllipse(x, y, w, h);
     CASE: items > 1
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	THIS->drawEllipse(*rect);
 
@@ -165,8 +166,8 @@ void
 QPainter::drawLine(arg1, arg2, ...)
     CASE: items == 3
 	PREINIT:
-	QPoint *p1 = (QPoint *)extract_ptr(ST(1), "QPoint");
-	QPoint *p2 = (QPoint *)extract_ptr(ST(2), "QPoint");
+	QPoint *p1 = pextract(QPoint, 1);
+	QPoint *p2 = pextract(QPoint, 2);
 	CODE:
 	THIS->drawLine(*p1, *p2);
     CASE: items > 4
@@ -206,7 +207,7 @@ QPainter::drawPie(...)
 	THIS->drawPie(x, y, w, h, a, alen);
     CASE: items > 3
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	int a = SvIV(ST(2));
 	int alen = SvIV(ST(3));
 	CODE:
@@ -218,7 +219,7 @@ QPainter::drawPixmap(...)
 	PREINIT:
 	int x = SvIV(ST(1));
 	int y = SvIV(ST(2));
-	QPixmap *pix = (QPixmap *)extract_ptr(ST(3), "QPixmap");
+	QPixmap *pix = pextract(QPixmap, 3);
 	int sx = (items > 4) ? SvIV(ST(4)) : 0;
 	int sy = (items > 5) ? SvIV(ST(5)) : 0;
 	int sw = (items > 6) ? SvIV(ST(6)) : -1;
@@ -227,15 +228,15 @@ QPainter::drawPixmap(...)
 	THIS->drawPixmap(x, y, *pix, sx, sy, sw, sh);
     CASE: items > 3
 	PREINIT:
-	QPoint *p = (QPoint *)extract_ptr(ST(1), "QPoint");
-	QPixmap *pix = (QPixmap *)extract_ptr(ST(2), "QPixmap");
-	QRect *sr = (QRect *)extract_ptr(ST(3), "QRect");
+	QPoint *p = pextract(QPoint, 1);
+	QPixmap *pix = pextract(QPixmap, 2);
+	QRect *sr = pextract(QRect, 3);
 	CODE:
 	THIS->drawPixmap(*p, *pix, *sr);
     CASE: items == 3
 	PREINIT:
-	QPoint *p = (QPoint *)extract_ptr(ST(1), "QPoint");
-	QPixmap *pix = (QPixmap *)extract_ptr(ST(2), "QPixmap");
+	QPoint *p = pextract(QPoint, 1);
+	QPixmap *pix = pextract(QPixmap, 2);
 	CODE:
 	THIS->drawPixmap(*p, *pix);
     CASE:
@@ -246,7 +247,7 @@ void
 QPainter::drawPoint(arg1, ...)
     CASE: items == 2
 	PREINIT:
-	QPoint *point = (QPoint *)extract_ptr(ST(1), "QPoint");
+	QPoint *point = pextract(QPoint, 1);
 	CODE:
 	THIS->drawPoint(*point);
     CASE: items > 2
@@ -292,7 +293,7 @@ QPainter::drawRect(...)
 	THIS->drawRect(x, y, w, h);
     CASE: items > 1
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	THIS->drawRect(*rect);
 
@@ -300,7 +301,7 @@ void
 QPainter::drawRoundRect(arg1, arg2, arg3, ...)
     CASE: items == 4
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	int xRnd = SvIV(ST(2));
 	int yRnd = SvIV(ST(3));
 	CODE:
@@ -327,7 +328,7 @@ QPainter::drawText(...)
 	int flags = SvIV(ST(5));
 	char *str = SvPV(ST(6), na);
 	int len = (items > 7) ? SvIV(ST(7)) : -1;
-	QRect *br = (items > 8) ? (QRect *)extract_ptr(ST(8), "QRect") : 0;
+	PRect *br = (items > 8) ? pextract(PRect, 8) : 0;
 	CODE:
 	THIS->drawText(x, y, w, h, flags, str, len, br);
     CASE: !sv_isobject(ST(1))
@@ -340,16 +341,16 @@ QPainter::drawText(...)
 	THIS->drawText(x, y, str, len);
     CASE: items > 3 && SvIOK(ST(2))
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	int flags = SvIV(ST(2));
 	char *str = SvPV(ST(3), na);
 	int len = (items > 4) ? SvIV(ST(4)) : -1;
-	QRect *br = (items > 5) ? (QRect *)extract_ptr(ST(5), "QRect") : 0;
+	PRect *br = (items > 5) ? pextract(PRect, 5) : 0;
 	CODE:
 	THIS->drawText(*rect, flags, str, len, br);
     CASE: items > 2
 	PREINIT:
-	QPoint *point = (QPoint *)extract_ptr(ST(1), "QPoint");
+	QPoint *point = pextract(QPoint, 1);
 	char *str = SvPV(ST(2), na);
 	int len = (items > 3) ? SvIV(ST(3)) : -1;
 	CODE:
@@ -370,7 +371,7 @@ QPainter::drawWinFocusRect(...)
 	THIS->drawWinFocusRect(x, y, w, h);
     CASE: items > 1
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	THIS->drawWinFocusRect(*rect);
 
@@ -457,7 +458,7 @@ QPainter::lineTo(...)
 	THIS->lineTo(x, y);
     CASE: items > 1
 	PREINIT:
-	QPoint *point = (QPoint *)extract_ptr(ST(1), "QPoint");
+	QPoint *point = pextract(QPoint, 1);
 	CODE:
 	THIS->lineTo(*point);
 
@@ -471,7 +472,7 @@ QPainter::moveTo(...)
 	THIS->moveTo(x, y);
     CASE: items > 1
 	PREINIT:
-	QPoint *point = (QPoint *)extract_ptr(ST(1), "QPoint");
+	QPoint *point = pextract(QPoint, 1);
 	CODE:
 	THIS->moveTo(*point);
 
@@ -537,7 +538,7 @@ void
 QPainter::setBrushOrigin(arg1, ...)
     CASE: items == 2
 	PREINIT:
-	QPoint *point = (QPoint *)extract_ptr(ST(1), "QPoint");
+	QPoint *point = pextract(QPoint, 1);
 	CODE:
 	THIS->setBrushOrigin(*point);
     CASE:
@@ -555,7 +556,7 @@ void
 QPainter::setClipRect(arg1, ...)
     CASE: items == 2
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	THIS->setClipRect(*rect);
     CASE: items > 4
@@ -610,7 +611,7 @@ void
 QPainter::setViewport(arg1, ...)
     CASE: items == 2
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	THIS->setViewport(*rect);
     CASE: items > 4
@@ -626,7 +627,7 @@ void
 QPainter::setWindow(arg1, ...)
     CASE: items == 2
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	THIS->setWindow(*rect);
     CASE: items > 4

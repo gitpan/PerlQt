@@ -47,14 +47,23 @@ PBrush::new(...)
 	RETVAL = new PBrush();
 	OUTPUT:
 	RETVAL
+    CASE: items == 2 && sv_isobject(ST(1)) && sv_derived_from(ST(1), "QBrush")
+	PREINIT:
+	QBrush *brush = pextract(QBrush, 1);
+	CODE:
+	RETVAL = new PBrush(*brush);
+	OUTPUT:
+	RETVAL
     CASE: items > 2 && sv_isobject(ST(2))
-	QColor *color = (QColor *)extract_ptr(ST(1), "QColor");
-	QPixmap *pixmap = (QPixmap *)extract_ptr(ST(2), "QPixmap");
+	PREINIT:
+	QColor *color = pextract(QColor, 1);
+	QPixmap *pixmap = pextract(QPixmap, 2);
 	CODE:
 	RETVAL = new PBrush(*color, *pixmap);
 	OUTPUT:
 	RETVAL
     CASE: !sv_isobject(ST(1))
+	PREINIT:
 	BrushStyle style = (BrushStyle)SvIV(ST(1));
 	CODE:
 	RETVAL = new PBrush(style);
@@ -62,7 +71,7 @@ PBrush::new(...)
 	RETVAL
     CASE:
 	PREINIT:
-	QColor *color = (QColor *)extract_ptr(ST(1), "QColor");
+	QColor *color = pextract(QColor, 1);
 	BrushStyle style = (items > 2) ?
 	    (BrushStyle)SvIV(ST(2)) : SolidPattern;
 	CODE:
@@ -98,3 +107,20 @@ QBrush::setStyle(style)
 
 BrushStyle
 QBrush::style()
+
+
+bool
+QBrush::beq(brush, misc)
+    QBrush *brush
+    CODE:
+    RETVAL = (*THIS == *brush);
+    OUTPUT:
+    RETVAL
+
+bool
+QBrush::bne(brush, misc)
+    QBrush *brush
+    CODE:
+    RETVAL = (*THIS != *brush);
+    OUTPUT:
+    RETVAL

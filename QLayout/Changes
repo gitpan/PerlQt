@@ -1,5 +1,8 @@
 Revision history for Perl extension QLayout.
 
+1.01  Mon May  5 13:03:18 1997
+	- undef checking
+
 0.03  Wed Apr 30 13:44:09 1997
 	- ditched everything but %Align and %Direction from @EXPORT
 

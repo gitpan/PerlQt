@@ -12,11 +12,20 @@
 
 #undef bool
 #include "qaccel.h"
-#include "pqt.h"
+#include "virtual.h"
 
-class PAccel : public QAccel {
+class PAccel : public QAccel, public PAccel_virtualize {
+    QAccel_virtual_functions
 public:
     PAccel(QWidget *parent, const char *name = 0) : QAccel(parent, name) {}
+};
+
+class pAccel : public QAccel {
+public:
+    pAccel(QWidget *parent, const char *name = 0) : QAccel(parent, name) {}
+    bool virtual_eventFilter(QObject *o, QEvent *e) {
+	return QAccel::eventFilter(o, e);
+    }
 };
 
 #endif  // PACCEL_H

@@ -10,7 +10,7 @@ require QButton;
 
 @ISA = qw(DynaLoader QButton);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QRadioButton $VERSION;
 
 1;

@@ -18,8 +18,8 @@
 
 class PFontMetrics : public QFontMetrics {
 public:
-    PFontMetrics(const QFontMetrics &fontMet) : QFontMetrics(fontMet) {
-	*(QFontMetrics *)this = fontMet;
-    }
+    PFontMetrics(const QFontMetrics &fontMet) : QFontMetrics(fontMet) {}
+    PFontMetrics(const QFont &font) : QFontMetrics(font) {}
 };
+
 #endif  // PFONTMET_H

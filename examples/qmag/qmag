@@ -1,0 +1,230 @@
+#!/usr/bin/perl -w
+
+package MagWidget;
+
+use Qt;
+use QComboBox;
+use QCursor;
+use QLabel;
+use QPainter;
+use QPushButton;
+use QWidget;
+
+use slots 'setZoom(int)', 'setRefresh(int)';
+
+@ISA = qw(QWidget);
+
+@zoomfactors = ('100%', '200%', '300%', '400%', '500%',
+		'600%', '700%', '800%', '1600%');
+
+@refreshrates = (
+    'No autorefresh', '4 per second', '3 per second', '2 per second',
+    'Every second', 'Every two seconds', 'Every three seconds',
+    'Every five seconds', 'Every ten seconds'
+);
+
+@timer = (0, 250, 333, 500, 1000, 2000, 3000, 5000, 10000);
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+    my $zoom = new QComboBox($self);
+    $zoom->insertStrList(-1, @zoomfactors);
+    $self->connect($zoom, 'activated(int)', 'setZoom(int)');
+
+    my $refresh = new QComboBox($self);
+    $refresh->insertStrList(-1, @refreshrates);
+    $self->connect($refresh, 'activated(int)', 'setRefresh(int)');
+
+    my($w, $x, $w2);
+
+    $w = 0;
+    for(@zoomfactors) {
+	$w2 = $zoom->fontMetrics()->width($_);
+	$w = $w2 if $w2 > $w;
+    }
+    $zoom->setGeometry(2, 2, $w+30, 20);
+
+    $x = $w+34;
+    $w = 0;
+    for(@refreshrates) {
+	$w2 = $refresh->fontMetrics()->width($_);
+	$w = $w2 if $w2 > $w;
+    }
+    $refresh->setGeometry($x, 2, $w+30, 20);
+
+    my $quitButton = new QPushButton($self);
+    $qApp->connect($quitButton, 'clicked()', 'quit()');
+    $quitButton->setText('Quit');
+    $quitButton->setGeometry($x+$w+30+2, 2,
+			     10+$quitButton->fontMetrics()->width('Quit'), 20);
+
+    my $rgb = new QLabel;
+    $rgb->setText('');
+    $rgb->setAlignment($Align{VCenter});
+    $rgb->resize($self->width(), $rgb->fontMetrics()->height() + 4);
+
+    my $yoffset = $zoom->height()
+	+ 4
+	+ $rgb->height();
+
+    @$self{'zoom', 'refresh', 'quitButton', 'rgb', 'yoffset', 'z', 'r',
+	   'grabbing', 'grabx', 'graby'} =
+	       ($zoom, $refresh, $quitButton, $rgb, $yoffset, 1, 0,
+		0, -1, -1);
+
+    $self->setMinimumSize($x+$w+30+2, $yoffset+20);
+    $self->resize($quitButton->geometry()->topRight()->x() + 2, $yoffset+60);
+
+    $self->setMouseTracking(1);
+
+    return $self;
+};
+
+sub setZoom {
+    my $self = shift;
+    my $index = shift;
+
+    $$self{'z'} = ($index == 8) ? 16 : $index+1;
+    print "setZoom\n";
+    $self->grab();
+}
+
+sub setRefresh {
+    my $self = shift;
+    my $index = shift;
+
+    $$self{'r'} = $index;
+    $self->killTimers();
+    print "setRefresh\n";
+    $self->startTimer($timer[$index]) if $index && !$$self{'grabbing'};
+}
+
+sub grab {
+    print "grab\n";
+    my $self = shift;
+    my($yoffset, $z, $grabx, $graby) =
+	@$self{'yoffset', 'z', 'grabx', 'graby'};
+
+    return unless $self->isVisible();
+
+    return if $$self{'grabx'} < 0 || $$self{'graby'} < 0;
+
+    my($x, $y, $w, $h);
+
+    $w = ($self->width()+$z-1)/$z;
+    $h = ($self->height()-1-$yoffset)/$z;
+    return if $w < 1 || $h < 1;
+
+    $x = $grabx-$w/2;
+    $y = $graby-$h/2;
+    if($x + $w > QApplication::desktop()->width()) {
+	$x = QApplication::desktop()->width()-$w;
+    } elsif($x < 0) {
+	$x = 0;
+    }
+    if($y + $h > QApplication::desktop()->height()) {
+	$y = QApplication::desktop()->height()-$h;
+    } elsif($y < 0) {
+	$y = 0;
+    }
+
+    my $pm = QPixmap::grabWindow(QApplication::desktop()->winId(),
+				 $x, $y, $w, $h);
+    my $m = new QWMatrix;
+    $z += 0.0;
+    $m->scale($z, $z);
+    $pm = $pm->xForm($m);
+
+    $$self{'pm'} = $pm;
+    print "foo\n";
+    $self->repaint(0);
+}
+
+sub paintEvent {
+#    print "paintEvent\n";
+    my $self = shift;
+    my($zoom, $pm, $yoffset) = @$self{'zoom', 'pm', 'yoffset'};
+
+    if($pm) {
+#	print "painter\n";
+	my $paint = new QPainter;
+#	print "beginning\n";
+	$paint->begin($self);
+#	print "drawing\n";
+	$paint->drawPixmap(0, $zoom->height()+4, $pm,
+			   0, 0, $self->width(), $self->height()-$yoffset);
+#	print "ending\n";
+	$paint->end();
+#	print "ended\n";
+    }
+#    print "end\n";
+}
+
+sub mousePressEvent {
+    my $self = shift;
+    my $r = $$self{'r'};
+    my $e = shift;
+
+    $$self{'grabbing'} = !$$self{'grabbing'};
+    if($$self{'grabbing'}) {
+	$self->killTimers();
+	$self->grabMouse($Cursor{cross});
+    } else {
+	$self->releaseMouse();
+	$$self{'grabx'} = $self->mapToGlobal($e->pos())->x();
+	$$self{'graby'} = $self->mapToGlobal($e->pos())->y();
+	print "running grab from mousePress\n";
+	$self->grab();
+	$self->startTimer($timer[$r]) if $r;
+    }
+}
+
+sub mouseMoveEvent {
+    my $self = shift;
+    my($zoom, $pm, $rgb, $z, $grabbing) =
+	@$self{'zoom', 'pm', 'rgb', 'z', 'grabbing'};
+    my $e = shift;
+
+#    print "mouseMove\n";
+    print "grab = $grabbing, pm = $pm, $rgb\n";
+    if($grabbing || !$pm ||
+       $e->pos()->y() > $self->height() - $zoom->fontMetrics()->height() - 4 ||
+       $e->pos()->y() < $zoom->height()+4) {
+	print "YES\n";
+	$rgb->setText('');
+    } else {
+	my($x, $y);
+	$x = $e->pos()->x() / $z;
+	$y = ($e->pos->y() - $zoom->height()+4) / $z;
+	print "x = $x, y = $y\n";
+	$rgb->setText("x=$x, y=$y");
+    }
+}
+
+sub focusOutEvent {
+    my $self = shift;
+    my $rgb = $$self{'rgb'};
+
+    $rgb->setText('');
+}
+
+$sdkfhkjsdrt = 0;
+sub timerEvent { print "$sdkfhkjsdrt\n"; shift->grab() }
+
+sub resizeEvent {
+    my $self = shift;
+    my $rgb = $$self{'rgb'};
+
+    $rgb->setGeometry(0, $self->height() - $rgb->height(), $self->width(),
+		      $rgb->height());
+    $self->grab();
+}
+
+package main;
+
+use Qt;
+
+$m = new MagWidget;
+$qApp->setMainWidget($m);
+$m->show();
+exit $qApp->exec();

@@ -1,9 +1,30 @@
 use ExtUtils::MakeMaker;
+require ExtUtils::Liblist;
+
+sub find_libperlqt {
+    open(QSAVEOUT, ">&STDOUT") || die "failed to save STDOUT: $!";
+    open(STDOUT, ">qcheck") || die "could not redirect output to qcheck: $!";
+
+    shift->ExtUtils::Liblist::ext('-lperlqt');
+
+    open(STDOUT, ">&QSAVEOUT") || die "failed to restore STDOUT: $!";
+    close QSAVEOUT;
+    if(-s "qcheck") {
+	open(QCHECK, "qcheck") || die "qcheck: $!\n";
+	print(<QCHECK>);
+	close QCHECK;
+	unlink "qcheck";
+	die "You must install libperlqt where Perl can find it " .
+	    "before compiling PerlQt.\n";
+    }
+    unlink "qcheck";
+}
 
 WriteMakefile(
     'NAME'	=> 'Qt',
     'DISTNAME'	=> 'PerlQt',
     'VERSION_FROM' => 'Qt.pm',
+    'CONFIGURE'	=> \&find_libperlqt,
     'DIR'	=> [ qw(QAccel
 			QApplication
 			QBitmap

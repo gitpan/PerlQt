@@ -13,7 +13,7 @@ require QObject;
 @ISA = qw(Exporter DynaLoader QObject);
 @EXPORT = qw(%Align %Direction);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QLayout $VERSION;
 
 

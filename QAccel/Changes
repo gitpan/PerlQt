@@ -1,5 +1,11 @@
 Revision history for Perl extension QAccel.
 
+1.01  Mon May  5 11:32:35 1997
+	- pstring conversion
+
+1.01  Sun May  4 15:11:01 1997
+	- added virtual functions
+
 0.02  Sat Apr  5 11:46:34 1997
 	- added disconnectItem()
 

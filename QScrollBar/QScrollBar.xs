@@ -8,6 +8,7 @@
  */
 
 #include "pscrbar.h"
+#include "pwidget.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QScrollBar::key)
 
@@ -39,10 +40,10 @@ PScrollBar::new(...)
 	RETVAL = new PScrollBar();
 	OUTPUT:
 	RETVAL
-	    CASE: items < 4 && sv_isobject(ST(1))
+    CASE: items < 4 && sv_isobject(ST(1))
 	PREINIT:
-	QWidget *parent = (QWidget *)extract_ptr(ST(1), "QWidget");
-	const char *name = (items > 2) ? SvPV(ST(2), na) : 0;
+	pWidget *parent = pextract(pWidget, 1);
+	pChar *name = (items > 2 && SvOK(ST(2))) ? SvPV(ST(2), na) : 0;
 	CODE:
 	RETVAL = new PScrollBar(parent, name);
 	OUTPUT:
@@ -51,9 +52,8 @@ PScrollBar::new(...)
 	PREINIT:
 	QScrollBar::Orientation orientation =
 	    (QScrollBar::Orientation) SvIV(ST(1));
-	QWidget *parent = (items > 2) ?
-	    (QWidget *)extract_ptr(ST(2), "QWidget") : 0;
-	const char *name = (items > 3) ? SvPV(ST(3), na) : 0;
+	pWidget *parent = (items > 2) ? pextract(pWidget, 2) : 0;
+	pChar *name = (items > 3 && SvOK(ST(3))) ? SvPV(ST(3), na) : 0;
 	CODE:
 	RETVAL = new PScrollBar(orientation, parent, name);
 	OUTPUT:
@@ -62,16 +62,15 @@ PScrollBar::new(...)
 	PREINIT:
 	int minValue = SvIV(ST(1));
 	int maxValue = SvIV(ST(2));
-	int LineStep = SvIV(ST(3));
-	int PageStep = SvIV(ST(4));
+	int lineStep = SvIV(ST(3));
+	int pageStep = SvIV(ST(4));
 	int value = SvIV(ST(5));
 	QScrollBar::Orientation orientation =
 	    (QScrollBar::Orientation) SvIV(ST(6));
-	QWidget *parent = (items > 7) ?
-	    (QWidget *)extract_ptr(ST(7), "QWidget") : 0;
-	const char *name = (items > 8) ? SvPV(ST(8), na) : 0;
+	pWidget *parent = (items > 7) ? pextract(pWidget, 7) : 0;
+	pChar *name = (items > 8 && SvOK(ST(8))) ? SvPV(ST(8), na) : 0;
 	CODE:
-	RETVAL = new PScrollBar(minValue, maxValue, LineStep, PageStep, value,
+	RETVAL = new PScrollBar(minValue, maxValue, lineStep, pageStep, value,
 				orientation, parent, name);
 	OUTPUT:
 	RETVAL

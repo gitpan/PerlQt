@@ -105,7 +105,7 @@ QWMatrix::map(thing, ...)
 	RETVAL
     CASE: sv_derived_from(ST(1), "QRect")
 	PREINIT:
-	QRect *rect = (QRect *)extract_ptr(ST(1), "QRect");
+	QRect *rect = pextract(QRect, 1);
 	CODE:
 	RETVAL =
 	    objectify_ptr((void *)new PRect(THIS->map(*rect)), "QRect", 1);
@@ -113,7 +113,7 @@ QWMatrix::map(thing, ...)
 	RETVAL
     CASE: sv_derived_from(ST(1), "QPoint")
 	PREINIT:
-	QPoint *point = (QPoint *)extract_ptr(ST(1), "QPoint");
+	QPoint *point = pextract(QPoint, 1);
 	CODE:
 	RETVAL =
 	    objectify_ptr((void *)new PPoint(THIS->map(*point)), "QPoint", 1);

@@ -1,5 +1,8 @@
 Revision history for Perl extension QListBox.
 
+1.01  Mon May  5 13:05:14 1997
+	- undef checking
+
 0.02  Thu Apr 24 12:44:56 1997
 	- added virtual and protected functions
 

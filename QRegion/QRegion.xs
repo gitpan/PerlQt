@@ -8,16 +8,36 @@
  */
 
 #include "pregion.h"
+#include "enum.h"
+
+#define STORE_key(key) enumIV(hv, MSTR(key), QRegion::key)
+
+inline void init_enum() {
+    HV *hv = perl_get_hv("QRegion::Region", TRUE | GV_ADDMULTI);
+
+    STORE_key(Rectangle);
+    STORE_key(Ellipse);
+}
 
 MODULE = QRegion		PACKAGE = QRegion
 
 PROTOTYPES: ENABLE
+
+BOOT:
+    init_enum();
 
 PRegion *
 PRegion::new(...)
     CASE: items == 1
 	CODE:
 	RETVAL = new PRegion();
+	OUTPUT:
+	RETVAL
+    CASE: items == 2 && sv_derived_from(ST(1), "QRegion")
+	PREINIT:
+	QRegion *region = pextract(QRegion, 1);
+	CODE:
+	RETVAL = new PRegion(*region);
 	OUTPUT:
 	RETVAL
     CASE: sv_derived_from(ST(1), "QRect")
@@ -93,5 +113,22 @@ QRegion::xor(region)
     QRegion *region
     CODE:
     RETVAL = new PRegion(THIS->xor(*region));
+    OUTPUT:
+    RETVAL
+
+
+bool
+QRegion::beq(region, misc)
+    QRegion *region
+    CODE:
+    RETVAL = (*THIS == *region);
+    OUTPUT:
+    RETVAL
+
+bool
+QRegion::bne(region, misc)
+    QRegion *region
+    CODE:
+    RETVAL = (*THIS != *region);
     OUTPUT:
     RETVAL

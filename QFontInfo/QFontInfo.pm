@@ -10,7 +10,7 @@ require QFont;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QFontInfo $VERSION;
 
 1;
@@ -28,6 +28,7 @@ Requires QFont.
 
 =head2 Member functions
 
+new,
 bold,
 charSet,
 exactMatch,

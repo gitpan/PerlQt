@@ -8,6 +8,7 @@
  */
 
 #include "pframe.h"
+#include "pwidget.h"
 #include "enum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QFrame::key)
@@ -37,8 +38,8 @@ BOOT:
 
 PFrame *
 PFrame::new(parent = 0, name = 0, f = 0, allowLines = TRUE)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
     WFlags f
     bool allowLines
 

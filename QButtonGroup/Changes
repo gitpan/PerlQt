@@ -1,5 +1,8 @@
 Revision history for Perl extension QButtonGroup.
 
+1.01  Mon May  5 12:27:35 1997
+	- undef checking
+
 0.02  Wed Apr 30 11:32:09 1997
 	- virtual and protected functions suit this class nicely
 

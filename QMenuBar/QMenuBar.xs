@@ -8,6 +8,7 @@
  */
 
 #include "pmenubar.h"
+#include "pwidget.h"
 #include "pqt.h"
 
 MODULE = QMenuBar		PACKAGE = QMenuBar
@@ -16,8 +17,8 @@ PROTOTYPES: ENABLE
 
 PMenuBar *
 PMenuBar::new(parent = 0, name = 0)
-    QWidget *parent
-    char *name
+    pWidget *parent
+    pChar *name
 
 
 MODULE = QMenuBar	PACKAGE = QMenuBar	PREFIX = virtual_

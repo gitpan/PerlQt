@@ -1,7 +1,7 @@
 PerlQt is a complete and well-thought-out object-oriented interface
 to the C++ GUI development library, Qt.
 
-This release, PerlQt 1.00, is distributed under the LGPL and requires
+This release, PerlQt 1.01, is distributed under the LGPL and requires
 Qt-1.2 and Perl 5.004 (or a beta version). I have only successfully
 compiled PerlQt myself on my own RedHat Linux 4.0 system with a 2.0.28
 kernel, running Perl-5.00397i, which is a beta-release of Perl-5.004.
@@ -45,7 +45,7 @@ license just as much as a C++ Qt program; although I think the Qt license
 needs to be much more explicit about Qt clones and language interfaces.
 
 PerlQt is available for free, and may be downloaded from any CPAN mirror
-in the authors/Ashley_Winters/ directory as the file PerlQt-1.00.tar.gz.
+in the authors/Ashley_Winters/ directory as the file PerlQt-1.01.tar.gz.
 
 Going to http://www.perl.com/CPAN/ will forward you to a CPAN mirror
 which is close to you.

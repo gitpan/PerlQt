@@ -1,5 +1,8 @@
 Revision history for Perl extension QCheckBox.
 
+1.01  Mon May  5 12:28:53 1997
+	- undef checking
+
 0.03  Wed Apr 23 13:12:25 1997
 	- added virtual functions
 
