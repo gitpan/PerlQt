@@ -8,6 +8,8 @@
 # modify it under the same terms as Perl itself.
 #
 
+use Carp;
+
 $| = 1;
 umask 0;
 
@@ -61,6 +63,9 @@ my($Sourcefile, $Headerfile);
 my(@ClassList, %ConstantList);
 
 my @Vtbl;
+my @VtblIn;
+
+my %LinkList;
 
 my(@Modules, @I, @Include, @l, @L, @S, @r, @c);
 my($verbose, $silent, $pedantic);
@@ -776,7 +781,7 @@ sub endmodulecode {
 #    export "    { 0, 0 }\n";
 #    export "};\n\n";
 
-    export "PIG_EXPORT_TABLE(PIG_Qt)\n";
+    export "PIG_EXPORT_TABLE(PIG_$Module)\n";
 #    export "struct pig_symboltable PIG_export_$Module\[] = {\n";
     for my $export (@Vtbl) {
 	export "    PIG_EXPORT_SUBTABLE(PIG_${export}_vtbl)\n";
@@ -890,6 +895,7 @@ sub readmodule {
 #    $Module = $class;
 
     loadmodule($class);
+    $LinkList{$class}++;
 
     if($Info{$class}{'Inherit'}) {
 	for my $super ($Info{$class}->inherit) {
@@ -1022,7 +1028,7 @@ sub endiheader {
     iheader "\nPIG_IMPORT_TABLE(PIG_${Module})\n";
 #    iheader "struct pig_symboltable PIG_import_${Module}\[] = {\n";
 
-    for my $import (@Vtbl) {
+    for my $import (@Vtbl, @VtblIn) {
 	iheader "    PIG_IMPORT_SUBTABLE(PIG_${import}_vtbl)\n";
 #	iheader "    { 0, (void *)PIG_${import}_import_vtbl },\n";
     }
@@ -1097,6 +1103,7 @@ sub write_virtual_methods_def {
 }
 
 sub write_virtual_class {
+    my $header = shift;
     my @vlist;
 
     vheader "extern pigfptr _pig_virtual_$Class\[];\n\n";
@@ -1133,12 +1140,13 @@ sub write_virtual_class {
 
     vheader "};\n\n";
 
-    source "PIG_EXPORT_TABLE(PIG_${Class}_vtbl)\n";
+    source "PIG_EXPORT_TABLE(PIG_${Class}_vtbl)\n" unless $header;
 #    source "struct pig_symboltable PIG_${Class}_export_vtbl[] = {\n";
-    export "PIG_DECLARE_EXPORT_TABLE(PIG_${Class}_vtbl)\n";
+    export "PIG_DECLARE_EXPORT_TABLE(PIG_${Class}_vtbl)\n" unless $header;
 #    export "extern struct pig_symboltable PIG_${Class}_export_vtbl[];\n";
     $idx++ unless $idx;
-    push @Vtbl, $Class;
+    push @Vtbl, $Class unless $header;
+    push @VtblIn, $Class if $header;
     iheader "pigfptr _pig_virtual_$Class\[$idx];\n";
     $idx = 0;
     iheader "PIG_IMPORT_TABLE(PIG_${Class}_vtbl)\n";
@@ -1154,13 +1162,13 @@ sub write_virtual_class {
 	}
 	$decl .= ")";
 	my $poly = polyname($proto);
-	source qq~    PIG_EXPORT_VIRTUAL("$Class\::$poly", ($decl)pig_virtual_${Class}__$proto->{'Name'})\n~;
+	source qq~    PIG_EXPORT_VIRTUAL("$Class\::$poly", ($decl)pig_virtual_${Class}__$proto->{'Name'})\n~ unless $header;
 #	source qq~    { "virtual $Class\::$poly", (void *)($decl)pig_virtual_${Class}__$proto->{'Name'} },\n~;
         iheader qq~    PIG_IMPORT_VIRTUAL("$Class\::$poly", &_pig_virtual_${Class}\[$idx])\n~;
 #        iheader qq~    { "virtual $Class\::$poly", (void *)&_pig_virtual_${Class}\[$idx] },\n~;
         $idx++;
     }
-    source "PIG_EXPORT_ENDTABLE\n";
+    source "PIG_EXPORT_ENDTABLE\n" unless $header;
 #    source "    { 0, 0 }\n};\n";
     iheader "PIG_IMPORT_ENDTABLE\n\n";
 #    iheader "    { 0, 0 }\n};\n\n";
@@ -1376,7 +1384,7 @@ sub fetch_vret {
 	if($xtype =~ s/(\W).*//) {
 	    $pre = '&' if $1 eq '&';
 	    my $xarg = $arg;
-	    $xarg =~ s/\&^//;
+	    $xarg =~ s/\&.*//;
 	    $t = "*($xarg *)";
 	}
 	$s = "${t}pig_type_${xtype}_pop()";
@@ -1527,6 +1535,8 @@ sub fetch_ret {
     if(exists $Types{$type}) {
 	my $c = '';
 	$c = "($Cast{$Types{$type}})" if exists $Cast{$Types{$type}};
+	$c =~ s/\(+/\(/g;	# Embarassing hack
+	$c =~ s/\)+/\)/g;	# Please, avert your eyes
 	my $pre = "";
 	my $xtype = $Types{$type};
 	if($xtype =~ s/(\W).*//) {
@@ -2502,7 +2512,6 @@ sub findvirtual {
 	$Inclusive{$poly} = $Prototypes{$class}{$poly}
 	    unless exists $Inclusive{$poly};
     }
-
     for my $super ($Info{$class}->virtual) {
 	next if $super eq $class;
         findvirtual($super);
@@ -2537,6 +2546,8 @@ sub writemodule {
     writeheader;
     writevheader if info->virtual;
     endsource $class;
+
+    delete $LinkList{$class};
 
     push @ClassList, $class;
 
@@ -2593,9 +2604,12 @@ sub GenerateSource {
     @Include = @{$args{'INCLUDE'}};
     $Sourcedir = $args{'SOURCEDIR'};
     $VirtualHeader = $args{'VIRTUALHEADER'};
+    @S = (@S, @{$args{'LINK'}}) if ref $args{'LINK'};
 
     for my $module (@{$args{'DIR'}}) {
 	$Module = $module;
+	push @S, $module;
+	$Module =~ s/\W+.*//;
 	$Path = $module;
 
 	say "Loading $module...";
@@ -2629,6 +2643,33 @@ sub GenerateSource {
 	}
 	say "\n";
 
+	for my $class (keys %LinkList) {
+	    $Class = $class;
+	    if(info->virtual) {
+		my $info = $Info{$class};
+		my $ifndef;
+
+        open VHEADER, ">$Sourcedir/pig_${class}_v.h";
+        $ifndef = uc("pig_${class}_v_h");
+        vheader "#ifndef $ifndef\n";
+        vheader "#define $ifndef\n\n";
+        if($info->virtual > 1) {
+            for my $super ($info->virtual) {
+                vheader qq'#include "pig_${super}_v.h"\n' if $super ne $class;
+            }
+            vheader "\n";
+        } else {
+            vheader qq'#include "$VirtualHeader"\n\n' if $info->virtual == 1;
+        }
+
+		getvirtual;
+#		writevheader;
+		write_virtual_methods_def;
+		write_virtual_class 1;
+	vheader "#endif $ifndef\n";
+	close VHEADER;
+	    }
+	}
 	endiheader;
 	endmodulecode;
     }

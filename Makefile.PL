@@ -16,6 +16,11 @@
 # This is a Unix-only Makefile.PL as far as I know...
 #
 
+$MAKE = 'Qt-1.4';
+
+# If you want to compile using Qt-2.0, uncomment the next line
+#$MAKE = 'Qt-2.0';
+
 ##########
 # Please modify these arguments as needed
 %Args = (
@@ -37,9 +42,9 @@ my $filelist;
 
 unless(@ARGV && $ARGV[0] =~ /^-f/) {
     GenerateSource(
-	DIR => [ 'Qt' ],
-	TYPEMAPS => [ 'Qt.typemap' ],
-	INCLUDE => [ 'pigmodule_Qt.h' ],
+	DIR => [ $MAKE ],
+	TYPEMAPS => [ "$MAKE/typemap" ],
+	INCLUDE => [ "pigmodule_$MAKE.h" ],
 	VIRTUALHEADER => 'pigvirtual.h',
 	SOURCEDIR => '.',
 	Source => \$filelist

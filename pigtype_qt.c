@@ -28,6 +28,7 @@ PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfoList_ptr, class QFileInfoList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QStringList_ptr, class QStringList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QStrList_ptr, class QStrList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QTabList_ptr, class QTabList *)
+PIG_DEFINE_STUB_TYPE(pig_type_qt_QString_ref, class QString *)
 
 PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qt_sender, class QObject *, int) {
     return (class QObject *)pig_type_object_argument("QObject");
@@ -456,6 +457,7 @@ PIG_DEFINE_TYPE(pig_type_qt_QStrList_ptr)
 PIG_DEFINE_TYPE(pig_type_qt_QTabList_ptr)
 PIG_DEFINE_TYPE(pig_type_qt_QObjectList_ptr)
 PIG_DEFINE_TYPE(pig_type_qt_QWidgetList_ptr)
+PIG_DEFINE_TYPE(pig_type_qt_QString_ref)
 
 PIG_EXPORT_TABLE(pigtype_qt)
     PIG_EXPORT_TYPE(pig_type_qt_serial, "Qt serial")
@@ -474,6 +476,7 @@ PIG_EXPORT_TABLE(pigtype_qt)
     PIG_EXPORT_TYPE(pig_type_qt_HVorientation, "Qt HVorientation")
     PIG_EXPORT_TYPE(pig_type_qt_VHorientation, "Qt VHorientation")
     PIG_EXPORT_TYPE(pig_type_qt_QString_ptr, "Qt QString*")
+    PIG_EXPORT_TYPE(pig_type_qt_QString_ref, "Qt QString&")
     PIG_EXPORT_TYPE(pig_type_qt_const_QString_ref, "Qt const QString&")
     PIG_EXPORT_TYPE(pig_type_qt_QByteArray_ptr, "Qt QByteArray*")
     PIG_EXPORT_TYPE(pig_type_qt_QArray_QRect_ptr, "Qt QArray<QRect>*")

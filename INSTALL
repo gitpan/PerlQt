@@ -1,7 +1,10 @@
 To install PerlQt-2:
 
-Look at Makefile.PL and make sure the values are reasonable. The QTDIR
-environment variable should be properly set.
+Look at Makefile.PL and make sure the values are reasonable.
+By default, PerlQt is compiled using Qt-1.4. To change that, modify the
+$MAKE variable in Makefile.PL
+
+The QTDIR environment variable should be properly set.
 
 perl Makefile.PL
 make

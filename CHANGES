@@ -1,3 +1,12 @@
+Changes from 2.100 to 2.101  (2000-Jan-19)
+---------------------------
+
+- Allow compiling with either Qt-2.0 or Qt-1.4 templates
+- Added support for PerlKDE
+- Rewrote symbol import functions
+- Included Qt version in template dir name (Qt-1.4 and Qt-2.0)
+
+
 Changes from 2.007 to 2.008  (1999-Jul-1)
 ---------------------------
 

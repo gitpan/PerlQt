@@ -137,7 +137,6 @@ PIG_DEFINE_FUNC_3(SV *, pig_new_castobject, void *, const char *, const char *) 
     SV *pigr = sv_2mortal(pig_object_create(pig2, &pigd));
 
     pig_assign_pigd(pigd, pig0, pig_classinfo_fetch(pig1), PIGOBJECT_ALLOCATED);
-
     pig_virtual *pigv =
       (pig_virtual *)(*pigd->piginfo->pigtocastfunc)("virtual", pig0);
     if(pigv) pig_virtual_setobject(pigv, pigr);

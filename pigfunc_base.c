@@ -32,6 +32,7 @@ PIG_DEFINE_VOID_FUNC_0(pig_sub_leave) {
 }
 
 PIG_DEFINE_VOID_FUNC_2(pig_begin, void *, const char *) {
+    dTHR;
     struct pig_sub_frame pigf;
     pigf.pigax = TOPMARK + 1;
     pig_sub_enter(&pigf);
