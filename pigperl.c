@@ -45,4 +45,7 @@ PIG_EXPORT_TABLE(pigperl)
     PIG_EXPORT_VARIABLE(pig_argument_idx)
     PIG_EXPORT_VARIABLE(pig_argument_max_idx)
     PIG_EXPORT_VARIABLE(pig_depth)
+    PIG_EXPORT_FUNC(pig_scope_argument)
+    PIG_EXPORT_FUNC(pig_scope_virtual)
+    PIG_EXPORT_FUNC(pig_scope_leave)
 PIG_EXPORT_ENDTABLE

@@ -181,6 +181,7 @@ PIG_IMPORT_TABLE(pigperl)
     PIG_IMPORT_FUNC(pig_parse_proto)
     PIG_IMPORT_FUNC(pig_scope_argument)
     PIG_IMPORT_FUNC(pig_scope_virtual)
+    PIG_IMPORT_FUNC(pig_scope_leave)
 PIG_IMPORT_ENDTABLE
 
 #define pig_virtual_return PIG_VARIABLE(pig_virtual_return)

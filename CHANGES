@@ -1,4 +1,11 @@
-Changes from 2.003 to 2.004  (1998-May-11)
+Changes from 2.004 to 2.005  (1999-Jun-17)
+---------------------------
+
+- Horror of horrors! 2.004 never worked! How will I ever live it down?
+  I fixed 2.004 and am calling it 2.005.
+
+
+Changes from 2.003 to 2.004  (1999-May-11)
 ---------------------------
 
 - Added descriptions to MANIFEST
@@ -12,7 +19,7 @@ Changes from 2.003 to 2.004  (1998-May-11)
 - Adjusted prototypes for bit types in Qt
 
 
-Changes from 2.002 to 2.003  (1998-Apr-22)
+Changes from 2.002 to 2.003  (1999-Apr-22)
 ---------------------------
 
 - Reorganized Makefile.PL
@@ -27,7 +34,7 @@ Changes from 2.002 to 2.003  (1998-Apr-22)
 - Perl-5.003 supported, #undef debug and #undef dirty to clean namespace
 
 
-Changes from 2.001 to 2.002  (1998-Apr-6)
+Changes from 2.001 to 2.002  (1999-Apr-6)
 ---------------------------
 
 - Replaced all references to PIG_PROTO_LONG_DOUBLE with PIG_PROTO_LDOUBLE
