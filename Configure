@@ -1,0 +1,246 @@
+#!/usr/bin/perl -w
+use strict;
+use Symbol;
+use Config;
+#use Fatal qw(open);
+use vars qw(%SavedConfig %PigConfig %C $VERSION $building);
+
+sub run (@) {
+    my $QtDir = $C{qtdir};
+    print "> $_[0]\n" if $building;
+    my $sysret = system "QTDIR=\'$QtDir\' $_[0]";
+    if($sysret == 0xff00) {
+        die "system \"QTDIR=\'$QtDir\' $_[0]\" failed: $!";
+    } elsif($sysret & 0xff) {
+        $sysret &= ~0xff80;
+        die "Fatal signal $sysret recieved during \"$_[0]\"\n";
+    } elsif($sysret > 0x80) {
+        die "\"$_[0]\" failed miserably\n";
+    }
+}
+
+print <<INTRO;
+
+So, you have chosen to build PerlQt...
+
+This script will help with your compiling configuration of PerlQt and
+will optionally compile PerlQt unattended.
+
+You will be asked several questions. The default answers will be surrounded
+with [], and just pressing enter without any input will use the default
+setting. If you don't want the default, but rather a blank entry, just
+enter 'none'.
+
+If you have any problems, send a bug-report to jql\@accessone.com.
+
+INTRO
+
+$| = 1;
+
+%C = (
+  qtdir => $ENV{'QTDIR'} ? $ENV{'QTDIR'} : '/usr/lib/qt',
+  make => $Config{'make'},
+  perl => $^X,
+  cc => 'g++',
+  ld => 'g++',
+  opts => $Config{'optimize'},
+  cppflags => $Config{'cppflags'},
+  include => '-I$(QTDIR)/include',
+  libpqtdir => "$Config{prefix}/lib",
+  makelibpqt => 'N',
+  pqtinstdir => "$Config{prefix}/lib/perlqt",
+  pminstdir => "$Config{installsitelib}",
+  argcount => 3,
+);
+
+if (-e "./perlqt.conf") {
+  # can overwrite %C
+  eval { require  "./perlqt.conf" }; # ok if fail
+  if (!$@) {
+      while (my ($k,$v) = each %SavedConfig) {
+         # maybe only accept some keys? XXX
+         $C{$k} = $v;
+      }
+  }
+}
+
+$VERSION = '2.000';
+
+
+sub tilde {      # Is there a simpler way to do this?
+    my $path = shift;
+    my $username = shift || getlogin || getpwuid($<) || "root";
+    my @pwent;
+    while(@pwent = getpwent) {
+        if($pwent[0] eq $username) {
+            $path =~ s/^\s*~\w*/$pwent[7]/;
+	    last;
+        }
+    }
+    endpwent;
+    return $path
+}
+
+$C{libs} = "-L$C{qtdir}/lib -lqt" unless $C{libs};
+
+# should try architechure specific defaults XXX
+
+$C{qtdir} = get('What is your Qt dir?', $C{qtdir});
+$ENV{'QTDIR'} = $C{qtdir};
+$C{make} = get("What is your 'make' program called?", $C{'make'});
+$C{perl} = get("How shall I invoke perl?", $C{perl});
+$C{cc} = get('What C++ compiler shall I use?', $C{cc});
+$C{ld} = get('What C++ linker shall I use?', $C{ld});
+$C{opts} = get('What C++ optimization flags shall I use?', $C{'opts'});
+$C{cppflags} = get('What C++ compiler flags shall I use?', $C{'cppflags'});
+$C{include} = get('What include directives shall I use?', $C{include});
+$C{libs} = get('What libraries should I link in?', $C{libs});
+$C{makelibpqt} = get('Do you want to build a separate libpqt?', $C{makelibpqt});
+my $makelibpqt = 0;
+if($C{makelibpqt} =~ /^y/i) {
+    $makelibpqt = 1;
+    $C{libpqtdir} = get('Where should I install libpqt?', $C{libpqtdir});
+}
+$C{pqtinstdir} = get('Where should I install PerlQt? (~user okay)', $C{pqtinstdir});
+if($C{pqtinstdir} =~ /^\s*~(\w*)/) {
+    $C{pqtinstdir} = tilde($C{pqtinstdir}, $1);
+    print "Expanded path to $C{pqtinstdir}\n";
+}
+
+$C{pminstdir} = get('Alternate path for Qt.pm (if desired)', $C{pminstdir});
+if($C{pminstdir} =~ /^\s*~(\w*)/) {
+    $C{pminstdir} = tilde($C{pminstdir}, $1);
+    print "Expanded path to $C{pminstdir}\n";
+}
+
+$C{argcount} = get('How many signal/slot arguments shall I support?',
+                  $C{argcount});
+
+do {
+    my $verbose = get('How about some verbosity while you wait? (Yes, No, Silent)', 'Y');
+    my $vflag = '';
+    if($verbose =~ /^y/i) { $vflag = '-v' }
+    elsif($verbose =~ /^s/i) { $vflag = '-s' }
+
+    print "Generating signal/slot stubs..." if $verbose !~ /^s/;
+    my $binclude = $C{include};
+    $binclude =~ s/\$\((.*?)\)/\$$1/g;
+    run "$C{cc} $binclude -o types types.c";
+    run "$C{perl} gensigslot -n $C{argcount} int long short bool float double 'void*'";
+    print "\n" if $verbose !~ /^s/;
+
+    my @flags;
+    if($C{makelibpqt} !~ /^y/i) {
+        push @flags, "-c libpqt";
+    }
+    run "$C{perl} pig Qt @flags '$C{include}' $C{libs} -include pqt.h -lpqt $vflag";
+};
+print "Generated source-code.\n";
+print "Building supplemental perlqt.conf...";
+
+for my $cnf ('src/Qt/perlqt.conf') {
+    my $pqt = $makelibpqt ? "-L$C{libpqtdir} -lpqt" : "";
+    my $fh = gensym;
+    open $fh, ">$cnf";
+    print $fh "# uncomment the following line to regenerate:\n#return 0;\n\n";
+    print $fh qq[
+%PigConfig = (
+    'CC' => "\Q$C{cc}\E",
+    'CCFLAGS' => "\Q$C{cppflags}\E",
+    'LD' => "\Q$C{ld}\E",
+    'INC' => "\Q-I../../include -I.. -I. $C{include}\E",
+    'LIBS' => "\Q$pqt $C{libs}\E",
+    'OPTIMIZE' => "\Q$C{opts}\E"
+);
+
+\$VERSION = "\Q$VERSION\E";
+];
+
+    unless($makelibpqt) {
+        print $fh "sub MY::install {\n";
+        print $fh "    return qq{\n";
+	print $fh "\Qinstall: \$(INST_DYNAMIC)\n";
+        print $fh "\Q\t\$(MKPATH) $C{pqtinstdir}\n";
+        print $fh "\Q\t\$(CP) \$(INST_DYNAMIC) $C{pqtinstdir}\n";
+        print $fh "\Q\t\$(CP) Qt.pm $C{pminstdir}\n";
+        print $fh "};\n";
+        print $fh "}\n";
+    }
+
+    print $fh "1;\n";
+    close $fh;
+}
+
+for my $cnf (qw(libpqt/perlqt.conf perlqt.conf)) {
+    my $fh = gensym;
+    open $fh, ">$cnf";
+    print $fh "# uncomment the following line to regenerate:\n#return 0;\n\n";
+    print $fh qq[
+%PigConfig = (
+    'CC' => "\Q$C{cc}\E",
+    'CCFLAGS' => "\Q$C{cppflags}\E",
+    'LD' => "\Q$C{ld}\E",
+    'INC' => "\Q-I../include -I../src -I../src/Qt $C{include}\E",
+    'LIBS' => "\Q$C{libs}\E",
+    'OPTIMIZE' => "\Q$C{opts}\E"
+);
+
+\$VERSION = "\Q$VERSION\E";
+\$LibDest = "\Q$C{libpqtdir}\E";
+
+];
+    for my $k (qw(qtdir make perl cc ld opts cppflags include
+                  libs libpqtdir makelibpqt pqtinstdir pminstdir argcount)) {
+       print $fh qq[\$SavedConfig{$k} = "\Q$C{$k}\E";\n];
+    }
+    print $fh "\n1;\n";
+    close $fh;
+}
+
+open(QTPM, "Qt.pm") || die "What? No Qt.pm? $!";
+open(QTOUT, ">src/Qt/Qt.pm") || die "What? No src/Qt? $!";
+
+my $line;
+while(defined($line = <QTPM>)) {
+    if($line =~ /^my \$file/) {
+        print QTOUT qq{my \$file = "\Q$C{pqtinstdir}/Qt.$Config{dlext}\E";\n};
+    } else {
+        print QTOUT $line;
+    }
+}
+
+close QTPM;
+close QTOUT;
+
+print "\n";
+
+do {
+    my $compile = get('PerlQt is ready. Shall I compile for you?', 'N');
+    exit if $compile !~ /^y/i;
+};
+
+$building = 1;
+if($makelibpqt) {
+    print "Alright, first I'll build and install libpqt.\n";
+    run "cd libpqt; $C{perl} Makefile.PL";
+    run "cd libpqt; $C{make} install";
+}
+run "cd src/Qt; $C{perl} Makefile.PL";
+run "cd src/Qt; $C{make}";
+
+print "Finished building PerlQt-$VERSION.\n";
+print "To install, run the following commands:\n";
+print "cd src/Qt; make install\n";
+
+sub get {
+    my $question = shift;
+    my $default = shift;
+
+    print "$question [$default] ";
+    my $input = <STDIN>;
+    chomp($input);
+    return $default unless $input =~ /\S/;
+    return '' if $input =~ /^\s*none\s*$/i;
+    return $input;
+}
+

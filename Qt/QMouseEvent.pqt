@@ -1,0 +1,33 @@
+#include <qevent.h>
+
+struct QMouseEvent : QEvent {
+    QMouseEvent(const QMouseEvent &);
+    QMouseEvent(int, const QPoint &, int, int);
+    int button() const;
+    const QPoint &pos() const;
+    int state() const;
+    int x() const;
+    int y() const;
+} MouseEvent;
+
+%Button = (
+    None => NoButton,
+    Left => LeftButton,
+    Right => RightButton,
+    Mid => MidButton,
+    MouseMask => MouseButtonMask,
+    Shift => ShiftButton,
+    Control => ControlButton,
+    Alt => AltButton,
+    KeyMask => KeyButtonMask,
+
+    NoButton => NoButton,
+    LeftButton => LeftButton,
+    RightButton => RightButton,
+    MidButton => MidButton,
+    MouseButtonMask => MouseButtonMask,
+    ShiftButton => ShiftButton,
+    ControlButton => ControlButton,
+    AltButton => AltButton,
+    KeyButtonMask => KeyButtonMask
+);

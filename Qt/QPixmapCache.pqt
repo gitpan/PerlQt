@@ -1,0 +1,9 @@
+#include <qpmcache.h>
+
+namespace QPixmapCache {
+    static int cacheLimit();
+    static void clear();
+    static QPixmap *find(const char *);
+    static bool insert(const char *, QPixmap *);
+    static void setCacheLimit(int);
+} PixmapCache;

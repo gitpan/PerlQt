@@ -1,0 +1,14 @@
+#!/usr/bin/perl -w
+
+use Qt 2.0 qw($app %Color %Weight);
+use Hello;
+
+$s = @ARGV ? "@ARGV" : 'Hello, World';
+$h = Hello->new($s);
+$h->setCaption('PerlQt says hello');
+$app->connect($h, 'clicked()', 'quit()');
+$h->setFont(QFont->new('Times', 32, $Weight{Bold}));
+$h->setBackgroundColor($Color{White});
+$app->setMainWidget($h);
+$h->show();
+exit $app->exec();

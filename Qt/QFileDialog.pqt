@@ -1,0 +1,20 @@
+#include <qfiledlg.h>
+
+suicidal virtual class QFileDialog : virtual QDialog {
+    QFileDialog(QWidget * = 0, const char * = 0, bool = FALSE);
+    QFileDialog(const char *, const char * = 0, QWidget * = 0, const char * = 0, bool = FALSE);
+    virtual ~QFileDialog();
+    const QDir *dir() const;
+    const char *dirPath() const;
+    static QString getOpenFileName(const char * = 0, const char * = 0, QWidget * = 0, const char * = 0);
+    static QString getSaveFileName(const char * = 0, const char * = 0, QWidget * = 0, const char * = 0);
+    void rereadDir();
+    QString selectedFile() const;
+    void setDir(const char *);
+    void setDir(const QDir &);
+protected:
+    void dirEntered(const char *) signal;
+    void fileHighlighted(const char *) signal;
+    void fileSelected(const char *) signal;
+    virtual void resizeEvent(QResizeEvent *);
+} FileDialog;

@@ -1,0 +1,9 @@
+#!/usr/bin/perl -w
+
+use Qt 2.0;
+use Biff;
+
+$b = Biff->new;
+$app->setMainWidget($b);
+$b->show();
+exit $app->exec();

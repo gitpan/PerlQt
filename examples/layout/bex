@@ -1,0 +1,73 @@
+#!/usr/bin/perl -w
+
+use Qt 2.0 qw($app %Align %Color %Direction %Frame);
+
+$f = QGroupBox->new;
+$f->setFrameStyle($Frame{Panel} | $Frame{Sunken});
+
+$gm = QBoxLayout->new($f, $Direction{BottomToTop}, 5);
+
+$b1 = new QBoxLayout($Direction{RightToLeft});
+$gm->addLayout($b1, 10);
+
+for(my $i = 0; $i < 4; $i++) {
+    my $lab = QLabel->new($f);
+    $lab->setText("Test $i");
+    $lab->adjustSize();
+    $lab->setMinimumSize($lab->size());
+    $lab->setFrameStyle($Frame{Panel} | $Frame{Plain});
+    $lab->setAlignment($Align{Top} | $Align{HCenter});
+    $lab->setBackgroundColor($Color{yellow});
+    $lab->setMaximumSize(150, 200);
+
+    $b1->addWidget($lab, 20);
+}
+
+$qb = QPushButton->new('Quit', $f);
+$app->connect($qb, 'clicked()', 'quit()');
+$qb->setFixedSize($qb->size());
+$b1->addWidget($qb, 0, $Align{Top});
+
+$large = QLabel->new($f);
+$large->setText("This is supposed to be a large window\n you know.");
+$large->adjustSize();
+$large->setMinimumSize($large->size());
+$large->setFrameStyle($Frame{Panel} | $Frame{Plain});
+$large->setAlignment($Align{Center});
+$large->setBackgroundColor($Color{White});
+
+$b2 = QBoxLayout->new($Direction{LeftToRight});
+$gm->addLayout($b2, 50);
+
+$b2->addWidget($large, 100);
+
+{
+    my $s = QLabel->new($f);
+    $s->setMaximumSize(150, 150);
+    $s->setText("This\n is\n supposed\n to be\n centered\n relatively.");
+    $s->adjustSize();
+    $s->setMinimumSize($s->size());
+    $s->setFrameStyle($Frame{Panel} | $Frame{Plain});
+    $s->setAlignment($Align{Center});
+    $s->setBackgroundColor($Color{Cyan});
+    $b2->addWidget($s, 10, $Align{Center});
+}
+
+{
+    my $s = QLabel->new($f);
+#    $s->setMaximumSize($QLayout::unlimited, 50);
+    $s->setMaximumSize(32767, 50);
+    $s->setText('This is a widget inside the outermost box');
+    $s->adjustSize();
+    $s->setMinimumSize($s->width(), $s->height());
+    $s->setFrameStyle($Frame{Panel} | $Frame{Plain});
+    $s->setAlignment($Align{Center});
+    $s->setBackgroundColor($Color{Red});
+    $gm->addWidget($s, 1);
+}
+
+$gm->activate();
+$f->show();
+
+$app->setMainWidget($f);
+$app->exec();

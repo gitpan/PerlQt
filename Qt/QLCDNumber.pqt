@@ -1,0 +1,59 @@
+#undef HEX
+#undef DEC
+#undef BIN
+#undef OCT
+#include <qlcdnum.h>
+
+suicidal virtual class QLCDNumber : virtual QFrame {
+    QLCDNumber(QWidget * = 0, const char * = 0);
+    QLCDNumber(uint, QWidget * = 0, const char * = 0);
+    virtual ~QLCDNumber();
+    bool checkOverflow(int) const;
+    bool checkOverflow(double) const;
+    void display(int) slot;
+    void display(double) slot;
+    void display(const char *) slot;
+    int intValue() const;
+    QLCDNumber::Mode {enum} mode() const;
+    int numDigits() const;
+    QLCDNumber::SegmentStyle {enum} segmentStyle() const;
+    void setBinMode() slot;
+    void setDecMode() slot;
+    void setHexMode() slot;
+    void setOctMode() slot;
+    void setMode(QLCDNumber::Mode {enum});
+    void setNumDigits(int);
+    void setSegmentStyle(QLCDNumber::SegmentStyle {enum});
+    void setSmallDecimalPoint(bool) slot;
+    bool smallDecimalPoint() const;
+    double value() const;
+protected:
+    virtual void drawContents(QPainter *);
+    void overflow() signal;
+    virtual void resizeEvent(QResizeEvent *);
+} LCDNumber;
+
+%Base = (
+    Hexadecimal => QLCDNumber::HEX,
+    Decimal => QLCDNumber::DEC,
+    Octal => QLCDNumber::OCT,
+    Binary => QLCDNumber::BIN,
+    Hex => QLCDNumber::HEX,
+    Dec => QLCDNumber::DEC,
+    Oct => QLCDNumber::OCT,
+    Bin => QLCDNumber::BIN,
+    2 => QLCDNumber::BIN,
+    8 => QLCDNumber::OCT,
+    10 => QLCDNumber::DEC,
+    16 => QLCDNumber::HEX,
+    HEX => QLCDNumber::HEX,
+    DEC => QLCDNumber::DEC,
+    OCT => QLCDNumber::OCT,
+    BIN => QLCDNumber::BIN
+);
+
+%Segment = (
+    Outline => QLCDNumber::Outline,
+    Filled => QLCDNumber::Filled,
+    Flat => QLCDNumber::Flat
+);

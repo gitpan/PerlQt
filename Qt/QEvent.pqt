@@ -1,0 +1,66 @@
+#include <qevent.h>
+
+struct QEvent {
+    QEvent(int);
+    QEvent(const QEvent &);
+    ~QEvent();
+    int type() const;
+} Event;
+
+%Event = (
+    None => Event_None,
+    Timer => Event_Timer,
+    MouseButtonPress => Event_MouseButtonPress,
+    MouseButtonRelease => Event_MouseButtonRelease,
+    MouseButtonDblClick => Event_MouseButtonDblClick,
+    MouseMove => Event_MouseMove,
+    KeyPress => Event_KeyPress,
+    KeyRelease => Event_KeyRelease,
+    FocusIn => Event_FocusIn,
+    FocusOut => Event_FocusOut,
+    Enter => Event_Enter,
+    Leave => Event_Leave,
+    Paint => Event_Paint,
+    Move => Event_Move,
+    Resize => Event_Resize,
+    Create => Event_Create,
+    Destroy => Event_Destroy,
+    Show => Event_Show,
+    Hide => Event_Hide,
+    Close => Event_Close,
+    Quit => Event_Quit,
+    Accel => Event_Accel,
+    Clipboard => Event_Clipboard,
+    SockAct => Event_SockAct,
+    DragMove => Event_DragMove,
+    DragLeave => Event_DragLeave,
+    User => Event_User,
+
+    Event_None => Event_None,
+    Event_Timer => Event_Timer,
+    Event_MouseButtonPress => Event_MouseButtonPress,
+    Event_MouseButtonRelease => Event_MouseButtonRelease,
+    Event_MouseButtonDblClick => Event_MouseButtonDblClick,
+    Event_MouseMove => Event_MouseMove,
+    Event_KeyPress => Event_KeyPress,
+    Event_KeyRelease => Event_KeyRelease,
+    Event_FocusIn => Event_FocusIn,
+    Event_FocusOut => Event_FocusOut,
+    Event_Enter => Event_Enter,
+    Event_Leave => Event_Leave,
+    Event_Paint => Event_Paint,
+    Event_Move => Event_Move,
+    Event_Resize => Event_Resize,
+    Event_Create => Event_Create,
+    Event_Destroy => Event_Destroy,
+    Event_Show => Event_Show,
+    Event_Hide => Event_Hide,
+    Event_Close => Event_Close,
+    Event_Quit => Event_Quit,
+    Event_Accel => Event_Accel,
+    Event_Clipboard => Event_Clipboard,
+    Event_SockAct => Event_SockAct,
+    Event_DragMove => Event_DragMove,
+    Event_DragLeave => Event_DragLeave,
+    Event_User => Event_User
+);

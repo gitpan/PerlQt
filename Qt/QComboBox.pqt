@@ -1,0 +1,69 @@
+#include <qcombo.h>
+
+suicidal virtual class QComboBox : virtual QWidget {
+    QComboBox(QWidget * = 0, const char * = 0);
+    QComboBox(bool, QWidget * = 0, const char * = 0);
+    virtual ~QComboBox();
+    bool autoResize() const;
+    void changeItem(const char *, int);
+    void changeItem(const QPixmap &, int);
+    void clear();
+    void clearValidator() slot;
+    int count() const;
+    int currentItem() const;
+    const char *currentText() const;
+    QComboBox::Policy {enum} insertionPolicy() const;
+    void insertItem(const char *, int = -1);
+    void insertItem(const QPixmap &, int = -1);
+    void insertStrList(const QStrList *{qstrlistptr}, int = -1);
+    int maxCount() const;
+    const QPixmap *pixmap(int) const;
+    void removeItem(int);
+    void setAutoResize(bool);
+    virtual void setBackgroundColor(const QColor &);
+    void setCurrentItem(int);
+    virtual void setEnabled(bool);
+    virtual void setFont(const QFont &);
+    void setInsertionPolicy(QComboBox::Policy {enum});
+    void setMaxCount(int);
+    virtual void setPalette(const QPalette &);
+    void setSizeLimit(int);
+    virtual void setStyle(GUIStyle {enum});
+    void setValidator(QValidator *);
+    virtual QSize sizeHint() const;
+    int sizeLimit() const;
+    const char *text(int) const;
+    QValidator *validator() const;
+protected:
+    void activated(int) signal;
+    void activated(const char *) signal;
+    virtual void focusInEvent(QFocusEvent *);
+    void highlighted(int) signal;
+    void highlighted(const char *) signal;
+    virtual void keyPressEvent(QKeyEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent *);
+    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void mousePressEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void paintEvent(QPaintEvent *);
+    void popup();
+    virtual void resizeEvent(QResizeEvent *);
+private:
+    virtual bool eventFilter(QObject *, QEvent *);
+} ComboBox;
+
+%Insertion = (
+    None => QComboBox::NoInsertion,
+    Top => QComboBox::AtTop,
+    Current => QComboBox::AtCurrent,
+    Bottom => QComboBox::AtBottom,
+    After => QComboBox::AfterCurrent,
+    Before => QComboBox::BeforeCurrent,
+
+    NoInsertion => QComboBox::NoInsertion,
+    AtTop => QComboBox::AtTop,
+    AtCurrent => QComboBox::AtCurrent,
+    AtBottom => QComboBox::AtBottom,
+    AtAfter => QComboBox::AfterCurrent,
+    AtBefore => QComboBox::BeforeCurrent,
+);

@@ -1,0 +1,82 @@
+#include <qpixmap.h>
+
+struct QPixmap : QPaintDevice {
+    QPixmap();
+    QPixmap(const char ** {xpm});
+    QPixmap(const QPixmap &);
+    QPixmap(const QSize &);
+    QPixmap(int, int, int = -1);
+    QPixmap(const char *, const char *, int);
+    virtual ~QPixmap();
+    QPixmap &operator = (const QImage &);
+    QPixmap &operator = (const QPixmap &);
+    const char *{serial} operator << () const : pqt_serialize($this);
+    void operator >> (const char *{serial}) : pqt_deserialize($this, $1);
+    bool convertFromImage(const QImage &, int);
+    QImage convertToImage() const;
+    QBitmap createHeuristicMask(bool = TRUE) const;
+    static int defaultDepth();
+    int depth() const;
+    void detach();
+    void fill(const QColor & = white);
+    void fill(const QWidget *, const QPoint &);
+    void fill(const QWidget *, int, int);
+    static QPixmap grabWindow(WId {uint}, int = 0, int = 0, int = -1, int = -1);
+    int height() const;
+    static const char *imageFormat(const char *);
+    static bool isGloballyOptimized();
+    bool isNull() const;
+    bool isOptimized() const;
+    bool isQBitmap() const;
+    bool load(const char *, const char *, int);
+    bool loadFromData(const uchar * {ubits *1}, uint {ubitslen $1}, const char *, int);
+    const QBitmap *mask() const;
+    void optimize(bool);
+    static void optimizeGlobally(bool);
+    QRect rect() const;
+    void resize(const QSize &);
+    void resize(int, int);
+    bool save(const char *, const char *) const;
+    bool selfMask() const;
+    int serialNumber() const;
+    void setMask(const QBitmap &);
+    QSize size() const;
+    static QWMatrix trueMatrix(const QWMatrix &, int, int);
+    int width() const;
+    QPixmap xForm(const QWMatrix &) const;
+} Pixmap;
+
+%Dither = (
+    AutoColor => AutoColor,
+    Mono => MonoOnly,
+    Color => ColorOnly,
+    Auto => AutoDither,
+    Avoid => AvoidDither,
+    Prefer => PreferDither,
+    Threshold => ThresholdDither,
+    Ordered => OrderedDither,
+    Diffuse => DiffuseDither,
+    ThresholdAlpha => ThresholdAlphaDither,
+    OrderedAlpha => OrderedAlphaDither,
+    DiffuseAlpha => DiffuseAlphaDither,
+    Mask => Dither_Mask,
+    ColorMask => ColorMode_Mask,
+    ModeMask => DitherMode_Mask,
+    AlphaMask => AlphaDither_Mask,
+
+    MonoOnly => MonoOnly,
+    ColorOnly => ColorOnly,
+    AutoDither => AutoDither,
+    AvoidDither => AvoidDither,
+    PreferDither => PreferDither,
+    ThresholdDither => ThresholdDither,
+    OrderedDither => OrderedDither,
+    DiffuseDither => DiffuseDither,
+    ThresholdAlphaDither => ThresholdAlphaDither,
+    OrderedAlphaDither => OrderedAlphaDither,
+    DiffuseAlphaDither => DiffuseAlphaDither,
+    Dither_Mask => Dither_Mask,
+    ColorMode_Mask => ColorMode_Mask,
+    DitherMode_Mask => DitherMode_Mask,
+    AlphaDither_Mask => AlphaDither_Mask
+);

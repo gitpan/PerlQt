@@ -1,0 +1,11 @@
+#include <qlayout.h>
+
+class QLayout : QObject {
+    virtual ~QLayout();
+    virtual bool activate();
+    int defaultBorder() const;
+    void freeze();
+    void freeze(int, int);
+    QWidget *mainWidget();
+    void setMenuBar(QMenuBar *);
+} Layout;

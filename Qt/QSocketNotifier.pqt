@@ -1,0 +1,19 @@
+#include <qsocknot.h>
+
+suicidal virtual class QSocketNotifier : virtual QObject {
+    QSocketNotifier(int, QSocketNotifier::Type {enum}, QObject * = 0, const char * = 0);
+    virtual ~QSocketNotifier();
+    bool isEnabled() const;
+    void setEnabled(bool);
+    int socket() const;
+    QSocketNotifier::Type {enum} type() const;
+protected:
+    void activated(int) signal;
+    virtual bool event(QEvent *);
+} SocketNotifier;
+
+%Socket = (
+    Read => QSocketNotifier::Read,
+    Write => QSocketNotifier::Write,
+    Exception => QSocketNotifier::Exception
+);

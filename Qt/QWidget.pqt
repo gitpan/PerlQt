@@ -1,0 +1,258 @@
+#include <qwidget.h>
+
+suicidal virtual class QWidget : virtual QObject, QPaintDevice {
+    QWidget(QWidget * = 0, const char * = 0, WFlags {enum} = 0);
+    virtual ~QWidget();
+    virtual void adjustSize();
+    const QColor &backgroundColor() const;
+    QWidget::BackgroundMode {enum} backgroundMode() const;
+    const QPixmap *backgroundPixmap() const;
+    const char *caption() const;
+    QRect childrenRect() const;
+    void clearFocus();
+    virtual bool close(bool = FALSE);
+    const QColorGroup &colorGroup() const;
+    const QCursor &cursor() const;
+    void drawText(const QPoint &, const char *);
+    void drawText(int, int, const char *);
+    void erase();
+    void erase(const QRect &);
+    void erase(int, int, int, int);
+    static QWidget *find(WId {uint});
+    QWidget::FocusPolicy {enum} focusPolicy() const;
+    QWidget *focusProxy() const;
+    QWidget *focusWidget() const;
+    const QFont &font() const;
+    QFontInfo fontInfo() const;
+    QFontMetrics fontMetrics() const;
+    const QColor &foregroundColor() const;
+    const QRect &frameGeometry() const;
+    const QRect &geometry() const;
+    void grabKeyboard();
+    void grabMouse();
+    void grabMouse(const QCursor &);
+    bool hasFocus() const;
+    bool hasMouseTracking() const;
+    int height() const;
+    virtual void hide() slot;
+    const QPixmap *icon() const;
+    void iconify() slot;
+    const char *iconText() const;
+    bool isActiveWindow() const;
+    bool isDesktop() const;
+    bool isEnabled() const;
+    bool isFocusEnabled() const;
+    bool isModal() const;
+    bool isPopup() const;
+    bool isTopLevel() const;
+    bool isUpdatesEnabled() const;
+    bool isVisible() const;
+    bool isVisibleToTLW() const;
+    static QWidget *keyboardGrabber();
+    void lower();
+    QPoint mapFromGlobal(const QPoint &) const;
+    QPoint mapFromParent(const QPoint &) const;
+    QPoint mapToGlobal(const QPoint &) const;
+    QPoint mapToParent(const QPoint &) const;
+    QSize maximumSize() const;
+    QSize minimumSize() const;
+    static QWidget *mouseGrabber();
+    void move(const QPoint &);
+    virtual void move(int, int);
+    const QPalette &palette() const;
+    QWidget *parentWidget() const;
+    QPoint pos() const;
+    void raise();
+    void recreate(QWidget *, WFlags {enum}, const QPoint &, bool = FALSE);
+    QRect rect() const;
+    void releaseKeyboard();
+    void releaseMouse();
+    void repaint(bool = TRUE) slot;
+    void repaint(const QRect &, bool = TRUE) slot;
+    void repaint(int, int, int, int, bool = TRUE) slot;
+    void resize(const QSize &);
+    virtual void resize(int, int);
+    void scroll(int, int);
+    void setActiveWindow();
+    virtual void setBackgroundColor(const QColor &);
+    void setBackgroundMode(QWidget::BackgroundMode {enum});
+    virtual void setBackgroundPixmap(const QPixmap &);
+    void setCaption(const char *);
+    virtual void setCursor(const QCursor &);
+    virtual void setEnabled(bool) slot;
+    void setFixedHeight(int);
+    void setFixedSize(const QSize &);
+    void setFixedSize(int, int);
+    void setFixedWidth(int);
+    void setFocus();
+    void setFocusPolicy(QWidget::FocusPolicy {enum});
+    void setFocusProxy(QWidget *);
+    virtual void setFont(const QFont &);
+    void setGeometry(const QRect &);
+    virtual void setGeometry(int, int, int, int);
+    void setIcon(const QPixmap &);
+    void setIconText(const char *);
+    void setMaximumHeight(int);
+    void setMaximumSize(const QSize &);
+    void setMaximumSize(int, int);
+    void setMaximumWidth(int);
+    void setMinimumHeight(int);
+    void setMinimumSize(const QSize &);
+    void setMinimumSize(int, int);
+    void setMinimumWidth(int);
+    void setMouseTracking(bool) slot;
+    virtual void setPalette(const QPalette &);
+    void setSizeIncrement(const QSize &);
+    void setSizeIncrement(int, int);
+    virtual void setStyle(GUIStyle {enum});
+    static void setTabOrder(QWidget *, QWidget *);
+    void setUpdatesEnabled(bool) slot;
+    virtual void show() slot;
+    QSize size() const;
+    virtual QSize sizeHint() const;
+    QSize sizeIncrement() const;
+    GUIStyle {enum} style() const;
+    bool testWFlags(WFlags {enum}) const;
+    QWidget *topLevelWidget() const;
+    void update() slot;
+    void update(const QRect &) slot;
+    void update(int, int, int, int) slot;
+    int width() const;
+    WId {uint} winId() const;
+    int x() const;
+    int y() const;
+protected:
+    virtual void backgroundColorChange(const QColor &);
+    virtual void backgroundPixmapChange(const QPixmap &);
+    void clearWFlags(WFlags {enum});
+    virtual void closeEvent(QCloseEvent *);
+    void create(WId {uint});
+    void create(WId {uint}, bool, bool);
+    void destroy(bool, bool);
+    virtual void enabledChange(bool);
+    virtual void enterEvent(QEvent *);
+    virtual bool event(QEvent *);
+    virtual void focusInEvent(QFocusEvent *);
+    virtual bool focusNextPrevChild(bool);
+    virtual void focusOutEvent(QFocusEvent *);
+    virtual void fontChange(const QFont &);
+    WFlags {enum} getWFlags() const;
+    virtual void keyPressEvent(QKeyEvent *);
+    virtual void keyReleaseEvent(QKeyEvent *);
+    virtual void leaveEvent(QEvent *);
+    virtual void mouseDoubleClickEvent(QMouseEvent *);
+    virtual void mouseMoveEvent(QMouseEvent *);
+    virtual void mousePressEvent(QMouseEvent *);
+    virtual void mouseReleaseEvent(QMouseEvent *);
+    virtual void moveEvent(QMoveEvent *);
+    virtual void paintEvent(QPaintEvent *);
+    virtual void paletteChange(const QPalette &);
+    virtual void resizeEvent(QResizeEvent *);
+    void setWFlags(WFlags {enum});
+    virtual void styleChange(GUIStyle {enum});
+} Widget;
+
+%Widget = (
+    Created => WState_Created,
+    Disabled => WState_Disabled,
+    Visible => WState_Visible,
+    DoHide => WState_DoHide,
+    ClickToFocus => WState_ClickToFocus,
+    TrackMouse => WState_TrackMouse,
+    BlockUpdates => WState_BlockUpdates,
+    PaintEvent => WState_PaintEvent,
+    TopLevel => WType_TopLevel,
+    Modal => WType_Modal,
+    Popup => WType_Popup,
+    Desktop => WType_Desktop,
+    Customize => WStyle_Customize,
+    NormalBorder => WStyle_NormalBorder,
+    DialogBorder => WStyle_DialogBorder,
+    NoBorder => WStyle_NoBorder,
+    Title => WStyle_Title,
+    SysMenu => WStyle_SysMenu,
+    Minimize => WStyle_Minimize,
+    Maximize => WStyle_Maximize,
+    MinMax => WStyle_MinMax,
+    Tool => WStyle_Tool,
+    Mask => WStyle_Mask,
+    CursorSet => WCursorSet,
+    DestructiveClose => WDestructiveClose,
+    PaintDesktop => WPaintDesktop,
+    PaintUnclipped => WPaintUnclipped,
+    PaintClever => WPaintClever,
+    ConfigPending => WConfigPending,
+    ResizeNoErase => WResizeNoErase,
+    Recreated => WRecreated,
+    ExportFontMetrics => WExportFontMetrics,
+    ExportFontInfo => WExportFontInfo,
+    FocusSet => WFocusSet,
+    TabToFocus => WState_TabToFocus,
+
+    WState_Created => WState_Created,
+    WState_Disabled => WState_Disabled,
+    WState_Visible => WState_Visible,
+    WState_DoHide => WState_DoHide,
+    WState_ClickToFocus => WState_ClickToFocus,
+    WState_TrackMouse => WState_TrackMouse,
+    WState_BlockUpdates => WState_BlockUpdates,
+    WState_PaintEvent => WState_PaintEvent,
+    WType_TopLevel => WType_TopLevel,
+    WType_Modal => WType_Modal,
+    WType_Popup => WType_Popup,
+    WType_Desktop => WType_Desktop,
+    WStyle_Customize => WStyle_Customize,
+    WStyle_NormalBorder => WStyle_NormalBorder,
+    WStyle_DialogBorder => WStyle_DialogBorder,
+    WStyle_NoBorder => WStyle_NoBorder,
+    WStyle_Title => WStyle_Title,
+    WStyle_SysMenu => WStyle_SysMenu,
+    WStyle_Minimize => WStyle_Minimize,
+    WStyle_Maximize => WStyle_Maximize,
+    WStyle_MinMax => WStyle_MinMax,
+    WStyle_Tool => WStyle_Tool,
+    WStyle_Mask => WStyle_Mask,
+    WCursorSet => WCursorSet,
+    WDestructiveClose => WDestructiveClose,
+    WPaintDesktop => WPaintDesktop,
+    WPaintUnclipped => WPaintUnclipped,
+    WPaintClever => WPaintClever,
+    WConfigPending => WConfigPending,
+    WResizeNoErase => WResizeNoErase,
+    WRecreated => WRecreated,
+    WExportFontMetrics => WExportFontMetrics,
+    WExportFontInfo => WExportFontInfo,
+    WFocusSet => WFocusSet,
+    WState_TabToFocus => WState_TabToFocus,
+);
+
+%Palette = (
+    None => QWidget::NoBackground,
+    Color => QWidget::FixedColor,
+    Pixmap => QWidget::FixedPixmap,
+    Foreground => QWidget::PaletteForeground,
+    Background => QWidget::PaletteBackground,
+    Light => QWidget::PaletteLight,
+    Midlight => QWidget::PaletteMidlight,
+    Dark => QWidget::PaletteDark,
+    Mid => QWidget::PaletteMid,
+    Text => QWidget::PaletteText,
+    Base => QWidget::PaletteBase,
+
+    NoBackground => QWidget::NoBackground,
+    FixedColor => QWidget::FixedColor,
+    FixedPixmap => QWidget::FixedPixmap,
+    PaletteForeground => QWidget::PaletteForeground,
+    PaletteBackground => QWidget::PaletteBackground,
+    PaletteLight => QWidget::PaletteLight,
+    PaletteMidlight => QWidget::PaletteMidlight,
+    PaletteDark => QWidget::PaletteDark,
+    PaletteMid => QWidget::PaletteMid,
+    PaletteText => QWidget::PaletteText,
+    PaletteBase => QWidget::PaletteBase
+);
+
+%Orientation = (
+    Horizontal => 0,
+    Vertical => 1
+);

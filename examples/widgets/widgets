@@ -1,0 +1,334 @@
+#!/usr/bin/perl -I../aclock -I../dclock -w
+
+use Qt ();
+
+BEGIN { QApplication::setColorSpec(1) }
+
+package WidgetView;
+
+use Qt qw($app %Align %Button %Color %Event %Frame %Orientation %Tick %Weight);
+use AnalogClock;
+use DigitalClock;
+
+use slots 'button1Clicked()', 'button2Clicked()';
+use slots 'checkBoxClicked(int)', 'radioButtonClicked(int)';
+use slots 'sliderValueChanged(int)', 'listBoxItemSelected(int)';
+use slots 'comboBoxItemActivated(int)', 'edComboBoxItemActivated(cstring)';
+use slots 'lineEditTextChanged(cstring)';
+
+@ISA = qw(QDialog);
+
+#
+# Construct the WidgetView with buttons
+#
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+    my $col = QColor->new;
+
+    # Set the window caption/title
+
+    $self->setCaption("PerlQt Widgets Demo Application");
+
+    # Install an application-global event filter
+    # This causes a connect warning, but it's inconsequential
+
+    $app->installEventFilter($self);
+
+    # Create an analog and a digital clock
+
+    my $aclock = AnalogClock->new($self);
+    my $dclock = DigitalClock->new($self);
+    $aclock->setGeometry(300, 100, 100, 100);
+    $dclock->setGeometry(300, 220, 100, 60);
+
+    # Give the dclock widget a blue palette
+
+    $col->setRgb(0xaa, 0xbe, 0xff);
+    my $colgrp = QColorGroup->new($Color{Black}, $col, $col->light(), $col->dark(),
+				  $col->dark(120), $Color{Black}, $Color{White});
+    $dclock->setPalette(QPalette->new($colgrp, $colgrp, $colgrp));
+
+    # make tool tips for both of them
+
+    QToolTip::add($aclock, "custom widget: analog clock");
+    QToolTip::add($dclock, "custom widget: digital clock");
+
+    # Create two push buttons, a text button and a pixmap button
+
+    my $pb = QPushButton->new($self, 'button1');
+    $pb->setText('Push Button 1');
+    $pb->setGeometry(10, 30, 120, 30);
+    $self->connect($pb, 'clicked()', 'button1Clicked()');
+    QToolTip::add($pb, 'push button 1');
+    $pb = QPushButton->new($self, 'button2');
+    my $pm = QPixmap->new;
+    my $pix = 1;
+    unless($pm->load('perlqt.bmp')) {
+	QMessageBox::message('Error', 'Could not load perlqt.bmp pixmap');
+	$pb->setText('No pixmap');
+	$pix = 0;
+    } else {
+	$pb->setPixmap($pm);
+    }
+    $pb->setGeometry(150, 10, 60, 60);
+    $self->connect($pb, 'clicked()', 'button2Clicked()');
+    QToolTip::add($pb, 'push button 2');
+
+    # Create a quit button
+    # Pressing the quit button will terminate the application
+
+    my $quitButton = QPushButton->new($self, 'quitButton');
+    $quitButton->setText('Quit');
+    $quitButton->setGeometry(300, 30, 80, 30);
+    $app->connect($quitButton, 'clicked()', 'quit()');
+
+    QToolTip::add($quitButton, 'quit the application');
+
+    # Make the quit button red and give it another font
+
+    $col = QColor->new(240, 10, 10);
+    $colgrp = QColorGroup->new($Color{Black}, $col, $col->light(), $col->dark(),
+			       $col->dark(120), $Color{Blue}, $Color{White});
+    $quitButton->setPalette(QPalette->new($colgrp, $colgrp, $colgrp));
+    $quitButton->setFont(QFont->new('Times', 14, $Weight{Bold}, 1));
+
+    # Create a group of check boxes
+
+    my $bg = QButtonGroup->new($self, 'checkGroup');
+    $bg->setTitle('Check boxes');
+    my @cb;
+    $cb[0] = QCheckBox->new($bg);
+    $cb[0]->setText('Read');
+    $cb[0]->setGeometry(10, 15, 100, 25);
+    $cb[1] = QCheckBox->new($bg);
+    $cb[1]->setText('Write');
+    $cb[1]->setGeometry(10, 45, 100, 25);
+    $cb[2] = QCheckBox->new($bg);
+    $cb[2]->setText('Execute');
+    $cb[2]->setGeometry(10, 75, 100, 30);
+    $bg->setGeometry(10, 80, 120, 110);
+    $self->connect($bg, 'clicked(int)', 'checkBoxClicked(int)');
+
+    QToolTip::add($cb[0], 'check box 1');
+    QToolTip::add($cb[1], 'check box 2');
+    QToolTip::add($cb[2], 'check box 3');
+
+    # Create a group of radio buttons
+
+    my $rb;
+    $bg = QButtonGroup->new($self, 'radioGroup');
+    $bg->setTitle('Radio buttons');
+    $rb = QRadioButton->new($bg);
+    $rb->setText('AM');
+    $rb->setGeometry(10, 15, 100, 25);
+    QToolTip::add($rb, 'radio button 1');
+    $rb = QRadioButton->new($bg);
+    $rb->setText('FM');
+    $rb->setGeometry(10, 45, 100, 25);
+    QToolTip::add($rb, 'radio button 2');
+    $rb = QRadioButton->new($bg);
+    $rb->setText('Short Wave');
+    $rb->setGeometry(10, 75, 100, 25);
+    $bg->setGeometry(140, 80, 120, 110);
+    $self->connect($bg, 'clicked(int)', 'radioButtonClicked(int)');
+    QToolTip::add($rb, 'radio button 3');
+
+    # Create a list box
+
+    my $lb = QListBox->new($self, 'listBox');
+    for my $i (0..99) {
+	if($i == 42 && $pix) {
+	    $lb->insertItem($pm);
+	} else {
+	    $lb->insertItem("line $i");
+	}
+    }
+    $lb->setGeometry(10, 200, 120, 140);
+    my $lbIH = $lb->itemHeight();
+    $lb->resize($lb->width(), (($lb->height()+$lbIH)/$lbIH)*$lbIH +
+		$lb->frameWidth()*2);
+    $self->connect($lb, 'selected(int)', 'listBoxItemSelected(int)');
+    QToolTip::add($lb, 'list box');
+
+    # Create a slider
+
+    my $sb = QSlider->new($Orientation{Horizontal}, $self, 'Slider');
+    $sb->setTickmarks($Tick{Below});
+    $sb->setGeometry(140, 200, 120, $sb->sizeHint()->height());
+    $self->connect($sb, 'valueChanged(int)', 'sliderValueChanged(int)');
+    QToolTip::add($sb, 'slider');
+
+    # Create a combo box
+
+    my $combo = QComboBox->new(0, $self, 'comboBox');
+    $combo->insertItem('True');
+    $combo->insertItem('False');
+    $combo->insertItem('Maybe');
+    $combo->insertItem('Certainly');
+    $combo->insertItem('Nope');
+    $combo->setGeometry(140, 250, 120, 30);
+    $self->connect($combo, 'activated(int)', 'comboBoxItemActivated(int)');
+    QToolTip::add($combo, 'read-only combo box');
+
+    # Create an editable combo box
+
+    $edCombo = QComboBox->new(1, $self, 'edComboBox');
+    $edCombo->insertItem('Permutable');
+    $edCombo->insertItem('Malleable');
+    $edCombo->insertItem('Adaptable');
+    $edCombo->insertItem('Alterable');
+    $edCombo->insertItem('Inconstant');
+    $edCombo->setGeometry(140, 290, 120, 30);
+    $self->connect($edCombo, 'activated(cstring)',
+		   'edComboBoxItemActivated(cstring)');
+    QToolTip::add($edCombo, 'editable combo box');
+
+    # Create a line edit
+
+    my $le = QLineEdit->new($self, 'lineEdit');
+    $le->setGeometry(140, 340, 230, 25);
+    $self->connect($le, 'textChanged(cstring)',
+		   'lineEditTextChanged(cstring)');
+    QToolTip::add($le, 'single line editor');
+
+    # Create a message label
+    # The message is updated when buttons are clicked etc.
+
+    my $msgLabel = QLabel->new($self, 'msgLabel');
+    $msgLabel->setText('Message:');
+    $msgLabel->setAlignment($Align{Right} | $Align{VCenter});
+    $msgLabel->setGeometry(10, 400, 85, 30);
+    QToolTip::add($msgLabel, 'label 1');
+
+    my $msg = QLabel->new($self, 'message');
+    $msg->setFrameStyle($Frame{Panel} | $Frame{Sunken});
+    $msg->setAlignment($Align{Center});
+    $msg->setGeometry(100, 400, 300, 30);
+    $msg->setFont(QFont->new('Times', 12, $Weight{Bold}));
+    QToolTip::add($msg, 'label 2');
+
+    # Create a horizontal line (sort of QFrame) above the quit button
+
+    my $separator = QFrame->new($self, 'separatorLine');
+    $separator->setFrameStyle($Frame{HLine} | $Frame{Sunken});
+    $separator->setGeometry(5, 390, 440, 4);
+    QToolTip::add($separator, 'tool tips on a separator! wow!');
+
+    $self->adjustSize();
+
+    @$self{'msg', 'cb'} = ($msg, \@cb);
+    return $self;
+}
+
+sub button1Clicked {
+    shift->{'msg'}->setText('The first push button was clicked');
+}
+
+sub button2Clicked {
+    shift->{'msg'}->setText('The second push button was clicked');
+}
+
+sub checkBoxClicked {
+    my $self = shift;
+    my($msg, $cb) = @$self{'msg', 'cb'};
+    my $id = shift;
+    my $str = "Check box $id clicked : ";
+
+    $str .= $$cb[0]->isChecked() ? 'r' : '-';
+    $str .= $$cb[1]->isChecked() ? 'w' : '-';
+    $str .= $$cb[2]->isChecked() ? 'x' : '-';
+    $msg->setText($str);
+}
+
+sub edComboBoxItemActivated {
+    my $self = shift;
+    my $msg = $self->{'msg'};
+    my $text = shift;
+
+    $msg->setText("Editable Combo Box set to $text");
+}
+
+sub radioButtonClicked {
+    my $self = shift;
+    my $msg = $self->{'msg'};
+    my $id = shift;
+
+    $msg->setText("Radio button #$id clicked");
+}
+
+sub listBoxItemSelected {
+    my $self = shift;
+    my $msg = $self->{'msg'};
+    my $index = shift;
+
+    $msg->setText("List box item $index selected");
+}
+
+sub sliderValueChanged {
+    $_[0]{'msg'}->setText("New slider value $_[1]");  # speed
+#    my $self = shift;
+#    my $msg = $$self{'msg'};
+#    my $value = shift;
+#
+#    $msg->setText("New slider value $value");
+}
+
+sub comboBoxItemActivated {
+    my $self = shift;
+    my $msg = $self->{'msg'};
+    my $index = shift;
+
+    $msg->setText("Combo box item $index activated");
+}
+
+sub lineEditTextChanged {
+    my $self = shift;
+    my $msg = $self->{'msg'};
+    my $newText = shift;
+
+    $msg->setText("Line edit text: $newText");
+}
+
+
+#
+# All application events are passed through this event filter.
+# We're using it to display some information about a clicked
+# widget (right mouse button + CTRL).
+#
+
+$identify_now = 1;
+
+sub eventFilter {
+    my $self = shift;
+    my $obj = shift;
+    my $event = shift;
+
+    if($event->type() == $Event{MouseButtonPress} && $identify_now) {
+	my $e = $event->cast('QMouseEvent');    # Careful, typecast
+	if($e->button() == $Button{Right} && $e->state() & $Button{Control}) {
+	    my $str = "The clicked widget is a\n";
+	    $str .= $obj->className();
+	    $str .= "\nThe widget's name is\n";
+	    $str .= $obj->name() ? $obj->name() : '<no name>';
+	    $identify_now = 0;
+	    $obj = $event->cast('QWidget');  # another typecast
+	    QMessageBox::message('Identify Widget', $str, undef, $obj);
+	    $identify_now = 1;
+	}
+    }
+    return 0;
+}
+
+package main;
+
+use Qt 2.0;
+
+#
+# Create and display our WidgetView
+#
+
+$w = WidgetView->new;
+$app->setMainWidget($w);
+$w->show();
+exit $app->exec();

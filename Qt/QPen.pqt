@@ -1,0 +1,36 @@
+#include <qpen.h>
+
+struct QPen {
+    QPen();
+    QPen(PenStyle {enum});
+    QPen(const QPen &);
+    QPen(const QColor &, uint = 0, PenStyle {enum} = SolidLine);
+    ~QPen();
+    QPen &operator = (const QPen &);
+    bool operator == (const QPen &) const;
+    bool operator != (const QPen &) const;
+    const char *{serial} operator << () const : pqt_serialize($this);
+    void operator >> (const char *{serial}) : pqt_deserialize($this, $1);
+    const QColor &color() const;
+    void setColor(const QColor &);
+    void setStyle(PenStyle {enum});
+    void setWidth(uint);
+    PenStyle {enum} style() const;
+    uint width() const;
+} Pen;
+
+%Pen = (
+    None => NoPen,
+    Solid => SolidLine,
+    Dash => DashLine,
+    Dot => DotLine,
+    DashDot => DashDotLine,
+    DashDotDot => DashDotDotLine,
+
+    NoPen => NoPen,
+    SolidLine => SolidLine,
+    DashLine => DashLine,
+    DotLine => DotLine,
+    DashDotLine => DashDotLine,
+    DashDotDotLine => DashDotDotLine
+);
