@@ -94,7 +94,7 @@ PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_cstring, const char *) {
 
 PIG_DEFINE_TYPE_RETURN(pig_type_cstring, const char *) {
     PIGRET;
-    PIGRETURN(sv_2mortal(newSVpv((char *)pig0, 0)));
+    PIGRETURN(pig0 ? sv_2mortal(newSVpv((char *)pig0, 0)) : sv_mortalcopy(&PIGsv_undef));
 }
 
 PIG_DEFINE_TYPE_PUSH(pig_type_cstring, const char *) {
@@ -324,6 +324,63 @@ PIG_DEFINE_STUB_PUSH(pig_type_boolptr, void *)
 PIG_DEFINE_STUB_POP(pig_type_boolptr, void *)
 
 
+PIG_DEFINE_SCOPE_ARGUMENT(pig_type_shortarray) {
+    delete[] (short *)pig0;
+}
+
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_shortarray, short *) {
+    PIGARGS;
+    AV *pigav;
+    SV **pigsvp;
+    I32 pigcnt, pigidx;
+    short *pigr;
+
+    if(!SvOK(PIG_ARG))
+        return 0;
+    if(!SvROK(PIG_ARG) || SvTYPE(SvRV(PIG_ARG)) != SVt_PVAV) {
+        if(PIGdowarn)
+           warn("Argument must be an array reference, not a list");
+       return 0;
+    }
+
+    pigav = (AV *)SvRV(PIG_ARG);
+    pigcnt = av_len(pigav);
+    pigr = new short[pigcnt + 2];
+
+    for(pigidx = 0; pigidx <= pigcnt; pigidx++) {
+        pigsvp = av_fetch(pigav, pigidx, 0);
+       if(!pigsvp) continue;
+        pigr[pigidx] = (short)SvIV(*pigsvp);
+    }
+
+    pigr[pigidx] = 0;    // Might as well zero-terminated?
+
+    PIGSCOPE_ARGUMENT(pig_type_shortarray, pigr);
+    PIGARGUMENT(pigr);
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_shortarray, short *)
+PIG_DEFINE_STUB_RETURN(pig_type_shortarray, short *)
+PIG_DEFINE_STUB_PUSH(pig_type_shortarray, short *)
+PIG_DEFINE_STUB_POP(pig_type_shortarray, short *)
+
+
+PIG_DEFINE_TYPE_ARGUMENT2(pig_type_shortarrayitems, int, int) {
+    PIGARGS;
+    SV *pigarg = ST(pig0);
+    if(!SvOK(pigarg) || !SvROK(pigarg) || SvTYPE(SvRV(pigarg)) != SVt_PVAV)
+        return 0;
+
+    // This does not move us to the next ST() argument
+    return av_len((AV *)SvRV(pigarg)) + 1;
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_shortarrayitems, int)
+PIG_DEFINE_STUB_RETURN(pig_type_shortarrayitems, int)
+PIG_DEFINE_STUB_PUSH(pig_type_shortarrayitems, int)
+PIG_DEFINE_STUB_POP(pig_type_shortarrayitems, int)
+
+
 PIG_DEFINE_TYPE(pig_type_bool)
 PIG_DEFINE_TYPE(pig_type_char)
 PIG_DEFINE_TYPE(pig_type_cstring)
@@ -335,6 +392,9 @@ PIG_DEFINE_TYPE(pig_type_long)
 PIG_DEFINE_TYPE(pig_type_short)
 PIG_DEFINE_TYPE(pig_type_ptr)
 PIG_DEFINE_TYPE(pig_type_boolptr)
+PIG_DEFINE_TYPE(pig_type_shortarray)
+PIG_DEFINE_TYPE(pig_type_shortarrayitems)
+
 
 PIG_EXPORT_TABLE(pigtype_base)
     PIG_EXPORT_TYPE(pig_type_bool, "bool")
@@ -350,4 +410,6 @@ PIG_EXPORT_TABLE(pigtype_base)
     PIG_EXPORT_TYPE(pig_type_short, "short")
     PIG_EXPORT_TYPE(pig_type_ptr, "*")
     PIG_EXPORT_TYPE(pig_type_boolptr, "bool*")
+    PIG_EXPORT_TYPE(pig_type_shortarray, "short[]")
+    PIG_EXPORT_TYPE(pig_type_shortarrayitems, "sizeof(short[])")
 PIG_EXPORT_ENDTABLE

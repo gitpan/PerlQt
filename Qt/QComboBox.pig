@@ -17,7 +17,7 @@ suicidal virtual class QComboBox : virtual QWidget {
     int count() const;
     int currentItem() const;
     const char *currentText() const;
-    bool eventFilter(QObject *, QEvent *);
+    virtual bool eventFilter(QObject *, QEvent *);
     QComboBox::Policy insertionPolicy() const;
     void insertItem(const char *, int = -1);
     void insertItem(const QPixmap &, int = -1);

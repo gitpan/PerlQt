@@ -130,40 +130,93 @@ README.LICENSE
 README.QT
 SigSlot.pm
 TODO
+examples/aclock/AnalogClock.pm
+examples/aclock/README
+examples/aclock/aclock
+examples/application/README
+examples/biff/README
+examples/connect/README
+examples/connect/connect
+examples/cursor/README
+examples/cursor/cursor
+examples/dclock/DigitalClock.pm
+examples/dclock/README
+examples/dclock/dclock
+examples/desktop/README
+examples/dirview/Directory.pm
+examples/dirview/README
+examples/dirview/dirview
+examples/dragdrop/README
+examples/drawdemo/README
+examples/drawdemo/drawdemo
+examples/forever/README
+examples/forever/forever
+examples/hello/Hello.pm
+examples/hello/README
+examples/hello/hello
+examples/layout/README
+examples/layout/layout
+examples/layouts/README
+examples/life/README
+examples/menu/README
+examples/movies/README
+examples/picture/README
+examples/pref/Preferences.pm
+examples/pref/README
+examples/pref/pref
+examples/progress/README
+examples/qmag/README
+examples/qwerty/Editor.pm
+examples/qwerty/README
+examples/qwerty/qwerty
+examples/scrollview/README
+examples/showimg/README
+examples/splitter/README
+examples/splitter/splitter
+examples/table/README
+examples/table/Table.pm
+examples/table/table
+examples/tetrix/README
+examples/tictac/README
+examples/tooltip/README
+examples/validator/README
+examples/widgets/README
+examples/widgets/widgets
+examples/xform/README
 gensigslot
-pig.h			Symbol-table support and fundamental structures
-pigboot.c		Perl bootstrap function
-pigclassinfo.c		Export XS functions using generated data-structures
+pig.h				Symbol-table support and fundamental structures
+pigboot.c			Perl bootstrap function
+pigclassinfo.c			Export XS functions using generated data-structures
 pigclassinfo.h
-pigconstant.c		Create constants using generated data
+pigconstant.c			Create constants using generated data
 pigconstant.h
-pigdebug.h		#define-able debugging information
-pigemit.c		XS functions for signal/slot support
-pigfunc.h		Definitions for symbol-table functions
-pigfunc_base.c		Base functions, required for Pig
+pigdebug.h			#define-able debugging information
+pigemit.c			XS functions for signal/slot support
+pigfunc.h			Definitions for symbol-table functions
+pigfunc_base.c			Base functions, required for Pig
 pigfunc_base.h
-pigfunc_object.c	Object-related functions
+pigfunc_object.c		Object-related functions
 pigfunc_object.h
-pigfunc_qt.c		PerlQt-specific functions
+pigfunc_qt.c			PerlQt-specific functions
 pigfunc_qt.h
-pigmodule_Qt.h		#includes all headers needed by generated PerlQt source
-pigobject.c		Misc signal/slot & object functions
-pigperl.c		Defines some variables
-pigperl.h		Perl-specific functions, variables, structures, defines
-pigproto.c		Signal/slot prototype parsing function
-pigsigslot.c		Skeleton wrapper around generated signal/slot class
+pigmodule_Qt.h			#includes all headers needed by generated PerlQt source
+pigobject.c			Misc signal/slot & object functions
+pigperl.c			Defines some variables
+pigperl.h			Perl-specific functions, variables, structures, defines
+pigproto.c			Signal/slot prototype parsing function
+pigsigslot.c			Skeleton wrapper around generated signal/slot class
 pigsigslot.h
-pigsymbol.c		Symbol-table import/export functions
+pigsymbol.c			Symbol-table import/export functions
 pigsymbol.h
-pigsymbol_Qt.c		Import symbol-table for PerlQt
-pigtype.h		Definitions for symbol-table types
-pigtype_base.c		Pig support for basic C++ types (int, char*, ...)
+pigsymbol_Qt.c			Import symbol-table for PerlQt
+pigtype.h			Definitions for symbol-table types
+pigtype_base.c			Pig support for basic C++ types (int, char*, ...)
 pigtype_base.h
-pigtype_object.c	Pig support for object types
+pigtype_object.c		Pig support for object types
 pigtype_object.h
-pigtype_qt.c		Pig support for PerlQt-specific types
+pigtype_qt.c			Pig support for PerlQt-specific types
 pigtype_qt.h
-pigvirtual.c		Support class for virtual function overrides
+pigvirtual.c			Support class for virtual function overrides
 pigvirtual.h
 tutorials/t1/t1
 tutorials/t10/CannonField.pm
@@ -196,4 +249,4 @@ tutorials/t8/t8
 tutorials/t9/CannonField.pm
 tutorials/t9/LCDRange.pm
 tutorials/t9/t9
-typesizes_c		Gets sizeof() information for signals&slots
+typesizes_c			Gets sizeof() information for signals&slots

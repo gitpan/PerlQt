@@ -1,0 +1,77 @@
+#!/usr/bin/perl -w
+
+package ConnectWidget;
+
+use Qt 2.0;
+
+@ISA = qw(Qt::Widget);
+
+$MAXCOLORS = 40;
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+
+    $self->setBackgroundColor(Qt::white);
+    $self->{'down'} = 0;
+    $self->{'points'} = [];
+    for(my $i = 0; $i < $MAXCOLORS; $i++) {
+	$self->{'colors'}[$i] = Qt::Color->new(rand(255), rand(255), rand(255));
+    }
+
+    return $self;
+}
+
+sub paintEvent {
+    my $self = shift;
+    my($colors, $points) = @$self{'colors', 'points'};
+    my $count = @$points;
+
+    my $paint = Qt::Painter->new;
+    $paint->begin($self);
+    my($i, $j);
+    for($i = 0; $i < $count-1; $i++) {
+	for($j = $i+1; $j < $count; $j++) {
+	    $paint->setPen($colors->[int(rand($MAXCOLORS))]);
+	    $paint->drawLine($points->[$i], $points->[$j]);
+	}
+    }
+    $paint->end();
+}
+
+sub mousePressEvent {
+    my $self = shift;
+
+    $self->{'down'} = 1;
+    $self->{'points'} = [];
+    $self->erase();
+}
+
+sub mouseReleaseEvent {
+    my $self = shift;
+
+    $self->{'down'} = 0;
+    $self->update();
+}
+
+sub mouseMoveEvent {
+    my $self = shift;
+    my $e = shift;
+
+    if($self->{'down'}) {
+	my $paint = Qt::Painter->new;
+	$paint->begin($self);
+	push @{$self->{'points'}}, $e->pos();
+	$paint->drawPoint($e->pos());
+	$paint->end();
+    }
+}
+
+package main;
+
+use Qt 2.0;
+use Qt::app;
+
+$connect = ConnectWidget->new;
+$app->setMainWidget($connect);
+$connect->show();
+exit $app->exec();

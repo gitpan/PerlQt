@@ -1,3 +1,21 @@
+Changes from 2.005 to 2.006  (1999-Jun-20)
+---------------------------
+
+- Started adding examples from Qt-1.44
+- QComboBox::eventFilter is now virtual
+- QPointArray array counts needed to be /2, so I added a
+  qt_pointarrayitems type
+- Virtual function return value (PIG_TOPSTACK) is not destroyed in
+  PIGPOP() anymore, but is destroyed just before being reused by the next
+  virtual function
+- PerlQt is creating objects around 0 ptrs. I have only fixed
+  pig_type_new_object_return
+- pig_object_can_delete makes sure !PIG_CLASS_SUICIDAL before allowing
+  perl to delete an object
+- cstring type checks before attempting to newSVpv(0, 0)
+- Added shortarray and shortarrayitems types to type_base
+
+
 Changes from 2.004 to 2.005  (1999-Jun-17)
 ---------------------------
 

@@ -19,7 +19,14 @@ PIG_DEFINE_VOID_FUNC_2(pig_scope_argument, pigscopefptr, void *) {
     pigscope->pigdata = pig1;
 }
 
-PIG_DEFINE_VOID_STUB_2(pig_scope_virtual, pigscopefptr, void *)
+PIG_DEFINE_VOID_FUNC_2(pig_scope_virtual, pigscopefptr, void *) {
+    static pigscopefptr pigfptr = 0;
+    static void *pigptr = 0;
+
+    if(pigptr) (*pigfptr)(pigptr);
+    pigfptr = pig0;
+    pigptr = pig1;
+}
 
 PIG_DEFINE_VOID_FUNC_1(pig_scope_leave, pig_sub_scope *) {
     pig_sub_scope *pigold;

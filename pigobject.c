@@ -170,15 +170,17 @@ PIG_DEFINE_VOID_FUNC_3(pig_type_new_castobject_return, void *, const char *, con
 PIG_DEFINE_VOID_FUNC_2(pig_type_new_object_return, void *, const char *) {
     PIGRET;
     pig_object_data *pigd;
+    if(!pig0) { PIGRETURN(sv_mortalcopy(&PIGsv_undef)); }
     SV *pigr = sv_2mortal(pig_object_create(pig_map_class(pig1), &pigd));
-
+//printf("Creating %s(%p)\n", pig_map_class(pig1), pig0);
     pig_assign_pigd(pigd, pig0, pig_classinfo_fetch(pig1), PIGOBJECT_ALLOCATED);
 
 //    pig_virtual *pigv =
 //      (pig_virtual *)(*pigd->piginfo->pigtocastfunc)("virtual", pig0);
 //    if(pigv) pig_virtual_setobject(pigv, PIG_RETARG);
 
-    sv_bless(pigr, gv_stashpv((char *)pig_map_class(pig1), TRUE));
+//    sv_bless(pigr, gv_stashpv((char *)pig_map_class(pig1), TRUE));
+//printf("Returning %p => %p\n", pigr, SvRV(pigr));
     PIGRETURN(pigr);
 }
 
@@ -198,7 +200,11 @@ PIG_DEFINE_FUNC_0(bool, pig_object_can_delete) {
 //printf("flags: %x\n", pigd->pigflags);
 //printf("testing for delete of %s:%p:%p:%x %s\n", pigd->piginfo->pigclassname, pigd, pigd->pigptr, pigd->pigflags, (pigd->pigflags & PIGOBJECT_ALLOCATED) ? "TRUE" : "FALSE");
 
-    PIGARGUMENT((pigd->pigflags & PIGOBJECT_ALLOCATED) ? TRUE : FALSE);
+    if(pigd->piginfo->pigclassinfo != PIG_CLASS_SUICIDAL) {
+        PIGARGUMENT((pigd->pigflags & PIGOBJECT_ALLOCATED) ? TRUE : FALSE);
+    } else {
+	PIGARGUMENT(FALSE);
+    }
 }
 
 PIG_DEFINE_VOID_FUNC_2(pig_object_destroy, void *, class pig_virtual *) {

@@ -1,0 +1,6 @@
+aclock example from Qt-1.44
+
+aclock.cpp => AnalogClock.pm
+main.cpp => aclock
+
+This example should work completely without any messages.

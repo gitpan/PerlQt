@@ -93,8 +93,11 @@ PIG_DEFINE_TYPE_PUSH2(pig_type_object_ref, void *, const char *) {
 
 PIG_DEFINE_TYPE_POP2(pig_type_object_ref, void *, const char *) {
     PIGPOPSTACK;
+//warn("POP using %p => %p\n", PIG_TOPSTACK, SvRV(PIG_TOPSTACK));
     pig_object_data *pigd = pig_object_extract(PIG_TOPSTACK);
+//warn("Extracting...\n");
     PIGPOP(pig_object_cast(pigd, pig0));
+//warn("That's the end\n");
 }
 
 PIG_DEFINE_TYPE_ARGUMENT2(pig_type_const_object, const void *, const char *) {
@@ -135,6 +138,8 @@ PIG_DEFINE_TYPE_PUSH2(pig_type_const_object, const void *, const char *) {
 
 PIG_DEFINE_TYPE_POP2(pig_type_const_object, const void *, const char *) {
     PIGPOPSTACK;
+    if(!SvOK(PIG_TOPSTACK)) { PIGPOP(0); }
+//warn("POP using %p => %p\n", PIG_TOPSTACK, SvRV(PIG_TOPSTACK));
     pig_object_data *pigd = pig_object_extract(PIG_TOPSTACK);
     PIGPOP(pig_object_cast(pigd, pig0));
 }

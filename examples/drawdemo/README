@@ -1,0 +1,6 @@
+drawdemo example from Qt-1.3x
+
+drawdemo.cpp => drawdemo
+
+The path text is screwed, but I hacked that badly. Also, I cannot Close
+the window, and that's probably a bug in PerlQt. It does work, though.

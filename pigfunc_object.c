@@ -51,7 +51,6 @@ PIG_DEFINE_FUNC_2(void *, pig_object_cast, struct pig_object_data *, const char 
     void *pigr = (*piginfo->pigtocastfunc)(pig1, (void *)pig0->pigptr);
     if(!pigr)
         die("Cannot cast %s pointer to %s\n", piginfo->pigclassname, pig1);
-
     return pigr;
 }
 

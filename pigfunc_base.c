@@ -126,7 +126,8 @@ PIG_DEFINE_VOID_FUNC_2(pig_call_retmethod, const class pig_virtual *, const char
     int pigr = perl_call_method((char *)pig1, G_SCALAR);
     if(pigr < 1) croak("perl_call_method croaked");
     SPAGAIN;
-    pig_virtual_return = newSVsv(POPs);
+    if(PIG_TOPSTACK) SvREFCNT_dec(PIG_TOPSTACK);
+    PIG_TOPSTACK = newSVsv(POPs);
     PUTBACK;
     FREETMPS;
     LEAVE;

@@ -1,0 +1,6 @@
+dirview example from Qt-1.44
+
+dirview.cpp => Directory.pm
+main.cpp => dirview
+
+It works perfectly for me.

@@ -5,7 +5,7 @@ struct QPointArray {
     QPointArray(int);
     QPointArray(const QPointArray &);
     QPointArray(const QRect &, bool = FALSE);
-    QPointArray(int {@shortarrayitems(1)}, const QCOORD *{shortarray});
+    QPointArray(int {@qt_pointarrayitems(1)}, const QCOORD *{shortarray});
     ~QPointArray();
     QPointArray &operator = (const QPointArray &);
     bool operator == (const QPointArray &) const;
@@ -26,12 +26,12 @@ struct QPointArray {
     uint nrefs() const;
     QPoint point(uint) const;
     void point(uint, int *, int *) const;
-    void putPoints(int, int {@shortarrayitems(2)}, const QCOORD *{shortarray});
+    void putPoints(int, int {@qt_pointarrayitems(2)}, const QCOORD *{shortarray});
     QPointArray quadBezier() const;
     bool resize(uint);
     void setPoint(uint, const QPoint &);
     void setPoint(uint, int, int);
-    void setPoints(int {@shortarrayitems(1)}, const QCOORD *{shortarray});
+    void setPoints(int {@qt_pointarrayitems(1)}, const QCOORD *{shortarray});
     uint size() const;
     void translate(int, int);
     bool truncate(uint);

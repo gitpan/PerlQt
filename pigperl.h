@@ -205,7 +205,8 @@ PIG_IMPORT_ENDTABLE
 #define PIGARGUMENT(value) PIGNEXTARG; return value
 #define PIGRETURN(value) PIG_RETARG = value; XSRETURN(1)
 #define PIGPUSH(sv) XPUSHs(sv); PUTBACK; return
-#define PIGPOP(value) return SvREFCNT_dec(PIG_TOPSTACK), value
+//#define PIGPOP(value) return SvREFCNT_dec(PIG_TOPSTACK), value
+#define PIGPOP(value) return value
 
 #define PIGSCOPE_ARGUMENT(name, var) \
 pig_scope_argument(&__ ## name ## _scope_argument, var)

@@ -1,0 +1,6 @@
+dclock example from Qt-1.44
+
+dclock.cpp => DigitalClock.pm
+main.cpp => dclock
+
+This example should work completely without any messages.

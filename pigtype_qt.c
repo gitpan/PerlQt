@@ -83,7 +83,9 @@ PIG_DEFINE_STUB_POP(pig_type_qt_unreceiver, class QObject *)
 PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qt_signal, const char *, int) {
     PIGARGS;
     const char *pigr;
-    if(pig0 < 0) {
+    if(!PIG_ARGOK) {
+	PIGARGUMENT(0);
+    } else if(pig0 < 0) {
         SV *pigsv = sv_2mortal(newSViv(SIGNAL_CODE));
 	STRLEN n_a;
 	sv_catsv(pigsv, PIG_ARG);
@@ -114,7 +116,7 @@ PIG_DEFINE_STUB_RETURN(pig_type_qt_signal, const char *)
 
 PIG_DEFINE_TYPE_PUSH(pig_type_qt_signal, const char *) {
     PIGPUSHSTACK;
-    PIGPUSH(sv_2mortal(newSVpv((char *)pig0 + 1, 0)));
+    PIGPUSH(pig0 ? sv_2mortal(newSVpv((char *)pig0 + 1, 0)) : sv_mortalcopy(&PIGsv_undef));
 }
 
 PIG_DEFINE_STUB_POP(pig_type_qt_signal, const char *)
@@ -164,6 +166,22 @@ PIG_DEFINE_TYPE_POP(pig_type_qt_HVorientation, int) {
     int pigr = SvIV(PIG_TOPSTACK);
     PIGPOP(pigr);
 }
+
+
+PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qt_pointarrayitems, int, int) {
+    PIGARGS;
+    SV *pigarg = ST(pig0);
+    if(!SvOK(pigarg) || !SvROK(pigarg) || SvTYPE(SvRV(pigarg)) != SVt_PVAV)
+        return 0;
+
+    // This does not move us to the next ST() argument
+    return((av_len((AV *)SvRV(pigarg)) + 1) / 2);
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qt_pointarrayitems, int)
+PIG_DEFINE_STUB_RETURN(pig_type_qt_pointarrayitems, int)
+PIG_DEFINE_STUB_PUSH(pig_type_qt_pointarrayitems, int)
+PIG_DEFINE_STUB_POP(pig_type_qt_pointarrayitems, int)
 
 
 PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_QString_ptr) {
@@ -312,6 +330,7 @@ PIG_DEFINE_TYPE(pig_type_qt_bitslen)
 PIG_DEFINE_TYPE(pig_type_qt_ubits)
 PIG_DEFINE_TYPE(pig_type_qt_ubitsarray)
 PIG_DEFINE_TYPE(pig_type_qt_uintarray)
+PIG_DEFINE_TYPE(pig_type_qt_pointarrayitems)
 PIG_DEFINE_TYPE(pig_type_qt_HVorientation)
 PIG_DEFINE_TYPE(pig_type_qt_VHorientation)
 PIG_DEFINE_TYPE(pig_type_qt_QString_ptr)
@@ -338,6 +357,7 @@ PIG_EXPORT_TABLE(pigtype_qt)
     PIG_EXPORT_TYPE(pig_type_qt_ubits, "Qt ubits")
     PIG_EXPORT_TYPE(pig_type_qt_ubitsarray, "Qt ubits[]")
     PIG_EXPORT_TYPE(pig_type_qt_uintarray, "Qt uint[]")
+    PIG_EXPORT_TYPE(pig_type_qt_pointarrayitems, "Qt sizeof(point[])")
     PIG_EXPORT_TYPE(pig_type_qt_HVorientation, "Qt HVorientation")
     PIG_EXPORT_TYPE(pig_type_qt_VHorientation, "Qt VHorientation")
     PIG_EXPORT_TYPE(pig_type_qt_QString_ptr, "Qt QString*")
