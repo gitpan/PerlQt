@@ -14,6 +14,8 @@
 #include "pigfunc.h"
 #include "pigtype.h"
 
+class QDataStream;
+
 PIG_DECLARE_TYPE(pig_type_argc)
 PIG_DECLARE_TYPE(pig_type_argv)
 
@@ -24,6 +26,8 @@ PIG_DECLARE_TYPE(pig_type_signal)
 PIG_DECLARE_TYPE(pig_type_receiver)
 PIG_DECLARE_TYPE(pig_type_unreceiver)
 PIG_DECLARE_TYPE(pig_type_member)
+
+PIG_DECLARE_TYPE(pig_type_qtobject)
 
 PIG_DECLARE_TYPE(pig_type_qt_xpm)
 PIG_DECLARE_TYPE(pig_type_qt_bits)
@@ -65,6 +69,9 @@ PIG_DECLARE_TYPE(pig_type_qt_leak_QStrList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QTabList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QObjectList_ptr)
 PIG_DECLARE_TYPE(pig_type_qt_QWidgetList_ptr)
+
+PIGTYPE_ARGUMENT2(pig_type_qtobject, void *, const char *)
+PIGTYPE_PUSH2(pig_type_qtobject, void *, const char *)
 
 PIGTYPE_ARGUMENT2(pig_type_argc, int &, int)
 PIGTYPE_ARGUMENT(pig_type_argv, char **)
@@ -158,6 +165,7 @@ PIG_IMPORT_TABLE(pigtype_qt)
     PIG_IMPORT_TYPE(pig_type_receiver, "Qt receiver")
     PIG_IMPORT_TYPE(pig_type_unreceiver, "Qt unreceiver")
     PIG_IMPORT_TYPE(pig_type_member, "Qt member")
+    PIG_IMPORT_TYPE(pig_type_qtobject, "Qt sigslot object")
     PIG_IMPORT_TYPE(pig_type_qt_xpm, "Qt xpm")
     PIG_IMPORT_TYPE(pig_type_qt_bits, "Qt bits")
     PIG_IMPORT_TYPE(pig_type_qt_bitslen, "Qt sizeof(bits)")

@@ -83,7 +83,7 @@ protected:
     void toggleCurrentItem();
     void updateItem(int);
     void updateItem(QListBoxItem *);
-    void updateVector();
+;    void updateVector();    // Where is this?
     virtual void viewportMousePressEvent(QMouseEvent *);
     virtual void viewportMouseReleaseEvent(QMouseEvent *);
     virtual void viewportMouseDoubleClickEvent(QMouseEvent *);

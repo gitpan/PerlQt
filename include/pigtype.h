@@ -88,6 +88,10 @@ inline type1 name ## _defargument(type1 pig0, type2 pig1) {			\
     return (*(type1 (*)(type1, type2))(_ ## name->pigdefargument))(pig0, pig1);	\
 }
 
+#define PIGTYPE_PUSH2(name, type1, type2)			\
+inline void name ## _push(type1 pig0, type2 pig1) {		\
+    (*(void (*)(type1, type2))(_ ## name->pigpush))(pig0, pig1);\
+}
 
 #define PIG_DECLARE_TYPE(type) PIGTPTR _ ## type;
 

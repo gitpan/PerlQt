@@ -8,12 +8,13 @@
  *
  */
 
-#include "pigperl.h"
+#include "pig.h"
 #include "pigtype_object.h"
 #include "pigtype_qt.h"
 #include "pigclassinfo.h"
 #include <qobjectlist.h>
 #include <qwidgetlist.h>
+#include "pigperl.h"
 
 PIG_DEFINE_STUB_TYPE(pig_type_qt_serial, const char *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_bits, char *)
@@ -27,6 +28,44 @@ PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfo_ptr, class QFileInfo *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QFileInfoList_ptr, class QFileInfoList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QStringList_ptr, class QStringList *)
 PIG_DEFINE_STUB_TYPE(pig_type_qt_QTabList_ptr, class QTabList *)
+
+PIG_DEFINE_TYPE_ARGUMENT2(pig_type_qtobject, void *, const char *) {
+    PIGARGS;
+    if(!strncmp(pig0 + 1, "QString", 7)) {
+	// Someone is using QString, so PIG_ARG is a string!
+	QString *pigr;
+	STRLEN n_a;
+	pigr = new QString((char *)SvPV(PIG_ARG, n_a));
+	PIGARGUMENT((void *)pigr);
+    }
+    pig_object_data *pigd = pig_object_extract(PIG_ARG);
+    PIGARGUMENT(pig_object_cast(pigd, pig0));
+}
+
+PIG_DEFINE_STUB_DEFARGUMENT(pig_type_qtobject, void *)
+PIG_DEFINE_STUB_RETURN(pig_type_qtobject, void *)
+
+PIG_DEFINE_TYPE_PUSH2(pig_type_qtobject, void *, const char *) {
+    PIGPUSHSTACK;
+    if(!strncmp(pig1 + 1, "QString", 7)) {
+	// Someone is using QString, so pig0 is actually a QString!
+	QString *pigs = (QString *)pig0;
+	if(!pigs) PIGPUSH(sv_mortalcopy(&PIGsv_undef));
+#if QT_VERSION > 200
+	PIGPUSH(sv_2mortal(newSVpv((char *)(const char *)pigs->utf8(), 0)));
+#else
+	PIGPUSH(sv_2mortal(newSVpv((char *)(const char *)pigs, 0)));
+#endif
+    }
+    pig_object_data *pigd;
+    SV *pigr = sv_2mortal(pig_object_create(pig_map_class(pig1), &pigd));
+    pigd->pigptr = pig0;
+    pigd->piginfo = pig_classinfo_fetch(pig1);
+    pigd->pigflags = 0x200;
+    PIGPUSH(pigr);
+}
+
+PIG_DEFINE_STUB_POP(pig_type_qtobject, void *)
 
 
 PIG_DEFINE_SCOPE_ARGUMENT(pig_type_qt_argc) {
@@ -394,6 +433,7 @@ PIG_DEFINE_TYPE_RETURN(pig_type_qt_QWidgetList_ptr, QWidgetList *) {
     PIGRETURN(pigsv);
 }
 
+PIG_DEFINE_TYPE(pig_type_qtobject)
 PIG_DEFINE_TYPE(pig_type_qt_argc)
 PIG_DEFINE_TYPE(pig_type_qt_argv)
 PIG_DEFINE_TYPE(pig_type_qt_serial)
@@ -422,6 +462,7 @@ PIG_DECLARE_EXPORT_TABLE(pigtype_qt_QString)
 PIG_DECLARE_EXPORT_TABLE(pigtype_qt_QStrList)
 
 PIG_EXPORT_TABLE(pigtype_qt)
+    PIG_EXPORT_TYPE(pig_type_qtobject, "Qt sigslot object")
     PIG_EXPORT_TYPE(pig_type_qt_argc, "Qt argc")
     PIG_EXPORT_TYPE(pig_type_qt_argv, "Qt argv")
     PIG_EXPORT_TYPE(pig_type_qt_serial, "Qt serial")

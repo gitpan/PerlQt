@@ -9,13 +9,13 @@
  */
 
 #include "pig.h"
+#include <qapplication.h>
+#include <qobject.h>
+#include <qconnection.h>
 #include "pigperl.h"
 #include "pigfunc_base.h"
 #include "pigfunc_object.h"
 #include "pigtype_object.h"
-#include <qapplication.h>
-#include <qobject.h>
-#include <qconnection.h>
 #include "pigsigslot.h"
 
 HV *__pig_class_info = 0;

@@ -55,6 +55,7 @@ const QFileInfo& => qt_QFileInfo_ptr &
 qt_QStrList_ptr = (QStrList *)
 enum = (int)
 qt_HVorientation = (int)
+uint = (unsigned)
 
 Qt::BGMode => enum
 Qt::GUIStyle => enum

@@ -13,26 +13,45 @@
 # make
 # make install
 #
-# This is a Unix-only Makefile.PL as far as I know...
-#
+require Config;
+
+unless($OS) {
+    unless($OS = $^O) {
+	$OS = $Config::Config{'osname'};
+    }
+}
+
+$win32 = 1 if $OS =~ /Win/;
 
 $MAKE = 'Qt-1.4';
 
 # If you want to compile using Qt-2.0, uncomment the next line
 #$MAKE = 'Qt-2.0';
 
-$ENV{QTDIR} = '/usr/lib/qt' unless $ENV{QTDIR};
+$ENV{QTDIR} = $win32 ? "C:\\Qt" : '/usr/lib/qt' unless $ENV{QTDIR};
 
 ##########
 # Please modify these arguments as needed
-%Args = (
-    CC => 'g++',
-    CCFLAGS => '',
-    DEFINE => '',
-    INC => '-I$(QTDIR)/include -I/usr/X11R6/include -I/usr/include/qt',
-    LIBS => "-L$ENV{QTDIR}/lib -L/usr/X11R6/lib -lqt -lX11",
-    OPTIMIZE => '-O'
-);
+if(!$win32) {
+# This is for Unix-based systems
+    %Args = (
+	CC => 'g++',
+	CCFLAGS => '',
+	DEFINE => '',
+	INC => '-I$(QTDIR)/include -I/usr/X11R6/include -I/usr/include/qt',
+	LIBS => "-L$ENV{QTDIR}/lib -L/usr/X11R6/lib -lqt -lX11",
+	OPTIMIZE => '-O'
+    );
+} else {
+# This is for Win32 based systems with Visual C++
+    %Args = (
+        CC => 'cl.exe -nologo',
+        CCFLAGS => "$Config::Config{ccflags} -TP",
+	DEFINE => '-DQT_DLL -DNO_XSLOCKS',
+        LIBS => "-L$ENV{QTDIR}\\lib -L$ENV{MSVCDIR}\\lib qt202.lib qtmain.lib",
+	INC => '-I$(QTDIR)\include'
+    );
+}
 ##########
 
 use ExtUtils::MakeMaker;
@@ -65,10 +84,10 @@ unlink "typelist";
 if($Config{bincompat3} && $Config{bincompat3} =~ /y/) {
     $pl = 3;
 } else {
-    $pl = $Config{PATCHLEVEL};
+    $pl = 0+$Config{PATCHLEVEL};
 }
 
-$sv = $Config{SUBVERSION};
+$sv = 0+$Config{SUBVERSION};
 
 sub configurate {
     my $object = qq{
@@ -99,21 +118,24 @@ sub configurate {
 
     my $libs = $Args{LIBS};
 
-    eval {
-	open(SAVEERR, ">&STDERR") || die "Cannot redirect stderr";
-#	open(STDERR, ">&STDOUT") || die "Cannot >&";   # doesn't work
-	open(STDERR, ">/dev/null") || die "Cannot redirect stderr";
-	my $filename = `$Args{CC} -print-libgcc-file-name`;
-	$libs .= " -L$1 -lgcc" if $filename =~ /(.*)\/libgcc\.a/;
-	open(STDERR, ">&SAVEERR") || die "Cannot restore stderr";
-	close(SAVEERR);
-    };
+    if($win32) {
+	eval {
+	    open(SAVEERR, ">&STDERR") || die "Cannot redirect stderr";
+#	    open(STDERR, ">&STDOUT") || die "Cannot >&";   # doesn't work
+	    open(STDERR, ">/dev/null") || die "Cannot redirect stderr";
+	    my $filename = `$Args{CC} -print-libgcc-file-name`;
+	    $libs .= " -L$1 -lgcc" if $filename =~ /(.*)\/libgcc\.a/;
+	    open(STDERR, ">&SAVEERR") || die "Cannot restore stderr";
+	    close(SAVEERR);
+	}
+    }
 
     return { OBJECT => $object, DEFINE => $define, LIBS => $libs };
 }
 
 $Args{INC} .= ' -I. -I./include';
 
+$bug = $win32 ? " &1 'Qt'," : '';
 WriteMakefile(
 # These arguments should remain unchanged.
     %Args,
@@ -123,13 +145,14 @@ WriteMakefile(
     PM => { 'Qt.pm', '$(INST_LIBDIR)/Qt.pm' },
     CONFIGURE => \&configurate,
     depend => { '$(C_FILES)' => '_pigsigslot.h' },
-    realclean => { FILES => 'pig_* _pig* typesizes$(EXE_EXT) typesizes.c typelist' }
+    realclean => { FILES => 'pig_* _pig* typesizes$(EXE_EXT) typesizes.c typelist' . $bug }
 );
 
 copy "typesizes_c", "typesizes.c";
 
 sub MY::postamble {
-    '
+    if(!$win32) {
+    return '
 typesizes$(EXE_EXT): typesizes$(OBJ_EXT)
 	$(CC) $(LARGE) $(LDFLAGS) -o typesizes$(EXE_EXT) typesizes$(OBJ_EXT)
 
@@ -140,4 +163,17 @@ _pigsigslot.h: typelist
 	$(PERL) gensigslot
 
 ';
+    } else {
+    return '
+typesizes$(EXE_EXT): typesizes$(OBJ_EXT)
+	$(CC) $(LARGE) -o typesizes$(EXE_EXT) typesizes$(OBJ_EXT)
+
+typelist: typesizes$(EXE_EXT)
+	.\typesizes$(EXE_EXT) > typelist
+
+_pigsigslot.h: typelist
+	$(PERL) gensigslot
+
+';
+    }
 }

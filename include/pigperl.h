@@ -11,7 +11,17 @@
  *
  */
 
+
+#include "math.h"
+
+#include "pig.h"
+
+#ifdef PIG_QT
+#include "qmetaobject.h"
+#endif  // PIG_QT
+
 extern "C" {
+
 #if PIGPERL_PL < 4
 #define debug PIGdebug
 #endif
@@ -20,9 +30,14 @@ extern "C" {
 #include "perl.h"
 #include "XSUB.h"
 
+}
+
+#ifdef PERL_OBJECT
+extern CPerlObj *pPerl;
+#endif
 #undef debug
 #undef dirty
-}
+
 
 #undef bool
 #undef list

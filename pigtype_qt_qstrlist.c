@@ -1,6 +1,7 @@
+#include "pig.h"
+#include <qstrlist.h>
 #include "pigperl.h"
 #include "pigtype_qt.h"
-#include <qstrlist.h>
 
 static SV *_pig_extract_QStrList(const QStrList &piglist) {
     AV *pigav = newAV();

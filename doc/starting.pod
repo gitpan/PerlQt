@@ -439,6 +439,14 @@ value.
 OR
 'member(cstring)'
 
+=item SLOT(member(const QString &))
+
+'member(const \QString)'
+
+=item SLOT(member(const QString *))
+
+'member(const QString)'
+
 =item SLOT(member(SV *))
 
 'member($)'

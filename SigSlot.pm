@@ -43,7 +43,7 @@ my(%From) = (
     'PIG_PROTO_DOUBLE' => 'pig_type_double_push(*(double*)&$var)',
     'PIG_PROTO_LDOUBLE' => 'pig_type_long_double_push(*(long double*)&$var)',
     'PIG_PROTO_STRING' => 'pig_type_cstring_push(*(char**)&$var)',
-    'PIG_PROTO_OBJECT' => 'pig_type_object_push(*(void**)&$var,$ptr+1)',
+    'PIG_PROTO_OBJECT' => 'pig_type_qtobject_push(*(void**)&$var,$ptr+1)',
     'PIG_PROTO_AVSCALAR' => 'pig_type_ptr_push(*(void**)&$var)',
     'PIG_PROTO_HVSCALAR' => 'pig_type_ptr_push(*(void**)&$var)',
     'PIG_PROTO_SCALARREF' => 'pig_type_ptr_push(*(void**)&$var)',
@@ -65,7 +65,7 @@ my(%To) = (
     'PIG_PROTO_AVSCALAR' => 'pig_type_ptr_argument()',
     'PIG_PROTO_LIST' => 'pig_type_ptr_argument()',
     'PIG_PROTO_STRING' => 'pig_type_cstring_argument()',
-    'PIG_PROTO_OBJECT' => 'pig_type_object_argument(0)'
+    'PIG_PROTO_OBJECT' => 'pig_type_qtobject_argument($ptr+1)'
 );
 
 my %sizeof;
@@ -114,15 +114,23 @@ sub close_header_file {
 sub output_headers {
     output <<HEADERS;
 #include <qobject.h>
-#include <qmetaobj.h>
+#include <qmetaobject.h>
 
 HEADERS
+
 }
 
 sub output_defines {
-    output <<DEFINES
+    output <<DEFINES;
 #define PIG_SIGSLOT_MAX_ARGS $count
 DEFINES
+
+    my $n;
+    @types = sort { $sizeof{$a} <=> $sizeof{$b} } @types;
+    for $n (@types) {
+	output "typedef $n b$sizeof{$n};";
+    }
+    output "";
 }
 
 sub output_stolen_moc_header {
@@ -164,7 +172,9 @@ SLOT_CLASS
 INF:
     while(1) {
 	my @args;
-	for(reverse @index) { push @args, $types[$_] if $_ >= 0 }
+	for(reverse @index) {
+	    push @args, "b$sizeof{$types[$_]}" if $_ >= 0;
+	}
 
 	output "    void $shmethod(@args);";
 
@@ -198,9 +208,8 @@ INCLUDES
 
 sub output_global_stacks {
     for(@types) {
-	my $a = $_;
-	$a =~ s/\W//g;
-	output "static $_ pig_sigslot_stack_$a\[PIG_SIGSLOT_MAX_ARGS];";
+	my $a = $sizeof{$_};
+	output "static b$a pig_sigslot_stack_$a\[PIG_SIGSLOT_MAX_ARGS];";
     }
     output "";
 }
@@ -241,7 +250,7 @@ sub output_slot_matrix {
 INF:
     while(1) {
 	my @args;
-	for(reverse @index) { push @args, $types[$_] if $_ >= 0 }
+	for(reverse @index) { push @args, "b$sizeof{$types[$_]}" if $_ >= 0 }
 
 	output "    (QMember)((void ($shclass\::*)(@args))&$shclass\::$shmethod),";
 
@@ -258,13 +267,8 @@ INF:
 sub output_slot_helper {
     output "void pig_push_slot_arguments(const char *pigcrypt) {";
 
-    my(@t) = map { my $a = $_; $a =~ s/\W//g; ($a) } @types;
-
-    for my $i (0..$#types) {
-        my $a = $t[$i];
-        my $t = $types[$i];
-
-	output "    int pig_sigslot_idx_$a = 0;";
+    for my $x (@types) {
+	output "    int pig_sigslot_idx_$sizeof{$x} = 0;";
     }
 
     output <<METHOD;
@@ -278,14 +282,12 @@ METHOD
     output "\tswitch(*pigc) {";
 
     for my $type (@types) {
-	my $a = $type;
-	$a =~ s/\W//g;
 	for my $t (@{$size[$sizeof{$type}]}) {
             for(@{$Typemap{$t}}) {
 		output "\t    case $_:";
 		my $f = $From{$_};
 		next unless $f;
-		$f =~ s/\$var/pig_sigslot_stack_$a\[pig_sigslot_idx_$a++]/;
+		$f =~ s/\$var/pig_sigslot_stack_$sizeof{$t}\[pig_sigslot_idx_$sizeof{$t}++]/;
 		$f =~ s/\$ptr/pigc/g;
 	        output "\t\t$f;";
 		output "\t\tbreak;";
@@ -300,13 +302,8 @@ METHOD
 sub output_signal_helper {
     output "void pig_pop_signal_arguments(const char *pigcrypt) {";
 
-    my(@t) = map { my $a = $_; $a =~ s/\W//g; ($a) } @types;
-
-    for my $i (0..$#types) {
-        my $a = $t[$i];
-        my $t = $types[$i];
-
-	output "    int pig_sigslot_idx_$a = 0;";
+    for my $x (@types) {
+	output "    int pig_sigslot_idx_$sizeof{$x} = 0;";
     }
 
     output <<METHOD;
@@ -320,8 +317,6 @@ METHOD
     output "\tswitch(*pigc) {";
 
     for my $type (@types) {
-	my $a = $type;
-	$a =~ s/\W//g;
 	for my $t (@{$size[$sizeof{$type}]}) {
             for(@{$Typemap{$t}}) {
 		output "\t    case $_:";
@@ -337,7 +332,7 @@ FINDTYPE:	for my $e (keys %Typemap) {
 		$f = "$var pigx = ($var)$f";
 		$f =~ s/\$ptr/pigc/g;
 	        output "\t\t    $f;";
-		$f = "pig_sigslot_stack_$a\[pig_sigslot_idx_$a++] = *(($type *)&pigx)";
+		$f = "pig_sigslot_stack_$sizeof{$type}\[pig_sigslot_idx_$sizeof{$type}++] = *(($type *)&pigx)";
 	        output "\t\t    $f;";
 		output "\t\t}";
 		output "\t\tbreak;";
@@ -359,7 +354,7 @@ INF:
 	for(reverse @index) {
 	    if($_ >= 0) {
 		push @args, $types[$_];
-		push @arglist, $types[$_];
+		push @arglist, "b$sizeof{$types[$_]}";
 		$arglist[$#arglist] .= " pig$#arglist";
 	    }
 	}
@@ -368,7 +363,7 @@ INF:
 	%indices = map { $_ => 0 } @args;
 	my $a = 0;
 	for(@args) {
-	    output "    pig_sigslot_stack_$_\[$indices{$_}] = pig$a;";
+	    output "    pig_sigslot_stack_$sizeof{$_}\[$indices{$_}] = pig$a;";
 	    $a++;
 	    $indices{$_}++;
 	}
@@ -394,19 +389,18 @@ INF:
 	for(reverse @index) {
 	    if($_ >= 0) {
 		my $a = $types[$_];
-		$a =~ s/\W//g;
 		push @args, $a;
 		push @arglist, $types[$_];
 	    }
 	}
 	%indices = map { $_ => 0 } @args;
 	for(@args) {
-	    push @stack, "pig_sigslot_stack_$_\[$indices{$_}]";
+	    push @stack, "pig_sigslot_stack_sizeof{$_}\[$indices{$_}]";
 	    $indices{$_}++;
 	}
 
 	my @sizes = map { $sizeof{$_} } @args;
-	output "    static void " . join("_", "pig_call", @sizes) . "();";
+	output "    static void " . join("_", "s_", @sizes) . "();";
 
 	for(my $i = 0; $i < @index; $i++) {
 	    last if ++$index[$i] < @types;
@@ -427,19 +421,18 @@ INF:
 	for(reverse @index) {
 	    if($_ >= 0) {
 		my $a = $types[$_];
-		$a =~ s/\W//g;
 		push @args, $a;
-		push @arglist, $types[$_];
+		push @arglist, "b$sizeof{$types[$_]}";
 	    }
 	}
 	%indices = map { $_ => 0 } @args;
 	for(@args) {
-	    push @stack, "pig_sigslot_stack_$_\[$indices{$_}]";
+	    push @stack, "pig_sigslot_stack_$sizeof{$_}\[$indices{$_}]";
 	    $indices{$_}++;
 	}
 
 	my @sizes = map { $sizeof{$_} } @args;
-	output "void $shclass\::" . join("_", "pig_call", @sizes) . "() {";
+	output "void $shclass\::" . join("_", "s_", @sizes) . "() {";
 	output "    typedef void (QObject::**PIG)(@arglist);";
 	output "    (pig_signal_object->*pig_func)(@stack);";
 	output "}\n";
@@ -462,7 +455,7 @@ INF:
 	my @args;
 	for(reverse @index) { push @args, $types[$_] if $_ >= 0 }
         my @sizes = map { $sizeof{$_} } @args;
-	output "    &$shclass\::" . join("_", "pig_call", @sizes) . ",";
+	output "    &$shclass\::" . join("_", "s_", @sizes) . ",";
 	for(my $i = 0; $i < @index; $i++) {
 	    last if ++$index[$i] < @types;
 	    last INF if $i == $#index;

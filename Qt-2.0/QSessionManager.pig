@@ -9,7 +9,7 @@ class QSessionManager : QObject {
     bool allowsInteraction();
     void cancel();
     QStringList discardCommand() const;
-    HANDLE handle() const;
+;    HANDLE handle() const;    // X11 only
     bool isPhase2() const;
     void release();
     void requestPhase2();

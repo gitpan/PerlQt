@@ -1,3 +1,15 @@
+Changes from 2.104 to 2.105  (2000-Mar-6)
+---------------------------
+
+- PerlQt now compiles under Win32
+- QString may now be used in signal/slot arguments
+- QListBox::updateVector and QSessionManager::handle have been removed
+- Abstract functions aren't getting called anymore... whew
+- SigSlot.pm was changed to use bytelengths instead of typenames
+- PerlQt now compiles with -DPERL_OBJECT, thanks to ActivePerl
+- From now on, pigperl.h must be included after the Qt headers
+
+
 Changes from 2.103 to 2.104  (2000-Feb-5)
 ---------------------------
 

@@ -9,12 +9,13 @@
  */
 
 #include "pig.h"
-#include "pigperl.h"
 #include "pigtype_base.h"
 #include "pigtype_object.h"
+#include "pigtype_qt.h"
 #include <qobject.h>
 #include <qmetaobj.h>
 #include "pigsigslot.h"
+#include "pigperl.h"
 
 QObject *pig_signal_object;
 QMember *pig_signal_member;

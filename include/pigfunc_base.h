@@ -23,6 +23,7 @@ PIG_DECLARE_FUNC_1(unsigned int, pig_argument_info, int)
 
 PIG_DECLARE_FUNC_2(int, pig_find_in_array, const char *, const char **)
 PIG_DECLARE_VOID_FUNC_2(pig_ambiguous, const char *, const char *)
+PIG_DECLARE_VOID_FUNC_1(pig_call_abstract, const char *)
 
 PIG_DECLARE_VOID_FUNC_2(pig_call_method, const class pig_virtual *, const char *)
 PIG_DECLARE_VOID_FUNC_2(pig_call_retmethod, const class pig_virtual *, const char *)
@@ -40,6 +41,7 @@ PIG_IMPORT_TABLE(pigfunc_base)
     PIG_IMPORT_FUNC(pig_find_in_array)
     PIG_IMPORT_FUNC(pig_ambiguous)
 
+    PIG_IMPORT_FUNC(pig_call_abstract)
     PIG_IMPORT_FUNC(pig_call_method)
     PIG_IMPORT_FUNC(pig_call_retmethod)
     PIG_IMPORT_FUNC(pig_return_nothing)

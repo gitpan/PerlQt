@@ -8,15 +8,16 @@
  *
  */
 
-#include "pigperl.h"
+#include "pig.h"
+#include <qobject.h>
+#include <qobjcoll.h>
+#include <qmetaobj.h>
 #include "pigvirtual.h"
 #include "pigtype_object.h"
 #include "pigfunc_object.h"
 #include "pigclassinfo.h"
-#include <qobject.h>
-#include <qobjcoll.h>
-#include <qmetaobj.h>
 #include "pigsigslot.h"
+#include "pigperl.h"
 
 class pig_public_QObject : public QObject {
 public:
@@ -200,7 +201,7 @@ PIG_DEFINE_VOID_FUNC_2(pig_object_destroy, void *, class pig_virtual *) {
 
 /* borrowed from Perl source under GPL */
 
-static bool isa_lookup(HV *stash, char *name, int len, int level) {
+static bool pig_isa_lookup(HV *stash, char *name, int len, int level) {
     AV* av;
     GV* gv;
     GV** gvp;
@@ -250,7 +251,7 @@ static bool isa_lookup(HV *stash, char *name, int len, int level) {
                             SvPVX(sv), HvNAME(stash));
                     continue;
                 }
-                if(isa_lookup(basestash, name, len, level + 1)) {
+                if(pig_isa_lookup(basestash, name, len, level + 1)) {
                     (void)hv_store(hv,name,len,&PIGsv_yes,0);
                     return TRUE;
                 }
@@ -265,7 +266,7 @@ static bool isa_lookup(HV *stash, char *name, int len, int level) {
 /* end borrowed Perl source */
 
 bool pig_class_isa(HV *pigstash, const char *pigclass) {
-    bool pigr = isa_lookup(pigstash, (char *)pigclass, strlen(pigclass), 0);
+    bool pigr = pig_isa_lookup(pigstash, (char *)pigclass, strlen(pigclass), 0);
     return pigr;
 }
 

@@ -15,6 +15,9 @@ declare(QListIteratorM,QConnection);
 #endif
 #endif
 */
+
+#include "pigperl.h"
+
 #define pig_func (*((PIG)pig_signal_member))
 
 class pig_sigslot_argument_iterator {

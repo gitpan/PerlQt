@@ -1052,7 +1052,7 @@ sub writeheader {
     for my $proto (sort { $a->{'Method'} cmp $b->{'Method'} }
 		   values %{$Prototypes{$Class}}) {
 	next unless $proto->protected;    # || $proto->virtual 
-	next if $proto->constructor || $proto->destructor ||
+	next if $proto->constructor || $proto->destructor || $proto->abstract ||
 	        $proto->private || $proto->variable || $proto->{'Code'};
 
 	header $start;
@@ -1508,7 +1508,13 @@ sub cpp_cast {
     $arg =~ s/^\s*//;
     $arg =~ s/\s*$//;
     $arg =~ s/\s*([\*\&])/$1/g;
-    return (exists $Cast{$arg}) ? $Cast{$arg} : $targ;
+	if(exists $Cast{$arg}) {
+		my $cast = $Cast{$arg};
+		$cast =~ s/^\(*//;
+		$cast =~ s/\)*$//;
+		return $cast;
+	}
+#    return (exists $Cast{$arg}) ? $Cast{$arg} : $targ;
     return $targ;
 }
 
@@ -1738,12 +1744,14 @@ sub write_proto_method {
     }
     source i."PIG_END_ARGUMENTS;\n\n";
 #    source "\n" if @{$proto->{'Arguments'}};
-    source i;
-    if($proto->{'Returns'} ne 'void') {
+
+    if($proto->abstract) {
+	source i."pig_call_abstract(\"$Class\::$proto->{Name}\");\n\n";
+    } elsif($proto->{'Returns'} ne 'void') {
 	my $arg = cpp_type($proto->{'Returns'});
-	source $arg;
-	source " pigr = ";
+	source i."$arg pigr = ";
     }
+
     if($proto->{'Code'}) {
 	my $code = $proto->{'Code'};
 	$code =~ s/^\s*//;
@@ -1786,7 +1794,8 @@ sub write_proto_method {
 	    source "$Class\::";
 	}
     } else {
-	if($proto->protected) {
+	if($proto->abstract) {
+	} elsif($proto->protected) {
 	    source "((pig_alias_$Class *)pig0)->pig_alias_";
 	} elsif($proto->virtual) {
 	    source "pig0->$Class\::";
@@ -1795,13 +1804,14 @@ sub write_proto_method {
 	}
     }
 
-    unless($proto->{'Code'} || $proto->variable) {
+    unless($proto->{'Code'} || $proto->variable || $proto->abstract) {
 	source "$proto->{'Method'}(";
 	source cpp_argname_list($proto, 'pig');
 	source ");\n\n";
     }
 
-    if($proto->{'Name'} eq 'new') {
+    if($proto->abstract) {
+    } elsif($proto->{'Name'} eq 'new') {
 	source i.qq'pig_type_new_castobject_return(pigr, "$Class", pigclass);\n';
     } elsif($proto->{'Returns'} ne 'void') {
 	source i.fetch_ret($proto->{'Returns'}).";\n";

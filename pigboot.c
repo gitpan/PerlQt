@@ -8,11 +8,12 @@
  *
  */
 
+#include "pig.h"
 #include "pig_QApplication.h"
-#include "pigperl.h"
-#include "pigsymbol.h"
 #include "pigclassinfo.h"
 #include "pigconstant.h"
+#include "pigperl.h"
+#include "pigsymbol.h"
 
 PIG_DECLARE_IMPORT_TABLE(pig)
 PIG_DECLARE_EXPORT_TABLE(PIG_Qt)
@@ -201,7 +202,11 @@ extern "C" XS(PIG_Qt_import) {
 
 extern "C" XS(boot_Qt) {
     dXSARGS;
-    
+
+#ifdef PERL_OBJECT
+    ::pPerl = pPerl;
+#endif
+
     pig_symbol_exchange(PIG_EXPORTTABLE(pig), PIG_IMPORTTABLE(pig), "Qt");
 
     __pig_module_used("Qt::app");
@@ -234,3 +239,7 @@ extern "C" XS(boot_Qt) {
 	piginfo++;
     }
 */
+
+#ifdef PERL_OBJECT
+#include "XSlock.h"
+#endif

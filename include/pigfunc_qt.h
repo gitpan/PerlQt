@@ -12,6 +12,7 @@
  */
 
 #include "pigfunc.h"
+#include "qdatastream.h"
 
 PIG_DECLARE_VARIABLE(class QDataStream *, pig_dstreamptr)
 #define pig_dstreamptr PIG_VARIABLE(pig_dstreamptr)

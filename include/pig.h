@@ -11,6 +11,11 @@
  *
  */
 
+#if defined(_MSC_VER)
+// Apparently, passing this to base member initializer is bad :(
+#pragma warning(disable : 4355)
+#endif
+
 #ifdef PIG_QT
 
 // Qt defines its own bool type which we need to honor for PerlQt

@@ -17,6 +17,10 @@ void pig_croak(const char* pat, ...) {
     warn("%s", pat);
 }
 
+PIG_DEFINE_VOID_FUNC_1(pig_call_abstract, const char *) {
+    croak("Attempt to call abstract function \"%s\"", pig0);
+}
+
 PIG_DEFINE_VOID_FUNC_1(pig_sub_enter, struct pig_sub_frame *) {
     struct pig_sub_frame *pignode;
     pignode = new pig_sub_frame;
@@ -158,6 +162,7 @@ PIG_EXPORT_TABLE(pigfunc_base)
     PIG_EXPORT_FUNC(pig_argument_info)
     PIG_EXPORT_FUNC(pig_find_in_array)
     PIG_EXPORT_FUNC(pig_ambiguous)
+    PIG_EXPORT_FUNC(pig_call_abstract)
     PIG_EXPORT_FUNC(pig_call_method)
     PIG_EXPORT_FUNC(pig_call_retmethod)
     PIG_EXPORT_FUNC(pig_return_nothing)
