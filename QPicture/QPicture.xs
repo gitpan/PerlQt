@@ -11,7 +11,7 @@
 
 MODULE = QPicture		PACKAGE = QPicture
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PPicture *
 PPicture::new()

@@ -8,8 +8,7 @@
  */
 
 #include "plined.h"
-#include "pqt.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QLineEdit::key)
 
@@ -23,7 +22,7 @@ inline void init_enum() {
 
 MODULE = QLineEdit		PACKAGE = QLineEdit
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PLineEdit *
 PLineEdit::new(parent, name)

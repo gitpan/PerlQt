@@ -8,8 +8,7 @@
  */
 
 #include "playout.h"
-#include "pqt.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QBoxLayout::key)
 #define STORE_keys(key, copy) \
@@ -29,7 +28,7 @@ inline void init_enum() {
 
 MODULE = QLayout		PACKAGE = QLayout
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

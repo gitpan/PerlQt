@@ -13,7 +13,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget);
 @EXPORT = qw(%Policy);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QComboBox $VERSION;
 
 1;

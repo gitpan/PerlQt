@@ -8,7 +8,10 @@
  */
 
 #include "pevent.h"
-#include "enum.h"
+#include "ppoint.h"
+#include "prect.h"
+#include "psize.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), key ## Button)
 
@@ -60,7 +63,7 @@ inline void init_Event() {
 
 MODULE = QEvent		PACKAGE = QEvent
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

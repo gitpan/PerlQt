@@ -1,5 +1,11 @@
 Revision history for Perl extension QSlider.
 
+1.02  Fri May  9 19:04:59 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:34:29 1997
+	- modified header structure
+
 1.01  Mon May  5 14:05:32 1997
 	- undef checking
 

@@ -11,11 +11,29 @@
  */
 
 #undef bool
-#include <qslider.h>
-#include "virtual.h"
+#include "qslider.h"
+#include "pwidget.h"
+#include "prangect.h"
 
-typedef QSlider::Orientation QSlider__Orientation;
-typedef QSlider::TickSetting QSlider__TickSetting;
+#define QSlider_virtual_functions					\
+    QWidget_virtual_functions						\
+    QRangeControl_virtual_functions					\
+public:									\
+    void setTickInterval(int);						\
+    void setTickmarks(QSlider::TickSetting);				\
+protected:								\
+    void paintSlider(QPainter *, const QRect &);			\
+    int thickness() const;
+
+class PSlider_virtualize : public PWidget_virtualize,
+			   public PRangeControl_virtualize {
+public:
+    void PSlider_setTickInterval(int);
+    void PSlider_setTickmarks(QSlider::TickSetting);
+protected:
+    void PSlider_paintSlider(QPainter *, const QRect &);
+    int PSlider_thickness() const;
+};
 
 class PSlider : public QSlider, public PSlider_virtualize {
     QSlider_virtual_functions
@@ -63,5 +81,8 @@ public:
 	QSlider::drawWinGroove(p, c);
    }
 };
+
+typedef QSlider::Orientation QSlider__Orientation;
+typedef QSlider::TickSetting QSlider__TickSetting;
 
 #endif  // PSLIDER_H

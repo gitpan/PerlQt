@@ -9,12 +9,11 @@
 
 #include "pmenudta.h"
 #include "ppixmap.h"
-#include "pqt.h"
-#include "sigslot.h"
+#include "psigslot.h"
 
 MODULE = QMenuData		PACKAGE = QMenuData
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PMenuData *
 PMenuData::new()

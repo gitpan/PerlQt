@@ -18,7 +18,7 @@ require QRect;
 @ISA = qw(Exporter DynaLoader Qt::Base);
 @EXPORT = qw(%Region);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QRegion $VERSION;
 
 1;

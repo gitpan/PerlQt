@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qtabdlg.h"
-#include "virtual.h"
+#include "pdialog.h"
+
+#define QTabDialog_virtual_functions QDialog_virtual_functions
+
+class PTabDialog_virtualize : public PDialog_virtualize {};
 
 class PTabDialog : public QTabDialog, public PTabDialog_virtualize {
     QTabDialog_virtual_functions

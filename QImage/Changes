@@ -1,5 +1,11 @@
 Revision history for Perl extension QImage.
 
+1.02  Fri May  9 18:57:44 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:14:27 1997
+	- modified header structure
+
 1.01  Mon May  5 12:49:55 1997
 	- undef checking
 

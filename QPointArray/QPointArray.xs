@@ -8,10 +8,12 @@
  */
 
 #include "ppntarry.h"
+#include "ppoint.h"
+#include "prect.h"
 
 MODULE = QPointArray		PACKAGE = QPointArray
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PPointArray *
 PPointArray::new(...)
@@ -75,6 +77,9 @@ QPointArray::copy()
     OUTPUT:
     RETVAL
 
+void
+QPointArray::detach()
+
 bool
 QPointArray::fill(p, size = -1)
     QPoint *p
@@ -83,6 +88,12 @@ QPointArray::fill(p, size = -1)
     RETVAL = THIS->fill(*p, size);
     OUTPUT:
     RETVAL
+
+bool
+QPointArray::isEmpty()
+
+bool
+QPointArray::isNull()
 
 void
 QPointArray::makeArc(x, y, w, h, a1, a2)
@@ -140,6 +151,10 @@ QPointArray::quadBezier()
     OUTPUT:
     RETVAL
 
+bool
+QPointArray::resize(size)
+    uint size
+
 void
 QPointArray::setPoint(i, ...)
     CASE: items > 3
@@ -170,7 +185,31 @@ QPointArray::setPoints(firstx, firsty, ...)
     OUTPUT:
     RETVAL
 
+uint
+QPointArray::size()
+
 void
 QPointArray::translate(dx, dy)
     int dx
     int dy
+
+bool
+QPointArray::truncate(pos)
+    uint pos
+
+
+bool
+QPointArray::beq(parray, misc)
+    QPointArray *parray
+    CODE:
+    RETVAL = (*THIS == *parray);
+    OUTPUT:
+    RETVAL
+
+bool
+QPointArray::bne(parray, misc)
+    QPointArray *parray
+    CODE:
+    RETVAL = (*THIS != *parray);
+    OUTPUT:
+    RETVAL

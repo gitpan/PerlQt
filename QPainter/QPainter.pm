@@ -31,7 +31,7 @@ require QWMatrix;
 
 	     %RasterOp %BGMode);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QPainter $VERSION;
 
 1;

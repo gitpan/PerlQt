@@ -12,7 +12,6 @@
 
 #undef bool
 #include "qfontinf.h"
-#include "pfont.h"
 #include "pqt.h"
 
 class PFontInfo : public QFontInfo {

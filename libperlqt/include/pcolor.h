@@ -22,7 +22,7 @@ public:
     PColor(QRgb rgb, uint pixel = 0xffffffff) : QColor(rgb, pixel) {}
     PColor(const char *name) : QColor(name) {}
 
-    PColor(const QColor &color) { *(QColor *)this = color; }
+    PColor(const QColor &color) : QColor(color) {}
 };
 
 #endif  // PCOLOR_H

@@ -12,7 +12,49 @@
 
 #undef bool
 #include "qmlined.h"
-#include "virtual.h"
+#include "ptablevw.h"
+
+#define QMultiLineEdit_virtual_functions				\
+    QTableView_virtual_functions					\
+public:									\
+    void insertAt(const char *, int, int);				\
+    void insertLine(const char *, int = -1);				\
+    void removeLine(int);						\
+protected:								\
+    void backspace();							\
+    void cursorDown(bool = FALSE);					\
+    void cursorLeft(bool = FALSE, bool = TRUE);				\
+    void cursorRight(bool = FALSE, bool = TRUE);			\
+    void cursorUp(bool = FALSE);					\
+    void del();								\
+    void end(bool = FALSE);						\
+    void home(bool = FALSE);						\
+    void insertChar(char);						\
+    void killLine();							\
+    void newLine();							\
+    void pageUp(bool = FALSE);						\
+    void pageDown(bool = FALSE);
+
+class PMultiLineEdit_virtualize : public PTableView_virtualize {
+public:
+    void PMultiLineEdit_insertAt(const char *, int, int);
+    void PMultiLineEdit_insertLine(const char *, int = -1);
+    void PMultiLineEdit_removeLine(int);
+protected:
+    void PMultiLineEdit_backspace();
+    void PMultiLineEdit_cursorDown(bool = FALSE);
+    void PMultiLineEdit_cursorLeft(bool = FALSE, bool = TRUE);
+    void PMultiLineEdit_cursorRight(bool = FALSE, bool = TRUE);
+    void PMultiLineEdit_cursorUp(bool = FALSE);
+    void PMultiLineEdit_del();
+    void PMultiLineEdit_end(bool = FALSE);
+    void PMultiLineEdit_home(bool = FALSE);
+    void PMultiLineEdit_insertChar(char);
+    void PMultiLineEdit_killLine();
+    void PMultiLineEdit_newLine();
+    void PMultiLineEdit_pageUp(bool = FALSE);
+    void PMultiLineEdit_pageDown(bool = FALSE);
+};
 
 class PMultiLineEdit : public QMultiLineEdit, public PMultiLineEdit_virtualize {
     QMultiLineEdit_virtual_functions

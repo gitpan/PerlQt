@@ -12,16 +12,6 @@
 
 #undef bool
 #include "qpainter.h"
-#include "qwidget.h"
-#include "pbrush.h"
-#include "pcolor.h"
-#include "pfont.h"
-#include "pfontinf.h"
-#include "pfontmet.h"
-#include "ppen.h"
-#include "ppoint.h"
-#include "pregion.h"
-#include "pwmatrix.h"
 #include "pqt.h"
 
 class PPainter : public QPainter {

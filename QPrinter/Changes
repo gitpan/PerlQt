@@ -1,5 +1,11 @@
 Revision history for Perl extension QPrinter.
 
+1.02  Fri May  9 19:02:27 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:31:57 1997
+	- modified header structure
+
 1.01  Mon May  5 13:40:45 1997
 	- undef checking
 

@@ -1,5 +1,11 @@
 Revision history for Perl extension QMenuData.
 
+1.02  Fri May  9 18:59:10 1997
+	- disabled prototypes
+
+1.01  Fri May  9 18:16:50 1997
+	- modified header structure
+
 0.03  Fri Apr 25 10:04:31 1997
 	- added virtual functions
 

@@ -8,10 +8,13 @@
  */
 
 #include "pwmatrix.h"
+#include "ppntarry.h"
+#include "ppoint.h"
+#include "prect.h"
 
 MODULE = QWMatrix		PACKAGE = QWMatrix
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PWMatrix *
 PWMatrix::new(...)

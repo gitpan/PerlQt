@@ -12,13 +12,14 @@
 
 #undef bool
 #include "qprinter.h"
-
-typedef QPrinter::Orientation QPrinter__Orientation;
-typedef QPrinter::PageSize QPrinter__PageSize;
+#include "pqt.h"
 
 class PPrinter : public QPrinter {
 public:
     PPrinter() {}
 };
+
+typedef QPrinter::Orientation QPrinter__Orientation;
+typedef QPrinter::PageSize QPrinter__PageSize;
 
 #endif  // PPRINTER_H

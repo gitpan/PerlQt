@@ -8,12 +8,10 @@
  */
 
 #include "ppopmenu.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QPopupMenu		PACKAGE = QPopupMenu
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PPopupMenu *
 PPopupMenu::new(parent = 0, name = 0)

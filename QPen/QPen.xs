@@ -8,6 +8,8 @@
  */
 
 #include "ppen.h"
+#include "pcolor.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), key ## Line)
 
@@ -24,7 +26,7 @@ inline void init_enum() {
 
 MODULE = QPen		PACKAGE = QPen
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

@@ -1,5 +1,8 @@
 Revision history for Perl extension QRangeControl.
 
+1.01  Fri May  9 19:03:34 1997
+	- disabled prototypes
+
 0.04  Sat Apr 26 12:07:36 1997
 	- added virtual and protected functions
 

@@ -12,6 +12,7 @@
 
 #undef bool
 #include "qtimer.h"
+#include "pqt.h"
 
 class PTimer : public QTimer {
 public:

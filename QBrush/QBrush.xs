@@ -8,7 +8,8 @@
  */
 
 #include "pbrush.h"
-#include "enum.h"
+#include "pcolor.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), key ## Pattern)
 
@@ -35,7 +36,7 @@ inline void init_enum() {
 
 MODULE = QBrush		PACKAGE = QBrush
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

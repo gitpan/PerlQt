@@ -8,7 +8,6 @@
  */
 
 #include "ptabbar.h"
-#include "pqt.h"
 
 static const char *QTab_keys[] = {
     "label",
@@ -20,7 +19,7 @@ static const char *QTab_keys[] = {
 
 MODULE = QTabBar		PACKAGE = QTabBar
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PTabBar *
 PTabBar::new(parent, name)

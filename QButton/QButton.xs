@@ -8,11 +8,11 @@
  */
 
 #include "pbutton.h"
-#include "pwidget.h"
+#include "ppixmap.h"
 
 MODULE = QButton		PACKAGE = QButton
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PButton *
 PButton::new(parent = 0, name = 0)

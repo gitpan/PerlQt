@@ -14,7 +14,7 @@ require QFrame;
 @EXPORT = qw(%Align $SingleLine $DontClip $ExpandTabs $ShowPrefix $WordBreak
              $GrayText $DontPrint);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QGroupBox $VERSION;
 
 1;

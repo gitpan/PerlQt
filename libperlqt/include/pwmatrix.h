@@ -12,8 +12,6 @@
 
 #undef bool
 #include "qwmatrix.h"
-#include "ppntarry.h"
-#include "prect.h"
 #include "pqt.h"
 
 class PWMatrix : public QWMatrix {

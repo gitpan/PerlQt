@@ -1,5 +1,14 @@
 Revision history for Perl extension QGlobal.
 
+1.02  Sat May 10 00:35:23 1997
+	- changed Qt::Base::DESTROY to support a type-safe THIS structure
+
+1.02  Fri May  9 18:57:05 1997
+	- disabled prototypes
+
+1.01  Fri May  9 18:13:46 1997
+	- modified header structure
+
 0.04  Sun Apr 27 16:13:13 1997
 	- renamed Qt::Hash to Qt::Base
 

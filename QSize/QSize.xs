@@ -11,7 +11,7 @@
 
 MODULE = QSize		PACKAGE = QSize
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PSize *
 PSize::new(...)

@@ -10,6 +10,7 @@
 #undef bool
 #include "qmetaobj.h"
 #include "pobject.h"
+#include "psigslot.h"
 
 #if !defined(Q_MOC_CONNECTIONLIST_DECLARED)
 #define Q_MOC_CONNECTIONLIST_DECLARED
@@ -108,7 +109,7 @@ addSignal(name)
 
 MODULE = QObject		PACKAGE = QObject
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     MetaObjects = newHV();

@@ -8,10 +8,12 @@
  */
 
 #include "pbitmap.h"
+#include "psize.h"
+#include "pwmatrix.h"
 
 MODULE = QBitmap		PACKAGE = QBitmap
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PBitmap *
 PBitmap::new(...)

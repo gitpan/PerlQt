@@ -2,6 +2,10 @@ package QPointArray;
 
 use strict;
 use vars qw($VERSION @ISA);
+use overload
+    '==' => \&beq,
+    '!=' => \&bne,
+    'fallback' => 1;
 
 require DynaLoader;
 require QGlobal;
@@ -11,7 +15,7 @@ require QPoint;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QPointArray $VERSION;
 
 1;
@@ -31,15 +35,25 @@ new,
 at,
 boundingRect,
 copy,
+detach,
 fill,
+isEmpty,
+isNull,
 makeArc,
 makeEllipse,
 point,
 putPoints,
 quadBezier,
+resize,
 setPoint,
 setPoints,
-translate
+size,
+translate,
+truncate
+
+=head2 Overloaded operators
+
+!= ==
 
 =head1 DESCRIPTION
 

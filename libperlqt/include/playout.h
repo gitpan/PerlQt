@@ -12,8 +12,7 @@
 
 #undef bool
 #include "qlayout.h"
-
-typedef QBoxLayout::Direction QBoxLayout__Direction;
+#include "pqt.h"
 
 class PBoxLayout : public QBoxLayout {
 public:
@@ -34,5 +33,7 @@ public:
 		const char *name = 0) :
 	QGridLayout(nRows, nCols, autoBorder, name) {}
 };
+
+typedef QBoxLayout::Direction QBoxLayout__Direction;
 
 #endif  // PLAYOUT_H

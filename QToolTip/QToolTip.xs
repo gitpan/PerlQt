@@ -8,11 +8,10 @@
  */
 
 #include "ptooltip.h"
-#include "pqt.h"
 
 MODULE = QToolTip		PACKAGE = QToolTipGroup
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PToolTipGroup *
 PToolTipGroup::new(parent, name)

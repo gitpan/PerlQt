@@ -1,5 +1,5 @@
-#ifndef ENUM_H
-#define ENUM_H
+#ifndef PENUM_H
+#define PENUM_H
 
 /*
  * Utility functions for making enum constants available in Perl
@@ -17,4 +17,4 @@
 #define enum2IV(hash, key, copy, value) \
 safe_hv_store(hash, copy, safe_hv_store(hash, key, newSViv(value)));
 
-#endif  // ENUM_H
+#endif  // PENUM_H

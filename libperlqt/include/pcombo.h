@@ -12,10 +12,11 @@
 
 #undef bool
 #include "qcombo.h"
-#include "psize.h"
-#include "virtual.h"
+#include "pwidget.h"
 
-typedef QComboBox::Policy QComboBox__Policy;
+#define QComboBox_virtual_functions QWidget_virtual_functions
+
+class PComboBox_virtualize : public PWidget_virtualize {};
 
 class PComboBox : public QComboBox, public PComboBox_virtualize {
     QComboBox_virtual_functions
@@ -53,5 +54,7 @@ public:
 
     void protected_popup() { QComboBox::popup(); }
 };
+
+typedef QComboBox::Policy QComboBox__Policy;
 
 #endif  // PCOMBO_H

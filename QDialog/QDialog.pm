@@ -12,7 +12,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget);
 @EXPORT = qw(%Dialog);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QDialog $VERSION;
 
 1;

@@ -309,7 +309,6 @@ libperlqt/QWidget.xs
 libperlqt/QWindow.xs
 libperlqt/README
 libperlqt/convert_class
-libperlqt/include/enum.h
 libperlqt/include/paccel.h
 libperlqt/include/papp.h
 libperlqt/include/pbitmap.h
@@ -322,6 +321,7 @@ libperlqt/include/pcolor.h
 libperlqt/include/pcombo.h
 libperlqt/include/pcursor.h
 libperlqt/include/pdialog.h
+libperlqt/include/penum.h
 libperlqt/include/pevent.h
 libperlqt/include/pfiledlg.h
 libperlqt/include/pfont.h
@@ -357,6 +357,7 @@ libperlqt/include/prangect.h
 libperlqt/include/prect.h
 libperlqt/include/pregion.h
 libperlqt/include/pscrbar.h
+libperlqt/include/psigslot.h
 libperlqt/include/psize.h
 libperlqt/include/pslider.h
 libperlqt/include/ptabbar.h
@@ -364,14 +365,13 @@ libperlqt/include/ptabdlg.h
 libperlqt/include/ptablevw.h
 libperlqt/include/ptimer.h
 libperlqt/include/ptooltip.h
+libperlqt/include/pvirtual.h
 libperlqt/include/pwidget.h
 libperlqt/include/pwindow.h
 libperlqt/include/pwmatrix.h
-libperlqt/include/sigslot.h
-libperlqt/include/virtual.h
 libperlqt/libperlqt.xs
-libperlqt/sigslot.xs
-libperlqt/virtual.xs
+libperlqt/psigslot.xs
+libperlqt/pvirtual.xs
 tutorial/t1/t1
 tutorial/t10/CannonField.pm
 tutorial/t10/LCDRange.pm

@@ -2,12 +2,12 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     'NAME'	=> 'libperlqt',
-    'VERSION'	=> '1.01',
+    'VERSION'	=> '1.02',
     'CC'	=> 'g++',
     'INC'	=> '-I$(QTDIR)/include -I../libperlqt/include',
     'OBJECT'	=> q{libperlqt$(OBJ_EXT)
-		     virtual$(OBJ_EXT)
-		     sigslot$(OBJ_EXT)
+		     pvirtual$(OBJ_EXT)
+		     psigslot$(OBJ_EXT)
 		     QAccel$(OBJ_EXT)
 		     QApplication$(OBJ_EXT)
 		     QButton$(OBJ_EXT)
@@ -45,4 +45,8 @@ sub MY::install {
 install: all
 	cp $(INST_DYNAMIC) /usr/local/lib
 '
+}
+
+unless(defined $ENV{'QTDIR'}) {
+    warn "Be sure libperlqt has a QTDIR when compiling. See INSTALL.\n";
 }

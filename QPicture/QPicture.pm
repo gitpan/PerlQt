@@ -8,7 +8,7 @@ require QPaintDevice;
 
 @ISA = qw(DynaLoader QPaintDevice);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QPicture $VERSION;
 
 1;

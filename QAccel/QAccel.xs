@@ -8,11 +8,11 @@
  */
 
 #include "paccel.h"
-#include "sigslot.h"
+#include "psigslot.h"
 
 MODULE = QAccel		PACKAGE = QAccel
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PAccel *
 PAccel::new(parent, name = 0)

@@ -12,11 +12,7 @@
 
 #undef bool
 #include "qfont.h"
-#include "enum.h"
 #include "pqt.h"
-
-typedef QFont::CharSet QFont__CharSet;
-typedef QFont::StyleHint QFont__StyleHint;
 
 class PFont : public QFont {
 public:
@@ -24,7 +20,10 @@ public:
     PFont(const char *family, int pointSize = 12, int weight = QFont::Normal,
 	  bool italic = FALSE) : QFont(family, pointSize, weight, italic) {}
 
-    PFont(const QFont &font) { *(QFont *)this = font; }
+    PFont(const QFont &font) : QFont(font) {}
 };
+
+typedef QFont::CharSet QFont__CharSet;
+typedef QFont::StyleHint QFont__StyleHint;
 
 #endif  // PFONT_H

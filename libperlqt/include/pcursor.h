@@ -10,9 +10,8 @@
  * README file
  */
 
+#undef bool
 #include "qcursor.h"
-#include "pbitmap.h"
-#include "ppoint.h"
 #include "pqt.h"
 
 class PCursor : public QCursor {
@@ -22,7 +21,7 @@ public:
     PCursor(const QBitmap &bitmap, const QBitmap &mask, int hotX=-1,
 	int hotY=-1) : QCursor(bitmap, mask, hotX, hotY) {}
 
-    PCursor(const QCursor &cursor) { *(QCursor *)this = cursor; }
+    PCursor(const QCursor &cursor) : QCursor(cursor) {}
 };
 
 #endif  // PCURSOR_H

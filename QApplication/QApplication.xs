@@ -8,7 +8,9 @@
  */
 
 #include "papp.h"
-#include "enum.h"
+#include "pfontmet.h"
+#include "ppalette.h"
+#include "penum.h"
 
 #define STORE_spec(key) enumIV(hv, MSTR(key), QApplication::key ## Color)
 
@@ -23,7 +25,7 @@ inline void init_enum() {
 
 MODULE = QApplication		PACKAGE = QApplication		
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

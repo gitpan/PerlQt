@@ -1,8 +1,6 @@
 #ifndef POBJECT_H
 #define POBJECT_H
 
-class pObject;
-
 /*
  * Declaration of the PObject class
  *
@@ -14,21 +12,36 @@ class pObject;
 
 #undef bool
 #include "qobject.h"
-#include "pqt.h"
-#include "virtual.h"
-#include "sigslot.h"
+#include "pvirtual.h"
+
+#define QObject_virtual_functions					\
+public:									\
+    const char *className() const;					\
+    bool event(QEvent *);						\
+    bool eventFilter(QObject *, QEvent *);				\
+    QMetaObject *metaObject() const;					\
+protected:								\
+    void initMetaObject();						\
+    void timerEvent(QTimerEvent *);
+
+class PObject_virtualize : virtual public virtualize {
+public:
+    const char *PObject_className() const;
+    bool PObject_event(QEvent *);
+    bool PObject_eventFilter(QObject *, QEvent *);
+    QMetaObject *PObject_metaObject() const;
+protected:
+    void PObject_initMetaObject();
+    void PObject_timerEvent(QTimerEvent *);
+};
 
 class PObject : public QObject, public PObject_virtualize {
     QObject_virtual_functions
 public:
     PObject(QObject *parent=0, const char *name=0) : QObject(parent, name) {}
-//    const char *className();
-    void activateI(const char *, IV);
-//protected:
-//    void timerEvent(QTimerEvent *);
 };
 
-class pObject : public QObject {
+class pObject : public QObject {	// fix me
 public:
     QConnectionList *protected_receivers(const char *signal) const {
 	return receivers(signal);
@@ -39,9 +52,5 @@ public:
 
 extern char *getPerlSuperClass(char *clname);
 extern QMetaObject *metaObjectSetup(char *clname);
-
-extern HV *Signals;
-extern HV *Slots;
-extern HV *MetaObjects;
 
 #endif  // POBJECT_H

@@ -2,7 +2,7 @@
 #define PCLIPBRD_H
 
 /*
- * Declaration of the PCursor class
+ * Definition of nothing.
  *
  * Copyright (C) 1997, Ashley Winters <jql@accessone.com>
  *
@@ -12,7 +12,6 @@
 
 #undef bool
 #include "qclipbrd.h"
-#include "ppixmap.h"
-#include "pqt.h"
+#include "pobject.h"
 
 #endif  // PCLIPBRD_H

@@ -10,7 +10,7 @@
 #include "pimage.h"
 #include "prect.h"
 #include "psize.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QImage::key ## Endian)
 
@@ -24,7 +24,7 @@ inline void init_enum() {
 
 MODULE = QImage		PACKAGE = QImage
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

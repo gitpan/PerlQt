@@ -12,9 +12,17 @@
 
 #undef bool
 #include "qapp.h"
-#include "pfontmet.h"
-#include "ppalette.h"
-#include "virtual.h"
+#include "pobject.h"
+
+#define QApplication_virtual_functions					\
+    QObject_virtual_functions						\
+public:									\
+    bool notify(QObject *, QEvent *);
+
+class PApplication_virtualize : public PObject_virtualize {
+public:
+    bool PApplication_notify(QObject *, QEvent *);
+};
 
 class PApplication : public QApplication, public PApplication_virtualize {
     QApplication_virtual_functions

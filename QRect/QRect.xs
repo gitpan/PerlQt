@@ -8,10 +8,12 @@
  */
 
 #include "prect.h"
+#include "ppoint.h"
+#include "psize.h"
 
 MODULE = QRect		PACKAGE = QRect
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PRect *
 PRect::new(...)

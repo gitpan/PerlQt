@@ -12,8 +12,11 @@
 
 #undef bool
 #include "qradiobt.h"
-#include "psize.h"
-#include "virtual.h"
+#include "pbutton.h"
+
+#define QRadioButton_virtual_functions QButton_virtual_functions
+
+class PRadioButton_virtualize : public PButton_virtualize {};
 
 class PRadioButton : public QRadioButton, public PRadioButton_virtualize {
     QRadioButton_virtual_functions

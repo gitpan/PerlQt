@@ -7,8 +7,7 @@
  * README file
  */
 
-#include "pqt.h"
-#include "virtual.h"
+#include "pvirtual.h"
 
 int pfailed = FALSE;
 

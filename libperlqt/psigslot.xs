@@ -7,8 +7,7 @@
  * README file
  */
 
-#include "sigslot.h"
-#include "pobject.h"
+#include "psigslot.h"
 
 void pQtSigSlot::initMetaObject() {
     char *clname = (char *)qobj->className();

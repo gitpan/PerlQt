@@ -9,12 +9,11 @@
 
 #include "ptimer.h"
 #include "pobject.h"
-#include "pqt.h"
-#include "sigslot.h"
+#include "psigslot.h"
 
 MODULE = QTimer		PACKAGE = QTimer
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PTimer *
 PTimer::new(parent = 0, name = 0)

@@ -8,11 +8,11 @@
  */
 
 #include "ppushbt.h"
-#include "pwidget.h"
+#include "psize.h"
 
 MODULE = QPushButton		PACKAGE = QPushButton		
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PPushButton *
 PPushButton::new(...)

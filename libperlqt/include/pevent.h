@@ -12,8 +12,6 @@
 
 #undef bool
 #include "qevent.h"
-#include "enum.h"
-#include "prect.h"
 #include "pqt.h"
 
 class PEvent : public QEvent {

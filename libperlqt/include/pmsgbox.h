@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qmsgbox.h"
-#include "virtual.h"
+#include "pdialog.h"
+
+#define QMessageBox_virtual_functions QDialog_virtual_functions
+
+class PMessageBox_virtualize : public PDialog_virtualize {};
 
 class PMessageBox : public QMessageBox, public PMessageBox_virtualize {
     QMessageBox_virtual_functions

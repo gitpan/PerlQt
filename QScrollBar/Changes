@@ -1,5 +1,11 @@
 Revision history for Perl extension QScrollBar.
 
+1.02  Fri May  9 19:04:19 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:33:59 1997
+	- modified header structure
+
 1.01  Mon May  5 13:59:50 1997
 	- undef checking
 

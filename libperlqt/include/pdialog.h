@@ -12,7 +12,17 @@
 
 #undef bool
 #include "qdialog.h"
-#include "virtual.h"
+#include "pwidget.h"
+
+#define QDialog_virtual_functions					\
+    QWidget_virtual_functions						\
+protected:								\
+    void done(int);
+
+class PDialog_virtualize : public PWidget_virtualize {
+protected:
+    void PDialog_done(int);
+};
 
 class PDialog : public QDialog, public PDialog_virtualize {
     QDialog_virtual_functions

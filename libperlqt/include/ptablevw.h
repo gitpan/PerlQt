@@ -12,8 +12,27 @@
 
 #undef bool
 #include "qtablevw.h"
-#include "prect.h"
-#include "virtual.h"
+#include "pframe.h"
+
+#define QTableView_virtual_functions					\
+    QFrame_virtual_functions						\
+protected:								\
+    int cellHeight(int);						\
+    int cellWidth(int);							\
+    void paintCell(QPainter *, int, int);				\
+    void setupPainter(QPainter *);					\
+    int totalHeight();							\
+    int totalWidth();
+
+class PTableView_virtualize : public PFrame_virtualize {
+protected:
+    int PTableView_cellHeight(int);
+    int PTableView_cellWidth(int);
+    void PTableView_paintCell(QPainter *, int, int);
+    void PTableView_setupPainter(QPainter *);
+    int PTableView_totalHeight();
+    int PTableView_totalWidth();
+};
 
 class PTableView : public QTableView, public PTableView_virtualize {
     QTableView_virtual_functions

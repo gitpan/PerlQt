@@ -11,7 +11,7 @@ require QPixmap;
 
 @ISA = qw(DynaLoader QObject);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QClipboard $VERSION;
 
 1;

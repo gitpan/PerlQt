@@ -8,6 +8,7 @@
  */
 
 #include "pfont.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QFont::key)
 #define STORE_keys(key, copy) enum2IV(hv, MSTR(key), MSTR(copy), QFont::copy)
@@ -57,7 +58,7 @@ inline void load_enum() {
 
 MODULE = QFont		PACKAGE = QFont
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     load_enum();

@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qfiledlg.h"
-#include "virtual.h"
+#include "pdialog.h"
+
+#define QFileDialog_virtual_functions QDialog_virtual_functions
+
+class PFileDialog_virtualize : public PDialog_virtualize {};
 
 class PFileDialog : public QFileDialog, public PFileDialog_virtualize {
     QFileDialog_virtual_functions

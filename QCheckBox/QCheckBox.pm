@@ -10,7 +10,7 @@ require QButton;
 
 @ISA = qw(DynaLoader QButton);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QCheckBox $VERSION;
 
 1;

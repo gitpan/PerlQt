@@ -12,7 +12,7 @@ require QWMatrix;
 
 @ISA = qw(DynaLoader QPixmap);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QBitmap $VERSION;
 
 1;

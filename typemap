@@ -31,44 +31,54 @@ BrushStyle		T_ENUM
 PenStyle		T_ENUM
 RasterOp		T_ENUM
 
-QAccel *		Qt_OBJECT
-QApplication *		Qt_OBJECT
+QAccel *		RQt_OBJECT
+QApplication *		RQt_OBJECT
+QButton *		RQt_OBJECT
+QButtonGroup *		RQt_OBJECT
+QCheckBox *		RQt_OBJECT
+QComboBox *		RQt_OBJECT
+QDialog *		RQt_OBJECT
+QFileDialog *		RQt_OBJECT
+QFrame *		RQt_OBJECT
+QGroupBox *		RQt_OBJECT
+QLCDNumber *		RQt_OBJECT
+QLabel *		RQt_OBJECT
+QLineEdit *		RQt_OBJECT
+QListBox *		RQt_OBJECT
+QMenuBar *		RQt_OBJECT
+QMessageBox *		RQt_OBJECT
+QMultiLineEdit *	RQt_OBJECT
+QObject *		RQt_OBJECT
+QPopupMenu *		RQt_OBJECT
+QPushButton *		RQt_OBJECT
+QRadioButton *		RQt_OBJECT
+QScrollBar *		RQt_OBJECT
+QSlider *		RQt_OBJECT
+QTabBar *		RQt_OBJECT
+QTabDialog *		RQt_OBJECT
+QTableView *		RQt_OBJECT
+QWidget *		RQt_OBJECT
+
 QBitmap *		Qt_OBJECT
 QBoxLayout *		Qt_OBJECT
 QBrush *		Qt_OBJECT
-QButton *		Qt_OBJECT
-QButtonGroup *		Qt_OBJECT
-QCheckBox *		Qt_OBJECT
 QClipboard *		Qt_OBJECT
 QCloseEvent *		Qt_OBJECT
 QColor *		Qt_OBJECT
 QColorGroup *		Qt_OBJECT
-QComboBox *		Qt_OBJECT
 QCursor *		Qt_OBJECT
-QDialog *		Qt_OBJECT
 QEvent *		Qt_OBJECT
-QFileDialog *		Qt_OBJECT
 QFocusEvent *		Qt_OBJECT
 QFont *			Qt_OBJECT
 QFontInfo *		Qt_OBJECT
 QFontMetrics *		Qt_OBJECT
-QFrame *		Qt_OBJECT
 QGridLayout *		Qt_OBJECT
-QGroupBox *		Qt_OBJECT
 QImage *		Qt_OBJECT
 QKeyEvent *		Qt_OBJECT
-QLCDNumber *		Qt_OBJECT
-QLabel *		Qt_OBJECT
 QLayout *		Qt_OBJECT
-QLineEdit *		Qt_OBJECT
-QListBox *		Qt_OBJECT
 QListBoxItem *		Qt_OBJECT
-QMenuBar *		Qt_OBJECT
-QMessageBox *		Qt_OBJECT
 QMouseEvent *		Qt_OBJECT
 QMoveEvent *		Qt_OBJECT
-QMultiLineEdit *	Qt_OBJECT
-QObject *		Qt_OBJECT
 QPaintEvent *		Qt_OBJECT
 QPainter *		Qt_OBJECT
 QPalette *		Qt_OBJECT
@@ -77,25 +87,16 @@ QPicture *		Qt_OBJECT
 QPixmap *		Qt_OBJECT
 QPoint *		Qt_OBJECT
 QPointArray *		Qt_OBJECT
-QPopupMenu *		Qt_OBJECT
 QPrinter *		Qt_OBJECT
-QPushButton *		Qt_OBJECT
-QRadioButton *		Qt_OBJECT
 QRect *			Qt_OBJECT
 QRegion *		Qt_OBJECT
 QResizeEvent *		Qt_OBJECT
-QScrollBar *		Qt_OBJECT
 QSize *			Qt_OBJECT
-QSlider *		Qt_OBJECT
 QTab *			Qt_OBJECT
-QTabBar *		Qt_OBJECT
-QTabDialog *		Qt_OBJECT
-QTableView *		Qt_OBJECT
 QTimer *		Qt_OBJECT
 QTimerEvent *		Qt_OBJECT
 QToolTip *		Qt_OBJECT
 QToolTipGroup *		Qt_OBJECT
-QWidget *		Qt_OBJECT
 QWMatrix *		Qt_OBJECT
 
 const QScrollBar *	Qt_OBJECT
@@ -210,6 +211,9 @@ Qt_OBJECT
 PQt_OBJECT
     $arg = objectify_ptr((void*)$var, MSTR($type), 1);
 
+RQt_OBJECT
+    $arg = objectify_ptr((void*)$var, MSTR($type));
+
 VQt_OBJECT
     if(!$var) XSRETURN_UNDEF;
     $arg = objectify_ptr((void*)$var, $var->setQtClassName(CLASS), 1);
@@ -235,6 +239,9 @@ Q_PV
 
 INPUT
 Qt_OBJECT
+    $var = ($type)extract_ptr($arg, MSTR($type));
+
+RQt_OBJECT
     $var = ($type)extract_ptr($arg, MSTR($type));
 
 pQt_OBJECT

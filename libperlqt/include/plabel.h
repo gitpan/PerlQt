@@ -12,9 +12,11 @@
 
 #undef bool
 #include "qlabel.h"
-#include "psize.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pframe.h"
+
+#define QLabel_virtual_functions QFrame_virtual_functions
+
+class PLabel_virtualize : public PFrame_virtualize {};
 
 class PLabel : public QLabel, public PLabel_virtualize {
     QLabel_virtual_functions

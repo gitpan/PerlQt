@@ -1,5 +1,11 @@
 Revision history for Perl extension QWindow.
 
+1.02  Fri May  9 19:08:05 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:40:14 1997
+	- modified header structure
+
 1.01  Mon May  5 14:16:54 1997
 	- undef checking
 

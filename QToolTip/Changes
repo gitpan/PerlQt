@@ -1,5 +1,11 @@
 Revision history for Perl extension QToolTip.
 
+1.01  Fri May  9 19:07:06 1997
+	- disabled prototypes
+
+1.01  Fri May  9 18:38:36 1997
+	- modified header structure
+
 0.01  Thu Apr 10 11:01:20 1997
 	- original version; created by h2xs 1.18
 

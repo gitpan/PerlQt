@@ -9,9 +9,8 @@
 
 #include "pcombo.h"
 #include "ppixmap.h"
-#include "pwidget.h"
-#include "pqt.h"
-#include "enum.h"
+#include "psize.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QComboBox::key)
 
@@ -28,7 +27,7 @@ inline void init_enum() {
 
 MODULE = QComboBox		PACKAGE = QComboBox
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

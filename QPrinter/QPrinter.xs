@@ -9,8 +9,7 @@
 
 #include "pprinter.h"
 #include "pwidget.h"
-#include "pqt.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QPrinter::key)
 
@@ -29,7 +28,7 @@ inline void init_enum() {
 
 MODULE = QPrinter		PACKAGE = QPrinter
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

@@ -12,7 +12,24 @@
 
 #undef bool
 #include "qmenubar.h"
-#include "virtual.h"
+#include "pframe.h"
+#include "pmenudta.h"
+
+// @!$! %&!@ &!#@ &!@&# troll tech @!%&@*! @(!@*#& $*&%!!!!!!!!!!!!!!!!! //
+
+#define QMenuBar_virtual_functions					\
+    QWidget_virtual_functions						\
+protected:								\
+    void drawFrame(QPainter *);						\
+    void drawContents(QPainter *);					\
+public:									\
+    void updateItem(int);						\
+protected:								\
+    void menuContentsChanged();						\
+    void menuStateChanged();
+
+class PMenuBar_virtualize : public PFrame_virtualize,
+			    public PMenuData_virtualize {};
 
 class PMenuBar : public QMenuBar, public PMenuBar_virtualize {
     QMenuBar_virtual_functions
@@ -48,6 +65,5 @@ public:
     void virtual_show() { QMenuBar::show(); }
     void virtual_updateItem(int id) { QMenuBar::updateItem(id); }
 };
-
 
 #endif  // PMENUBAR_H

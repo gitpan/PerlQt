@@ -1,5 +1,11 @@
 Revision history for Perl extension QPalette.
 
+1.02  Fri May  9 19:00:26 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:21:48 1997
+	- modified header structure
+
 1.01  Sun May  4 18:58:14 1997
 	- added some copy constructor prototypes
 

@@ -8,9 +8,7 @@
  */
 
 #include "pdialog.h"
-#include "pwidget.h"
-#include "pqt.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QDialog::key)
 inline void init_enum() {
@@ -22,7 +20,7 @@ inline void init_enum() {
 
 MODULE = QDialog		PACKAGE = QDialog
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
      init_enum();

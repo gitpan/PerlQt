@@ -15,7 +15,7 @@ require QScrollBar;
 @ISA = qw(Exporter DynaLoader QFrame);
 @EXPORT = qw(%Tbl);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QTableView $VERSION;
 
 1;

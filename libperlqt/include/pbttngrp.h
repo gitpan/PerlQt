@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qbttngrp.h"
-#include "virtual.h"
+#include "pgrpbox.h"
+
+#define QButtonGroup_virtual_functions QGroupBox_virtual_functions
+
+class PButtonGroup_virtualize : public PGroupBox_virtualize {};
 
 class PButtonGroup : public QButtonGroup, public PButtonGroup_virtualize {
     QButtonGroup_virtual_functions

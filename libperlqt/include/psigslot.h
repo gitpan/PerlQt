@@ -1,5 +1,5 @@
-#ifndef SIGSLOT_H
-#define SIGSLOT_H
+#ifndef PSIGSLOT_H
+#define PSIGSLOT_H
 
 /*
  * Declaration of the pQtSigSlot class
@@ -12,7 +12,6 @@
 
 #undef bool
 #include "qmetaobj.h"
-#include "qobject.h"
 #include "pobject.h"
 #include "pqt.h"
 
@@ -42,4 +41,8 @@ public:
 
 QMember stub_func(char *member);
 
-#endif  // SIGSLOT_H
+extern HV *Signals;
+extern HV *Slots;
+extern HV *MetaObjects;
+
+#endif  // PSIGSLOT_H

@@ -8,12 +8,10 @@
  */
 
 #include "pmlined.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QMultiLineEdit		PACKAGE = QMultiLineEdit
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PMultiLineEdit *
 PMultiLineEdit::new(parent = 0, name = 0)

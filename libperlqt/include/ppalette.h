@@ -10,8 +10,8 @@
  * README file
  */
 
+#undef bool
 #include "qpalette.h"
-#include "pcolor.h"
 #include "pqt.h"
 
 class PColorGroup : public QColorGroup {
@@ -34,7 +34,7 @@ public:
     PPalette(const QColorGroup &normal, const QColorGroup &disabled,
 	     const QColorGroup &active) : QPalette(normal, disabled, active) {}
 
-    PPalette(const QPalette &palette) { *(QPalette *)this = palette; }
+    PPalette(const QPalette &palette) : QPalette(palette) {}
 };
 
 #endif  // PPALETTE_H

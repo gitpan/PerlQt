@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qgrpbox.h"
-#include "virtual.h"
+#include "pframe.h"
+
+#define QGroupBox_virtual_functions QFrame_virtual_functions
+
+class PGroupBox_virtualize : public PFrame_virtualize {};
 
 class PGroupBox : public QGroupBox, public PGroupBox_virtualize {
     QGroupBox_virtual_functions

@@ -8,12 +8,10 @@
  */
 
 #include "pfiledlg.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QFileDialog		PACKAGE = QFileDialog
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PFileDialog *
 PFileDialog::new(...)

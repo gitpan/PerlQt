@@ -8,7 +8,12 @@
  */
 
 #include "ppixmap.h"
-#include "enum.h"
+#include "pbitmap.h"
+#include "pimage.h"
+#include "prect.h"
+#include "psize.h"
+#include "pwmatrix.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QPixmap::key)
 
@@ -22,7 +27,7 @@ inline void init_enum() {
 
 MODULE = QPixmap		PACKAGE = QPixmap
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

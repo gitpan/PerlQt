@@ -8,8 +8,8 @@
  */
 
 #include "ptablevw.h"
-#include "pwidget.h"
-#include "enum.h"
+#include "prect.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), Tbl_ ## key)
 
@@ -38,7 +38,7 @@ inline void init_enum() {
 
 MODULE = QTableView		PACKAGE = QTableView
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

@@ -12,15 +12,75 @@
 
 #undef bool
 #include "qwidget.h"
-#include "pcolor.h"
-#include "pfont.h"
-#include "pfontinf.h"
-#include "ppalette.h"
-#include "ppixmap.h"
-#include "prect.h"
-#include "virtual.h"
+#include "pobject.h"
 
-typedef QWidget::FocusPolicy QWidget__FocusPolicy;
+#define QWidget_virtual_functions					\
+    QObject_virtual_functions						\
+public:									\
+    void adjustSize();							\
+    bool close(bool = FALSE);						\
+    void hide();							\
+    void move(int, int);						\
+    void resize(int, int);						\
+    void setBackgroundColor(const QColor &);				\
+    void setBackgroundPixmap(const QPixmap &);				\
+    void setCursor(const QCursor &);					\
+    void setEnabled(bool);						\
+    void setFont(const QFont &);					\
+    void setGeometry(int, int, int, int);				\
+    void setPalette(const QPalette &);					\
+    void setStyle(GUIStyle);						\
+    void show();							\
+    QSize sizeHint() const;						\
+protected:								\
+    void closeEvent(QCloseEvent *);					\
+    void enterEvent(QEvent *);						\
+    void focusInEvent(QFocusEvent *);					\
+    void focusOutEvent(QFocusEvent *);					\
+    void keyPressEvent(QKeyEvent *);					\
+    void keyReleaseEvent(QKeyEvent *);					\
+    void leaveEvent(QEvent *);						\
+    void mouseDoubleClickEvent(QMouseEvent *);				\
+    void mouseMoveEvent(QMouseEvent *);					\
+    void mousePressEvent(QMouseEvent *);				\
+    void mouseReleaseEvent(QMouseEvent *);				\
+    void moveEvent(QMoveEvent *);					\
+    void paintEvent(QPaintEvent *);					\
+    void resizeEvent(QResizeEvent *);
+
+class PWidget_virtualize : public PObject_virtualize {
+public:
+    void PWidget_adjustSize();
+    bool PWidget_close(bool = FALSE);
+    void PWidget_hide();
+    void PWidget_move(int, int);
+    void PWidget_resize(int, int);
+    void PWidget_setBackgroundColor(const QColor &);
+    void PWidget_setBackgroundPixmap(const QPixmap &);
+    void PWidget_setCursor(const QCursor &);
+    void PWidget_setEnabled(bool);
+    void PWidget_setFont(const QFont &);
+    void PWidget_setGeometry(int, int, int, int);
+    void PWidget_setPalette(const QPalette &);
+    void PWidget_setStyle(GUIStyle);
+    void PWidget_show();
+    QSize PWidget_sizeHint() const;
+protected:
+    void PWidget_closeEvent(QCloseEvent *);
+    void PWidget_enterEvent(QEvent *);
+    void PWidget_focusInEvent(QFocusEvent *);
+    void PWidget_focusOutEvent(QFocusEvent *);
+    void PWidget_keyPressEvent(QKeyEvent *);
+    void PWidget_keyReleaseEvent(QKeyEvent *);
+    void PWidget_leaveEvent(QEvent *);
+    void PWidget_mouseDoubleClickEvent(QMouseEvent *);
+    void PWidget_mouseMoveEvent(QMouseEvent *);
+    void PWidget_mousePressEvent(QMouseEvent *);
+    void PWidget_mouseReleaseEvent(QMouseEvent *);
+    void PWidget_moveEvent(QMoveEvent *);
+    void PWidget_paintEvent(QPaintEvent *);
+    void PWidget_resizeEvent(QResizeEvent *);
+};
 
 class PWidget : public QWidget, public PWidget_virtualize {
     QWidget_virtual_functions
@@ -71,5 +131,7 @@ public:
     void virtual_show() { QWidget::show(); }
     QSize virtual_sizeHint() const { return QWidget::sizeHint(); }
 };
+
+typedef QWidget::FocusPolicy QWidget__FocusPolicy;
 
 #endif  // PWIDGET_H

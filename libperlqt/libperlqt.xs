@@ -9,45 +9,31 @@
 
 #include "pqt.h"
 
-SV *obj_check(SV *sv, char *message = "Invalid object") {
+SV *obj_check(SV *sv, const char *message = "Invalid object") {
     SV *rv = rv_check(sv, message);
     if(!SvOBJECT(rv) || SvTYPE(rv) != SVt_PVHV)
         croak(message);
     return rv;
 }
 
-SV *rv_check(SV *sv, char *message = "Not a reference") {
+SV *rv_check(SV *sv, const char *message = "Not a reference") {
     if(!sv || !SvROK(sv)) croak(message);
     return SvRV(sv);
 }
 
-SV *safe_hv_store(HV *hash, char *key, SV *value) {
-    register SV **svp = hv_store(hash, key, strlen(key), value, 0);
+SV *safe_hv_store(HV *hash, const char *key, SV *value) {
+    register SV **svp = hv_store(hash, (char *)key, strlen(key), value, 0);
     if(!svp) croak("Hash store store of '%s' failed", key);
     return *svp;
 }
 
-SV *safe_hv_fetch(HV *hash, char *key, char *message) {
-    register SV **svp = hv_fetch(hash, key, strlen(key), 0);
+SV *safe_hv_fetch(HV *hash, const char *key, const char *message) {
+    register SV **svp = hv_fetch(hash, (char *)key, strlen(key), 0);
     if(!svp) croak(message);
     return *svp;
 }
 
-/*
-static char *parse_clname(char *clname) {
-    char *tmp = clname;
-    int origlen = strlen(clname);
-
-    if(!tmp) croak("NULL classname");
-    while(isALNUM(*tmp)) tmp++;
-    *tmp = 0;
-    if(toLOWER(*clname) == 'p' && strlen(clname) != origlen) *clname = 'Q';
-
-    return clname;
-}
-*/
-
-static char *parse_clname(char *clname) {
+static char *parse_clname(const char *clname) {
     char *newclname, *tmp;
 
     if(!clname) croak("NULL classname");
@@ -61,30 +47,57 @@ static char *parse_clname(char *clname) {
     return newclname;   // this is New() memory, careful!
 }
 
-SV *objectify_ptr(void *ptr, char *clname, int delete_on_destroy = 0) {
+SV *objectify_ptr(void *ptr, const char *clname, int delete_on_destroy = 0) {
     if(!ptr) return &sv_undef;
-    clname = parse_clname(clname);
+    char *name = parse_clname(clname);
 
     HV *obj = newHV();
 
-    safe_hv_store(obj, "THIS", newSViv((IV)ptr));
+    HV *THIS   = newHV();
+    SV *ptrsv  = newSViv((IV)ptr); SvREADONLY_on(ptrsv);
+    SV *coresv = newSViv((IV)ptr); SvREADONLY_on(coresv);
+    safe_hv_store(THIS, name, ptrsv);
+    safe_hv_store(THIS, "CORE", coresv);  // Interesting naming scheme
+    safe_hv_store(obj, "THIS", newRV_noinc((SV *)THIS));
+
     if(delete_on_destroy)
 	safe_hv_store(obj, "DELETE", &sv_yes);
-    SV *ret = sv_bless(newRV_noinc((SV *)obj), gv_stashpv(clname, true));
-    Safefree(clname);   // parse_clname() returned New()ed memory.
+    SV *ret = sv_bless(newRV_noinc((SV *)obj), gv_stashpv(name, true));
+    Safefree(name);  // parse_clname
     return ret;
 }
 
-void *extract_ptr(SV *rv, char *clname) {
+void *extract_ptr(SV *rv, const char *clname) {
     if(!SvOK(rv)) {
 	if(toLOWER(clname[0]) != 'p')
 	    warn("Unexpected undef argument converted to NULL pointer");
 	return NULL;
     }
     HV *obj = (HV *)obj_check(rv);
-    SV *THIS = safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element");
 
-    return (void *)SvIV(THIS);
+    char *name = parse_clname(clname);
+    HV *THIS =
+	(HV *)rv_check(
+	    safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element")
+	);
+    SV **ptrsv = hv_fetch(THIS, name, strlen(name), 0);
+    SV *value;
+    if(!ptrsv) {
+	if(!sv_derived_from(rv, name))
+	    croak("Expected a %s, got a %s", name, HvNAME(SvSTASH((SV *)obj)));
+	value = safe_hv_fetch(THIS, "CORE", "Couldn't fetch \"CORE\"");
+	if(SvREADONLY(value)) {
+	    SV *copy = newSVsv(value);
+	    SvREADONLY_on(copy);
+	    safe_hv_store(THIS, name, copy);  // cache
+	}
+    }
+    else value = *ptrsv;
+    if(!SvREADONLY(value))
+	croak("Tampered THIS pointer");
+    Safefree(name);  // parse_clname
+
+    return (void *)SvIV(value);
 }
 
 char *find_signal(SV *obj, char *signal) {

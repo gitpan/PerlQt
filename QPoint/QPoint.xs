@@ -11,7 +11,7 @@
 
 MODULE = QPoint		PACKAGE = QPoint
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PPoint *
 PPoint::new(xpos = 0, ypos = 0)

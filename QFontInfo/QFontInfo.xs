@@ -8,10 +8,11 @@
  */
 
 #include "pfontinf.h"
+#include "pfont.h"
 
 MODULE = QFontInfo		PACKAGE = QFontInfo
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PFontInfo *
 PFontInfo::new(copy)

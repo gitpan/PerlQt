@@ -8,10 +8,12 @@
  */
 
 #include "pfontmet.h"
+#include "pfont.h"
+#include "prect.h"
 
 MODULE = QFontMetrics		PACKAGE = QFontMetrics
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PFontMetrics *
 PFontMetrics::new(copy)

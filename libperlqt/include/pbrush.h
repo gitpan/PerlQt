@@ -12,7 +12,6 @@
 
 #undef bool
 #include "qbrush.h"
-#include "pcolor.h"
 #include "pqt.h"
 
 class PBrush : public QBrush {
@@ -23,9 +22,8 @@ public:
 	QBrush(color, style) {}
     PBrush(const QColor &color, const QPixmap &pixmap) :
 	QBrush(color, pixmap) {}
-//    PBrush(const QBrush &brush) : QBrush(brush) {}
 
-    PBrush(const QBrush &brush) { *(QBrush *)this = brush; }
+    PBrush(const QBrush &brush) : QBrush(brush) {}
 };
 
 #endif  // PBRUSH_H

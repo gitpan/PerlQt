@@ -8,7 +8,7 @@
  */
 
 #include "pqt.h"
-#include "enum.h"
+#include "penum.h"
 #include "qkeycode.h"
 
 #define CONST_init(const) \
@@ -292,7 +292,7 @@ inline void init_Key() {
 
 MODULE = QGlobal		PACKAGE = QGlobal
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_const();
@@ -313,7 +313,15 @@ DESTROY(rv)
     HV *obj = (HV *)obj_check(rv);
 
     if(hv_exists(obj, "DELETE", 6)) {
-	SV *THIS =
-	    safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element");
-	delete (void *)SvIV(THIS);
+//	SV *THIS =
+//	    safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element");
+//	delete (void *)SvIV(THIS);
+	HV *THIS =
+	    (HV *)rv_check(
+		safe_hv_fetch(obj, "THIS", "Could not access \"THIS\" element")
+	    );
+	SV *ptr = safe_hv_fetch(THIS, "CORE", "CORE inaccessible");
+	if(!SvREADONLY(ptr))
+	    croak("Attempt to destroy bogus THIS pointer");
+	delete (void *)SvIV(ptr);
     }

@@ -8,8 +8,8 @@
  */
 
 #include "pframe.h"
-#include "pwidget.h"
-#include "enum.h"
+#include "prect.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QFrame::key)
 
@@ -31,7 +31,7 @@ inline void init_enum() {
 
 MODULE = QFrame		PACKAGE = QFrame		
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

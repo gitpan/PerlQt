@@ -8,7 +8,7 @@
  */
 
 #include "ppaintd.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_PDT(key) enumIV(hv, MSTR(key), PDT_ ## key)
 #define STORE_PDF(key) enumIV(hv, MSTR(key), PDF_ ## key)
@@ -31,7 +31,7 @@ inline void init_const() {
 
 MODULE = QPaintDevice		PACKAGE = QPaintDevice
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_const();

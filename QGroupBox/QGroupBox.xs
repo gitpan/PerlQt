@@ -8,12 +8,10 @@
  */
 
 #include "pgrpbox.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QGroupBox		PACKAGE = QGroupBox
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PGroupBox *
 PGroupBox::new(...)

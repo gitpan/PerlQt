@@ -12,13 +12,23 @@
 
 #undef bool
 #include "qframe.h"
-#include "prect.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pwidget.h"
+
+#define QFrame_virtual_functions					\
+    QWidget_virtual_functions						\
+protected:								\
+    void drawFrame(QPainter *);						\
+    void drawContents(QPainter *);					\
+    void frameChanged();
+
+class PFrame_virtualize : public PWidget_virtualize {
+protected:
+    void PFrame_drawContents(QPainter *);
+    void PFrame_drawFrame(QPainter *);
+    void PFrame_frameChanged();
+};
 
 class PFrame : public QFrame, public PFrame_virtualize {
-//    QObject_virtual_functions
-//    QWidget_virtual_functions
     QFrame_virtual_functions
 public:
     PFrame(QWidget *parent = 0, const char *name = 0, WFlags f = 0,

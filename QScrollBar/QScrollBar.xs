@@ -8,7 +8,9 @@
  */
 
 #include "pscrbar.h"
-#include "pwidget.h"
+#include "prect.h"
+#include "psize.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QScrollBar::key)
 
@@ -28,7 +30,7 @@ inline void load_enum() {
 
 MODULE = QScrollBar		PACKAGE = QScrollBar
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     load_enum();

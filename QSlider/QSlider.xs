@@ -9,9 +9,8 @@
 
 #include "pslider.h"
 #include "prect.h"
-#include "pwidget.h"
-#include "pqt.h"
-#include "enum.h"
+#include "psize.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QSlider::key)
 #define STORE_keys(key, copy) enum2IV(hv, MSTR(key), MSTR(copy), QSlider::copy)
@@ -32,7 +31,7 @@ inline void init_enum() {
 
 MODULE = QSlider		PACKAGE = QSlider
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

@@ -8,7 +8,7 @@
  */
 
 #include "pregion.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QRegion::key)
 
@@ -21,7 +21,7 @@ inline void init_enum() {
 
 MODULE = QRegion		PACKAGE = QRegion
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

@@ -8,11 +8,11 @@
  */
 
 #include "plabel.h"
-#include "pwidget.h"
+#include "psize.h"
 
 MODULE = QLabel		PACKAGE = QLabel
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PLabel *
 PLabel::new(...)

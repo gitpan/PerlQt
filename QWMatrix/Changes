@@ -1,5 +1,11 @@
 Revision history for Perl extension QWMatrix.
 
+1.02  Fri May  9 19:07:39 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:39:37 1997
+	- modified header structure
+
 1.01  Sun May  4 19:39:17 1997
 	- eradicated extract_ptr
 

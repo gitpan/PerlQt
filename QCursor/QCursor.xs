@@ -8,7 +8,9 @@
  */
 
 #include "pcursor.h"
-#include "enum.h"
+#include "pbitmap.h"
+#include "ppoint.h"
+#include "penum.h"
 
 #define STORE_cur(cursor) \
 safe_hv_store(hv, MSTR(cursor), \
@@ -52,7 +54,7 @@ inline void init_enum() {
 
 MODULE = QCursor		PACKAGE = QCursor
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_const();

@@ -8,12 +8,10 @@
  */
 
 #include "pbttngrp.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QButtonGroup		PACKAGE = QButtonGroup
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PButtonGroup *
 PButtonGroup::new(...)

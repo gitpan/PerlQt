@@ -12,9 +12,11 @@
 
 #undef bool
 #include "qpushbt.h"
-#include "psize.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pbutton.h"
+
+#define QPushButton_virtual_functions QButton_virtual_functions
+
+class PPushButton_virtualize : public PButton_virtualize {};
 
 class PPushButton : public QPushButton, public PPushButton_virtualize {
     QPushButton_virtual_functions

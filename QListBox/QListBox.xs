@@ -9,12 +9,10 @@
 
 #include "plistbox.h"
 #include "ppixmap.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QListBox		PACKAGE = QListBoxItem
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 int
 QListBoxItem::height(listbox)

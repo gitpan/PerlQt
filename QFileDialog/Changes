@@ -1,5 +1,11 @@
 Revision history for Perl extension QFileDialog.
 
+1.02  Fri May  9 18:55:53 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:11:47 1997
+	- modified header structure
+
 1.01  Mon May  5 12:41:55 1997
 	- undef checking
 

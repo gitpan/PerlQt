@@ -1,33 +1,18 @@
 
 Here is my list of things to do in a random descending list of priority.
 
-* FIX THE MEMORY LEAK!
-
 * require 5.004;
-
-* fix extract_ptr()!!! Perhaps by making THIS a hash with type-names as
-elements? Perhaps also allowing multiple-inheritance? Hey, just a thought.
-
-* Fix the P* copy constructor prototypes
-
-* Perhaps fix the inheritance trees for 'efficiency'
-
-* Add tests to check whether THIS and DELETE are valid.
 
 * Allow more data-types to be passed as arguments to signals/slots
 and do minimal argument parsing.
 
+* Fix bugs (read memory leaks)
+
 * Get the typemap to read from className and convert to THAT type, not the
 one requested
 
-* Perhaps interface QArray to make access to QPointArray easier?
-
 * Write a QGlobal::import() that will only initialize enum values if
 they are requested by a module.
-
-* Fix the include tree
-
-* Move most of virtual.h into the other headers
 
 * Create a pembed
 

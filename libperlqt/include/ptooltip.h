@@ -12,6 +12,7 @@
 
 #undef bool
 #include "qtooltip.h"
+#include "pqt.h"
 
 class PToolTipGroup : public QToolTipGroup {
 public:

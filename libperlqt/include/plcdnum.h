@@ -12,11 +12,11 @@
 
 #undef bool
 #include "qlcdnum.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pframe.h"
 
-typedef QLCDNumber::Mode QLCDNumber__Mode;
-typedef QLCDNumber::SegmentStyle QLCDNumber__SegmentStyle;
+#define QLCDNumber_virtual_functions QFrame_virtual_functions
+
+class PLCDNumber_virtualize : public PFrame_virtualize {};
 
 class PLCDNumber : public QLCDNumber, public PLCDNumber_virtualize {
     QLCDNumber_virtual_functions
@@ -32,5 +32,8 @@ public:
     void virtual_drawContents(QPainter *p) { QLCDNumber::drawContents(p); }
     void virtual_resizeEvent(QResizeEvent *e) { QLCDNumber::resizeEvent(e); }
 };
+
+typedef QLCDNumber::Mode QLCDNumber__Mode;
+typedef QLCDNumber::SegmentStyle QLCDNumber__SegmentStyle;
 
 #endif  // PLCDNUM_H

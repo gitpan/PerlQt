@@ -12,9 +12,11 @@
 
 #undef bool
 #include "qlined.h"
-#include "virtual.h"
+#include "pwidget.h"
 
-typedef QLineEdit::EchoMode QLineEdit__EchoMode;
+#define QLineEdit_virtual_functions QWidget_virtual_functions
+
+class PLineEdit_virtualize : public PWidget_virtualize {};
 
 class PLineEdit : public QLineEdit, public PLineEdit_virtualize {
     QLineEdit_virtual_functions
@@ -47,5 +49,7 @@ public:
     bool protected_hasMarkedText() { return QLineEdit::hasMarkedText(); }
     const char *protected_markedText() { return QLineEdit::markedText(); }
 };
+
+typedef QLineEdit::EchoMode QLineEdit__EchoMode;
 
 #endif  // PLINED_H

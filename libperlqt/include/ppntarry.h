@@ -12,8 +12,6 @@
 
 #undef bool
 #include "qpntarry.h"
-#include "ppoint.h"
-#include "prect.h"
 #include "pqt.h"
 
 class PPointArray : public QPointArray {
@@ -25,7 +23,7 @@ public:
     PPointArray(int nPoints, const QCOORD *points) :
 	QPointArray(nPoints, points) {}
 
-    PPointArray(const QPointArray &parray) { *(QPointArray *)this = parray; }
+    PPointArray(const QPointArray &parray) : QPointArray(parray) {}
 };
 
 #endif  // PPNTARRY_H

@@ -11,9 +11,9 @@
  */
 
 
-// This header is needed by every Qt source file. It needs to be
+// This header is needed by every Qt source file. It probably should be
 // #included *AFTER* any real qt headers, because there are serious
-// name-space conflicts between qt and Perl! Any and all name-space
+// name-space conflicts between qt and Perl. Any and all name-space
 // conflicts are to be solved in this header, one time.
 
 #undef bool
@@ -41,16 +41,16 @@ extern "C" {
 
 #define MSTR(str) # str
 
-#define pextract(type, elem) (type *)extract_ptr(ST(elem), MSTR(elem))
+#define pextract(type, elem) (type *)extract_ptr(ST(elem), MSTR(type ## *))
 
 typedef char pChar;
 
-extern SV *objectify_ptr(void *ptr, char *clname, int delete_on_destroy = 0);
-extern void *extract_ptr(SV *obj, char *clname);
-extern SV *rv_check(SV *rv, char *errmsg = "Not a reference");
-extern SV *obj_check(SV *rv, char *errmsg = "Invalid object");
-extern SV *safe_hv_store(HV *hash, char *key, SV *value);
-extern SV *safe_hv_fetch(HV *hash, char *key, char *message);
+extern SV *objectify_ptr(void *, const char *, int = 0);
+extern void *extract_ptr(SV *, const char *);
+extern SV *rv_check(SV *, const char * = "Not a reference");
+extern SV *obj_check(SV *, const char * = "Invalid object");
+extern SV *safe_hv_store(HV *, const char *, SV *);
+extern SV *safe_hv_fetch(HV *, const char *, const char *);
 
 extern char *find_signal(SV *obj, char *signal);
 extern char *find_slot(SV *obj, char *slot);

@@ -12,8 +12,6 @@
 
 #undef bool
 #include "qbitmap.h"
-#include "psize.h"
-#include "pwmatrix.h"
 #include "pqt.h"
 
 class PBitmap : public QBitmap {
@@ -28,7 +26,7 @@ public:
     PBitmap(const char *fileName, const char *format = 0) :
 	QBitmap(fileName, format) {}
 
-    PBitmap(const QBitmap &bitmap) { *(QBitmap *)this = bitmap; }
+    PBitmap(const QBitmap &bitmap) : QBitmap(bitmap) {}
     PBitmap(const QPixmap &pixmap) { *(QBitmap *)this = pixmap; }
     PBitmap(const QImage &image) { *(QBitmap *)this = image; }
 };

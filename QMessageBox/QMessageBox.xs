@@ -8,12 +8,10 @@
  */
 
 #include "pmsgbox.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QMessageBox		PACKAGE = QMessageBox
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PMessageBox *
 PMessageBox::new(parent = 0, name = 0)

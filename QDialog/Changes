@@ -1,5 +1,11 @@
 Revision history for Perl extension QDialog.
 
+1.02  Fri May  9 18:55:04 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:10:47 1997
+	- modified header structure
+
 1.01  Mon May  5 12:38:31 1997
 	- undef checking
 

@@ -12,9 +12,11 @@
 
 #undef bool
 #include "qchkbox.h"
-#include "psize.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pbutton.h"
+
+#define QCheckBox_virtual_functions QButton_virtual_functions
+
+class PCheckBox_virtualize : public PButton_virtualize {};
 
 class PCheckBox : public QCheckBox, public PCheckBox_virtualize {
     QCheckBox_virtual_functions

@@ -12,9 +12,6 @@
 
 #undef bool
 #include "qimage.h"
-#include "prect.h"
-#include "psize.h"
-#include "pqt.h"
 
 typedef QImage::Endian QImage__Endian;
 
@@ -29,7 +26,7 @@ public:
     PImage(const char *xpm[]) : QImage(xpm) {}
 
     PImage(const QImage &image) : QImage(image) {}
-    PImage(const QPixmap &pixmap) { *this = pixmap; }
+    PImage(const QPixmap &pixmap) { *(QImage *)this = pixmap; }
 };
 
 #endif  // PIMAGE_H

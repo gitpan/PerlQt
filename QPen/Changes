@@ -1,5 +1,11 @@
 Revision history for Perl extension QPen.
 
+1.02  Fri May  9 19:00:39 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:22:05 1997
+	- modified header structure
+
 1.01  Sun May  4 23:33:43 1997
 	- added copy constructor prototype
 

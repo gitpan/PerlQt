@@ -1,5 +1,11 @@
 Revision history for Perl extension QRegion.
 
+1.02  Fri May  9 19:04:05 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:33:21 1997
+	- modified header structure
+
 1.01  Mon May  5 00:01:30 1997
 	- added copy constructor prototype
 

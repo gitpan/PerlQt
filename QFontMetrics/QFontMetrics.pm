@@ -11,7 +11,7 @@ require QRect;
 
 @ISA = qw(DynaLoader Qt::Base);
 
-$VERSION = '1.00';
+$VERSION = '1.02';
 bootstrap QFontMetrics $VERSION;
 
 1;

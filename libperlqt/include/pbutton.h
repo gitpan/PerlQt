@@ -12,9 +12,21 @@
 
 #undef bool
 #include "qbutton.h"
-#include "ppixmap.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pwidget.h"
+
+#define QButton_virtual_functions					\
+    QWidget_virtual_functions						\
+protected:								\
+    void drawButton(QPainter *);					\
+    void drawButtonLabel(QPainter *);					\
+    bool hitButton(const QPoint &) const;
+
+class PButton_virtualize : public PWidget_virtualize {
+protected:
+    void PButton_drawButton(QPainter *);
+    void PButton_drawButtonLabel(QPainter *);
+    bool PButton_hitButton(const QPoint &) const;
+};
 
 class PButton : public QButton, public PButton_virtualize {
     QButton_virtual_functions

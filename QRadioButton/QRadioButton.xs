@@ -8,12 +8,11 @@
  */
 
 #include "pradiobt.h"
-#include "pwidget.h"
-#include "pqt.h"
+#include "psize.h"
 
 MODULE = QRadioButton		PACKAGE = QRadioButton
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PRadioButton *
 PRadioButton::new(...)

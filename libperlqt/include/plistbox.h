@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qlistbox.h"
-#include "virtual.h"
+#include "ptablevw.h"
+
+#define QListBox_virtual_functions QTableView_virtual_functions
+
+class PListBox_virtualize : public PTableView_virtualize {};
 
 class PListBox : public QListBox, public PListBox_virtualize {
     QListBox_virtual_functions

@@ -83,3 +83,7 @@ WriteMakefile(
 			QWidget
 			QWindow) ],
 );
+
+unless(defined $ENV{'QTDIR'}) {
+    warn "Be sure PerlQt has a QTDIR when compiling. See INSTALL.\n";
+}

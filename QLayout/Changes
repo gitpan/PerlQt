@@ -1,5 +1,11 @@
 Revision history for Perl extension QLayout.
 
+1.02  Fri May  9 18:58:21 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:15:29 1997
+	- modified header structure
+
 1.01  Mon May  5 13:03:18 1997
 	- undef checking
 

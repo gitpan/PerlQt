@@ -12,9 +12,23 @@
 
 #undef bool
 #include "qtabbar.h"
-#include "virtual.h"
+#include "pwidget.h"
 
-// struct PTab : public QTab {};  // QTabBar::~QTabBar() runs delete, whoopie!
+#define QTabBar_virtual_functions					\
+    QWidget_virtual_functions						\
+public:									\
+    int addTab(QTab *);							\
+protected:								\
+    void paint(QPainter *, QTab *, bool) const;				\
+    QTab *selectTab(const QPoint &) const;
+
+class PTabBar_virtualize : public PWidget_virtualize {
+public:
+    int PTabBar_addTab(QTab *);
+protected:
+    void PTabBar_paint(QPainter *, QTab *, bool) const;
+    QTab *PTabBar_selectTab(const QPoint &) const;
+};
 
 class PTabBar : public QTabBar, public PTabBar_virtualize {
     QTabBar_virtual_functions

@@ -8,8 +8,7 @@
  */
 
 #include "plcdnum.h"
-#include "pwidget.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QLCDNumber::key)
 
@@ -34,7 +33,7 @@ inline void init_enum() {
 
 MODULE = QLCDNumber		PACKAGE = QLCDNumber
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

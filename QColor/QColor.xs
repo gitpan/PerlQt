@@ -8,7 +8,7 @@
  */
 
 #include "pcolor.h"
-#include "enum.h"
+#include "penum.h"
 
 #define STORE_enum(key) enumIV(hv, MSTR(key), QColor::key)
 
@@ -57,7 +57,7 @@ inline void load_const() {
 
 MODULE = QColor		PACKAGE = QColor
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     load_enum();

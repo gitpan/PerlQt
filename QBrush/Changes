@@ -1,5 +1,11 @@
 Revision history for Perl extension QBrush.
 
+1.02  Fri May  9 18:50:09 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:04:56 1997
+	- modified header structure
+
 1.01  Sun May  4 20:16:51 1997
 	- added copy constructor prototype
 

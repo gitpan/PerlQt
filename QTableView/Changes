@@ -1,5 +1,11 @@
 Revision history for Perl extension QTableView.
 
+1.02  Fri May  9 19:06:24 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:36:49 1997
+	- modified header structure
+
 1.01  Mon May  5 14:07:18 1997
 	- undef checking
 

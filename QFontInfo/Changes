@@ -1,5 +1,11 @@
 Revision history for Perl extension QFontInfo.
 
+1.02  Fri May  9 18:56:19 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:12:26 1997
+	- modified header structure
+
 1.01  Sun May  4 21:09:32 1997
 	- added some copy constructor prototypes
 

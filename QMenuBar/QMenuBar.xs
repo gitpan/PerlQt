@@ -8,12 +8,10 @@
  */
 
 #include "pmenubar.h"
-#include "pwidget.h"
-#include "pqt.h"
 
 MODULE = QMenuBar		PACKAGE = QMenuBar
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PMenuBar *
 PMenuBar::new(parent = 0, name = 0)

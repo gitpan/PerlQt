@@ -1,5 +1,11 @@
 Revision history for Perl extension QAccel.
 
+1.02  Fri May  9 18:48:15 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:02:30 1997
+	- modified header structure
+
 1.01  Mon May  5 11:32:35 1997
 	- pstring conversion
 

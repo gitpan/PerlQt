@@ -7,9 +7,17 @@
  * README file
  */
 
-#include "pfontmet.h"
 #include "pwidget.h"
-#include "enum.h"
+#include "pcolor.h"
+#include "pfont.h"
+#include "pfontinf.h"
+#include "pfontmet.h"
+#include "ppalette.h"
+#include "ppixmap.h"
+#include "ppoint.h"
+#include "prect.h"
+#include "psize.h"
+#include "penum.h"
 
 #define STORE_key(key) enumIV(hv, MSTR(key), QWidget::key ## Focus)
 
@@ -84,7 +92,7 @@ inline void init_WFlags() {
 
 MODULE = QWidget	PACKAGE = QWidget
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_enum();

@@ -12,8 +12,6 @@
 
 #undef bool
 #include "qrect.h"
-#include "ppoint.h"
-#include "psize.h"
 #include "pqt.h"
 
 class PRect : public QRect {

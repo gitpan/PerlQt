@@ -15,7 +15,26 @@
 #include "qmenudta.h"
 #include "qpopmenu.h"
 #include "qmenubar.h"
-#include "virtual.h"
+#include "pvirtual.h"
+
+#define QMenuData_virtual_functions					\
+public:									\
+    void updateItem(int);						\
+protected:								\
+    void menuContentsChanged();						\
+    void menuDelPopup(QPopupMenu *);					\
+    void menuInsPopup(QPopupMenu *);					\
+    void menuStateChanged();
+
+class PMenuData_virtualize : virtual public virtualize {
+public:
+    void PMenuData_updateItem(int);
+protected:
+    void PMenuData_menuContentsChanged();
+    void PMenuData_menuDelPopup(QPopupMenu *);
+    void PMenuData_menuInsPopup(QPopupMenu *);
+    void PMenuData_menuStateChanged();
+};
 
 class PMenuData : public QMenuData, public PMenuData_virtualize {
     QMenuData_virtual_functions

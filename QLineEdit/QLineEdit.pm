@@ -12,7 +12,7 @@ require QWidget;
 @ISA = qw(Exporter DynaLoader QWidget);
 @EXPORT = qw(%Echo);
 
-$VERSION = '1.00';
+$VERSION = '1.01';
 bootstrap QLineEdit $VERSION;
 
 1;

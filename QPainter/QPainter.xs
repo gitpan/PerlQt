@@ -8,9 +8,18 @@
  */
 
 #include "ppainter.h"
+#include "pbrush.h"
+#include "pcolor.h"
+#include "pfont.h"
+#include "pfontinf.h"
+#include "pfontmet.h"
 #include "ppaintd.h"
+#include "ppen.h"
+#include "ppoint.h"
 #include "prect.h"
-#include "enum.h"
+#include "pregion.h"
+#include "pwmatrix.h"
+#include "penum.h"
 
 #define STORE_mode(mode) enumIV(hv, MSTR(mode), mode ## Mode)
 
@@ -23,7 +32,7 @@ inline void init_BGMode() {
 
 MODULE = QPainter		PACKAGE = QPainter
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 BOOT:
     init_BGMode();

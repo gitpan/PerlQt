@@ -8,10 +8,11 @@
  */
 
 #include "pclipbrd.h"
+#include "ppixmap.h"
 
 MODULE = QClipboard		PACKAGE = QClipboard
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 void
 QClipboard::clear()

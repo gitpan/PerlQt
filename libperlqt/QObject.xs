@@ -7,9 +7,8 @@
  * README file
  */
 
-#include "pqt.h"
 #include "pobject.h"
-#include "virtual.h"
+#include "psigslot.h"
 
 HV *Signals = NULL;
 HV *Slots = NULL;

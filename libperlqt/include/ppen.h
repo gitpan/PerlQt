@@ -12,9 +12,7 @@
 
 #undef bool
 #include "qpen.h"
-#include "pcolor.h"
 #include "pqt.h"
-#include "enum.h"
 
 class PPen : public QPen {
 public:
@@ -23,7 +21,7 @@ public:
     PPen(const QColor &color, uint width = 0, PenStyle style = SolidLine) :
 	QPen(color, width, style) {}
 
-    PPen(const QPen &pen) { *(QPen *)this = pen; }
+    PPen(const QPen &pen) : QPen(pen) {}
 };
 
 #endif  // PPEN_H

@@ -1,5 +1,11 @@
 Revision history for Perl extension QEvent.
 
+1.01  Fri May  9 18:55:24 1997
+	- disabled prototypes
+
+1.01  Fri May  9 18:10:47 1997
+	- modified header structure
+
 0.04  Tue Apr 29 16:39:19 1997
 	- export $ALT, $CTRL, $SHIFT and $ASCII_ACCEL
 

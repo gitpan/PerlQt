@@ -8,10 +8,11 @@
  */
 
 #include "ppalette.h"
+#include "pcolor.h"
 
 MODULE = QPalette		PACKAGE = QColorGroup
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PColorGroup *
 PColorGroup::new(...)

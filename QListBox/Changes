@@ -1,5 +1,11 @@
 Revision history for Perl extension QListBox.
 
+1.02  Fri May  9 18:58:46 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:16:13 1997
+	- modified header structure
+
 1.01  Mon May  5 13:05:14 1997
 	- undef checking
 

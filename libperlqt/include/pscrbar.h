@@ -12,13 +12,15 @@
 
 #undef bool
 #include "qscrbar.h"
-#include "prect.h"
-#include "psize.h"
-#include "enum.h"
-#include "pqt.h"
-#include "virtual.h"
+#include "pwidget.h"
+#include "prangect.h"
 
-typedef QScrollBar::Orientation QScrollBar__Orientation;
+#define QScrollBar_virtual_functions					\
+    QWidget_virtual_functions						\
+    QRangeControl_virtual_functions
+
+class PScrollBar_virtualize : public PWidget_virtualize,
+			      public PRangeControl_virtualize {};
 
 class PScrollBar : public QScrollBar, public PScrollBar_virtualize {
     QScrollBar_virtual_functions
@@ -59,5 +61,7 @@ public:
     QRect protected_sliderRect() const { return QScrollBar::sliderRect(); }
     int protected_sliderStart() const { return QScrollBar::sliderStart(); }
 };
+
+typedef QScrollBar::Orientation QScrollBar__Orientation;
 
 #endif  // PSCRBAR_H

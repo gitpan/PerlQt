@@ -1,5 +1,11 @@
 Revision history for Perl extension QFontMetrics.
 
+1.02  Fri May  9 18:56:39 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:12:46 1997
+	- modified header structure
+
 1.01  Sun May  4 21:16:30 1997
 	- added some copy constructor prototypes
 

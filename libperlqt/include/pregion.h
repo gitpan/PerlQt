@@ -22,7 +22,7 @@ public:
     PRegion(const QPointArray &parray, bool winding=FALSE) :
 	QRegion(parray, winding) {}
 
-    PRegion(const QRegion &region) { *(QRegion *)this = region; }
+    PRegion(const QRegion &region) : QRegion(region) {}
 };
 
 #endif  // PREGION_H

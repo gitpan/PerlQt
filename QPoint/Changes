@@ -1,5 +1,8 @@
 Revision history for Perl extension QPoint.
 
+1.02  Fri May  9 19:01:25 1997
+	- disabled prototypes
+
 1.01  Sun May  4 23:42:30 1997
 	- added copy constructor prototype
 

@@ -12,7 +12,28 @@
 
 #undef bool
 #include "qpopmenu.h"
-#include "virtual.h"
+#include "ptablevw.h"
+#include "pmenudta.h"
+
+// @!$! %&!@ &!#@ &!@&# troll tech @!%&@*! @(!@*#& $*&%!!!!!!!!!!!!!!!!! //
+
+#define QPopupMenu_virtual_functions					\
+    QWidget_virtual_functions						\
+public:									\
+    void updateItem(int);						\
+protected:								\
+    void drawFrame(QPainter *);						\
+    void drawContents(QPainter *);					\
+									\
+    int cellHeight(int);						\
+    int cellWidth(int);							\
+    void paintCell(QPainter *, int, int);				\
+    void setupPainter(QPainter *);					\
+    int totalHeight();							\
+    int totalWidth();							\
+
+class PPopupMenu_virtualize : public PTableView_virtualize,
+			      public PMenuData_virtualize {};
 
 class PPopupMenu : public QPopupMenu, public PPopupMenu_virtualize {
     QPopupMenu_virtual_functions

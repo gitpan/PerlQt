@@ -11,7 +11,7 @@
 
 MODULE = QRangeControl		PACKAGE = QRangeControl
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PRangeControl *
 PRangeControl::new(...)

@@ -1,5 +1,14 @@
 Revision history for Perl extension libperlqt.
 
+1.02  Sat May 10 00:26:16 1997
+	- modified extract_ptr() and objectify_ptr() to add idiot-proof
+type-safety
+
+1.02  Fri May  9 17:59:00 1997
+	- modified headers to meet a standard structure, and gutted virtual.h
+to make addition of extensions without editing of virtual.h more
+straightforward
+
 1.01  Sun May  4 18:39:01 1997
 	- added a QApplication.xs, and added virtual functions to PApplication
 

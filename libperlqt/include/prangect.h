@@ -14,7 +14,20 @@
 #include "qrangect.h"
 #include "qscrbar.h"
 #include "qslider.h"
-#include "virtual.h"
+#include "pvirtual.h"
+
+#define QRangeControl_virtual_functions					\
+protected:								\
+    void rangeChange();							\
+    void stepChange();							\
+    void valueChange();
+
+class PRangeControl_virtualize : virtual public virtualize {
+protected:
+    void PRangeControl_rangeChange();
+    void PRangeControl_stepChange();
+    void PRangeControl_valueChange();
+};
 
 class PRangeControl : public QRangeControl, public PRangeControl_virtualize {
     QRangeControl_virtual_functions

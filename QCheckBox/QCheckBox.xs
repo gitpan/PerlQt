@@ -8,11 +8,11 @@
  */
 
 #include "pchkbox.h"
-#include "pqt.h"
+#include "psize.h"
 
 MODULE = QCheckBox		PACKAGE = QCheckBox
 
-PROTOTYPES: ENABLE
+PROTOTYPES: DISABLE
 
 PCheckBox *
 PCheckBox::new(...)

@@ -20,7 +20,7 @@ require QGlobal;
 
 	     &qBlue &qGray &qGreen &qRgb &qRed);
 
-$VERSION = '1.01';
+$VERSION = '1.02';
 bootstrap QColor $VERSION;
 
 1;

@@ -17,7 +17,7 @@ require DynaLoader;
 
 		%GUI);
 
-$VERSION = '1.00';
+$VERSION = '1.02';
 bootstrap QGlobal $VERSION;
 
 package Qt::Base;

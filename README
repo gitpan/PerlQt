@@ -1,3 +1,22 @@
+What's new in PerlQt 1.02:
+- Type-safeness. You can no-longer pass a QRect to setMainWidget()!
+
+- QTDIR warnings. Makefile.PL will now warn you that PerlQt needs QTDIR
+to build when it hasn't been set when Makefile.PL is run.
+
+- No more pointless prototypes. Mainly an internal change, but it removes
+the XS prototypes which don't work for method-calls, and suck for non-method
+calls
+
+- Major header-file changes. Mainly an internal change, but it makes the
+ability to add new widgets and modules almost trivial. It also un-clutters
+everything making maintenence easier. There was also a renaming of headers
+to make sure they *all* begin with a p.
+
+- Improved QPointArray. Added many QArray functions, to more closely emulate
+the C++ version. Also added overloaded operators
+
+
 What's new in PerlQt 1.01:
 - Overloaded operators. Yes, overloaded operators! Finally I've gotten them
 to work. I've added them to all classes when have them in C++ Qt. No =

@@ -12,14 +12,7 @@
 
 #undef bool
 #include "qpixmap.h"
-#include "pbitmap.h"
-#include "pimage.h"
-#include "prect.h"
-#include "psize.h"
-#include "pwmatrix.h"
 #include "pqt.h"
-
-typedef QPixmap::ColorMode QPixmap__ColorMode;
 
 class PPixmap : public QPixmap {
 public:
@@ -33,5 +26,7 @@ public:
     PPixmap(const QPixmap &pixmap) : QPixmap(pixmap) {}
     PPixmap(const QImage &image) { *(QPixmap *)this = image; }
 };
+
+typedef QPixmap::ColorMode QPixmap__ColorMode;
 
 #endif  // PPIXMAP_H

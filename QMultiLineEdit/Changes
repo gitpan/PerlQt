@@ -1,5 +1,11 @@
 Revision history for Perl extension QMultiLineEdit.
 
+1.02  Fri May  9 18:59:34 1997
+	- disabled prototypes
+
+1.02  Fri May  9 18:17:29 1997
+	- modified header structure
+
 1.01  Mon May  5 13:11:54 1997
 	- undef checking
 

@@ -12,7 +12,11 @@
 
 #undef bool
 #include "qaccel.h"
-#include "virtual.h"
+#include "pobject.h"
+
+#define QAccel_virtual_functions QObject_virtual_functions
+
+class PAccel_virtualize : public PObject_virtualize {};
 
 class PAccel : public QAccel, public PAccel_virtualize {
     QAccel_virtual_functions

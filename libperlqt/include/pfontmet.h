@@ -12,8 +12,6 @@
 
 #undef bool
 #include "qfontmet.h"
-#include "pfont.h"
-#include "prect.h"
 #include "pqt.h"
 
 class PFontMetrics : public QFontMetrics {
