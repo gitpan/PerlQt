@@ -30,7 +30,7 @@ my(%Typemap) = (
     'int' => [ 'PIG_PROTO_INT' ],
     'float' => [ 'PIG_PROTO_FLOAT' ],
     'double' => [ 'PIG_PROTO_DOUBLE' ],
-    'long double' => [ 'PIG_PROTO_LONG_DOUBLE' ],
+    'long double' => [ 'PIG_PROTO_LDOUBLE' ],
     'bool' => [ 'PIG_PROTO_BOOL' ],
 );
 
@@ -41,7 +41,7 @@ my(%From) = (
     'PIG_PROTO_SHORT' => 'pig_type_short_push(*(short*)&$var)',
     'PIG_PROTO_FLOAT' => 'pig_type_float_push(*(float*)&$var)',
     'PIG_PROTO_DOUBLE' => 'pig_type_double_push(*(double*)&$var)',
-    'PIG_PROTO_LONG_DOUBLE' => 'pig_type_long_double_push(*(long double*)&$var)',
+    'PIG_PROTO_LDOUBLE' => 'pig_type_long_double_push(*(long double*)&$var)',
     'PIG_PROTO_STRING' => 'pig_type_cstring_push(*(char**)&$var)',
     'PIG_PROTO_OBJECT' => 'pig_type_object_push(*(void**)&$var,$ptr+1)',
     'PIG_PROTO_AVSCALAR' => 'pig_type_ptr_push(*(void**)&$var)',
@@ -58,7 +58,7 @@ my(%To) = (
     'PIG_PROTO_SHORT' => 'pig_type_short_argument()',
     'PIG_PROTO_FLOAT' => 'pig_type_float_argument()',
     'PIG_PROTO_DOUBLE' => 'pig_type_double_argument()',
-    'PIG_PROTO_LONG_DOUBLE' => 'pig_type_long_double_argument()',
+    'PIG_PROTO_LDOUBLE' => 'pig_type_long_double_argument()',
     'PIG_PROTO_SCALAR' => 'pig_type_ptr_argument()',
     'PIG_PROTO_SCALARREF' => 'pig_type_ptr_argument()',
     'PIG_PROTO_HVSCALAR' => 'pig_type_ptr_argument()',

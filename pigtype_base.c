@@ -139,6 +139,35 @@ PIG_DEFINE_TYPE_POP(pig_type_double, double) {
 }
 
 
+PIG_DEFINE_TYPE_ARGUMENT(pig_type_long_double, long double) {
+    PIGARGS;
+    long double pigr = SvNV(PIG_ARG);
+    PIGARGUMENT(pigr);
+}
+
+PIG_DEFINE_TYPE_DEFARGUMENT(pig_type_long_double, long double) {
+    PIGARGS;
+    long double pigr = PIG_ARGOK ? SvNV(PIG_ARG) : pig0;
+    PIGARGUMENT(pigr);
+}
+
+PIG_DEFINE_TYPE_RETURN(pig_type_long_double, long double) {
+    PIGRET;
+    PIGRETURN(sv_2mortal(newSVnv(pig0)));
+}
+
+PIG_DEFINE_TYPE_PUSH(pig_type_long_double, long double) {
+    PIGPUSHSTACK;
+    PIGPUSH(sv_2mortal(newSVnv(pig0)));
+}
+
+PIG_DEFINE_TYPE_POP(pig_type_long_double, long double) {
+    PIGPOPSTACK;
+    long double pigr = SvNV(PIG_TOPSTACK);
+    PIGPOP(pigr);
+}
+
+
 PIG_DEFINE_TYPE_ARGUMENT(pig_type_float, float) {
     PIGARGS;
     float pigr = SvNV(PIG_ARG);
@@ -299,6 +328,7 @@ PIG_DEFINE_TYPE(pig_type_bool)
 PIG_DEFINE_TYPE(pig_type_char)
 PIG_DEFINE_TYPE(pig_type_cstring)
 PIG_DEFINE_TYPE(pig_type_double)
+PIG_DEFINE_TYPE(pig_type_long_double)
 PIG_DEFINE_TYPE(pig_type_int)
 PIG_DEFINE_TYPE(pig_type_float)
 PIG_DEFINE_TYPE(pig_type_long)
@@ -311,6 +341,7 @@ PIG_EXPORT_TABLE(pigtype_base)
     PIG_EXPORT_TYPE(pig_type_char, "char")
     PIG_EXPORT_TYPE(pig_type_cstring, "const char*")
     PIG_EXPORT_TYPE(pig_type_double, "double")
+    PIG_EXPORT_TYPE(pig_type_long_double, "long double")
     PIG_EXPORT_TYPE(pig_type_float, "float")
     PIG_EXPORT_TYPE(pig_type_int, "int")
     PIG_EXPORT_TYPE(pig_type_int, "enum")

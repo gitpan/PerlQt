@@ -1,0 +1,5 @@
+Changes from 2.001 to 2.002  (1998-Apr-6)
+---------------------------
+
+- Replaced all references to PIG_PROTO_LONG_DOUBLE with PIG_PROTO_LDOUBLE
+  and added the long double type.
