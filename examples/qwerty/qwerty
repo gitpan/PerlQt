@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+use Qt;
+use Editor;
+
+for(@ARGV) {
+    $e = new Editor->setImmortal;
+    $e->resize(400, 400);
+    $e->load($_);
+    $e->show();
+}
+$qApp->connect($qApp, 'lastWindowClosed()', 'quit()');
+exit $qApp->exec();

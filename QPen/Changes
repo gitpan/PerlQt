@@ -1,0 +1,8 @@
+Revision history for Perl extension QPen.
+
+0.03  Sun Apr 27 17:52:12 1997
+	- renamed %PenStyle to %Pen
+
+0.01  Fri Mar 14 16:06:37 1997
+	- original version; created by h2xs 1.18
+

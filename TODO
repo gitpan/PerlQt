@@ -1,0 +1,48 @@
+
+Here is my list of things to do in a random descending list of priority.
+
+* FIX THE MEMORY LEAK! (Probably in virtual functions)
+
+* require 5.004;
+
+* fix extract_ptr()!!! Perhaps by making THIS a hash with type-names as
+elements? Perhaps also allowing multiple-inheritance? Hey, just a thought.
+
+* Change all extract_ptr()'s to pextract()'s
+
+* Add tests to check whether THIS and DELETE are valid.
+
+* Change all virtual method-calls to non-virtual method-calls
+
+* Allow more data-types to be passed as arguments to signals/slots
+and do minimal argument parsing.
+
+* Get the typemap to read from className and convert to THAT type, not the
+one requested
+
+* Find the NULLs and make sure XSRETURN_UNDEF is called to bypass the
+typemap conversion!
+
+* Check for undef in the arguments and/or in the typemaps?
+
+* Write a QGlobal::import() that will only initialize enum values if
+they are requested by a module.
+
+* Incorporate operator overloading into QSize/QRect and friends.
+
+* Create a pembed
+
+* Add tests
+
+* Compile everything as one library, and see if there is any benefit.
+
+* Allow connections to closure slots.
+
+* Arbitrary argument-lists (...) between Perl signals and Perl slots.
+
+* Make libperlqt more generic, so as to support other scripting languages?
+
+* Overloaded signals/slots
+
+* Rewrite the whole thing in SWIG, to allow all the other scripting
+languages in the world to bask in the glory of PerlQt.

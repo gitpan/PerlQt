@@ -1,0 +1,128 @@
+#!/usr/bin/perl -w
+#
+# PerlQt Example Application: forever
+#
+# Draws rectangles forever.
+#
+
+package Counter;
+
+#
+# Counter - a widget that displays an unsigned int continuously.
+#
+
+use QLabel;
+
+@ISA = qw(QLabel);
+
+#
+# Constructs a Counter
+#
+
+sub new {
+    my $self = shift->SUPER::new(@_[1..$#_]);
+
+    $$self{'number'} = shift;
+    $self->setText('  0  rectangles/second');
+    $self->setAutoResize(1);
+    $self->startTimer(1000);
+
+    return $self;
+}
+
+#
+# Timer event is called every second and prints out number
+#
+
+sub timerEvent {
+    my $self = shift;
+    my $number = $$self{'number'};
+
+    if(defined $$self{'number'}) {
+	$self->setText(sprintf('%d rectangles/second', $$number));
+	$$number = 0;
+    }
+    $self->repaint(1);
+}
+
+package Forever;
+
+#
+# Forever - a widget that draws rectangles forever.
+#
+
+use QPen;
+use QWidget;
+
+@ISA = qw(QWidget);
+
+#
+# Constructs a Forever widget.
+#
+
+sub COLORS () { 120 }
+
+sub new {
+    my $self = shift->SUPER::new(@_);
+    my @colors;
+
+    for my $a (0..COLORS-1) {
+	$colors[$a] = new QColor(rand(0xff), rand(0xff), rand(0xff));
+    }
+    my $rectangles = 0;
+    my $counter = new Counter(\$rectangles);
+    $counter->show();
+    print "$self\n";
+    $self->startTimer(0);
+
+    @$self{'counter', 'rectangles', 'colors'} =
+	($counter, \$rectangles, \@colors);
+    return $self;
+}
+
+#
+# Handles paint events for the Forever widget.
+#
+
+sub paintEvent {
+    my $self = shift;
+    my $colors = $$self{'colors'};
+    print "foo\n";
+    my $paint = new QPainter;
+    print "bar $self, $paint\n";
+
+    $paint->begin($self);
+    $paint->setWindow(0, 0, 1024, 1024);
+    $paint->setPen($Pen{NoPen});
+    $paint->setBrush($$colors[int(rand(COLORS))]);
+    my $p1 = new QPoint(rand(0x3ff), rand(0x3ff));
+    my $p2 = new QPoint(rand(0x3ff), rand(0x3ff));
+    my $r = new QRect($p1, $p2);
+    $paint->drawRect($r);
+    $paint->end();
+    print "FOOOOO\n\n\n\n";
+}
+
+#
+# Handles timer events for the Forever widget.
+#
+
+sub timerEvent {
+    my $self = shift;
+    my $rectangles = shift;
+
+    $self->repaint(0);
+    $$rectangles++;
+}
+
+package main;
+
+use Qt;
+
+print "yes\n";
+$always = new Forever;
+print "no\n";
+$qApp->setMainWidget($always);
+$always->show();
+exit $qApp->exec();
+

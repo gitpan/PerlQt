@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+if(@ARGV < 2) { print "more args\n"; exit(-1); }
+
+$old = $ARGV[0];
+$new = $ARGV[1];
+$ld = $old;
+$ew = $new;
+$ld =~ s/^.//;
+$ew =~ s/^.//;
+
+open(IN, "$old.xs") || die "$old.xs: $!";
+open(OUT, ">$new.xs") || die "$new.xs: $!";
+
+while(<IN>) {
+    last if /virtualize/;
+    s/([QP])$ld(\::)/$1$ew$2/g;
+    print OUT $_;
+}

@@ -1,0 +1,9 @@
+Revision history for Perl extension QButton.
+
+0.03  Wed Apr 23 12:43:48 1997
+	- added all virtual and protected functions, and added autoRepeat()
+and setAutoRepeat()
+
+0.01  Tue Mar  4 16:19:48 1997
+	- original version; created by h2xs 1.18
+

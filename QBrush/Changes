@@ -1,0 +1,8 @@
+Revision history for Perl extension QBrush.
+
+0.03  Sun Apr 27 16:17:21 1997
+	- changed %BrushStyle to %Brush
+
+0.01  Fri Mar 14 16:06:41 1997
+	- original version; created by h2xs 1.18
+

@@ -1,0 +1,14 @@
+Revision history for Perl extension QEvent.
+
+0.03  Fri Apr 18 16:06:55 1997
+	- export %Key
+
+0.03  Fri Apr 18 14:26:46 1997
+	- added the Qt-1.2 QMouseEvent::x() and QMouseEvent::y() methods
+ 
+0.03  Fri Apr 18 14:19:08 1997
+	- moved the ButtonState constants to %Button
+
+0.01  Wed Mar  5 01:50:00 1997
+	- original version; created by h2xs 1.18
+

@@ -1,0 +1,8 @@
+Revision history for Perl extension QPrinter.
+
+0.02  Sun Apr 27 18:13:48 1997
+	- renamed %PageSize to %Page
+
+0.01  Sat Apr 12 13:55:42 1997
+	- original version; created by h2xs 1.18
+

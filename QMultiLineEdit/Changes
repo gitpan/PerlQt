@@ -1,0 +1,8 @@
+Revision history for Perl extension QMultiLineEdit.
+
+0.02  Thu Apr 24 17:09:49 1997
+	- added virtual and protected functions
+
+0.01  Fri Apr  4 10:21:25 1997
+	- original version; created by h2xs 1.18
+

@@ -1,0 +1,8 @@
+Revision history for Perl extension QLCDNumber.
+
+0.03  Fri Apr 25 16:39:11 1997
+	- added virtual functions
+
+0.01  Wed Mar  5 00:40:22 1997
+	- original version; created by h2xs 1.18
+

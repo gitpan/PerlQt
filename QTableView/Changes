@@ -1,0 +1,11 @@
+Revision history for Perl extension QTableView.
+
+0.02  Thu Apr 24 09:53:45 1997
+	- created a %Tbl to store the Tbl_* constants in, and exported it
+
+0.02  Thu Apr 24 00:22:57 1997
+	- added virtual and protected functions, as well as the constructor
+
+0.01  Fri Apr  4 10:21:21 1997
+	- original version; created by h2xs 1.18
+
